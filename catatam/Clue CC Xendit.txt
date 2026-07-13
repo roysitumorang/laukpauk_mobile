@@ -1,0 +1,5 @@
+Clue CC Xendit :
+1. Jika dibiarkan lewat time yang diberi : Authorization_Failed
+2. Jika dimasukkan OTP sebelum waktu habis : return token 60bb3bf220f786001bb93922
+token lain
+60bb3dc4431d86001bdcd171

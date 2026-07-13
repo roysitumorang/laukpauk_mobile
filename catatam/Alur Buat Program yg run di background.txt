@@ -1,0 +1,5 @@
+1. get data from sharedpreferences (jadwal yg dipilih)
+2. read data
+3. check is currentime >= batasWaktu
+	=> true
+		=> removeTransactionSession

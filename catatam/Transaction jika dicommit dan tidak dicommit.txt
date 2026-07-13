@@ -1,0 +1,6 @@
+1. jika transaction tidak di commit
+	=> master transaksi tidak dibuat
+	=> admin menerima notifikasi ada orderan masuk
+2. jika transaction di commit
+	=> master transaksi dibuat
+	=> admin menerima notifikasi ada orderan masuk

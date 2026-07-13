@@ -1,0 +1,2 @@
+Bugs LP : 5 Juni 2021
+1. Dompet masuk dan transaksi masuk gak ada notif ke app (CLEAR, 6 Juni 2021)
