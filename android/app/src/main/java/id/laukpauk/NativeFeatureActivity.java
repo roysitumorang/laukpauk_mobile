@@ -53,7 +53,7 @@ public final class NativeFeatureActivity extends Activity {
         title.setText(titleFor(route));
         subtitle.setText("Native Android (Java) · data and actions available depend on the migrated API.");
         if ("buyer".equalsIgnoreCase(route) || "home".equalsIgnoreCase(route) || "/".equals(route)) {
-            addAction("Beranda / banner", "home");
+            addAction("Beranda / banner", "banner");
             addAction("Kategori produk", "categories");
             addAction("Pasar", "market");
             addAction("Promo", "promos");
@@ -159,7 +159,7 @@ public final class NativeFeatureActivity extends Activity {
         switch (route.toLowerCase()) {
             case "buyer": case "home": return "Laukpauk · Pembeli";
             case "seller": return "Laukpauk · Penjual";
-            case "categories": return "Kategori produk";
+            case "banner": return "Beranda";\n            case "categories": return "Kategori produk";
             case "market": case "market-load": return "Pasar";
             case "promos": return "Promo";
             case "recipes": return "Resep";
