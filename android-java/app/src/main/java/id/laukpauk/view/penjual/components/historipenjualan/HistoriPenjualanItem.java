@@ -66,7 +66,7 @@ public class HistoriPenjualanItem extends LinearLayout {
                     @Override
                     public void run(Integer idPenjual) {
                         int id = idPenjual == null ? 0 : idPenjual;
-                        Nav_push(ctx, idTransaksi, id);
+                        navPush(ctx, idTransaksi, id);
                     }
                 });
             }
@@ -122,7 +122,7 @@ public class HistoriPenjualanItem extends LinearLayout {
     }
 
     /** Navigator.push(context, MaterialPageRoute(builder: (_) => ItemTransaksi(idTransaksi, idPenjual: ..., scaffold: true))). */
-    private static void Nav_push(Context ctx, String idTransaksi, int idPenjual) {
+    private static void navPush(Context ctx, String idTransaksi, int idPenjual) {
         id.laukpauk.ui.Nav.push(ctx, ItemTransaksiActivity.class,
                 Json.of("idTransaksi", idTransaksi, "idPenjual", String.valueOf(idPenjual), "scaffold", true));
     }
