@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FFFFFF">
+    <LinearLayout
+        android:id="@+id/native_feature_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+        <TextView
+            android:id="@+id/native_feature_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Laukpauk"
+            android:textColor="#247D4C"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/native_feature_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="#242D27"
+            android:textSize="15sp" />
+        <ProgressBar
+            android:id="@+id/native_feature_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+        <LinearLayout
+            android:id="@+id/native_feature_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical" />
+        <TextView
+            android:id="@+id/native_feature_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="#242D27"
+            android:textIsSelectable="true"
+            android:textSize="13sp" />
+    </LinearLayout>
+</ScrollView>
