@@ -37,17 +37,22 @@ public final class NativeApiClient {
 
     public static void get(String baseUrl, String path, Map<String, String> query,
                            Callback callback) {
-        request("GET", baseUrl, path, query, null, callback);
+        request("GET", baseUrl, path, query, null, null, callback);
     }
 
     public static void postJson(String baseUrl, String path, JSONObject body,
                                 Callback callback) {
-        request("POST", baseUrl, path, null, body, callback);
+        request("POST", baseUrl, path, null, body, null, callback);
+    }
+
+    public static void postForm(String baseUrl, String path, Map<String, String> query,
+                                Map<String, String> formBody, Callback callback) {
+        request("POST", baseUrl, path, query, null, formBody, callback);
     }
 
     private static void request(String method, String baseUrl, String path,
                                 Map<String, String> query, JSONObject body,
-                                Callback callback) {
+                                Map<String, String> formBody, Callback callback) {
         IO.execute(() -> {
             HttpURLConnection connection = null;
             try {
@@ -71,10 +76,25 @@ public final class NativeApiClient {
                 connection.setReadTimeout(20000);
                 connection.setRequestProperty("Accept", "application/json");
 
-                if (body != null) {
+                if (body != null || formBody != null) {
                     connection.setDoOutput(true);
-                    connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-                    byte[] bytes = body.toString().getBytes(StandardCharsets.UTF_8);
+                    byte[] bytes;
+                    if (formBody != null) {
+                        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+                        StringBuilder encoded = new StringBuilder();
+                        Iterator<Map.Entry<String, String>> formIterator = formBody.entrySet().iterator();
+                        while (formIterator.hasNext()) {
+                            Map.Entry<String, String> entry = formIterator.next();
+                            if (encoded.length() > 0) encoded.append("&");
+                            encoded.append(URLEncoder.encode(entry.getKey(), "UTF-8"))
+                                   .append("=")
+                                   .append(URLEncoder.encode(entry.getValue() == null ? "" : entry.getValue(), "UTF-8"));
+                        }
+                        bytes = encoded.toString().getBytes(StandardCharsets.UTF_8);
+                    } else {
+                        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+                        bytes = body.toString().getBytes(StandardCharsets.UTF_8);
+                    }
                     try (OutputStream out = connection.getOutputStream()) {
                         out.write(bytes);
                     }

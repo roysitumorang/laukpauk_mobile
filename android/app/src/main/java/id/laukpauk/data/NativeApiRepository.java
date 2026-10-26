@@ -51,6 +51,17 @@ public final class NativeApiRepository {
         NativeApiClient.postJson(ApiConfiguration.baseUrl(), path, payload, callback);
     }
 
+    /** Form-encoded equivalent of package:http post(url, body: map). */
+    public static void postForm(Context context, String path, boolean includeAuth,
+                                Map<String, String> body, Map<String, String> queryParameters,
+                                NativeApiClient.Callback callback) {
+        Map<String, String> payload = new LinkedHashMap<>();
+        if (body != null) payload.putAll(body);
+        payload.put("versionCode", String.valueOf(BuildConfig.VERSION_CODE));
+        NativeApiClient.postForm(ApiConfiguration.baseUrl(), path,
+                query(context, includeAuth, queryParameters), payload, callback);
+    }
+
     public static Map<String, String> params(String... pairs) {
         Map<String, String> result = new LinkedHashMap<>();
         for (int i = 0; i + 1 < pairs.length; i += 2) result.put(pairs[i], pairs[i + 1]);
