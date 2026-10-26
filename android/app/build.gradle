@@ -2,6 +2,13 @@ plugins {
     id 'com.android.application'
 }
 
+def configuredApiBaseUrl = providers.gradleProperty('LAUKPAUK_API_BASE_URL')
+        .orElse(providers.environmentVariable('LAUKPAUK_API_BASE_URL'))
+        .getOrElse('')
+def configuredMapsApiKey = providers.gradleProperty('MAPS_API_KEY')
+        .orElse(providers.environmentVariable('MAPS_API_KEY'))
+        .getOrElse('')
+
 android {
     namespace 'id.laukpauk'
     compileSdk 35
@@ -13,7 +20,12 @@ android {
         versionCode 50600
         versionName '5.0.6'
         multiDexEnabled true
+        buildConfigField 'String', 'API_BASE_URL', '"' + configuredApiBaseUrl.replace('\\', '\\\\').replace('"', '\\"') + '"'
+        manifestPlaceholders = [MAPS_API_KEY: configuredMapsApiKey]
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
+
+    buildFeatures { buildConfig true }
 
     buildTypes {
         debug { }
@@ -42,4 +54,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:21.3.0'
     implementation 'com.google.firebase:firebase-messaging:24.1.0'
     implementation 'com.xendit:xendit-android:3.6.1'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test:rules:1.6.1'
 }
