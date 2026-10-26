@@ -10,13 +10,21 @@ def configuredMapsApiKey = providers.gradleProperty('MAPS_API_KEY')
         .getOrElse('')
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('/home/roy/laukpauk_mobile/laukpauk.keystore')
+            keyAlias 'laukpauk'
+            keyPassword 'medan12345'
+            storePassword 'medan12345'
+        }
+    }
     namespace 'id.laukpauk'
-    compileSdk 35
+    compileSdk 37
 
     defaultConfig {
         applicationId 'id.laukpauk'
-        minSdk 23
-        targetSdk 35
+        minSdk 24
+        targetSdk 37
         versionCode 50600
         versionName '5.0.6'
         multiDexEnabled true
@@ -42,21 +50,21 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation 'com.google.android.material:material:1.14.0'
+    implementation 'com.google.code.gson:gson:2.15.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.activity:activity:1.9.3'
-    implementation 'androidx.lifecycle:lifecycle-runtime:2.8.7'
-    implementation 'androidx.work:work-runtime:2.9.1'
+    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'androidx.activity:activity:1.13.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.11.0'
+    implementation 'androidx.work:work-runtime:2.12.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
-    implementation 'com.google.android.gms:play-services-maps:19.0.0'
-    implementation 'com.google.android.gms:play-services-location:21.3.0'
-    implementation 'com.google.firebase:firebase-messaging:24.1.0'
+    implementation 'com.google.android.gms:play-services-maps:20.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.4.0'
+    implementation 'com.google.firebase:firebase-messaging:26.0.1'
     // Xendit SDK is deferred until the native payment flow is ported; its 3DS transitive dependency currently requires authenticated JFrog access.
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test:runner:1.6.2'
-    androidTestImplementation 'androidx.test:rules:1.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test:runner:1.7.0'
+    androidTestImplementation 'androidx.test:rules:1.7.0'
 }
