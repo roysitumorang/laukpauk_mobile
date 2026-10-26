@@ -34,8 +34,9 @@ public final class NativeApiRepository {
 
     public static void post(Context context, String path, boolean includeAuth,
                             JSONObject body, NativeApiClient.Callback callback) {
-        JSONObject payload = body == null ? new JSONObject() : new JSONObject(body.toString());
+        JSONObject payload;
         try {
+            payload = body == null ? new JSONObject() : new JSONObject(body.toString());
             payload.put("versionCode", String.valueOf(BuildConfig.VERSION_CODE));
             if (includeAuth) {
                 String token = NativePreferences.getAuthToken(context);

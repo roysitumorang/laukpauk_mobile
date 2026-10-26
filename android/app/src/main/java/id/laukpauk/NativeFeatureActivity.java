@@ -73,7 +73,7 @@ public final class NativeFeatureActivity extends Activity {
             addAction("Kembali ke pembeli", "buyer");
         } else {
             switch (route.toLowerCase()) {
-                case "home":
+                case "banner":
                     request("Memuat banner…", cb -> BannerModel.getBanner(this, cb));
                     break;
                 case "categories":
@@ -159,7 +159,8 @@ public final class NativeFeatureActivity extends Activity {
         switch (route.toLowerCase()) {
             case "buyer": case "home": return "Laukpauk · Pembeli";
             case "seller": return "Laukpauk · Penjual";
-            case "banner": return "Beranda";\n            case "categories": return "Kategori produk";
+            case "banner": return "Beranda";
+            case "categories": return "Kategori produk";
             case "market": case "market-load": return "Pasar";
             case "promos": return "Promo";
             case "recipes": return "Resep";
