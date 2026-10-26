@@ -12,13 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-/**
- * Native Android entry point. This activity deliberately uses Android Views
- * directly; it has no Flutter engine, Dart runtime, or platform channels.
- *
- * Feature screens are being ported from the legacy lib/ Dart sources in
- * follow-up migration commits.
- */
 public final class MainActivity extends Activity {
     private static final int GREEN = Color.rgb(36, 125, 76);
     private static final int INK = Color.rgb(36, 45, 39);
@@ -26,6 +19,7 @@ public final class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        NativePreferences.migrateKnownLegacyValues(getApplicationContext());
         getWindow().setStatusBarColor(GREEN);
         getWindow().setNavigationBarColor(Color.WHITE);
         getWindow().getDecorView().setSystemUiVisibility(

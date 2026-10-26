@@ -3,18 +3,26 @@ package id.laukpauk;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Native preferences for the Java application.
  *
- * Legacy Flutter SharedPreferences values are read as a migration fallback;
- * newly written values use the native "laukpauk" preference file. Do not
- * clear legacy data until the user/session migration has been verified.
+ * Legacy Flutter SharedPreferences values are read as a migration fallback.
+ * migrateKnownLegacyValues() copies known keys without deleting legacy data,
+ * so rollback to the previous app version remains possible.
  */
 public final class NativePreferences {
     private static final String FILE = "laukpauk";
     private static final String LEGACY_FILE = "FlutterSharedPreferences";
+    private static final List<String> STRING_KEYS = Arrays.asList(
+            "authToken", "idUser", "cartCode", "savedLatitude", "savedLongitude",
+            "savedJadwalDeliveryCode", "savedAlamat", "savedJadwalDeliveryMap",
+            "usedVoucher", "externalUserID");
+    private static final List<String> BOOLEAN_KEYS = Arrays.asList(
+            "lewatiOTPRegistrasi", "isAlamatDeliveryDanJadwalDeliverySet");
 
     private NativePreferences() { }
 
@@ -50,6 +58,30 @@ public final class NativePreferences {
 
     public static void remove(Context context, String key) {
         current(context).edit().remove(key).apply();
+    }
+
+    /**
+     * Idempotently copies only known preference types. The legacy store is
+     * intentionally preserved; call this before native auth/cart initialization.
+     */
+    public static void migrateKnownLegacyValues(Context context) {
+        SharedPreferences old = legacy(context);
+        SharedPreferences now = current(context);
+        SharedPreferences.Editor editor = now.edit();
+        for (String key : STRING_KEYS) {
+            String oldKey = "flutter." + key;
+            if (!now.contains(key) && old.contains(oldKey)) {
+                String value = old.getString(oldKey, null);
+                if (value != null) editor.putString(key, value);
+            }
+        }
+        for (String key : BOOLEAN_KEYS) {
+            String oldKey = "flutter." + key;
+            if (!now.contains(key) && old.contains(oldKey)) {
+                editor.putBoolean(key, old.getBoolean(oldKey, false));
+            }
+        }
+        editor.apply();
     }
 
     public static String getAuthToken(Context context) {
