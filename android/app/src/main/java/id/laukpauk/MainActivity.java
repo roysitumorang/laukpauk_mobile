@@ -1,266 +1,87 @@
 package id.laukpauk;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.BroadcastReceiver;
-
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+/** Native Android entry point. Feature screens are migrated incrementally. */
+public final class MainActivity extends AppCompatActivity {
+    private static final int INK = Color.rgb(35,45,38);
+    private static final int GREEN = Color.rgb(35,126,76);
+    private static final int MUTED = Color.rgb(104,115,106);
+    private LinearLayout content;
 
-import io.flutter.embedding.android.FlutterActivity;
-import io.flutter.embedding.engine.FlutterEngine;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.EventChannel;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-
-import kotlin.Unit;
-import kotlin.jvm.internal.Intrinsics;
-
-import com.google.android.play.core.appupdate.AppUpdateInfo;
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
-import com.google.android.play.core.install.InstallState;
-import com.google.android.play.core.install.InstallStateUpdatedListener;
-import com.google.android.play.core.install.model.InstallStatus;
-import com.google.android.play.core.install.model.UpdateAvailability;
-import com.google.android.play.core.tasks.OnSuccessListener;
-
-import org.jetbrains.annotations.NotNull;
-
-import com.google.android.play.core.appupdate.AppUpdateManager;
-
-import com.xendit.Models.Card;
-import com.xendit.Models.Token;
-import com.xendit.Models.XenditError;
-import com.xendit.TokenCallback;
-import com.xendit.Xendit;
-
-import com.google.gson.Gson;
-
-
-//private final String devPublicKey =  "xnd_public_development_qjQ94sUBTX1EUO8Eu0GBeMaYoYkBEtRUG3IY9zIX894mtLdUkaBtazgoWTX5Y7";
-//private final String prodPublicKey =  "xnd_public_production_wG8Fg0RNVSaCVYwOGWyZ2DdquAvAmQcqTCaErxJ7bXivEwekU2q7Xb8Hk0M3a";
-//devPublicKey dan prodPublicKey diambil dari dashboard xendit akun id.laukpauk@gmail.com
-
-public class MainActivity extends FlutterActivity{
-    final String nativeCode = "native.code";
-    final String xenditChannel = "laukpauk.xendit";
-    final String CHANNEL = "https://lp2021.page.link/channel";
-    final String EVENTS = "https://lp2021.page.link/events";
-    String startString;
-    String routeName;
-    String routeParams;
-    BroadcastReceiver linkReceiver;
-    MyJobService myJobService;
-
-    private AppUpdateManager _appUpdateManager;
-    private static final int RC_APP_UPDATE = 100;
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-
-        myJobService = new MyJobService();
-
-        Intent intent = getIntent();
-        if(intent.getData() != null){
-            routeName   = intent.getData().getPath();
-            routeParams = intent.getData().getQuery();
-        }
-
-        if(intent.getDataString() != null){
-            startString = intent.getDataString();
-        }
-
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            JobInfo jobInfo = new JobInfo.Builder(11, new ComponentName(this, MyJobService.class))
-                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                    .build();
-            jobScheduler.schedule(jobInfo);
-        }
-
-        Intent _myIntentService = new Intent(this, MyIntentService.class);
-        _myIntentService.putExtra("foo", "Falentino Djoka");
-
-        startService(_myIntentService);
-
-        _appUpdateManager = AppUpdateManagerFactory.create(this);
-        _appUpdateManager.getAppUpdateInfo().addOnSuccessListener(new OnSuccessListener<AppUpdateInfo>() {
-            @Override
-            public void onSuccess(AppUpdateInfo appUpdateInfo) {
-                System.out.println("onSuccess update aplikasi");
-                if(appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
-                    // try {
-                        (new MethodChannel(
-                        (BinaryMessenger) getFlutterEngine().getDartExecutor().getBinaryMessenger(),
-                        nativeCode)).invokeMethod("updateAvailable", null);
-                    // } catch (IntentSender.SendIntentException e) {
-                    //     e.printStackTrace();
-                    // }
-                }
-            }
-        });
-        _appUpdateManager.registerListener(_installStateUpdateListener);
+    @Override protected void onCreate(Bundle state) {
+        super.onCreate(state);
+        getWindow().setStatusBarColor(Color.WHITE);
+        getWindow().setNavigationBarColor(Color.WHITE);
+        getWindow().getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        showHome();
     }
 
-    @Override
-    protected void onStop() {
-        if(_appUpdateManager != null){
-            _appUpdateManager.unregisterListener(_installStateUpdateListener);
-        }
-        super.onStop();
+    private void showHome() {
+        ScrollView scroll = new ScrollView(this);
+        scroll.setFillViewport(true);
+        content = new LinearLayout(this);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(dp(22),dp(20),dp(22),dp(28));
+        content.setBackgroundColor(Color.rgb(250,250,247));
+        scroll.addView(content);
+
+        content.addView(label("Laukpauk",30,GREEN,true), matchWrap());
+        TextView subtitle = label("Belanja kebutuhan dapur, lebih mudah.",15,MUTED,false);
+        LinearLayout.LayoutParams sub = matchWrap(); sub.topMargin=dp(6);
+        content.addView(subtitle,sub);
+
+        TextView hero = label("Bahan segar untuk masakan hari ini",22,Color.WHITE,true);
+        hero.setGravity(Gravity.CENTER_VERTICAL);
+        hero.setPadding(dp(20),dp(22),dp(20),dp(22));
+        hero.setBackground(background(GREEN,18));
+        LinearLayout.LayoutParams hp=matchWrap(); hp.topMargin=dp(28);
+        content.addView(hero,hp);
+
+        TextView heading=label("Mulai dari sini",19,INK,true);
+        LinearLayout.LayoutParams sh=matchWrap(); sh.topMargin=dp(26); sh.bottomMargin=dp(8);
+        content.addView(heading,sh);
+        addAction("Masuk / Daftar","Akses akun dan pesanan Anda","Layar autentikasi sedang dalam proses migrasi ke Java.");
+        addAction("Cari produk","Jelajahi produk dan pasar sekitar","Katalog produk sedang dalam proses migrasi ke Java.");
+        addAction("Keranjang","Tinjau belanjaan sebelum checkout","Keranjang dan checkout sedang dalam proses migrasi ke Java.");
+        addAction("Pesanan saya","Lihat status dan riwayat pesanan","Pesanan sedang dalam proses migrasi ke Java.");
+
+        TextView note=label("Versi native Android · Java",12,MUTED,false); note.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams np=matchWrap(); np.topMargin=dp(30); content.addView(note,np);
+        setContentView(scroll);
     }
 
-    private final InstallStateUpdatedListener _installStateUpdateListener = new InstallStateUpdatedListener() {
-        @Override
-        public void onStateUpdate(@NonNull InstallState state) {
-            if(state.installStatus() == InstallStatus.DOWNLOADED){
-                System.out.println("From mainactivity => Downloded !");
-            }
-        }
-    };
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RC_APP_UPDATE && resultCode != RESULT_OK){
-            System.out.println("Tidak");
-        }
+    private void addAction(String title,String description,String message) {
+        LinearLayout card=new LinearLayout(this); card.setOrientation(LinearLayout.VERTICAL);
+        card.setPadding(dp(16),dp(14),dp(16),dp(14)); card.setBackground(background(Color.WHITE,14));
+        card.setClickable(true); card.setFocusable(true);
+        card.setOnClickListener(v -> new AlertDialog.Builder(this).setTitle("Laukpauk")
+            .setMessage(message).setPositiveButton("OK",null).show());
+        card.addView(label(title,16,INK,true),matchWrap());
+        TextView detail=label(description,13,MUTED,false);
+        LinearLayout.LayoutParams dp=matchWrap(); dp.topMargin=this.dp(4); card.addView(detail,dp);
+        LinearLayout.LayoutParams cp=matchWrap(); cp.topMargin=dp(8); content.addView(card,cp);
     }
-
-    @Override
-    protected void onNewIntent(@NonNull Intent intent) {
-        super.onNewIntent(intent);
-        if(intent.getAction() == "android.intent.action.VIEW"){
-            if(linkReceiver != null){
-                linkReceiver.onReceive(getApplicationContext(), intent);
-            }
-        }
+    private TextView label(String text,int size,int color,boolean bold) {
+        TextView v=new TextView(this); v.setText(text); v.setTextSize(size); v.setTextColor(color);
+        if(bold) v.setTypeface(Typeface.DEFAULT,Typeface.BOLD); return v;
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        IntentFilter filter = new IntentFilter(MyIntentService.ACTION);
-        LocalBroadcastManager.getInstance(this).registerReceiver(_myCustomBroadcast, filter);
+    private GradientDrawable background(int color,int radius) {
+        GradientDrawable d=new GradientDrawable(); d.setColor(color); d.setCornerRadius(dp(radius)); return d;
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(_myCustomBroadcast);
+    private LinearLayout.LayoutParams matchWrap() {
+        return new LinearLayout.LayoutParams(-1,LinearLayout.LayoutParams.WRAP_CONTENT);
     }
-
-    private BroadcastReceiver _myCustomBroadcast = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int _resultCode = intent.getIntExtra("resultCode", RESULT_CANCELED);
-            if(_resultCode == RESULT_OK){
-                (new MethodChannel(
-                        (BinaryMessenger) getFlutterEngine().getDartExecutor().getBinaryMessenger(),
-                        nativeCode)).invokeMethod("jadwalDeliveryKadaluarsa", null);
-            }
-        }
-    };
-
-
-
-    public final BroadcastReceiver createChangeReceiver(@NotNull final EventChannel.EventSink events) {
-        return (BroadcastReceiver)(new BroadcastReceiver(){
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if(intent != null){
-                    Object dataString = intent.getDataString();
-                    if(dataString == null){
-                        events.error("UNAVAILABLE", "Link Unavailable", null);
-                        dataString = Unit.INSTANCE;
-                    }
-
-                    events.success(dataString);
-                }
-            }
-        });
-   }
-
-    @Override
-    public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
-        super.configureFlutterEngine(flutterEngine);
-
-        (new MethodChannel((BinaryMessenger)flutterEngine.getDartExecutor(), CHANNEL))
-                .setMethodCallHandler((MethodChannel.MethodCallHandler)(new MethodChannel.MethodCallHandler() {
-            @Override
-            public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-                if(Intrinsics.areEqual(call.method, "initialLink")){
-                    if(startString != null){
-                        result.success(startString);
-                    }
-                }
-            }
-        }));
-
-        (new EventChannel((BinaryMessenger)flutterEngine.getDartExecutor(), EVENTS))
-                .setStreamHandler((EventChannel.StreamHandler)(new EventChannel.StreamHandler() {
-            @Override
-            public void onListen(Object arguments, EventChannel.EventSink events) {
-                linkReceiver = createChangeReceiver(events);
-            }
-
-            @Override
-            public void onCancel(Object arguments) {
-                linkReceiver = null;
-            }
-        }));
-
-        (new MethodChannel((BinaryMessenger)flutterEngine.getDartExecutor(), xenditChannel))
-                .setMethodCallHandler((MethodChannel.MethodCallHandler)(new MethodChannel.MethodCallHandler() {
-            public final void onMethodCall(@NotNull MethodCall call, @NotNull MethodChannel.Result result) {
-
-                if(Intrinsics.areEqual(call.method, "createCreditCartToken")){
-                    Gson gson       =   new Gson();
-                    Xendit xendit   =   new Xendit(getApplicationContext(), "xnd_public_production_wG8Fg0RNVSaCVYwOGWyZ2DdquAvAmQcqTCaErxJ7bXivEwekU2q7Xb8Hk0M3a", MainActivity.this);
-
-                    Object argument = call.arguments;
-                    String encodedArgument = argument.toString();
-                    TokenizationArgument decodedArgument = gson.fromJson(encodedArgument, TokenizationArgument.class);
-
-                    int _totalTagihan   =   decodedArgument.totalTagihan;
-                    String _totalTagihanString  =   Integer.toString(_totalTagihan);
-
-                    Card card = new Card(decodedArgument.cardNumber, decodedArgument.expiryMonth, decodedArgument.expiryYear, decodedArgument.cardCVN);                    
-                    TokenCallback _tokenCallback =   new TokenCallback() {
-                        public void onSuccess(Token token){
-                            if(token != null){
-                                String tokenID             =  token.getId();
-                                String authenticationID    =  token.getAuthenticationId();
-                                String cardCVN             =  decodedArgument.cardCVN;
-                                String returnedData        =  "{\"tokenID\": \""+tokenID+"\", \"authenticationID\":\""+authenticationID+"\", \"cardCVN\":\""+cardCVN+"\"}";
-
-                                result.success(returnedData);
-                            }
-                        }
-
-                        @Override
-                        public void onError(XenditError xenditError) {
-                            System.out.println("Terjadi Kesalahan");
-                            System.out.println(xenditError.getErrorMessage());
-                            result.success(null);
-                        }
-                    };
-
-                    xendit.createSingleUseToken(card, _totalTagihanString, true, "IDR", _tokenCallback);
-                }
-            }
-        }));
-    }
+    private int dp(int value) { return Math.round(value*getResources().getDisplayMetrics().density); }
 }
