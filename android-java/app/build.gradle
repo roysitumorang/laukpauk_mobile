@@ -1,0 +1,135 @@
+plugins {
+    id 'com.android.application'
+}
+
+// ---------------------------------------------------------------------------
+// Local configuration (see ../laukpauk.properties.example).
+// Values come from ../laukpauk.properties (git-ignored), then from -P / gradle.properties.
+// ---------------------------------------------------------------------------
+def localConfig = new Properties()
+def localConfigFile = rootProject.file('laukpauk.properties')
+if (localConfigFile.exists()) {
+    localConfigFile.withReader('UTF-8') { reader -> localConfig.load(reader) }
+}
+def cfg = { String key, String fallback ->
+    if (localConfig.getProperty(key) != null) return localConfig.getProperty(key)
+    if (project.hasProperty(key)) return project.property(key).toString()
+    return fallback
+}
+def q = { String value -> '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"' }
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withReader('UTF-8') { reader -> keystoreProperties.load(reader) }
+}
+
+android {
+    namespace 'id.laukpauk'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'id.laukpauk'
+        minSdk 21
+        targetSdk 35
+        // Same version as android/app/build.gradle of the Flutter app.
+        versionCode 50600
+        versionName '5.0.6'
+
+        buildConfigField 'String', 'API_BASE_URL', q(cfg('API_BASE_URL', 'https://CHANGE-ME.invalid/api'))
+        buildConfigField 'String', 'BASE_URL', q(cfg('BASE_URL', 'https://CHANGE-ME.invalid'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_ARTIKEL', q(cfg('UPLOAD_GAMBAR_ARTIKEL', 'upload/gambar/artikel'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_BANNER', q(cfg('UPLOAD_GAMBAR_BANNER', 'upload/gambar/banner'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_BANNER_PENJUAL', q(cfg('UPLOAD_GAMBAR_BANNER_PENJUAL', 'upload/gambar/banner-penjual'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_GIFT', q(cfg('UPLOAD_GAMBAR_GIFT', 'upload/gambar/gift'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_KATEGORI_PRODUK', q(cfg('UPLOAD_GAMBAR_KATEGORI_PRODUK', 'upload/gambar/kategori-produk'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_KONTEN_ITEM', q(cfg('UPLOAD_GAMBAR_KONTEN_ITEM', 'upload/gambar/konten-item'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_PAKET', q(cfg('UPLOAD_GAMBAR_PAKET', 'upload/gambar/paket'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_PASAR', q(cfg('UPLOAD_GAMBAR_PASAR', 'upload/gambar/pasar'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_PRODUK', q(cfg('UPLOAD_GAMBAR_PRODUK', 'upload/gambar/produk'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_PUSH_NOTIFIKASI', q(cfg('UPLOAD_GAMBAR_PUSH_NOTIFIKASI', 'upload/gambar/push-notifikasi'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_RESEP', q(cfg('UPLOAD_GAMBAR_RESEP', 'upload/gambar/resep'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_USER', q(cfg('UPLOAD_GAMBAR_USER', 'upload/gambar/user'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_VOUCHER', q(cfg('UPLOAD_GAMBAR_VOUCHER', 'upload/gambar/voucher'))
+        buildConfigField 'String', 'ENVIRONMENT', q(cfg('ENVIRONMENT', 'production'))
+        buildConfigField 'String', 'ONESIGNAL_APP_ID_PRODUCTION', q(cfg('ONESIGNAL_APP_ID_PRODUCTION', '7314cba5-1b0d-455a-916b-700a566b207f'))
+        buildConfigField 'String', 'ONESIGNAL_APP_ID_DEVELOPMENT', q(cfg('ONESIGNAL_APP_ID_DEVELOPMENT', 'f8ffb130-45e4-413f-87d2-cd75f5dfc97b'))
+        buildConfigField 'String', 'XENDIT_PUBLIC_KEY', q(cfg('XENDIT_PUBLIC_KEY', 'CHANGE_ME'))
+        // Also used by LocalStorage.getGoogleMapsApiKey() for the Geocoding / Places web-service calls.
+        buildConfigField 'String', 'MAPS_API_KEY', q(cfg('MAPS_API_KEY', 'CHANGE_ME'))
+
+        manifestPlaceholders = [
+            MAPS_API_KEY: cfg('MAPS_API_KEY', 'CHANGE_ME')
+        ]
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+        // java.time (used by the delivery-schedule expiry check) needs API 26+ otherwise.
+        coreLibraryDesugaringEnabled true
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    lint {
+        abortOnError false
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.2'
+
+    // AndroidX / Material
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.activity:activity:1.9.3'
+    implementation 'androidx.core:core:1.15.0'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+    implementation 'com.google.android.material:material:1.12.0'
+
+    // Networking / JSON / images
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+
+    // Google Play services (replaces google_maps_flutter + geolocator)
+    implementation 'com.google.android.gms:play-services-maps:19.0.0'
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+
+    // In-app updates (replaces the deprecated com.google.android.play:core used before)
+    implementation 'com.google.android.play:app-update:2.1.0'
+
+    // Push notifications (replaces onesignal_flutter)
+    implementation 'com.onesignal:OneSignal:[5.1.0,5.2.0)'
+
+    // Xendit card tokenization (same artifacts as the Flutter build)
+    implementation 'com.xendit:xendit-android:3.6.1'
+    implementation 'org.jfrog.cardinalcommerce.gradle:cardinalmobilesdk:2.2.7-2'
+    implementation 'com.snowplowanalytics:snowplow-android-tracker:1.4.0@aar'
+}
