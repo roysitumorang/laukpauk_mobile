@@ -64,6 +64,7 @@ public final class NativeFeatureActivity extends Activity {
             addAction("Voucher", "vouchers");
             addAction("Notifikasi", "notifications");
             addAction("Profil saya", "profile");
+            addAction("Masuk / Login", "login");
             addAction("Kelola toko", "seller");
         } else if ("seller".equalsIgnoreCase(route)) {
             addAction("Pesanan masuk (butuh ID transaksi)", "seller-orders");
@@ -73,6 +74,9 @@ public final class NativeFeatureActivity extends Activity {
             addAction("Kembali ke pembeli", "buyer");
         } else {
             switch (route.toLowerCase()) {
+                case "login":
+                    startActivity(new Intent(this, LoginActivity.class));
+                    break;
                 case "banner":
                     request("Memuat banner…", cb -> BannerModel.getBanner(this, cb));
                     break;

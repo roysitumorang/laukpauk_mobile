@@ -19,6 +19,28 @@ public final class NativeAuthService {
 
     private NativeAuthService() { }
 
+    /** Port of lib/views/pembeli/Login.dart cekLogin(): GET credentials and persist returned session. */
+    public static void login(Context context, String phone, String password,
+                             BooleanCallback callback) {
+        Map<String, String> query = new HashMap<>();
+        query.put("versionCode", String.valueOf(id.laukpauk.BuildConfig.VERSION_CODE));
+        query.put("nomorHP", phone == null ? "" : phone);
+        query.put("password", password == null ? "" : password);
+        query.put("cartCode", NativePreferences.getCartCode(context));
+        NativeApiClient.get(ApiConfiguration.baseUrl(), "/Auth/loginAuthentication", query,
+                new NativeApiClient.Callback() {
+                    @Override public void onSuccess(int status, org.json.JSONObject body) {
+                        boolean ok = status == 200 && body.optBoolean("loginAuthentication", false);
+                        if (ok) {
+                            NativePreferences.putString(context, "authToken", body.optString("authToken", ""));
+                            NativePreferences.putString(context, "idUser", body.optString("idUser", ""));
+                        }
+                        callback.onResult(ok);
+                    }
+                    @Override public void onError(Exception error) { callback.onError(error); }
+                });
+    }
+
     public static void isLoggedIn(Context context, BooleanCallback callback) {
         String token = NativePreferences.getAuthToken(context);
         if (token.isEmpty()) {

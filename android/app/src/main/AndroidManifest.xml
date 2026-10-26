@@ -27,6 +27,7 @@
         android:label="Laukpauk"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="false">
+        <activity android:name=".LoginActivity" android:exported="false" />
         <activity
             android:name=".NativeFeatureActivity"
             android:exported="false" />
