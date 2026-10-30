@@ -65,7 +65,7 @@ jobs:
               m = re.search(r'\* What went wrong:\n(.*?)(\n\* Try:|\Z)', text, re.S)
               if m:
                   print('::error title=%s: what went wrong::%s' % (name, esc(m.group(1).strip()[:6000])))
-              errs = [l for l in text.splitlines() if re.search(r'(error:|^e: |ERROR:|FAILURE:|Could not resolve)', l)]
+              errs = [l for l in text.splitlines() if re.search(r'(error:|^e: |FAILURE:|Could not resolve|uses-sdk|Manifest merger|overlay)', l, re.I)]
               for i in range(0, min(len(errs), 400), 50):
                   print('::error title=%s errors %d-%d::%s' % (name, i + 1, i + 50, esc('\n'.join(errs[i:i + 50]))))
           PY
