@@ -57,6 +57,11 @@ public final class Txt {
             return this;
         }
 
+        public Style italic(boolean i) {
+            this.italic = i;
+            return this;
+        }
+
         public Style strike() {
             this.strike = true;
             return this;
