@@ -40,6 +40,7 @@
         android:allowBackup="false"
         android:supportsRtl="false"
         android:enableOnBackInvokedCallback="true"
+        tools:replace="android:allowBackup,android:supportsRtl"
         tools:targetApi="36">
 
         <!-- Android 16 (targetSdk 36): predictive back is on and onBackPressed() is never called; screens use
@@ -49,21 +50,71 @@
         <!-- Google Maps SDK key: MAPS_API_KEY in laukpauk.properties (never commit the real key) -->
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="${MAPS_API_KEY}" />
 
+        <activity android:name="id.laukpauk.view.PenjualActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.BuatOrderanBerhasilActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.DetailPaketActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.DetailProdukActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.pembeli.DetailPromoItemActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.DetailResepActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.DoPaymentActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.EditKeranjangItemActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.HistoriDompetActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.HistoriPoinActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.HubungiKamiActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.pembeli.KeranjangActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.KirimUlangOTPActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.KodeReferalActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.pembeli.LoginActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.LupaPasswordActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.NotifikasiActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.pembeli.OTPNotCompletedActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.pembeli.OTPRegistrasiActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.OTPVerifikasiUserActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.PesananSayaActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.ProdukDiDalamPasarActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.pembeli.PromoActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.pembeli.RegisterActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.RepeatOrderActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.ResepActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.TransferBankActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.pembeli.components.detailtransaksi.ItemTransaksiActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.pembeli.components.notifikasi.DetailNotifikasiGlobalActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.penjual.HistoriPenjualanActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.penjual.PesananItemTidakTersediaActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.penjual.PesananMasukActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.penjual.ProsesPesananActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
 
         <provider
