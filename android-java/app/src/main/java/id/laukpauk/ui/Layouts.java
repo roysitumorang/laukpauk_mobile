@@ -25,25 +25,37 @@ public final class Layouts {
 
     // ------------------------------------------------------------------ status bar
 
+    /** Height of the status bar in px (informational; BaseActivity already insets every screen). */
     public static int statusBarHeightPx(Context ctx) {
         int id = ctx.getResources().getIdentifier("status_bar_height", "dimen", "android");
         return id > 0 ? ctx.getResources().getDimensionPixelSize(id) : Ui.dp(ctx, 24);
     }
 
     /**
-     * MediaQuery.of(context).padding.top: a spacer as tall as the status bar. Put it at the top of
-     * the screen (or give the green header this much top padding) because BaseActivity draws edge to edge.
+     * Kept for source compatibility: returns an EMPTY (0 px) view. BaseActivity applies all
+     * system-bar / cutout / keyboard insets (Android 15/16 edge-to-edge), so a screen must not add
+     * the status-bar height again. To colour the area behind the status bar use
+     * {@link BaseActivity#setStatusBarScrimColor(int)}.
      */
     public static View statusBarSpace(Context ctx) {
         View v = new View(ctx);
-        v.setLayoutParams(new LinearLayout.LayoutParams(1, statusBarHeightPx(ctx)));
+        v.setLayoutParams(new LinearLayout.LayoutParams(1, 0));
         return v;
     }
 
-    /** Adds the status-bar height to the view's top padding (Container(padding: top: padding.top)). */
+    /**
+     * Paints the area behind the status bar (Flutter: an AppBar / green header extending under the
+     * status bar). No-op when the context is not a BaseActivity (e.g. a dialog's context).
+     */
+    public static void tintStatusBar(Context ctx, int color) {
+        if (ctx instanceof BaseActivity) {
+            ((BaseActivity) ctx).setStatusBarScrimColor(color);
+        }
+    }
+
+    /** Kept for source compatibility: a no-op (see {@link #statusBarSpace}). */
     public static void padTopForStatusBar(View v) {
-        v.setPadding(v.getPaddingLeft(), v.getPaddingTop() + statusBarHeightPx(v.getContext()),
-                v.getPaddingRight(), v.getPaddingBottom());
+        // insets are applied by BaseActivity
     }
 
     // ------------------------------------------------------------------ aspect ratio / grid

@@ -60,9 +60,14 @@ public final class Ui {
         return m.heightPixels / m.density;
     }
 
-    /** SizeConfig.horizontalBlock, in dp. */
+    /**
+     * SizeConfig.horizontalBlock, in dp: 1% of the screen width, capped at a 600 dp wide screen.
+     * Flutter sized all text by screen width; Android 16 ignores the portrait lock on screens of
+     * 600 dp and wider, so without the cap tablets and landscape windows would get 2-3x larger text.
+     * Phones (< 600 dp) are unchanged.
+     */
     public static float hb(Context ctx) {
-        return screenWidthDp(ctx) / 100f;
+        return Math.min(screenWidthDp(ctx), 600f) / 100f;
     }
 
     /** SizeConfig.verticalBlock, in dp. */

@@ -7,15 +7,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -46,6 +51,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     private boolean alive;
     private JsonObject args;
     private FrameLayout rootHolder;
+    private View statusScrim;
+    private OnBackPressedCallback backCallback;
     private ProgressDialog busy;
     private Async.Done<JsonElement> pendingResult;
 
@@ -94,15 +101,87 @@ public abstract class BaseActivity extends AppCompatActivity {
         alive = true;
         args = Json.parseObject(getIntent() == null ? null : getIntent().getStringExtra(Nav.EXTRA_ARGS));
 
-        // Transparent status bar over a light-green header, like SystemUiOverlayStyle(statusBarColor: transparent).
+        // Edge-to-edge. Android 15 enforces it for targetSdk 35 and Android 16 removed the opt-out
+        // (windowOptOutEdgeToEdgeEnforcement is ignored for targetSdk 36), so EVERY screen draws behind
+        // the system bars. The insets are applied here once, for all screens:
+        //   - top: a "scrim" view as tall as the status bar / display cutout, coloured per screen
+        //     (green under the Header, white elsewhere) - Flutter's MediaQuery.padding.top;
+        //   - left/right: system bars + cutout (landscape on tablets, where Android 16 ignores the
+        //     portrait lock);
+        //   - bottom: the navigation bar OR the soft keyboard, whichever is taller. adjustResize no
+        //     longer resizes an edge-to-edge window, so the IME inset replaces it.
         Window w = getWindow();
-        w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        w.setStatusBarColor(Color.TRANSPARENT);
         WindowCompat.setDecorFitsSystemWindows(w, false);
 
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setBackgroundColor(CustomColors.nearlyWhite);
+
+        statusScrim = new View(this);
+        root.addView(statusScrim, new LinearLayout.LayoutParams(Ui.MATCH, 0));
+
         rootHolder = new FrameLayout(this);
-        rootHolder.setBackgroundColor(CustomColors.nearlyWhite);
-        super.setContentView(rootHolder, new ViewGroup.LayoutParams(Ui.MATCH, Ui.MATCH));
+        root.addView(rootHolder, new LinearLayout.LayoutParams(Ui.MATCH, 0, 1f));
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.displayCutout());
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            ViewGroup.LayoutParams lp = statusScrim.getLayoutParams();
+            if (lp.height != bars.top) {
+                lp.height = bars.top;
+                statusScrim.setLayoutParams(lp);
+            }
+            v.setPadding(bars.left, 0, bars.right, Math.max(bars.bottom, ime.bottom));
+            return WindowInsetsCompat.CONSUMED;
+        });
+
+        super.setContentView(root, new ViewGroup.LayoutParams(Ui.MATCH, Ui.MATCH));
+        setStatusBarScrimColor(CustomColors.nearlyWhite);
+    }
+
+    /**
+     * Colour drawn behind the status bar (Window.setStatusBarColor is a no-op on Android 15+). The
+     * icons switch to dark on a light colour and to light on a dark one. Header.java sets it to
+     * CustomColors.green; every other screen gets white by default.
+     */
+    public void setStatusBarScrimColor(int color) {
+        statusScrim.setBackgroundColor(color);
+        double luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color)
+                + 0.114 * Color.blue(color)) / 255.0;
+        WindowInsetsControllerCompat c = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        c.setAppearanceLightStatusBars(luminance > 0.6);
+        c.setAppearanceLightNavigationBars(true);
+    }
+
+    // ------------------------------------------------------------------ back (predictive back)
+
+    /**
+     * Replaces Flutter's WillPopScope(onWillPop: ...). Android 16 (targetSdk 36) never calls
+     * Activity.onBackPressed() and never delivers KEYCODE_BACK, so screens must NOT override them:
+     * call this instead. The handler decides what back does; call {@link #finish()} (or
+     * {@link #goBack()} after clearing the handler) to actually leave. Pass null to restore the default.
+     */
+    public void setOnBack(final Runnable handler) {
+        if (backCallback != null) {
+            backCallback.remove();
+            backCallback = null;
+        }
+        if (handler == null) {
+            return;
+        }
+        backCallback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                handler.run();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, backCallback);
+    }
+
+    /** Performs the system back action (honours a handler set with setOnBack). Use instead of onBackPressed(). */
+    public void goBack() {
+        getOnBackPressedDispatcher().onBackPressed();
     }
 
     @Override
@@ -120,9 +199,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     // ------------------------------------------------------------------ content
 
     /**
-     * Sets the screen content (Scaffold body). Status-bar padding is NOT added: screens whose
-     * header is green put a {@link Layouts#statusBarSpace} on top, like Header.dart's
-     * `padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top)`.
+     * Sets the screen content (Scaffold body). It is laid out INSIDE the system-bar insets (see
+     * onCreate), so screens never pad for the status bar, navigation bar or keyboard themselves.
      */
     public void setRoot(View content) {
         rootHolder.removeAllViews();

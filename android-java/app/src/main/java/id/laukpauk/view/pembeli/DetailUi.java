@@ -44,7 +44,7 @@ public final class DetailUi {
         LinearLayout bar = Ui.column(a);
         bar.setBackgroundColor(CustomColors.green);
         bar.setElevation(Ui.dp(a, 4));
-        bar.addView(Layouts.statusBarSpace(a));
+        Layouts.tintStatusBar(a, CustomColors.green); // edge-to-edge: BaseActivity insets the content
 
         FrameLayout toolbar = new FrameLayout(a);
         bar.addView(toolbar, new LinearLayout.LayoutParams(Ui.MATCH, Ui.dp(a, 56)));

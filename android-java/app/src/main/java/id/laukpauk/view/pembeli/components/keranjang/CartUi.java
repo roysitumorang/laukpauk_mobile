@@ -63,7 +63,7 @@ public final class CartUi {
         LinearLayout box = Ui.column(a);
         box.setBackgroundColor(CustomColors.green);
         box.setElevation(Ui.dp(a, 4));
-        box.addView(Layouts.statusBarSpace(a));
+        Layouts.tintStatusBar(a, CustomColors.green); // edge-to-edge: BaseActivity insets the content
 
         FrameLayout bar = new FrameLayout(a);
 

@@ -37,7 +37,7 @@ public final class PesananScreenUi {
         LinearLayout bar = Ui.column(a);
         bar.setBackgroundColor(CustomColors.green);
         bar.setElevation(Ui.dp(a, 4));
-        bar.addView(Layouts.statusBarSpace(a));
+        Layouts.tintStatusBar(a, CustomColors.green); // edge-to-edge: BaseActivity insets the content
 
         FrameLayout toolbar = new FrameLayout(a);
 
@@ -57,7 +57,11 @@ public final class PesananScreenUi {
         Ui.onTap(back, new Runnable() {
             @Override
             public void run() {
-                a.onBackPressed();
+                if (a instanceof id.laukpauk.ui.BaseActivity) {
+                    ((id.laukpauk.ui.BaseActivity) a).goBack(); // Android 16: onBackPressed() is not dispatched
+                } else {
+                    a.finish();
+                }
             }
         });
         toolbar.addView(back, new FrameLayout.LayoutParams(Ui.dp(a, 56), Ui.dp(a, 56), Gravity.START | Gravity.CENTER_VERTICAL));
