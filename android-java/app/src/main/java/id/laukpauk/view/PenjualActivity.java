@@ -177,7 +177,7 @@ public class PenjualActivity extends BaseActivity {
                     jenisProdukSelected = value;
                     renderTabs();
                     renderProduk();
-                }));
+                }), new FrameLayout.LayoutParams(Ui.WRAP, Ui.WRAP, Gravity.CENTER_HORIZONTAL));
     }
 
     private void renderProduk() {
