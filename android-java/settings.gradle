@@ -11,14 +11,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // Needed by the Xendit card tokenization SDK (same repository the Flutter build used).
-        maven {
-            url "https://cardinalcommerceprod.jfrog.io/artifactory/android"
-            credentials {
-                username ''
-                password ''
-            }
-        }
     }
 }
 

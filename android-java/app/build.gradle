@@ -137,8 +137,7 @@ dependencies {
     // Push notifications (replaces onesignal_flutter)
     implementation 'com.onesignal:OneSignal:[5.1.0,5.2.0)'
 
-    // Xendit card tokenization (same artifacts as the Flutter build)
-    implementation 'com.xendit:xendit-android:3.6.1'
-    implementation 'org.jfrog.cardinalcommerce.gradle:cardinalmobilesdk:2.2.7-2'
-    implementation 'com.snowplowanalytics:snowplow-android-tracker:1.4.0@aar'
+    // Xendit card tokenization + 3-D Secure. 3.7.0+ no longer needs the CardinalCommerce repository
+    // (it returns HTTP 401 to anonymous requests, which broke the build of the 3.6.1 + cardinal setup).
+    implementation 'com.xendit:xendit-android:4.2.5'
 }

@@ -82,7 +82,8 @@ public final class XenditModel {
             final String expiryYear = Json.str(argument, "expiryYear");
             final String cardCVN = Json.str(argument, "cardCVN");
 
-            Xendit xendit = new Xendit(activity.getApplicationContext(), BuildConfig.XENDIT_PUBLIC_KEY, activity);
+            // xendit-android 4.x: Xendit is an interface built by Xendit.create (3.x used a constructor)
+            Xendit xendit = Xendit.create(activity.getApplicationContext(), BuildConfig.XENDIT_PUBLIC_KEY, activity);
 
             String totalTagihanString = Integer.toString(totalTagihan);
 
