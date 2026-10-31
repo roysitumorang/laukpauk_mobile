@@ -74,7 +74,12 @@ jobs:
         run: |
           APK=$(ls app/build/outputs/apk/debug/*.apk | head -1)
           ZIPALIGN=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)zipalign
-          "$ZIPALIGN" -c -P 16 -v 4 "$APK" | tail -n 20
+          if "$ZIPALIGN" -c -P 16 -v 4 "$APK" > align.log 2>&1; then
+            echo "::notice title=16 KB alignment::$(grep -c '\.so' align.log) native libraries checked, all 16 KB aligned"
+          else
+            echo "::error title=16 KB alignment::$(grep '\.so' align.log | grep -v '(OK' | head -20 | tr '\n' ' ')"
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@v5
         if: always()
