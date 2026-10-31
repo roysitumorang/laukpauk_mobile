@@ -38,8 +38,19 @@ jobs:
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"
 
-      # No secrets are needed: app/build.gradle falls back to placeholder values when
-      # laukpauk.properties is absent, so CI proves the code compiles and lints, not that it talks to production.
+      # Real configuration comes from the repository secret LAUKPAUK_PROPERTIES (the full text of
+      # laukpauk.properties, see android/laukpauk.properties.example). Without it, app/build.gradle falls back
+      # to placeholder values: the APK builds and opens, but cannot reach the backend.
+      - name: Write laukpauk.properties from secret
+        env:
+          LAUKPAUK_PROPERTIES: ${{ secrets.LAUKPAUK_PROPERTIES }}
+        run: |
+          if [ -n "$LAUKPAUK_PROPERTIES" ]; then
+            printf '%s\n' "$LAUKPAUK_PROPERTIES" > laukpauk.properties
+            echo "::notice title=Configuration::Built with laukpauk.properties from the LAUKPAUK_PROPERTIES secret"
+          else
+            echo "::warning title=Configuration::LAUKPAUK_PROPERTIES secret not set: APK uses placeholder backend URL and keys"
+          fi
       - name: Assemble debug APK
         run: |
           set -o pipefail
@@ -84,7 +95,7 @@ jobs:
       - uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: laukpauk-java-debug
+          name: laukpauk-debug-apk
           path: |
             android/app/build/outputs/apk/debug/*.apk
             android/app/build/reports/lint-results-debug.html

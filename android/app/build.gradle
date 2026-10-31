@@ -75,6 +75,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Test builds install next to the Play Store app instead of replacing it
+            // (same package + different signature would force an uninstall and lose the user's session).
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
         release {
             minifyEnabled false
             shrinkResources false
