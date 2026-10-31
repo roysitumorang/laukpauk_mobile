@@ -19,16 +19,16 @@ cp laukpauk.properties.example laukpauk.properties   # fill in the backend URL a
 code builds, not that it talks to production.
 
 Release signing reads `key.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`; git-ignored).
-Prefer Play App Signing with a fresh upload key: the old keystore is committed to the Flutter repo.
+Prefer Play App Signing with a fresh upload key: the old `laukpauk.keystore` was committed to this repository and is still in its git history, so treat it as exposed. The Flutter project (lib/, android/, ios/, web/, assets/, pubspec) was removed from the tree; see git history before commit 7e0efa0 for the original sources.
 
 ## Configuration (`laukpauk.properties`)
 
 | Key | Was in the Flutter app |
 | --- | --- |
 | `API_BASE_URL`, `BASE_URL`, `UPLOAD_GAMBAR_*` | `lib/libraries/ServerPath.dart` (never committed) |
-| `MAPS_API_KEY` | `android/app/src/main/AndroidManifest.xml` (committed — rotate it) |
+| `MAPS_API_KEY` | the Flutter `android/app/src/main/AndroidManifest.xml` (in git history — rotate it) |
 | `ONESIGNAL_APP_ID_PRODUCTION` / `_DEVELOPMENT` | `lib/models/MainModel.dart` |
-| `XENDIT_PUBLIC_KEY` | `android/.../MainActivity.java` (committed — rotate it) |
+| `XENDIT_PUBLIC_KEY` | the Flutter `android/.../MainActivity.java` (in git history — rotate it) |
 | `ENVIRONMENT` | `lib/libraries/Environment.dart` |
 
 ## Android 16 (API 36) compatibility
