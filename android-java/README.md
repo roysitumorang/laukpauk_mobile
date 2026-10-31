@@ -1,6 +1,6 @@
 # Laukpauk — native Android (Java)
 
-A screen-for-screen Java port of the Flutter app in `../lib`. Same package name (`id.laukpauk`), same
+A screen-for-screen Java port of the Flutter app (its Dart sources were removed from this branch; they remain on `main` before this PR and in git history, commit 5390872). Same package name (`id.laukpauk`), same
 version code (50600) and same backend API, so it ships as an update to the existing Play listing and users
 stay logged in (the app reads Flutter's `FlutterSharedPreferences` file and `flutter.` key prefix as-is).
 
