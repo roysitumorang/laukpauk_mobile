@@ -1,0 +1,41 @@
+# Copy this file to `laukpauk.properties` (git-ignored) and fill in the values.
+#
+# These values lived in files that are NOT in the Flutter repo
+# (lib/libraries/ServerPath.dart and android/app/google-services.json are
+# git-ignored), or were hard-coded in the Dart/Android sources. They are read by
+# app/build.gradle and exposed to the code through BuildConfig / manifest placeholders.
+
+# --- Backend (required) ---------------------------------------------------
+# What ServerPath.apiBaseURL was in Dart, e.g. https://api.example.com/index.php/api
+API_BASE_URL=https://CHANGE-ME.invalid/api
+# What ServerPath.baseURL was in Dart, e.g. https://www.example.com
+BASE_URL=https://CHANGE-ME.invalid
+
+# --- Image upload folders, relative to BASE_URL (no leading/trailing slash) ----
+# The Dart code builds image URLs as baseURL + '/' + uploadGambarX + '/' + file.
+# Defaults below follow the only hard-coded example in the Dart sources
+# ('/upload/gambar/gift/'); confirm them against your ServerPath.dart.
+UPLOAD_GAMBAR_ARTIKEL=upload/gambar/artikel
+UPLOAD_GAMBAR_BANNER=upload/gambar/banner
+UPLOAD_GAMBAR_BANNER_PENJUAL=upload/gambar/banner-penjual
+UPLOAD_GAMBAR_GIFT=upload/gambar/gift
+UPLOAD_GAMBAR_KATEGORI_PRODUK=upload/gambar/kategori-produk
+UPLOAD_GAMBAR_KONTEN_ITEM=upload/gambar/konten-item
+UPLOAD_GAMBAR_PAKET=upload/gambar/paket
+UPLOAD_GAMBAR_PASAR=upload/gambar/pasar
+UPLOAD_GAMBAR_PRODUK=upload/gambar/produk
+UPLOAD_GAMBAR_PUSH_NOTIFIKASI=upload/gambar/push-notifikasi
+UPLOAD_GAMBAR_RESEP=upload/gambar/resep
+UPLOAD_GAMBAR_USER=upload/gambar/user
+UPLOAD_GAMBAR_VOUCHER=upload/gambar/voucher
+
+# --- Third-party keys (use your own; the old ones are public in the Flutter repo) ---
+# Google Maps SDK for Android key (restrict it to id.laukpauk + your signing SHA-1).
+MAPS_API_KEY=CHANGE_ME
+# Environment: development | testing | production
+ENVIRONMENT=production
+# OneSignal app ids (these two were hard-coded in lib/models/MainModel.dart).
+ONESIGNAL_APP_ID_PRODUCTION=7314cba5-1b0d-455a-916b-700a566b207f
+ONESIGNAL_APP_ID_DEVELOPMENT=f8ffb130-45e4-413f-87d2-cd75f5dfc97b
+# Xendit *public* key (hard-coded in the old MainActivity.java).
+XENDIT_PUBLIC_KEY=CHANGE_ME

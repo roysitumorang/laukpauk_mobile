@@ -1,0 +1,102 @@
+name: Android (Java) build
+
+on:
+  push:
+    branches: [java-rewrite, main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android.yml'
+  pull_request:
+    paths:
+      - 'android/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v5
+
+      - name: Install Android SDK platform 36
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"
+
+      # Real configuration comes from the repository secret LAUKPAUK_PROPERTIES (the full text of
+      # laukpauk.properties, see android/laukpauk.properties.example). Without it, app/build.gradle falls back
+      # to placeholder values: the APK builds and opens, but cannot reach the backend.
+      - name: Write laukpauk.properties from secret
+        env:
+          LAUKPAUK_PROPERTIES: ${{ secrets.LAUKPAUK_PROPERTIES }}
+        run: |
+          if [ -n "$LAUKPAUK_PROPERTIES" ]; then
+            printf '%s\n' "$LAUKPAUK_PROPERTIES" > laukpauk.properties
+            echo "::notice title=Configuration::Built with laukpauk.properties from the LAUKPAUK_PROPERTIES secret"
+          else
+            echo "::warning title=Configuration::LAUKPAUK_PROPERTIES secret not set: APK uses placeholder backend URL and keys"
+          fi
+      - name: Assemble debug APK
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon assembleDebug 2>&1 | tee build.log
+
+      - name: Lint
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon lintDebug 2>&1 | tee lint.log
+
+      # Job logs live on a blob host that some reviewers cannot reach; surface the failure as
+      # annotations (readable through the checks API and on the PR) instead.
+      - name: Report build errors as annotations
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import os, re
+          def esc(t): return t.replace('%', '%25').replace('\r', '').replace('\n', '%0A')
+          for name in ('build.log', 'lint.log'):
+              if not os.path.exists(name):
+                  continue
+              text = open(name, errors='replace').read()
+              m = re.search(r'\* What went wrong:\n(.*?)(\n\* Try:|\Z)', text, re.S)
+              if m:
+                  print('::error title=%s: what went wrong::%s' % (name, esc(m.group(1).strip()[:6000])))
+              errs = [l for l in text.splitlines() if re.search(r'(error:|^e: |FAILURE:|Could not resolve|uses-sdk|Manifest merger|overlay)', l, re.I)]
+              for i in range(0, min(len(errs), 400), 50):
+                  print('::error title=%s errors %d-%d::%s' % (name, i + 1, i + 50, esc('\n'.join(errs[i:i + 50]))))
+          PY
+
+      - name: Check 16 KB page alignment of native libraries
+        run: |
+          APK=$(ls app/build/outputs/apk/debug/*.apk | head -1)
+          ZIPALIGN=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)zipalign
+          if "$ZIPALIGN" -c -P 16 -v 4 "$APK" > align.log 2>&1; then
+            echo "::notice title=16 KB alignment::$(grep -c '\.so' align.log) native libraries checked, all 16 KB aligned"
+          else
+            echo "::error title=16 KB alignment::$(grep '\.so' align.log | grep -v '(OK' | head -20 | tr '\n' ' ')"
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: laukpauk-debug-apk
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/reports/lint-results-debug.html
+          if-no-files-found: ignore

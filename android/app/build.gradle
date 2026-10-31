@@ -1,112 +1,149 @@
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
+plugins {
+    id 'com.android.application'
 }
 
-def flutterRoot = localProperties.getProperty('flutter.sdk')
-if (flutterRoot == null) {
-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+// ---------------------------------------------------------------------------
+// Local configuration (see ../laukpauk.properties.example).
+// Values come from ../laukpauk.properties (git-ignored), then from -P / gradle.properties.
+// ---------------------------------------------------------------------------
+def localConfig = new Properties()
+def localConfigFile = rootProject.file('laukpauk.properties')
+if (localConfigFile.exists()) {
+    localConfigFile.withReader('UTF-8') { reader -> localConfig.load(reader) }
 }
-
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
+def cfg = { String key, String fallback ->
+    if (localConfig.getProperty(key) != null) return localConfig.getProperty(key)
+    if (project.hasProperty(key)) return project.property(key).toString()
+    return fallback
 }
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
-
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+def q = { String value -> '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"' }
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    keystorePropertiesFile.withReader('UTF-8') { reader -> keystoreProperties.load(reader) }
 }
 
 android {
-    compileSdkVersion 31
+    namespace 'id.laukpauk'
+    compileSdk 36
 
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
-
-    lintOptions {
-        disable 'InvalidPackage'
-    }
-    
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "id.laukpauk"
-        minSdkVersion 21
-        targetSdkVersion 31
+        applicationId 'id.laukpauk'
+        minSdk 23
+        targetSdk 36
+        // Same version as android/app/build.gradle of the Flutter app.
         versionCode 50600
-        versionName "5.0.6"
-        multiDexEnabled true
+        versionName '5.0.6'
 
+        buildConfigField 'String', 'API_BASE_URL', q(cfg('API_BASE_URL', 'https://CHANGE-ME.invalid/api'))
+        buildConfigField 'String', 'BASE_URL', q(cfg('BASE_URL', 'https://CHANGE-ME.invalid'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_ARTIKEL', q(cfg('UPLOAD_GAMBAR_ARTIKEL', 'upload/gambar/artikel'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_BANNER', q(cfg('UPLOAD_GAMBAR_BANNER', 'upload/gambar/banner'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_BANNER_PENJUAL', q(cfg('UPLOAD_GAMBAR_BANNER_PENJUAL', 'upload/gambar/banner-penjual'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_GIFT', q(cfg('UPLOAD_GAMBAR_GIFT', 'upload/gambar/gift'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_KATEGORI_PRODUK', q(cfg('UPLOAD_GAMBAR_KATEGORI_PRODUK', 'upload/gambar/kategori-produk'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_KONTEN_ITEM', q(cfg('UPLOAD_GAMBAR_KONTEN_ITEM', 'upload/gambar/konten-item'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_PAKET', q(cfg('UPLOAD_GAMBAR_PAKET', 'upload/gambar/paket'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_PASAR', q(cfg('UPLOAD_GAMBAR_PASAR', 'upload/gambar/pasar'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_PRODUK', q(cfg('UPLOAD_GAMBAR_PRODUK', 'upload/gambar/produk'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_PUSH_NOTIFIKASI', q(cfg('UPLOAD_GAMBAR_PUSH_NOTIFIKASI', 'upload/gambar/push-notifikasi'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_RESEP', q(cfg('UPLOAD_GAMBAR_RESEP', 'upload/gambar/resep'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_USER', q(cfg('UPLOAD_GAMBAR_USER', 'upload/gambar/user'))
+        buildConfigField 'String', 'UPLOAD_GAMBAR_VOUCHER', q(cfg('UPLOAD_GAMBAR_VOUCHER', 'upload/gambar/voucher'))
+        buildConfigField 'String', 'ENVIRONMENT', q(cfg('ENVIRONMENT', 'production'))
+        buildConfigField 'String', 'ONESIGNAL_APP_ID_PRODUCTION', q(cfg('ONESIGNAL_APP_ID_PRODUCTION', '7314cba5-1b0d-455a-916b-700a566b207f'))
+        buildConfigField 'String', 'ONESIGNAL_APP_ID_DEVELOPMENT', q(cfg('ONESIGNAL_APP_ID_DEVELOPMENT', 'f8ffb130-45e4-413f-87d2-cd75f5dfc97b'))
+        buildConfigField 'String', 'XENDIT_PUBLIC_KEY', q(cfg('XENDIT_PUBLIC_KEY', 'CHANGE_ME'))
+        // Also used by LocalStorage.getGoogleMapsApiKey() for the Geocoding / Places web-service calls.
+        buildConfigField 'String', 'MAPS_API_KEY', q(cfg('MAPS_API_KEY', 'CHANGE_ME'))
+
+        manifestPlaceholders = [
+            MAPS_API_KEY: cfg('MAPS_API_KEY', 'CHANGE_ME')
+        ]
     }
 
     signingConfigs {
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+            if (keystorePropertiesFile.exists()) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
 
     buildTypes {
+        debug {
+            // Test builds install next to the Play Store app instead of replacing it
+            // (same package + different signature would force an uninstall and lose the user's session).
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
         release {
-            shrinkResources false
             minifyEnabled false
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.release
+            shrinkResources false
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
-}
 
-flutter {
-    source '../..'
-}
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        // java.time (used by the delivery-schedule expiry check) needs API 26+ otherwise.
+        coreLibraryDesugaringEnabled true
+    }
 
-repositories {
-    maven {
-        url "https://cardinalcommerceprod.jfrog.io/artifactory/android"
-        credentials {
-            username ''
-            password ''
+    buildFeatures {
+        buildConfig true
+    }
+
+    lint {
+        abortOnError false
+        // Android 16: check edge-to-edge / predictive-back / large-screen issues on every build
+        checkReleaseBuilds true
+    }
+
+    packaging {
+        jniLibs {
+            // 16 KB page-size devices (Android 15+): keep .so files uncompressed so AGP can 16 KB-align them
+            useLegacyPackaging false
         }
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.android.material:material:1.6.0'
-    implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'org.jetbrains:annotations:23.0.0'
-    implementation "androidx.multidex:multidex:2.0.1"
-    implementation "androidx.legacy:legacy-support-v4:1.0.0"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
-    implementation "androidx.browser:browser:1.0.0"
-    implementation "androidx.work:work-runtime:2.1.0"
-    implementation 'androidx.work:work-runtime-ktx:2.7.0'
+    // AndroidX / Material
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.activity:activity:1.10.1'
+    implementation 'androidx.core:core:1.16.0'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+    implementation 'com.google.android.material:material:1.12.0'
 
-    implementation 'androidx.annotation:annotation:1.3.0'
-    androidTestImplementation 'androidx.annotation:annotation:1.3.0'
+    // Networking / JSON / images
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.google.code.gson:gson:2.13.1'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
 
-    implementation 'com.xendit:xendit-android:3.6.1'
-    // implementation 'org.jfrog.cardinalcommerce.gradle:cardinalmobilesdk:2.2.4-1'
-    implementation 'org.jfrog.cardinalcommerce.gradle:cardinalmobilesdk:2.2.7-2'
-    implementation "com.google.android.play:core:1.10.2"
-    implementation "com.snowplowanalytics:snowplow-android-tracker:1.4.0@aar"
-    implementation 'com.android.support:support-annotations:28.0.0'
+    // Google Play services (replaces google_maps_flutter + geolocator)
+    implementation 'com.google.android.gms:play-services-maps:19.2.0'
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+
+    // In-app updates (replaces the deprecated com.google.android.play:core used before)
+    implementation 'com.google.android.play:app-update:2.1.0'
+
+    // Push notifications (replaces onesignal_flutter)
+    implementation 'com.onesignal:OneSignal:[5.1.0,5.2.0)'
+
+    // Xendit card tokenization + 3-D Secure. 3.7.0+ no longer needs the CardinalCommerce repository
+    // (it returns HTTP 401 to anonymous requests, which broke the build of the 3.6.1 + cardinal setup).
+    implementation 'com.xendit:xendit-android:4.2.5'
 }

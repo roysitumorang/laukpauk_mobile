@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Debug builds (id.laukpauk.debug) show a distinct launcher label next to the Play Store app. -->
+    <string name="app_name">Laukpauk Debug</string>
+</resources>

@@ -1,5 +1,0 @@
-kemungkinan error pembayaran dengan cc
-1. ada error di blok try method buatOrder
-2. data yang dipassing di parameter buatOrderNextStep kemungkinan salah (tidak)
-
-085373246141
