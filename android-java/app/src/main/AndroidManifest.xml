@@ -156,6 +156,8 @@
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.pembeli.components.notifikasi.DetailNotifikasiGlobalActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.penjual.DetailProdukPenjualActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.penjual.HistoriPenjualanActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.penjual.ListProdukPenjualActivity" android:exported="false"
@@ -167,6 +169,8 @@
         <activity android:name="id.laukpauk.view.penjual.ProsesPesananActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.penjual.RequestPencairanDanaActivity" android:exported="false"
+            android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
+        <activity android:name="id.laukpauk.view.penjual.TambahProdukActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
         <activity android:name="id.laukpauk.view.penjual.TokoSayaActivity" android:exported="false"
             android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|uiMode|fontScale|layoutDirection|locale" />
