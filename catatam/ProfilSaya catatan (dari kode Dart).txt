@@ -1,2 +1,0 @@
-penggerbangan login (autentikasi) sampai saat ini hanya di halaman utama profil user saja, 
-dikarenakan semua fitur user hanya bisa masuk dari situ.

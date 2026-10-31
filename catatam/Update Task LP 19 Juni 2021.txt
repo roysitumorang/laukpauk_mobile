@@ -1,4 +1,0 @@
-Update Task Laukpauk 19 Juni 2021 :
-1. Update Aplikasi di PS => Masih menunggu review by Google
-2. VA BCA => Menunggu pergantian IP dari IP OVH ke IP VPSServer
-3. Landing Page => belum ada dikerjakan

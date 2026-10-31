@@ -1,1 +1,0 @@
-Global components sudah di commit di branch crash

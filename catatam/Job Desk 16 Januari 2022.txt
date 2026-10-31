@@ -1,9 +1,0 @@
-Jobdesc
-
-1. Alamat pengantaran maps di invoice
-2. Detail alamat pengiriman di Invoice
-3. Perbaikan detail alamat di apps
-
-Perubahan Database
-1. ALTER TABLE `transaksi` ADD `alamatDetailLengkap` CHAR(250) NOT NULL AFTER `alamatDelivery`;
-2. ALTER TABLE `produk` CHANGE `keterangan` `keterangan` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
