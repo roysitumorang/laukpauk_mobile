@@ -14,8 +14,8 @@ cp laukpauk.properties.example laukpauk.properties   # fill in the backend URL a
 ./gradlew lintDebug
 ```
 
-`.github/workflows/android-java.yml` builds and lints every push to `java-rewrite`/`main` that touches
-`android-java/`. CI runs without `laukpauk.properties`, so placeholder values are compiled in: it proves the
+`.github/workflows/android.yml` builds and lints every push to `java-rewrite`/`main` that touches
+`android/`. CI runs without `laukpauk.properties`, so placeholder values are compiled in: it proves the
 code builds, not that it talks to production.
 
 Release signing reads `key.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`; git-ignored).

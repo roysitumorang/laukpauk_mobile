@@ -1,4 +1,4 @@
-# Native Android (Java) app lives in android-java/ (it has its own .gitignore)
+# Native Android (Java) app lives in android/ (it has its own .gitignore)
 *.class
 *.log
 .DS_Store

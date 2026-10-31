@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates android-java/app/src/main/AndroidManifest.xml by scanning the Java sources for Activities
+"""Generates android/app/src/main/AndroidManifest.xml by scanning the Java sources for Activities
 (classes that extend BaseActivity or AppCompatActivity directly). Re-run whenever screens are added."""
 import os, re, sys
 

@@ -4,16 +4,16 @@ on:
   push:
     branches: [java-rewrite, main]
     paths:
-      - 'android-java/**'
-      - '.github/workflows/android-java.yml'
+      - 'android/**'
+      - '.github/workflows/android.yml'
   pull_request:
     paths:
-      - 'android-java/**'
-      - '.github/workflows/android-java.yml'
+      - 'android/**'
+      - '.github/workflows/android.yml'
   workflow_dispatch:
 
 concurrency:
-  group: android-java-${{ github.ref }}
+  group: android-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 45
     defaults:
       run:
-        working-directory: android-java
+        working-directory: android
     steps:
       - uses: actions/checkout@v5
 
@@ -86,6 +86,6 @@ jobs:
         with:
           name: laukpauk-java-debug
           path: |
-            android-java/app/build/outputs/apk/debug/*.apk
-            android-java/app/build/reports/lint-results-debug.html
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/reports/lint-results-debug.html
           if-no-files-found: ignore
