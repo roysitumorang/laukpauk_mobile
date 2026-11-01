@@ -54,7 +54,7 @@ jobs:
       - name: Assemble debug APK
         run: |
           set -o pipefail
-          ./gradlew --no-daemon assembleDebug 2>&1 | tee build.log
+          ./gradlew --no-daemon --warning-mode all assembleDebug 2>&1 | tee build.log
 
       - name: Lint
         run: |
@@ -79,6 +79,21 @@ jobs:
               errs = [l for l in text.splitlines() if re.search(r'(error:|^e: |FAILURE:|Could not resolve|uses-sdk|Manifest merger|overlay)', l, re.I)]
               for i in range(0, min(len(errs), 400), 50):
                   print('::error title=%s errors %d-%d::%s' % (name, i + 1, i + 50, esc('\n'.join(errs[i:i + 50]))))
+          PY
+
+      - name: TRIAL report deprecations
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import re
+          t = open('build.log', errors='replace').read() if __import__('os').path.exists('build.log') else ''
+          seen = []
+          for l in t.splitlines():
+              if re.search(r'deprecat|warning|will be removed|is scheduled', l, re.I) and l.strip() not in seen:
+                  seen.append(l.strip())
+          def esc(x): return x.replace('%', '%25').replace('\n', '%0A')
+          for i in range(0, min(len(seen), 200), 25):
+              print('::warning title=deprecations %d::%s' % (i, esc('\n'.join(seen[i:i+25]))))
           PY
 
       - name: Check 16 KB page alignment of native libraries
