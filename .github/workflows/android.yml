@@ -2,7 +2,7 @@ name: Android (Java) build
 
 on:
   push:
-    branches: [java-rewrite, main]
+    branches: [dev, main]
     paths:
       - 'android/**'
       - '.github/workflows/android.yml'
@@ -54,7 +54,7 @@ jobs:
       - name: Assemble debug APK
         run: |
           set -o pipefail
-          ./gradlew --no-daemon assembleDebug 2>&1 | tee build.log
+          ./gradlew --no-daemon --warning-mode all assembleDebug 2>&1 | tee build.log
 
       - name: Lint
         run: |
@@ -79,6 +79,25 @@ jobs:
               errs = [l for l in text.splitlines() if re.search(r'(error:|^e: |FAILURE:|Could not resolve|uses-sdk|Manifest merger|overlay)', l, re.I)]
               for i in range(0, min(len(errs), 400), 50):
                   print('::error title=%s errors %d-%d::%s' % (name, i + 1, i + 50, esc('\n'.join(errs[i:i + 50]))))
+          PY
+
+      # Gradle/AGP deprecations become hard errors in the next major versions: list them on every run.
+      - name: Report deprecation warnings
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import os, re
+          if not os.path.exists('build.log'):
+              raise SystemExit
+          seen = []
+          for l in open('build.log', errors='replace').read().splitlines():
+              l = l.strip()
+              if re.search(r'deprecated|will be removed|is scheduled to be removed', l, re.I) and l not in seen:
+                  seen.append(l)
+          if seen:
+              print('::warning title=Deprecations (%d)::%s' % (len(seen), '%0A'.join(x.replace('%', '%25') for x in seen[:40])))
+          else:
+              print('::notice title=Deprecations::none reported by Gradle or AGP')
           PY
 
       - name: Check 16 KB page alignment of native libraries

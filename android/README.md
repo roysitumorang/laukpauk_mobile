@@ -41,10 +41,10 @@ Prefer Play App Signing with a fresh upload key: the old `laukpauk.keystore` was
 | `scheduleAtFixedRate` / JobScheduler quota changes | No Timer, IntentService or JobService: the delivery-schedule expiry check is a main-thread Handler loop that runs only while a screen is resumed (`MainModel.startBackgroundWatchers`) |
 | Photo access / partial media access | System photo picker (`ACTION_PICK_IMAGES`, `GET_CONTENT` below API 33) and camera capture through `FileProvider`; no storage or media permissions |
 | `POST_NOTIFICATIONS` (13+) | Requested once at runtime on API 33+ |
-| 16 KB memory pages | AGP 8.13 packages native libraries uncompressed and 16 KB-aligned; CI runs `zipalign -c -P 16` on the APK |
+| 16 KB memory pages | AGP 9.5 packages native libraries uncompressed and 16 KB-aligned; CI runs `zipalign -c -P 16` on the APK |
 | Play target-API deadline (Aug 31, 2026: new apps and updates must target API 36) | `targetSdk 36`, `compileSdk 36` |
 
-Toolchain: Android Gradle Plugin 8.13.2 (supports up to API 36.1), Gradle 8.14.3, minSdk 23 (current Google
+Toolchain: Android Gradle Plugin 9.5.0 (supports up to API 37), Gradle 9.8.2, JDK 17, build-tools 36.0.0+, minSdk 23 (current Google
 Play services releases require it; the Flutter app allowed 21).
 
 ## Code layout
