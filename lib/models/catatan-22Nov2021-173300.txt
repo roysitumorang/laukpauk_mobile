@@ -1,1 +1,0 @@
-Ternyata penyebab aplikasi stuck setelah login adalah Model AuthModel versi baru. Aplikasi berjalan lancar setelah AuthModel diganti ke versi lama.
