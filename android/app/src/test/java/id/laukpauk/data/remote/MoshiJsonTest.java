@@ -121,11 +121,11 @@ public class MoshiJsonTest {
     @Test
     public void everyDtoHasAnAdapter() throws Exception {
         File root = new File(NotifikasiResponses.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        File model = new File(root, "id/laukpauk/data/model");
-        assertTrue("compiled classes not found at " + model, model.isDirectory());
+        List<String> names = classNames(root);
+        assertTrue("no model classes found in " + root, !names.isEmpty());
         List<String> failures = new ArrayList<>();
         int checked = 0;
-        for (String name : classNames(root, model)) {
+        for (String name : names) {
             Class<?> c = Class.forName(name);
             if (c.isInterface() || Modifier.isAbstract(c.getModifiers()) || c.isAnonymousClass()
                     || c.getEnclosingClass() != null && !Modifier.isStatic(c.getModifiers())
@@ -152,20 +152,38 @@ public class MoshiJsonTest {
         assertEquals("a", l.get(0).value);
     }
 
-    private static List<String> classNames(File root, File dir) {
+    /** Classes under id/laukpauk/data/model, from a classes directory or a classes jar. */
+    private static List<String> classNames(File root) throws java.io.IOException {
+        final String prefix = "id/laukpauk/data/model/";
         List<String> out = new ArrayList<>();
+        if (root.isFile()) {
+            try (java.util.jar.JarFile jar = new java.util.jar.JarFile(root)) {
+                java.util.Enumeration<java.util.jar.JarEntry> e = jar.entries();
+                while (e.hasMoreElements()) {
+                    String n = e.nextElement().getName();
+                    if (n.startsWith(prefix) && n.endsWith(".class")) {
+                        out.add(n.substring(0, n.length() - ".class".length()).replace('/', '.'));
+                    }
+                }
+            }
+            return out;
+        }
+        collect(root, new File(root, prefix), out);
+        return out;
+    }
+
+    private static void collect(File root, File dir, List<String> out) {
         File[] files = dir.listFiles();
         if (files == null) {
-            return out;
+            return;
         }
         for (File f : files) {
             if (f.isDirectory()) {
-                out.addAll(classNames(root, f));
+                collect(root, f, out);
             } else if (f.getName().endsWith(".class")) {
                 String rel = root.toURI().relativize(f.toURI()).getPath();
                 out.add(rel.substring(0, rel.length() - ".class".length()).replace('/', '.'));
             }
         }
-        return out;
     }
 }

@@ -190,6 +190,8 @@ public final class LenientJsonAdapterFactory implements JsonAdapter.Factory {
     }
 
     private static final class StringAdapter extends JsonAdapter<String> {
+        private static final JsonAdapter<Object> TREE = new id.laukpauk.util.JsonTreeAdapter();
+
         @Nullable
         @Override
         public String fromJson(JsonReader in) throws IOException {
@@ -203,7 +205,7 @@ public final class LenientJsonAdapterFactory implements JsonAdapter.Factory {
                     return in.nextString();
                 default:
                     // an object or array where text was expected: keep its JSON text
-                    Object tree = in.readJsonValue();
+                    Object tree = TREE.fromJson(in);
                     return tree == null ? null : id.laukpauk.util.Json.toJson(tree);
             }
         }
