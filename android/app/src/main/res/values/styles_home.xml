@@ -18,18 +18,18 @@
         <item name="android:letterSpacing">0</item>
     </style>
 
-    <style name="Home.SectionTitle">
+    <style name="Home.SectionTitle" parent="">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/home_text</item>
     </style>
 
-    <style name="Home.SectionLink">
+    <style name="Home.SectionLink" parent="">
         <item name="android:textSize">11sp</item>
         <item name="android:textColor">@color/dark_green</item>
     </style>
 
     <!-- Header cart / bell badge -->
-    <style name="Home.Badge">
+    <style name="Home.Badge" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">5dp</item>
@@ -43,32 +43,32 @@
         <item name="android:textSize">9sp</item>
     </style>
 
-    <style name="Home.WalletEntry">
+    <style name="Home.WalletEntry" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
-    <style name="Home.WalletIcon">
+    <style name="Home.WalletIcon" parent="">
         <item name="android:layout_width">19dp</item>
         <item name="android:layout_height">19dp</item>
         <item name="android:importantForAccessibility">no</item>
     </style>
-    <style name="Home.WalletText">
+    <style name="Home.WalletText" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">6dp</item>
         <item name="android:orientation">vertical</item>
     </style>
-    <style name="Home.WalletTitle">
+    <style name="Home.WalletTitle" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/home_text</item>
         <item name="android:textSize">11sp</item>
         <item name="android:textStyle">bold</item>
     </style>
-    <style name="Home.WalletValue">
+    <style name="Home.WalletValue" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">3dp</item>

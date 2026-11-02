@@ -26,18 +26,18 @@
     </style>
 
     <!-- Section title inside the cards -->
-    <style name="Account.SectionTitle">
+    <style name="Account.SectionTitle" parent="">
         <item name="android:textColor">@color/account_text</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Account.Caption">
+    <style name="Account.Caption" parent="">
         <item name="android:textColor">@color/nearly_black</item>
         <item name="android:textSize">11sp</item>
     </style>
 
-    <style name="Account.FieldLabel">
+    <style name="Account.FieldLabel" parent="">
         <item name="android:textColor">@color/account_text</item>
         <item name="android:textSize">11sp</item>
         <item name="android:textAllCaps">true</item>
@@ -54,7 +54,7 @@
         <item name="boxCornerRadiusBottomEnd">8dp</item>
     </style>
 
-    <style name="Account.Field.Password">
+    <style name="Account.Field.Password" parent="">
         <item name="endIconMode">password_toggle</item>
     </style>
 
