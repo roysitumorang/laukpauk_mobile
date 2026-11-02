@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.updateharga;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -25,6 +27,9 @@ import id.laukpauk.view.penjual.PenjualUi;
  * (false, true, false).
  */
 public class SatuanProduk extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String idProduk;
     private final boolean showNomorUrut;
     private final boolean updateAble;
@@ -55,10 +60,10 @@ public class SatuanProduk extends LinearLayout {
     /** Dart getSatuanProduk(). BLOCKING. */
     private JsonArray getSatuanProduk() {
         String entitasHargaProduk = "id, nama, harga, diskon, jenisHarga, keterangan, idProduk";
-        String params = HTTPRequest.getQueryString(
+        String params = deps.httpRequest.getQueryString(
                 "idProduk=" + idProduk + "&entitasHargaProduk=" + entitasHargaProduk);
 
-        Http.Response httpResponse = Http.getApi("/Produk/getHargaProduk?" + params);
+        Http.Response httpResponse = deps.http.getApi("/Produk/getHargaProduk?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.array(dataObject, "hargaProduk");

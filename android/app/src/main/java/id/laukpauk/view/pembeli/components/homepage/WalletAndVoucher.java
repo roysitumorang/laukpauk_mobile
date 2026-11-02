@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -24,6 +26,9 @@ import id.laukpauk.view.pembeli.VoucherActivity;
 
 /** Port of lib/views/pembeli/components/HomePage/WalletAndVoucher.dart. */
 public class WalletAndVoucher extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private boolean isUserLogin = false;
     private final BaseActivity act;
 
@@ -35,7 +40,7 @@ public class WalletAndVoucher extends LinearLayout {
         setBackground(Ui.shape(ctx, CustomColors.nearlyWhite, 10, CustomColors.green, 1.25f));
         Ui.pad(this, 8, 10, 8, 10);
         render();
-        act.async(() -> AuthModel.isLogin(), isLogin -> {
+        act.async(() -> deps.authModel.isLogin(), isLogin -> {
             isUserLogin = Boolean.TRUE.equals(isLogin);
             render();
         });
@@ -88,7 +93,7 @@ public class WalletAndVoucher extends LinearLayout {
                 ? column(title("Dompet"), Ui.spaceH(ctx, 3), dompetValue)
                 : column(title("Dompet"), Ui.spaceH(ctx, 3));
         if (isUserLogin) {
-            act.async(() -> HomepageModel.getTotalDompet(), (Integer totalDompet) -> {
+            act.async(() -> deps.homepageModel.getTotalDompet(), (Integer totalDompet) -> {
                 dompetValue.setText(Currency.formatRupiah(totalDompet, 0));
                 dompetValue.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, Ui.hb(ctx) * 2.25f);
             });
@@ -100,7 +105,7 @@ public class WalletAndVoucher extends LinearLayout {
                 ? column(title("Voucher"), Ui.spaceH(ctx, 3), voucherValue)
                 : column(title("Voucher"), Ui.spaceH(ctx, 3));
         if (isUserLogin) {
-            act.async(() -> HomepageModel.getJumlahVoucher(), (Integer jumlahVoucher) -> {
+            act.async(() -> deps.homepageModel.getJumlahVoucher(), (Integer jumlahVoucher) -> {
                 voucherValue.setText(jumlahVoucher >= 1
                         ? Currency.formatSatuan(jumlahVoucher, "Voucher")
                         : "Belum Ada Voucher");
@@ -114,7 +119,7 @@ public class WalletAndVoucher extends LinearLayout {
                 ? column(title("Poin"), Ui.spaceH(ctx, 3), poinValue)
                 : column(title("Poin"), Ui.spaceH(ctx, 3));
         if (isUserLogin) {
-            act.async(() -> PointModel.getPoint("point=true"), (JsonElement responsePoint) -> {
+            act.async(() -> deps.pointModel.getPoint("point=true"), (JsonElement responsePoint) -> {
                 if (!Json.isFalse(responsePoint) && Json.isObject(responsePoint)) {
                     int totalPoint = Json.intVal(responsePoint.getAsJsonObject(), "point");
                     poinValue.setText(Currency.formatRupiah(totalPoint, 0));

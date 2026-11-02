@@ -60,7 +60,7 @@ public class OTPRegistrasiActivity extends BaseActivity {
                 new CustomButton.Opts().color(CustomButton.themeColor).pill()));
         buttons.addView(Ui.spaceW(this, hb * 1.5f));
         buttons.addView(CustomButton.button(this, "Lewati", () -> {
-            LocalStorage.lewatiOTPRegistrasi();
+            container().localStorage.lewatiOTPRegistrasi();
             Nav.pushAndRemoveUntil(this, SplashScreenActivity.class, null);
         }, new CustomButton.Opts().color(CustomButton.themeColor).pill().outline()));
         column.addView(buttons, new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP));
@@ -71,11 +71,11 @@ public class OTPRegistrasiActivity extends BaseActivity {
     private void konfirmasiOTP() {
         final String otp = otpCodeField.getText().toString();
         async(() -> {
-            String idUser = LocalStorage.getCurrentUserID();
+            String idUser = container().localStorage.getCurrentUserID();
             Map<String, String> otpData = new LinkedHashMap<>();
             otpData.put("idUser", idUser);
             otpData.put("otp", otp);
-            return Http.postApi("/Auth/konfirmasiOTP", HTTPRequest.postBody(otpData));
+            return container().http.postApi("/Auth/konfirmasiOTP", container().httpRequest.postBody(otpData));
         }, httpResponse -> {
             if (httpResponse.statusCode != 200) {
                 return;
@@ -83,10 +83,10 @@ public class OTPRegistrasiActivity extends BaseActivity {
             JsonObject dataObject = httpResponse.jsonObject();
             final boolean isOTPSuccess = Json.bool(dataObject, "statusKonfirmasiOTP");
             if (isOTPSuccess) {
-                Prefs.setBool("otpHasConfirmed", true);
+                container().prefs.setBool("otpHasConfirmed", true);
 
                 String authToken = Json.str(Json.object(dataObject, "returnData"), "authToken");
-                Prefs.setString("authToken", authToken);
+                container().prefs.setString("authToken", authToken);
             }
             String title = "Konfirmasi OTP";
             String subTitle = isOTPSuccess

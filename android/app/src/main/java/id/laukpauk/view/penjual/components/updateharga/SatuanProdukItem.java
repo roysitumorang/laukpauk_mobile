@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.updateharga;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.text.InputType;
 import android.view.Gravity;
@@ -28,6 +30,9 @@ import id.laukpauk.view.penjual.PenjualUi;
  * `nomorUrut` is the Dart dynamic `nomorUrut`: a positive number to show "N." or 0 for Dart's `false`.
  */
 public class SatuanProdukItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final JsonObject satuan;
     private final int nomorUrut;
     private final boolean showOptions;
@@ -149,10 +154,10 @@ public class SatuanProdukItem extends LinearLayout {
 
     private void onHapus() {
         final BaseActivity activity = activity();
-        UpdateHargaModel.konfirmasiHapusSatuan(activity, satuan, konfirmasiHapus -> {
+        deps.updateHargaModel.konfirmasiHapusSatuan(activity, satuan, konfirmasiHapus -> {
             if (konfirmasiHapus != null && konfirmasiHapus) {
                 final String idSatuanProduk = Json.str(satuan, "id");
-                activity.async(() -> UpdateHargaModel.hapusSatuan(idSatuanProduk), statusHapusSatuan -> {
+                activity.async(() -> deps.updateHargaModel.hapusSatuan(idSatuanProduk), statusHapusSatuan -> {
                     if (statusHapusSatuan) {
                         onSatuanProdukDeleted.run();
                     } else {

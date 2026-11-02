@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 
 import com.google.gson.JsonObject;
@@ -21,7 +23,12 @@ import id.laukpauk.core.Json;
  * TokenizationArgument.java). The Dart call site was CreditCardData.dart.
  */
 public final class XenditModel {
-    private XenditModel() {}
+    private final Async async;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public XenditModel(Async async) {
+        this.async = async;
+    }
 
     /**
      * Creates a single-use Xendit token (3DS authentication enabled, currency IDR).
@@ -35,10 +42,10 @@ public final class XenditModel {
      *                 Dart then used jsonEncode of this map as moreDataMetodePembayaran, i.e.
      *                 {@code result.toString()}.
      */
-    public static void createCreditCardToken(final Activity activity, final JsonObject argument,
+    public void createCreditCardToken(final Activity activity, final JsonObject argument,
                                              final Async.Done<JsonObject> done) {
         if (!Async.isMainThread()) {
-            Async.main(new Runnable() {
+            async.main(new Runnable() {
                 @Override
                 public void run() {
                     createCreditCardToken(activity, argument, done);
@@ -60,7 +67,7 @@ public final class XenditModel {
                 if (Async.isMainThread()) {
                     done.run(result);
                 } else {
-                    Async.main(new Runnable() {
+                    async.main(new Runnable() {
                         @Override
                         public void run() {
                             done.run(result);

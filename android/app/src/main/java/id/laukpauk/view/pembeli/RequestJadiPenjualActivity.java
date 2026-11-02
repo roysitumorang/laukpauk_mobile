@@ -76,10 +76,10 @@ public class RequestJadiPenjualActivity extends BaseActivity {
         }
 
         async(() -> {
-            String params = HTTPRequest.getQueryString(null, true);
-            Map<String, String> body = HTTPRequest.postBody(dataRequest);
+            String params = container().httpRequest.getQueryString(null, true);
+            Map<String, String> body = container().httpRequest.postBody(dataRequest);
 
-            Http.Response httpResponse = Http.postApi("/Penjual/ajukanRequestPenjual?" + params, body);
+            Http.Response httpResponse = container().http.postApi("/Penjual/ajukanRequestPenjual?" + params, body);
             if (httpResponse.statusCode == 200) {
                 return Boolean.valueOf(Json.bool(httpResponse.jsonObject(), "statusRequest"));
             }

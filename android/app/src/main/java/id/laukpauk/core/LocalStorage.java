@@ -17,41 +17,50 @@ import id.laukpauk.BuildConfig;
  * background thread (Async.run / BaseActivity.async).
  */
 public final class LocalStorage {
-    private LocalStorage() {}
+    private final Context context;
+    private final Http http;
+    private final Prefs prefs;
 
-    public static boolean isAlamatDeliveryDanJadwalDeliverySet() {
-        return Prefs.getBool("isAlamatDeliveryDanJadwalDeliverySet", false);
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public LocalStorage(Context context, Http http, Prefs prefs) {
+        this.context = context;
+        this.http = http;
+        this.prefs = prefs;
+    }
+
+    public boolean isAlamatDeliveryDanJadwalDeliverySet() {
+        return prefs.getBool("isAlamatDeliveryDanJadwalDeliverySet", false);
     }
 
     /**
      * Keys: latitude, longitude, jadwalDeliveryCode, alamat. Missing values are JSON null
      * (read them with Json.strOrNull).
      */
-    public static JsonObject getSavedLatitudeAndLongitude() {
+    public JsonObject getSavedLatitudeAndLongitude() {
         JsonObject o = new JsonObject();
-        o.addProperty("latitude", Prefs.getString("savedLatitude"));
-        o.addProperty("longitude", Prefs.getString("savedLongitude"));
-        o.addProperty("jadwalDeliveryCode", Prefs.getString("savedJadwalDeliveryCode"));
-        o.addProperty("alamat", Prefs.getString("savedAlamat"));
+        o.addProperty("latitude", prefs.getString("savedLatitude"));
+        o.addProperty("longitude", prefs.getString("savedLongitude"));
+        o.addProperty("jadwalDeliveryCode", prefs.getString("savedJadwalDeliveryCode"));
+        o.addProperty("alamat", prefs.getString("savedAlamat"));
         return o;
     }
 
     /** Used for Geocoding / Places web-service calls. */
-    public static String getGoogleMapsApiKey() {
+    public String getGoogleMapsApiKey() {
         return BuildConfig.MAPS_API_KEY;
     }
 
-    public static String getAuthToken() {
-        return Prefs.getString("authToken", "");
+    public String getAuthToken() {
+        return prefs.getString("authToken", "");
     }
 
-    public static String getCurrentUserID() {
-        return Prefs.getString("idUser", "");
+    public String getCurrentUserID() {
+        return prefs.getString("idUser", "");
     }
 
     /** Creates (and stores) the anonymous cart code on first use: HHmmssSSS with Dart's padding quirks. */
-    public static String getCartCode() {
-        String cartCode = Prefs.getString("cartCode");
+    public String getCartCode() {
+        String cartCode = prefs.getString("cartCode");
         if (cartCode == null) {
             Calendar now = Calendar.getInstance();
             int jam = now.get(Calendar.HOUR_OF_DAY);
@@ -77,31 +86,31 @@ public final class LocalStorage {
             }
 
             cartCode = jamString + menitString + detikString + miliString;
-            Prefs.setString("cartCode", cartCode);
+            prefs.setString("cartCode", cartCode);
         }
         return cartCode;
     }
 
-    public static void clearCartCode() {
-        Prefs.remove("cartCode");
+    public void clearCartCode() {
+        prefs.remove("cartCode");
     }
 
-    public static String getUsedVoucher() {
-        return Prefs.getString("usedVoucher");
+    public String getUsedVoucher() {
+        return prefs.getString("usedVoucher");
     }
 
-    public static void setUsedVoucher(String idVoucher) {
-        Prefs.setString("usedVoucher", idVoucher);
+    public void setUsedVoucher(String idVoucher) {
+        prefs.setString("usedVoucher", idVoucher);
     }
 
-    public static void clearUsedVoucher() {
-        Prefs.remove("usedVoucher");
+    public void clearUsedVoucher() {
+        prefs.remove("usedVoucher");
     }
 
     /** NETWORK. Returns 'kadaluarsa' when the request fails. */
-    public static String getStatusVoucher(String idVoucher) {
+    public String getStatusVoucher(String idVoucher) {
         String authToken = getAuthToken();
-        Http.Response r = Http.getApi("/Voucher/getStatusVoucher/" + idVoucher
+        Http.Response r = http.getApi("/Voucher/getStatusVoucher/" + idVoucher
                 + "?authToken=" + authToken);
         if (r.statusCode == 200) {
             return Json.str(r.jsonObject(), "statusVoucher");
@@ -109,23 +118,23 @@ public final class LocalStorage {
         return "kadaluarsa";
     }
 
-    public static void setExternalUserID(String externalUserID) {
-        Prefs.setString("externalUserID", externalUserID);
+    public void setExternalUserID(String externalUserID) {
+        prefs.setString("externalUserID", externalUserID);
     }
 
     /** null when unset. */
-    public static String getExternalUserID() {
-        return Prefs.getString("externalUserID");
+    public String getExternalUserID() {
+        return prefs.getString("externalUserID");
     }
 
-    public static void removeExternalUserID() {
-        Prefs.remove("externalUserID");
+    public void removeExternalUserID() {
+        prefs.remove("externalUserID");
     }
 
     /** NETWORK. 0 when not logged in / request failed. */
-    public static int getIdPenjualFromActiveUser() {
+    public int getIdPenjualFromActiveUser() {
         String authToken = getAuthToken();
-        Http.Response r = Http.getApi("/User/getDetailUser?getUserEntities=id&authToken="
+        Http.Response r = http.getApi("/User/getDetailUser?getUserEntities=id&authToken="
                 + authToken);
         if (r.statusCode == 200) {
             JsonElement detailUser = Json.obj(r.json()).get("detailUser");
@@ -137,14 +146,14 @@ public final class LocalStorage {
         return 0;
     }
 
-    public static String getApplicationID() {
+    public String getApplicationID() {
         return "id.laukpauk";
     }
 
     /** NETWORK. */
-    public static boolean isUserVerified() {
+    public boolean isUserVerified() {
         String authToken = getAuthToken();
-        Http.Response r = Http.getApi("/Auth/cekVerifikasiUser?authToken=" + authToken);
+        Http.Response r = http.getApi("/Auth/cekVerifikasiUser?authToken=" + authToken);
         if (r.statusCode == 200) {
             return Json.bool(r.jsonObject(), "isVerified");
         }
@@ -152,8 +161,8 @@ public final class LocalStorage {
     }
 
     /** The saved delivery schedule (JSON map) or null. */
-    public static JsonObject savedJadwalDeliveryMap() {
-        String encoded = Prefs.getString("savedJadwalDeliveryMap");
+    public JsonObject savedJadwalDeliveryMap() {
+        String encoded = prefs.getString("savedJadwalDeliveryMap");
         if (encoded != null) {
             JsonElement e = Json.parse(encoded);
             if (e != null && e.isJsonObject()) {
@@ -163,18 +172,18 @@ public final class LocalStorage {
         return null;
     }
 
-    public static void lewatiOTPRegistrasi() {
-        Prefs.setBool("lewatiOTPRegistrasi", true);
+    public void lewatiOTPRegistrasi() {
+        prefs.setBool("lewatiOTPRegistrasi", true);
     }
 
-    public static boolean isOTPRegistrasiPassed() {
-        return Prefs.getBool("lewatiOTPRegistrasi", false);
+    public boolean isOTPRegistrasiPassed() {
+        return prefs.getBool("lewatiOTPRegistrasi", false);
     }
 
     /** The Android versionCode as a string (Flutter's PackageInfo.buildNumber). */
-    public static String getBuildNumber() {
+    public String getBuildNumber() {
         try {
-            Context ctx = App.context();
+            Context ctx = context;
             PackageInfo info = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
             return String.valueOf(PackageInfoCompat.getLongVersionCode(info));
         } catch (Exception e) {
@@ -182,13 +191,13 @@ public final class LocalStorage {
         }
     }
 
-    public static void setPasarPalingDekat(JsonObject pasarPalingDekat) {
-        Prefs.setString("pasarPalingDekat", pasarPalingDekat.toString());
+    public void setPasarPalingDekat(JsonObject pasarPalingDekat) {
+        prefs.setString("pasarPalingDekat", pasarPalingDekat.toString());
     }
 
     /** null when nothing is stored. */
-    public static JsonObject getPasarPalingDekat() {
-        String s = Prefs.getString("pasarPalingDekat");
+    public JsonObject getPasarPalingDekat() {
+        String s = prefs.getString("pasarPalingDekat");
         if (s == null) {
             return null;
         }

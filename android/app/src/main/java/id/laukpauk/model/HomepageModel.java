@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -10,11 +12,18 @@ import id.laukpauk.core.ServerPath;
 
 /** Port of lib/models/HomepageModel.dart. Every method is BLOCKING (network). */
 public final class HomepageModel {
-    private HomepageModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public HomepageModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
     /** Dart: getArtikel() -> Future&lt;List&gt;. */
-    public static JsonArray getArtikel() {
-        Http.Response httpResponse = Http.getApi("/Artikel/getArtikel");
+    public JsonArray getArtikel() {
+        Http.Response httpResponse = http.getApi("/Artikel/getArtikel");
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataArtikelObject = httpResponse.jsonObject();
@@ -24,10 +33,10 @@ public final class HomepageModel {
     }
 
     /** Dart: getJumlahVoucher() -> Future&lt;int&gt;. */
-    public static int getJumlahVoucher() {
-        String params = HTTPRequest.getQueryString(null, true);
+    public int getJumlahVoucher() {
+        String params = httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/User/getJumlahVoucher?" + params);
+        Http.Response httpResponse = http.getApi("/User/getJumlahVoucher?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
 
@@ -38,10 +47,10 @@ public final class HomepageModel {
     }
 
     /** Dart: getTotalDompet() -> Future&lt;int&gt;. */
-    public static int getTotalDompet() {
-        String params = HTTPRequest.getQueryString(null, true);
+    public int getTotalDompet() {
+        String params = httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/User/getTotalDompet?" + params);
+        Http.Response httpResponse = http.getApi("/User/getTotalDompet?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -56,7 +65,7 @@ public final class HomepageModel {
      * -> Future&lt;List&gt;. `pencarian` and `savedADJD` may be null. The saved ADJD map has the
      * keys latitude, longitude, jadwalDeliveryCode (see LocalStorage.getSavedLatitudeAndLongitude).
      */
-    public static JsonArray getDataPasar(boolean isADJDSet, boolean showAll, int limitPasar,
+    public JsonArray getDataPasar(boolean isADJDSet, boolean showAll, int limitPasar,
                                          String pencarian, JsonObject savedADJD) {
         String limitPasarQS = showAll ? "" : "limitPasar=" + limitPasar;
         String namaPasarQS = "";
@@ -92,7 +101,7 @@ public final class HomepageModel {
             }
         }
 
-        Http.Response httpResponse = Http.get(url);
+        Http.Response httpResponse = http.get(url);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();

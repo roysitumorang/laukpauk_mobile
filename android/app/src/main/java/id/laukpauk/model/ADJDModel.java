@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.Manifest;
 import android.location.Location;
 import android.location.LocationManager;
@@ -34,13 +36,24 @@ import id.laukpauk.ui.Ui;
  * main thread; `done` runs on the main thread exactly once. The others are BLOCKING.
  */
 public final class ADJDModel {
-    private ADJDModel() {}
+    private final Async async;
+    private final Http http;
+    private final LocalStorage localStorage;
+    private final Prefs prefs;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public ADJDModel(Async async, Http http, LocalStorage localStorage, Prefs prefs) {
+        this.async = async;
+        this.http = http;
+        this.localStorage = localStorage;
+        this.prefs = prefs;
+    }
 
     public static final String defaultLatitude = "3.5889242";
     public static final String defaultLongitude = "98.6790958";
     public static final String defaultAlamat = "Merdeka Walk Medan";
 
-    private static <T> void call(Async.Done<T> done, T value) {
+    private <T> void call(Async.Done<T> done, T value) {
         if (done != null) {
             done.run(value);
         }
@@ -48,13 +61,13 @@ public final class ADJDModel {
 
     // ------------------------------------------------------------------ location
 
-    private static boolean hasLocationPermission(BaseActivity activity) {
+    private boolean hasLocationPermission(BaseActivity activity) {
         return activity.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 || activity.hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
     /** geolocator's isLocationServiceEnabled(). */
-    private static boolean isLocationServiceEnabled(BaseActivity activity) {
+    private boolean isLocationServiceEnabled(BaseActivity activity) {
         LocationManager lm = (LocationManager) activity.getSystemService(android.content.Context.LOCATION_SERVICE);
         if (lm == null) {
             return false;
@@ -71,7 +84,7 @@ public final class ADJDModel {
      * longitude as strings). `done` gets null when the location could not be detected (permission
      * denied, GPS off, no fix). Asks for the location permission when it is not granted yet.
      */
-    public static void detectMyLocation(final BaseActivity activity, final Async.Done<JsonObject> done) {
+    public void detectMyLocation(final BaseActivity activity, final Async.Done<JsonObject> done) {
         // LocationPermission? _permissionRequest = LocationPermission.always, set to null when the
         // permission was not granted at the start (denied / deniedForever).
         final String permissionRequest = hasLocationPermission(activity) ? "always" : null;
@@ -86,7 +99,7 @@ public final class ADJDModel {
         }
     }
 
-    private static void locate(BaseActivity activity, final String permissionRequest,
+    private void locate(BaseActivity activity, final String permissionRequest,
                                final Async.Done<JsonObject> done) {
         // Geolocator.getCurrentPosition throws (-> null) without permission or with the location
         // services switched off.
@@ -134,7 +147,7 @@ public final class ADJDModel {
      * `done` gets {answer: 'ya' | 'tidak', address} or null (closed with "Tutup", or the geocoding
      * request failed). Pass null for title / content to use the defaults.
      */
-    public static void askAlamatPengantaran(final BaseActivity activity, String latitude, String longitude,
+    public void askAlamatPengantaran(final BaseActivity activity, String latitude, String longitude,
                                             String title, String content, final Async.Done<JsonObject> done) {
         final String lat = latitude == null ? "" : latitude;
         final String lng = longitude == null ? "" : longitude;
@@ -143,10 +156,10 @@ public final class ADJDModel {
                 ? "Apakah belanjaan akan diantarkan ke alamat tempat anda berada sekarang ?"
                 : content;
 
-        Async.run(() -> {
+        async.run(() -> {
             Async.sleep(1);
-            String geocodingApiKey = LocalStorage.getGoogleMapsApiKey();
-            return Http.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + lng
+            String geocodingApiKey = localStorage.getGoogleMapsApiKey();
+            return http.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + lng
                     + "&key=" + geocodingApiKey);
         }, httpResponse -> {
             if (httpResponse != null && httpResponse.statusCode == 200) {
@@ -191,7 +204,7 @@ public final class ADJDModel {
      * Dart: askJadwalDelivery(context, {latitude, longitude, currentLocation}).
      * `done` gets {jadwalDeliverySelected: kode, jadwalDeliveryTerpilih: map} or null ("Nanti Saja").
      */
-    public static void askJadwalDelivery(final BaseActivity activity, String latitude, String longitude,
+    public void askJadwalDelivery(final BaseActivity activity, String latitude, String longitude,
                                          String currentLocation, Async.Done<JsonObject> done) {
         String title = "Jadwal Delivery";
         String subTitle = "Silahkan pilih jadwal pengantaran yang anda inginkan :";
@@ -211,10 +224,10 @@ public final class ADJDModel {
      * Dart: reverseGeocoding({latitude, longitude}) (untyped arguments: double or String).
      * BLOCKING (network).
      */
-    public static String reverseGeocoding(Object latitude, Object longitude) {
-        String geocodingApiKey = LocalStorage.getGoogleMapsApiKey();
+    public String reverseGeocoding(Object latitude, Object longitude) {
+        String geocodingApiKey = localStorage.getGoogleMapsApiKey();
 
-        Http.Response httpResponse = Http.get("https://maps.googleapis.com/maps/api/geocode/json?latlng="
+        Http.Response httpResponse = http.get("https://maps.googleapis.com/maps/api/geocode/json?latlng="
                 + dartString(latitude) + "," + dartString(longitude) + "&key=" + geocodingApiKey);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -228,7 +241,7 @@ public final class ADJDModel {
     }
 
     /** Dart string interpolation of a dynamic value. */
-    private static String dartString(Object value) {
+    private String dartString(Object value) {
         if (value == null) {
             return "null";
         }
@@ -245,56 +258,56 @@ public final class ADJDModel {
      * keys (so they can be restored when the user does not finish choosing a new one) and removes
      * the saved ones.
      */
-    public static void deleteAlamatDanJadwalDelivery() {
-        String latitude = Prefs.getString("savedLatitude");
-        String longitude = Prefs.getString("savedLongitude");
-        String jadwalDeliveryCode = Prefs.getString("savedJadwalDeliveryCode");
-        String jadwalDeliveryMap = Prefs.getString("savedJadwalDeliveryMap");
-        String alamat = Prefs.getString("savedAlamat");
+    public void deleteAlamatDanJadwalDelivery() {
+        String latitude = prefs.getString("savedLatitude");
+        String longitude = prefs.getString("savedLongitude");
+        String jadwalDeliveryCode = prefs.getString("savedJadwalDeliveryCode");
+        String jadwalDeliveryMap = prefs.getString("savedJadwalDeliveryMap");
+        String alamat = prefs.getString("savedAlamat");
 
         if (latitude != null) {
-            Prefs.setString("coppiedLatitude", latitude);
+            prefs.setString("coppiedLatitude", latitude);
         }
         if (longitude != null) {
-            Prefs.setString("coppiedLongitude", longitude);
+            prefs.setString("coppiedLongitude", longitude);
         }
         if (jadwalDeliveryCode != null) {
-            Prefs.setString("coppiedJadwalDeliveryCode", jadwalDeliveryCode);
+            prefs.setString("coppiedJadwalDeliveryCode", jadwalDeliveryCode);
         }
         if (jadwalDeliveryMap != null) {
-            Prefs.setString("coppiedJadwalDeliveryMap", jadwalDeliveryMap);
+            prefs.setString("coppiedJadwalDeliveryMap", jadwalDeliveryMap);
         }
         if (alamat != null) {
-            Prefs.setString("coppiedAlamat", alamat);
+            prefs.setString("coppiedAlamat", alamat);
         }
 
-        Prefs.remove("isAlamatDeliveryDanJadwalDeliverySet");
-        Prefs.remove("savedLatitude");
-        Prefs.remove("savedLongitude");
-        Prefs.remove("savedJadwalDeliveryCode");
-        Prefs.remove("savedJadwalDeliveryMap");
-        Prefs.remove("savedAlamat");
+        prefs.remove("isAlamatDeliveryDanJadwalDeliverySet");
+        prefs.remove("savedLatitude");
+        prefs.remove("savedLongitude");
+        prefs.remove("savedJadwalDeliveryCode");
+        prefs.remove("savedJadwalDeliveryMap");
+        prefs.remove("savedAlamat");
     }
 
     /**
      * Dart: getCoppiedADJD(). Keys coppiedLatitude, coppiedLongitude, coppiedJadwalDeliveryCode,
      * coppiedJadwalDeliveryMap (a JSON text), coppiedAlamat; missing values are JSON null.
      */
-    public static JsonObject getCoppiedADJD() {
+    public JsonObject getCoppiedADJD() {
         JsonObject coppiedADJD = new JsonObject();
-        coppiedADJD.addProperty("coppiedLatitude", Prefs.getString("coppiedLatitude"));
-        coppiedADJD.addProperty("coppiedLongitude", Prefs.getString("coppiedLongitude"));
-        coppiedADJD.addProperty("coppiedJadwalDeliveryCode", Prefs.getString("coppiedJadwalDeliveryCode"));
-        coppiedADJD.addProperty("coppiedJadwalDeliveryMap", Prefs.getString("coppiedJadwalDeliveryMap"));
-        coppiedADJD.addProperty("coppiedAlamat", Prefs.getString("coppiedAlamat"));
+        coppiedADJD.addProperty("coppiedLatitude", prefs.getString("coppiedLatitude"));
+        coppiedADJD.addProperty("coppiedLongitude", prefs.getString("coppiedLongitude"));
+        coppiedADJD.addProperty("coppiedJadwalDeliveryCode", prefs.getString("coppiedJadwalDeliveryCode"));
+        coppiedADJD.addProperty("coppiedJadwalDeliveryMap", prefs.getString("coppiedJadwalDeliveryMap"));
+        coppiedADJD.addProperty("coppiedAlamat", prefs.getString("coppiedAlamat"));
         return coppiedADJD;
     }
 
-    public static void deleteCoppiedADJD() {
-        Prefs.remove("coppiedLatitude");
-        Prefs.remove("coppiedLongitude");
-        Prefs.remove("coppiedJadwalDeliveryCode");
-        Prefs.remove("coppiedJadwalDeliveryMap");
-        Prefs.remove("coppiedAlamat");
+    public void deleteCoppiedADJD() {
+        prefs.remove("coppiedLatitude");
+        prefs.remove("coppiedLongitude");
+        prefs.remove("coppiedJadwalDeliveryCode");
+        prefs.remove("coppiedJadwalDeliveryMap");
+        prefs.remove("coppiedAlamat");
     }
 }

@@ -61,9 +61,9 @@ public class DetailResepActivity extends BaseActivity {
         String idResep = idResepArg;
         String entitasResep = "id, nama, foto, keterangan, igLink, fbLink";
 
-        String params = HTTPRequest.getQueryString("entitasResep=" + entitasResep);
+        String params = container().httpRequest.getQueryString("entitasResep=" + entitasResep);
 
-        Http.Response httpResponse = Http.getApi("/Resep/getResep/" + idResep + "?" + params);
+        Http.Response httpResponse = container().http.getApi("/Resep/getResep/" + idResep + "?" + params);
 
         if (httpResponse.statusCode == 200) {
             return Json.get(httpResponse.jsonObject(), "dataResep");

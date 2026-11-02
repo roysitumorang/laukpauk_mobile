@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.view.Gravity;
 import android.view.View;
@@ -34,17 +36,30 @@ import id.laukpauk.view.pembeli.components.checkout.VoucherItemCheckout;
 
 /** Port of lib/models/CheckoutModel.dart. */
 public final class CheckoutModel {
-    private CheckoutModel() {}
+    private final Async async;
+    private final HTTPRequest httpRequest;
+    private final Http http;
+    private final LocalStorage localStorage;
+    private final Prefs prefs;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public CheckoutModel(Async async, HTTPRequest httpRequest, Http http, LocalStorage localStorage, Prefs prefs) {
+        this.async = async;
+        this.httpRequest = httpRequest;
+        this.http = http;
+        this.localStorage = localStorage;
+        this.prefs = prefs;
+    }
 
     /** BLOCKING. */
-    public static JsonArray getVoucher(int totalBelanja) {
+    public JsonArray getVoucher(int totalBelanja) {
         String totalBelanjaString = String.valueOf(totalBelanja);
         String entitasVoucher = "id, nama, foto, minimumBelanja, nilai, jenis, kode, maximumUsage";
 
-        String params = HTTPRequest.getQueryString(
+        String params = httpRequest.getQueryString(
                 "entitasVoucher=" + entitasVoucher + "&forThisTotalBelanja=" + totalBelanjaString, true);
 
-        Http.Response httpResponse = Http.getApi("/User/getVoucher?" + params);
+        Http.Response httpResponse = http.getApi("/User/getVoucher?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -58,7 +73,7 @@ public final class CheckoutModel {
      * Dart: showVoucher(context, totalBelanja, voucherTerpilih, onVoucherSelected) - a modal bottom sheet.
      * `onVoucherSelected` gets the chosen voucher (the sheet closes right after). `done` runs when the sheet is gone.
      */
-    public static void showVoucher(final BaseActivity activity, final int totalBelanja,
+    public void showVoucher(final BaseActivity activity, final int totalBelanja,
                                    final JsonObject voucherTerpilih, final Async.Done<JsonObject> onVoucherSelected,
                                    Async.Done<Void> done) {
         Modal.<Void>bottomSheet(activity, true, handle -> {
@@ -84,7 +99,7 @@ public final class CheckoutModel {
             holder.addView(spinner, spLp);
             column.addView(holder, new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
 
-            Async.run(() -> getVoucher(totalBelanja), (JsonArray dataVoucher) -> {
+            async.run(() -> getVoucher(totalBelanja), (JsonArray dataVoucher) -> {
                 if (dataVoucher == null) {
                     return; // request threw: Dart's FutureBuilder keeps the spinner
                 }
@@ -126,7 +141,7 @@ public final class CheckoutModel {
      * Dart: showMetodePembayaran(context, checkoutData, totalTagihan) - a modal bottom sheet (isScrollControlled).
      * When the checkout succeeds the app goes to TransferBank (tf_bca) or BuatOrderanBerhasil and clears the stack.
      */
-    public static void showMetodePembayaran(final BaseActivity activity, final JsonObject checkoutData,
+    public void showMetodePembayaran(final BaseActivity activity, final JsonObject checkoutData,
                                             final int totalTagihan, Async.Done<Void> done) {
         final int totalTagihanLocal = totalTagihan;
 
@@ -157,11 +172,11 @@ public final class CheckoutModel {
     }
 
     /** BLOCKING. */
-    public static boolean bersihkanKeranjang() {
-        String cartCode = LocalStorage.getCartCode();
-        String params = HTTPRequest.getQueryString("cartCode=" + cartCode);
+    public boolean bersihkanKeranjang() {
+        String cartCode = localStorage.getCartCode();
+        String params = httpRequest.getQueryString("cartCode=" + cartCode);
 
-        Http.Response httpResponse = Http.getApi("/Keranjang/bersihkanKeranjang?" + params);
+        Http.Response httpResponse = http.getApi("/Keranjang/bersihkanKeranjang?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -172,7 +187,7 @@ public final class CheckoutModel {
     }
 
     /** Dart: konfirmasi(context) -> bool?. `done` gets true / false / null (dismissed). */
-    public static void konfirmasi(final BaseActivity activity, Async.Done<Boolean> done) {
+    public void konfirmasi(final BaseActivity activity, Async.Done<Boolean> done) {
         String title = "Konfirmasi Keranjang";
         String subTitle = "Benarkah anda akan menghapus seluruh item belanjaan anda di keranjang?";
         Modal.Content<Boolean> actions = handle -> CustomAlert.actionsRow(activity,
@@ -182,17 +197,17 @@ public final class CheckoutModel {
     }
 
     /** BLOCKING. null when the request failed. Returns the whole decoded JSON. */
-    public static JsonElement getJenisOngkir() {
-        String cartCode = LocalStorage.getCartCode();
-        JsonObject savedADJD = LocalStorage.getSavedLatitudeAndLongitude();
+    public JsonElement getJenisOngkir() {
+        String cartCode = localStorage.getCartCode();
+        JsonObject savedADJD = localStorage.getSavedLatitudeAndLongitude();
 
         String latDelivery = Json.str(savedADJD, "latitude");
         String longDelivery = Json.str(savedADJD, "longitude");
 
-        String params = HTTPRequest.getQueryString(
+        String params = httpRequest.getQueryString(
                 "cartCode=" + cartCode + "&latDelivery=" + latDelivery + "&longDelivery=" + longDelivery);
 
-        Http.Response httpResponse = Http.getApi("/Transaksi/getJenisOngkir?" + params);
+        Http.Response httpResponse = http.getApi("/Transaksi/getJenisOngkir?" + params);
 
         if (httpResponse.statusCode == 200) {
             return httpResponse.json();
@@ -201,8 +216,8 @@ public final class CheckoutModel {
     }
 
     /** BLOCKING. dataObject['walletConfiguration'] or the JSON boolean false. */
-    public static JsonElement getWalletConfiguration() {
-        Http.Response httpResponse = Http.getApi("/Pengaturan/getWalletConfiguration");
+    public JsonElement getWalletConfiguration() {
+        Http.Response httpResponse = http.getApi("/Pengaturan/getWalletConfiguration");
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -213,17 +228,17 @@ public final class CheckoutModel {
     }
 
     /** BLOCKING. */
-    public static int getTotalKeranjang() {
-        JsonObject savedADJD = LocalStorage.getSavedLatitudeAndLongitude();
+    public int getTotalKeranjang() {
+        JsonObject savedADJD = localStorage.getSavedLatitudeAndLongitude();
 
-        String cartCode = LocalStorage.getCartCode();
+        String cartCode = localStorage.getCartCode();
         String latDelivery = Json.str(savedADJD, "latitude");
         String longDelivery = Json.str(savedADJD, "longitude");
 
-        String params = HTTPRequest.getQueryString(
+        String params = httpRequest.getQueryString(
                 "cartCode=" + cartCode + "&latDelivery=" + latDelivery + "&longDelivery=" + longDelivery);
 
-        Http.Response httpResponse = Http.getApi("/User/getTotalKeranjang?" + params);
+        Http.Response httpResponse = http.getApi("/User/getTotalKeranjang?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -234,17 +249,17 @@ public final class CheckoutModel {
     }
 
     /** BLOCKING. */
-    public static int getTotalOngkir() {
-        String cartCode = LocalStorage.getCartCode();
-        JsonObject savedADJD = LocalStorage.getSavedLatitudeAndLongitude();
+    public int getTotalOngkir() {
+        String cartCode = localStorage.getCartCode();
+        JsonObject savedADJD = localStorage.getSavedLatitudeAndLongitude();
 
         String latDelivery = Json.str(savedADJD, "latitude");
         String longDelivery = Json.str(savedADJD, "longitude");
 
-        String params = HTTPRequest.getQueryString(
+        String params = httpRequest.getQueryString(
                 "cartCode=" + cartCode + "&latDelivery=" + latDelivery + "&longDelivery=" + longDelivery);
 
-        Http.Response httpResponse = Http.getApi("/User/getTotalOngkir?" + params);
+        Http.Response httpResponse = http.getApi("/User/getTotalOngkir?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -255,11 +270,11 @@ public final class CheckoutModel {
     }
 
     /** BLOCKING. */
-    public static int getJumlahCart() {
-        String cartCode = LocalStorage.getCartCode();
-        String params = HTTPRequest.getQueryString("cartCode=" + cartCode);
+    public int getJumlahCart() {
+        String cartCode = localStorage.getCartCode();
+        String params = httpRequest.getQueryString("cartCode=" + cartCode);
 
-        Http.Response httpResponse = Http.getApi("/User/getJumlahCart?" + params);
+        Http.Response httpResponse = http.getApi("/User/getJumlahCart?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -269,11 +284,11 @@ public final class CheckoutModel {
     }
 
     /** BLOCKING. dataObject['diskonKategori'] or null when the request failed. */
-    public static JsonElement getDiskonKategori() {
-        String cartCode = LocalStorage.getCartCode();
-        String params = HTTPRequest.getQueryString("cartCode=" + cartCode);
+    public JsonElement getDiskonKategori() {
+        String cartCode = localStorage.getCartCode();
+        String params = httpRequest.getQueryString("cartCode=" + cartCode);
 
-        Http.Response httpResponse = Http.getApi("/User/getDiskonKategori?" + params);
+        Http.Response httpResponse = http.getApi("/User/getDiskonKategori?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.get(dataObject, "diskonKategori");
@@ -282,8 +297,8 @@ public final class CheckoutModel {
     }
 
     /** BLOCKING. true when no schedule is saved or the request failed. */
-    public static boolean isJadwalDeliveryOpened() {
-        String encodedJadwalDelivery = Prefs.getString("savedJadwalDeliveryMap");
+    public boolean isJadwalDeliveryOpened() {
+        String encodedJadwalDelivery = prefs.getString("savedJadwalDeliveryMap");
         if (encodedJadwalDelivery != null) {
             JsonObject decodedJadwalDelivery = Json.parseObject(encodedJadwalDelivery);
 
@@ -295,7 +310,7 @@ public final class CheckoutModel {
             body.put("kode", kode);
             body.put("day", day);
             body.put("setOn", setOn);
-            Http.Response httpResponse = Http.postApi("/JadwalDelivery/isJadwalDeliveryOpened", body);
+            Http.Response httpResponse = http.postApi("/JadwalDelivery/isJadwalDeliveryOpened", body);
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();
                 return Json.bool(dataObject, "isJadwalDeliveryOpened");

@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.prosespesanan;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
@@ -30,6 +32,9 @@ import id.laukpauk.view.penjual.PesananScreenUi;
 
 /** Port of lib/views/penjual/components/ProsesPesanan/ProsesPesananItem.dart. */
 public class ProsesPesananItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final JsonObject pesananItem;
     private final Async.Done<Boolean> pesananItemCallback;
 
@@ -46,10 +51,10 @@ public class ProsesPesananItem extends LinearLayout {
         Map<String, String> httpBody = new HashMap<String, String>();
         httpBody.put("idItem", Json.str(pesananItem, "id"));
 
-        String params = HTTPRequest.getQueryString(null, true);
-        Map<String, String> body = HTTPRequest.postBody(httpBody);
+        String params = deps.httpRequest.getQueryString(null, true);
+        Map<String, String> body = deps.httpRequest.postBody(httpBody);
 
-        Http.Response httpResponse = Http.postApi("/Transaksi/pembatalanKlaimTidakAda?" + params, body);
+        Http.Response httpResponse = deps.http.postApi("/Transaksi/pembatalanKlaimTidakAda?" + params, body);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.bool(dataObject, "statusPembatalanKlaimTidakTersedia");

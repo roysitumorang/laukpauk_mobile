@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.promo;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
@@ -36,6 +38,9 @@ import id.laukpauk.view.pembeli.DetailPromoItemActivity;
 
 /** Port of lib/views/pembeli/components/Promo/PromoItem.dart (a promo product card). */
 public class PromoItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
 
     private static final class CartResult {
         JsonObject response;
@@ -184,9 +189,9 @@ public class PromoItem extends LinearLayout {
         final CustomButton.Btn beli = CustomButton.button(ctx, "Beli", () -> {
             activity.async(() -> {
                 CartResult r = new CartResult();
-                r.response = ProdukModel.addToCart(idProduk, idSatuan, "1", idPromo);
+                r.response = deps.produkModel.addToCart(idProduk, idSatuan, "1", idPromo);
                 if (r.response != null) {
-                    r.jumlahKeranjang = HeaderModel.getJumlahCart();
+                    r.jumlahKeranjang = deps.headerModel.getJumlahCart();
                 }
                 return r;
             }, r -> {
@@ -198,7 +203,7 @@ public class PromoItem extends LinearLayout {
                 if (statusAddCart) {
                     ShopModelUi.keranjangSnackbar(activity,
                             "Berhasil ditambahkan ke dalam keranjang !", 3);
-                    AppState.get().setJumlahCart(r.jumlahKeranjang);
+                    deps.appState.setJumlahCart(r.jumlahKeranjang);
                 } else {
                     String messageCart =
                             "Maaf mak, produk gagal ditambahkan ke dalam keranjang. Coba lagi yah...";

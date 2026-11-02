@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.detailproduk;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
@@ -28,6 +30,9 @@ import id.laukpauk.view.pembeli.DetailUi;
  * the endpoint, the texts, the image folder and the target screen). Package private.
  */
 abstract class LainnyaList extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String uploadFolder;
     private final boolean withBorder;
     private final float gapBelowImage;
@@ -60,7 +65,7 @@ abstract class LainnyaList extends FrameLayout {
         if (getContext() instanceof BaseActivity) {
             ((BaseActivity) getContext()).async(work, done);
         } else {
-            Async.run(work, done);
+            deps.async.run(work, done);
         }
     }
 

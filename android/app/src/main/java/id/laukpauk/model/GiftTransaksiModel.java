@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,20 +17,29 @@ import id.laukpauk.element.GiftTransaksi;
 
 /** Port of lib/models/GiftTransaksiModel.dart. BLOCKING (network). */
 public final class GiftTransaksiModel {
-    private GiftTransaksiModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+    private final LocalStorage localStorage;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public GiftTransaksiModel(HTTPRequest httpRequest, Http http, LocalStorage localStorage) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+        this.localStorage = localStorage;
+    }
 
     /** Dart: getGiftTransaksi({String? cartCode}); pass null for the stored cart code. */
-    public static List<GiftTransaksi> getGiftTransaksi(String cartCode) {
+    public List<GiftTransaksi> getGiftTransaksi(String cartCode) {
         List<GiftTransaksi> giftTransaksi = new ArrayList<>();
 
-        String usedCartCode = LocalStorage.getCartCode();
+        String usedCartCode = localStorage.getCartCode();
         if (cartCode != null) {
             usedCartCode = cartCode;
         }
 
-        String params = HTTPRequest.getQueryString("cartCode=" + usedCartCode);
+        String params = httpRequest.getQueryString("cartCode=" + usedCartCode);
 
-        Http.Response httpResponse = Http.getApi("/gift/gift-transaksi?" + params);
+        Http.Response httpResponse = http.getApi("/gift/gift-transaksi?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
 
@@ -44,7 +55,7 @@ public final class GiftTransaksiModel {
         return giftTransaksi;
     }
 
-    public static List<GiftTransaksi> getGiftTransaksi() {
+    public List<GiftTransaksi> getGiftTransaksi() {
         return getGiftTransaksi(null);
     }
 }

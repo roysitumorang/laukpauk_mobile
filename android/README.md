@@ -54,14 +54,37 @@ review against the Dart original mechanical.
 
 | Dart | Java |
 | --- | --- |
-| `lib/models/FooModel.dart` | `id.laukpauk.model.FooModel` (blocking network methods run off the main thread; methods that showed dialogs take the Activity and a callback) |
+| `lib/models/FooModel.dart` | `id.laukpauk.model.FooModel`, an injected singleton (blocking network methods run off the main thread; methods that showed dialogs take the Activity and a callback) |
 | a pushed screen, e.g. `lib/views/pembeli/DetailProduk.dart` | `id.laukpauk.view.pembeli.DetailProdukActivity` (constructor arguments travel as a JSON extra named after the Dart fields) |
 | an embedded widget, e.g. `components/HomePage/Kategori.dart` | `id.laukpauk.view.pembeli.components.homepage.Kategori` (a `View`) |
 | `lib/global-components/*` | `id.laukpauk.ui.*` |
-| `lib/libraries/*`, `HeaderViewModel` (Provider) | `id.laukpauk.core.*`, `core.AppState` |
+| `lib/libraries/*`, `HeaderViewModel` (Provider) | `id.laukpauk.core.*`, `core.AppState` (injected) |
 
 Views are built in code (`ui/Ui`, `ui/Txt`, `ui/Layouts`), not XML. `AndroidManifest.xml` is generated from
 the Activity classes by `tools/gen_manifest.py`; re-run it after adding a screen.
+
+## Dependency injection
+
+Services and models are **singletons created once and injected**, never called statically. There is no DI
+library: `core/AppContainer` is a hand-written composition root.
+
+- **Who is injected:** the core services (`Http`, `HTTPRequest`, `Prefs`, `LocalStorage`, `AuthModel`,
+  `Async`, `AppState`) and every class in `model/`. Each one declares its dependencies as constructor
+  parameters (e.g. `new NotifikasiModel(http, httpRequest, authModel)`).
+- **Who builds them:** `AppContainer`, in dependency order, created once in `LaukpaukApp.onCreate()`.
+  Nothing else calls their constructors.
+- **Cycles:** `AppState` -> `HeaderModel` and `HeaderModel` -> `TransaksiModel` would make construction
+  circular, so those two edges are injected as `Lazy<T>` and resolved on first use.
+- **Where Android creates the object** (it can't take constructor parameters), the container is reached once:
+  - Activities: `container()` (from `BaseActivity`), e.g. `container().headerModel.adjd(...)`
+  - Views and dialogs: a `deps` field, `AppContainer.from(getContext())`
+  - static helpers: `AppContainer.from(<context parameter>)`
+- **Still static, on purpose:** stateless helpers with no I/O (`Json`, `Currency`, `Http.enc`, `Ui`, `Txt`,
+  `Layouts`, `Nav`, `CustomAlert`, the `*Ui` screen helpers, `ShopModelUi`) and constants (`ServerPath`,
+  `CustomColors`).
+
+When adding a model: give it a constructor taking what it uses, add it to `AppContainer`, and use it through
+`container()` / `deps`. Never add a `static` method that does I/O or holds state.
 
 ## Replaced Flutter plugins
 

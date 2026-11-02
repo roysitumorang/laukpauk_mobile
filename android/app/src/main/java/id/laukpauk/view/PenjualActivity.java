@@ -67,7 +67,7 @@ public class PenjualActivity extends BaseActivity {
     }
 
     private JsonElement getDetailPenjual() {
-        Http.Response httpResponse = Http.getApi("/Penjual/getDetailPenjual/" + idPenjual);
+        Http.Response httpResponse = container().http.getApi("/Penjual/getDetailPenjual/" + idPenjual);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return dataObject.get("detailPenjual");

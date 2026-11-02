@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -14,12 +16,19 @@ import id.laukpauk.core.Json;
  * value of JSON null is returned as Java null.
  */
 public final class SettingModel {
-    private SettingModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
 
-    public static JsonElement getSettingValue(String keyPengaturan) {
-        String params = HTTPRequest.getQueryString(null, true);
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public SettingModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
-        Http.Response httpResponse = Http.getApi("/Pengaturan/getSettingValue/" + keyPengaturan + "?" + params);
+    public JsonElement getSettingValue(String keyPengaturan) {
+        String params = httpRequest.getQueryString(null, true);
+
+        Http.Response httpResponse = http.getApi("/Pengaturan/getSettingValue/" + keyPengaturan + "?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -28,10 +37,10 @@ public final class SettingModel {
         return new JsonPrimitive(false);
     }
 
-    public static JsonElement getContactUsWhatsappConfiguration() {
-        String params = HTTPRequest.getQueryString(null, true);
+    public JsonElement getContactUsWhatsappConfiguration() {
+        String params = httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Pengaturan/getContactUsWhatsappConfiguration?" + params);
+        Http.Response httpResponse = http.getApi("/Pengaturan/getContactUsWhatsappConfiguration?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -40,7 +49,7 @@ public final class SettingModel {
         return new JsonPrimitive(false);
     }
 
-    private static JsonElement valueOrNull(JsonElement e) {
+    private JsonElement valueOrNull(JsonElement e) {
         return Json.isNull(e) ? null : e;
     }
 }

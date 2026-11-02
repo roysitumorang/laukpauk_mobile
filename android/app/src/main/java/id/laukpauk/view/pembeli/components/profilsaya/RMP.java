@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.profilsaya;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +25,9 @@ import id.laukpauk.ui.Ui;
 
 /** Port of lib/views/pembeli/components/ProfilSaya/RMP.dart (Response Menjadi Penjual). */
 public class RMP extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
 
     public RMP(final Context ctx, JsonObject dataPenjual) {
         super(ctx);
@@ -68,7 +73,7 @@ public class RMP extends LinearLayout {
         holder.addView(spinner, new FrameLayout.LayoutParams(Ui.dp(ctx, 15), Ui.dp(ctx, 15), Gravity.CENTER));
 
         final BaseActivity a = (BaseActivity) ctx;
-        a.async(SettingModel::getContactUsWhatsappConfiguration, config -> {
+        a.async(deps.settingModel::getContactUsWhatsappConfiguration, config -> {
             if (config == null) {
                 return; // Dart: snapshot without data keeps the spinner
             }

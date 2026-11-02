@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -20,11 +22,14 @@ import id.laukpauk.ui.Ui;
 
 /** Port of lib/views/pembeli/components/HomePage/HeroSlider.dart (CarouselSlider -> ViewPager2 + auto-advance). */
 public class HeroSlider extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public HeroSlider(Context ctx) {
         super(ctx);
         setLayoutParams(new LinearLayout.LayoutParams(Ui.MATCH, Ui.dp(ctx, Ui.hb(ctx) * 60)));
         addView(Loading.view(ctx));
-        HomeUi.act(ctx).async(() -> BannerModel.getBanner(), this::show);
+        HomeUi.act(ctx).async(() -> deps.bannerModel.getBanner(), this::show);
     }
 
     private void show(final JsonArray banners) {

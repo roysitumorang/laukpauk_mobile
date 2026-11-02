@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.detailpromo;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.Gravity;
@@ -27,6 +29,9 @@ import id.laukpauk.view.penjual.TambahProdukActivity;
 
 /** Port of lib/views/pembeli/components/DetailPromo/NamaProduk.dart. */
 public class NamaProduk extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
 
     private static final class CartResult {
         JsonObject response;
@@ -81,11 +86,11 @@ public class NamaProduk extends LinearLayout {
                                 }
                             });
                 } else {
-                    boolean isADJDSet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+                    boolean isADJDSet = deps.localStorage.isAlamatDeliveryDanJadwalDeliverySet();
                     if (isADJDSet) {
                         activity.async(() -> {
                             CartResult r = new CartResult();
-                            r.response = ProdukModel.addToCart(idProduk, idSatuan, "1", idPromo);
+                            r.response = deps.produkModel.addToCart(idProduk, idSatuan, "1", idPromo);
                             return r;
                         }, r -> {
                             if (r == null || r.response == null) {
@@ -102,15 +107,15 @@ public class NamaProduk extends LinearLayout {
                                         : "Produk gagal masuk ke keranjang! Silahkan coba lagi!";
                                 ShopModelUi.keranjangSnackbar(activity, text, 1);
 
-                                activity.async(() -> HeaderModel.getJumlahCart(), jumlah -> {
+                                activity.async(() -> deps.headerModel.getJumlahCart(), jumlah -> {
                                     if (jumlah != null) {
-                                        AppState.get().setJumlahCart(jumlah);
+                                        deps.appState.setJumlahCart(jumlah);
                                     }
                                 });
                             }
                         });
                     } else {
-                        ProdukModel.adjdNotSetAlert(activity, tentukanADJD -> {
+                        deps.produkModel.adjdNotSetAlert(activity, tentukanADJD -> {
                             // Dart: print('seharusnya tentukan lokasi') only
                         });
                     }

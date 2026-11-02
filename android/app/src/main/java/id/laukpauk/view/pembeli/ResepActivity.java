@@ -52,7 +52,7 @@ public class ResepActivity extends BaseActivity {
 
     /** Dart: initialization(). */
     private void initialization() {
-        ResepModel.getResep(this, dataResep -> {
+        container().resepModel.getResep(this, dataResep -> {
             if (dataResep == null) {
                 dataResep = new JsonArray();
             }
@@ -121,7 +121,7 @@ public class ResepActivity extends BaseActivity {
             fill = true;
         }
         SwipeRefreshLayout refresh = DetailUi.refreshable(this, content, () -> {
-            ResepModel.getResep(this, dataResep -> {
+            container().resepModel.getResep(this, dataResep -> {
                 if (dataResep == null) {
                     dataResep = new JsonArray();
                 }

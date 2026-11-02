@@ -40,10 +40,10 @@ public class HomePageActivity extends BaseActivity {
 
     /** _initialization(): gift check, "make sure ADJD" reminder, then the unread-notification count. */
     private void initialization() {
-        HeaderModel.giftChecking(this, v1 -> {
-            HeaderModel.makeSureADJD(this, v2 -> {
-                async(() -> HeaderModel.getJumlahNotifikasi(), (Integer jumlahNotifikasi) -> {
-                    AppState.get().setJumlahNotifikasi(jumlahNotifikasi);
+        container().headerModel.giftChecking(this, v1 -> {
+            container().headerModel.makeSureADJD(this, v2 -> {
+                async(() -> container().headerModel.getJumlahNotifikasi(), (Integer jumlahNotifikasi) -> {
+                    container().appState.setJumlahNotifikasi(jumlahNotifikasi);
                 });
             });
         });

@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.keranjang;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
@@ -29,6 +31,9 @@ import id.laukpauk.view.penjual.PesananScreenUi;
  * Dart `MyGift({Key? key, this.cartCode})`.
  */
 public class MyGift extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String cartCode;
     private final FrameLayout body;
 
@@ -46,7 +51,7 @@ public class MyGift extends LinearLayout {
         addView(body, Ui.weightH(1f));
         body.addView(Loading.view(ctx, null, null, 25f, 25f));
 
-        PesananScreenUi.run(ctx, () -> GiftTransaksiModel.getGiftTransaksi(this.cartCode),
+        PesananScreenUi.run(ctx, () -> deps.giftTransaksiModel.getGiftTransaksi(this.cartCode),
                 (List<GiftTransaksi> data) -> render(data));
     }
 
@@ -62,7 +67,7 @@ public class MyGift extends LinearLayout {
                 slot.addView(Loading.view(ctx, null, null, 35f, 35f));
                 column.addView(slot, new LayoutParams(Ui.MATCH, Ui.WRAP));
                 final String idGift = gT.idGift;
-                PesananScreenUi.run(ctx, () -> GiftModel.getGift(idGift), (Gift g) -> {
+                PesananScreenUi.run(ctx, () -> deps.giftModel.getGift(idGift), (Gift g) -> {
                     if (g != null) { // a null gift keeps the Loading indicator, as in Dart
                         slot.removeAllViews();
                         slot.addView(giftCard(ctx, g));

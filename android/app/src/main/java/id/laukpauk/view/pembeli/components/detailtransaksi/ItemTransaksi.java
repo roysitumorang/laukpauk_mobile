@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.detailtransaksi;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -25,6 +27,9 @@ import id.laukpauk.view.pembeli.DetailUi;
 
 /** Port of lib/views/pembeli/components/DetailTransaksi/ItemTransaksi.dart. */
 public class ItemTransaksi extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final BaseActivity activity;
     private final String idTransaksi;
     private final String idPenjual;
@@ -69,10 +74,10 @@ public class ItemTransaksi extends LinearLayout {
                 "id,  namaProduk, namaSatuan, quantity, harga, diskon, catatan, jenisProduk, status, diskonPromo";
         String idPenjualQS = (idPenjual == null) ? "" : "&idPenjual=" + idPenjual;
 
-        String params = id.laukpauk.core.HTTPRequest.getQueryString(
+        String params = deps.httpRequest.getQueryString(
                 "entitasItemTransaksi=" + entitasItemTransaksi + idPenjualQS, true);
 
-        Http.Response httpResponse = Http.getApi(
+        Http.Response httpResponse = deps.http.getApi(
                 "/Transaksi/getItemTransaksiFromTransaksi/" + idTransaksi + "?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();

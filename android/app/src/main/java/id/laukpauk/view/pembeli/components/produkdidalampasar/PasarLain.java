@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.produkdidalampasar;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -18,6 +20,9 @@ import id.laukpauk.ui.Ui;
 
 /** Port of lib/views/pembeli/components/ProdukDiDalamPasar/PasarLain.dart (Consumer of HeaderViewModel). */
 public class PasarLain extends LinearLayout implements AppState.Listener {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String idPasar;
     private Boolean renderedFor; // the isADJDSet value the current children were built for
 
@@ -31,13 +36,13 @@ public class PasarLain extends LinearLayout implements AppState.Listener {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        AppState.get().addListener(this);
+        deps.appState.addListener(this);
         render();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        AppState.get().removeListener(this);
+        deps.appState.removeListener(this);
         super.onDetachedFromWindow();
     }
 
@@ -48,7 +53,7 @@ public class PasarLain extends LinearLayout implements AppState.Listener {
 
     private void render() {
         final Context ctx = getContext();
-        boolean isADJDSet = AppState.get().isADJDSet();
+        boolean isADJDSet = deps.appState.isADJDSet();
         if (renderedFor != null && renderedFor == isADJDSet) {
             return;
         }
@@ -86,13 +91,13 @@ public class PasarLain extends LinearLayout implements AppState.Listener {
 
     private void tentukanADJD() {
         BaseActivity activity = (BaseActivity) getContext();
-        HeaderModel.adjd(activity, null, null, null, (JsonObject adjdSet) -> {
+        deps.headerModel.adjd(activity, null, null, null, (JsonObject adjdSet) -> {
             String latitude = Json.strOrNull(adjdSet, "latitude");
             String longitude = Json.strOrNull(adjdSet, "longitude");
             String kodeJadwalDelivery = Json.strOrNull(adjdSet, "kodeJadwalDelivery");
 
             if (latitude != null && longitude != null && kodeJadwalDelivery != null) {
-                AppState.get().setADJDSet(true);
+                deps.appState.setADJDSet(true);
             }
         });
     }

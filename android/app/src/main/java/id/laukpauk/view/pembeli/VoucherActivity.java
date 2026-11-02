@@ -39,7 +39,7 @@ public class VoucherActivity extends BaseActivity {
         waiting.addView(Loading.view(this), new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
         setRoot(waiting);
 
-        async(() -> AuthModel.isLogin(), isLogin -> {
+        async(() -> container().authModel.isLogin(), isLogin -> {
             if (isLogin != null && isLogin) {
                 buildScreen();
                 loadVoucher();
@@ -65,9 +65,9 @@ public class VoucherActivity extends BaseActivity {
     private JsonArray getVoucher() {
         String entitasVoucher = "id, foto, minimumBelanja, berlakuMulai, berlakuSampai, maximumUsage";
 
-        String params = HTTPRequest.getQueryString("entitasVoucher=" + entitasVoucher.replace(" ", "%20"), true);
+        String params = container().httpRequest.getQueryString("entitasVoucher=" + entitasVoucher.replace(" ", "%20"), true);
 
-        Http.Response httpResponse = Http.getApi("/User/getVoucher?" + params);
+        Http.Response httpResponse = container().http.getApi("/User/getVoucher?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.array(dataObject, "listVoucher");

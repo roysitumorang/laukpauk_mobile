@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.tokosaya;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -26,6 +28,9 @@ import id.laukpauk.view.penjual.PenjualUi;
  * `statusUbahLokasiBerjualanCallback` receives the result of TokoSayaModel.ubahLokasiBerjualan.
  */
 public class UpdateLokasiBerjualan extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final JsonObject dataPenjual;
     private final Async.Done<Boolean> statusUbahLokasiBerjualanCallback;
 
@@ -99,7 +104,7 @@ public class UpdateLokasiBerjualan extends LinearLayout {
                 final String latitude = Json.str(pinnedLocationMap, "lat");
                 final String longitude = Json.str(pinnedLocationMap, "lng");
 
-                activity.async(() -> ADJDModel.reverseGeocoding(latitude, longitude), pinnedLocationString -> {
+                activity.async(() -> deps.adjdModel.reverseGeocoding(latitude, longitude), pinnedLocationString -> {
                     JsonObject lokasiBaru = new JsonObject();
                     lokasiBaru.addProperty("latitude", latitude);
                     lokasiBaru.addProperty("longitude", longitude);
@@ -126,7 +131,7 @@ public class UpdateLokasiBerjualan extends LinearLayout {
             lokasiBaru.addProperty("idPasarBaru", (String) lokasiBaruBerjualanSelected);
         }
 
-        activity.async(() -> TokoSayaModel.ubahLokasiBerjualan(idPenjual, lokasiBaru), result ->
+        activity.async(() -> deps.tokoSayaModel.ubahLokasiBerjualan(idPenjual, lokasiBaru), result ->
                 statusUbahLokasiBerjualanCallback.run(result));
     }
 }

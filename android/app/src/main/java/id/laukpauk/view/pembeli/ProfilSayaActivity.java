@@ -71,7 +71,7 @@ public class ProfilSayaActivity extends BaseActivity {
         setRoot(root);
 
         showSpinner();
-        async(ProfilSayaModel::getDetailActiveUser, detail -> {
+        async(container().profilSayaModel::getDetailActiveUser, detail -> {
             if (detail == null) {
                 return; // Dart: snapshot without data keeps the spinner
             }
@@ -98,7 +98,7 @@ public class ProfilSayaActivity extends BaseActivity {
 
     /** Dart: initializeTextFieldValue(). */
     private void initializeTextFieldValue() {
-        async(ProfilSayaModel::getDetailActiveUser, detailUser -> {
+        async(container().profilSayaModel::getDetailActiveUser, detailUser -> {
             if (detailUser != null && !Json.isFalse(detailUser)) {
                 fillTextFields(detailUser);
             }
@@ -107,26 +107,26 @@ public class ProfilSayaActivity extends BaseActivity {
 
     private void logout() {
         async(() -> {
-            String cartCode = LocalStorage.getCartCode();
+            String cartCode = container().localStorage.getCartCode();
 
-            String params = HTTPRequest.getQueryString("cartCode=" + cartCode, true);
+            String params = container().httpRequest.getQueryString("cartCode=" + cartCode, true);
 
-            Http.Response httpResponse = Http.getApi("/Auth/removeToken?" + params);
+            Http.Response httpResponse = container().http.getApi("/Auth/removeToken?" + params);
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();
                 if (Json.bool(dataObject, "removeToken")) {
-                    Prefs.remove("authToken");
+                    container().prefs.remove("authToken");
 
                     com.onesignal.OneSignal.logout();
-                    LocalStorage.removeExternalUserID();
+                    container().localStorage.removeExternalUserID();
                     return Boolean.TRUE;
                 }
             }
             return Boolean.FALSE;
         }, removed -> {
             if (removed != null && removed) {
-                TransaksiModel.removeTransactionSession(this, done -> {
-                    AppState.get().setJumlahNotifikasi(0);
+                container().transaksiModel.removeTransactionSession(this, done -> {
+                    container().appState.setJumlahNotifikasi(0);
                     Nav.pushReplacement(this, SplashScreenActivity.class, null);
                 });
             }
@@ -205,7 +205,7 @@ public class ProfilSayaActivity extends BaseActivity {
         return new GantiFotoProfil(this, profilSaya, statusGantiFotoProfil -> {
             if (statusGantiFotoProfil != null && statusGantiFotoProfil) {
                 // setState(() {}) -> the FutureBuilder fetches the profile again
-                async(ProfilSayaModel::getDetailActiveUser, detail -> {
+                async(container().profilSayaModel::getDetailActiveUser, detail -> {
                     if (detail == null || Json.isFalse(detail)) {
                         return;
                     }
@@ -225,7 +225,7 @@ public class ProfilSayaActivity extends BaseActivity {
                 "alamat", alamatController.getText().toString(),
                 "username", usernameController.getText().toString());
 
-        async(() -> ProfilSayaModel.simpanPerubahanDataProfil(dataUser), statusUpdateProfil -> {
+        async(() -> container().profilSayaModel.simpanPerubahanDataProfil(dataUser), statusUpdateProfil -> {
             if (statusUpdateProfil != null && statusUpdateProfil) {
                 initializeTextFieldValue();
             }

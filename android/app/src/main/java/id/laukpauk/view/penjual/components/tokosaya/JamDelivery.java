@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.tokosaya;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -20,6 +22,9 @@ import id.laukpauk.view.penjual.PenjualUi;
 
 /** Port of lib/views/penjual/components/TokoSaya/JamDelivery.dart. */
 public class JamDelivery extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private boolean sixNineSelected = false;
     private boolean nineTwelveSelected = false;
     private boolean thirdTeenSelected = false;
@@ -41,9 +46,9 @@ public class JamDelivery extends LinearLayout {
 
     private void getJadwalDeliveryPenjual() {
         PenjualUi.async(getContext(), () -> {
-            String params = HTTPRequest.getQueryString(null, true);
+            String params = deps.httpRequest.getQueryString(null, true);
 
-            Http.Response httpResponse = Http.getApi("/Penjual/getJadwalDeliveryPenjual?" + params);
+            Http.Response httpResponse = deps.http.getApi("/Penjual/getJadwalDeliveryPenjual?" + params);
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();
                 return Json.array(dataObject, "jadwalDeliveryPenjual");
@@ -78,10 +83,10 @@ public class JamDelivery extends LinearLayout {
             Map<String, String> body = new LinkedHashMap<>();
             body.put("jadwalDeliveryCode", jadwalDeliveryCode);
 
-            String params = HTTPRequest.getQueryString(null, true);
-            Map<String, String> postBody = HTTPRequest.postBody(body);
+            String params = deps.httpRequest.getQueryString(null, true);
+            Map<String, String> postBody = deps.httpRequest.postBody(body);
 
-            Http.Response httpResponse = Http.postApi("/Penjual/toggleJadwalDelivery?" + params, postBody);
+            Http.Response httpResponse = deps.http.postApi("/Penjual/toggleJadwalDelivery?" + params, postBody);
 
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();

@@ -1,5 +1,7 @@
 package id.laukpauk.view.components.penjual;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -32,6 +34,9 @@ import id.laukpauk.view.penjual.TambahProdukActivity;
 
 /** Port of lib/views/components/Penjual/ProdukPenjualCard.dart. */
 public class ProdukPenjualCard extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final JsonObject dataProduk;
     private final Runnable deteksiADJD;
     private final Runnable reload;
@@ -45,7 +50,7 @@ public class ProdukPenjualCard extends LinearLayout {
         this.reload = reload;
         setOrientation(VERTICAL);
         try {
-            currentUserIDState = Integer.parseInt(LocalStorage.getCurrentUserID().trim());
+            currentUserIDState = Integer.parseInt(deps.localStorage.getCurrentUserID().trim());
         } catch (NumberFormatException e) {
             currentUserIDState = null; // Dart: int.parse throws, the state stays null
         }
@@ -60,7 +65,7 @@ public class ProdukPenjualCard extends LinearLayout {
     private JsonElement getLowestPrice() {
         String idProduk = Json.str(dataProduk, "id");
 
-        Http.Response httpResponse = Http.getApi("/Produk/getLowestPriceOfThisProduct/" + idProduk);
+        Http.Response httpResponse = deps.http.getApi("/Produk/getLowestPriceOfThisProduct/" + idProduk);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return dataObject.get("lowestPrice");
@@ -191,11 +196,11 @@ public class ProdukPenjualCard extends LinearLayout {
 
     private void onBeli() {
         final BaseActivity activity = activity();
-        boolean isADJDSet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+        boolean isADJDSet = deps.localStorage.isAlamatDeliveryDanJadwalDeliverySet();
         if (isADJDSet) {
-            ProdukModel.showSatuanProduk(activity, dataProduk, null);
+            deps.produkModel.showSatuanProduk(activity, dataProduk, null);
         } else {
-            ProdukModel.adjdNotSetAlert(activity, lakukanDeteksiADJD -> {
+            deps.produkModel.adjdNotSetAlert(activity, lakukanDeteksiADJD -> {
                 if (lakukanDeteksiADJD != null && lakukanDeteksiADJD) {
                     deteksiADJD.run();
                 }

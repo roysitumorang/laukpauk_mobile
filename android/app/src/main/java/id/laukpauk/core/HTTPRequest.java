@@ -8,31 +8,38 @@ import java.util.Map;
  * call from a background thread.
  */
 public final class HTTPRequest {
-    private HTTPRequest() {}
+    private final AuthModel authModel;
+    private final LocalStorage localStorage;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public HTTPRequest(AuthModel authModel, LocalStorage localStorage) {
+        this.authModel = authModel;
+        this.localStorage = localStorage;
+    }
 
     private static final String versionCodeKey = "versionCode";
 
     /** Dart: HTTPRequest.postBody(body: {...}) - the form map with versionCode added first. */
-    public static Map<String, String> postBody(Map<String, String> body) {
+    public Map<String, String> postBody(Map<String, String> body) {
         Map<String, String> returned = new LinkedHashMap<>();
-        returned.put(versionCodeKey, LocalStorage.getBuildNumber());
+        returned.put(versionCodeKey, localStorage.getBuildNumber());
         if (body != null) {
             returned.putAll(body);
         }
         return returned;
     }
 
-    public static Map<String, String> postBody() {
+    public Map<String, String> postBody() {
         return postBody(null);
     }
 
     /** Dart: getQueryString() -> "versionCode=50600". */
-    public static String getQueryString() {
+    public String getQueryString() {
         return getQueryString(null, false);
     }
 
     /** Dart: getQueryString(params: 'a=1&b=2'). Encode user-typed values with Http.enc(...). */
-    public static String getQueryString(String params) {
+    public String getQueryString(String params) {
         return getQueryString(params, false);
     }
 
@@ -40,12 +47,12 @@ public final class HTTPRequest {
      * Dart: getQueryString(params: ..., authToken: true). With authToken, the stored token is only
      * sent when the server confirms it is still valid (empty token otherwise).
      */
-    public static String getQueryString(String params, boolean authToken) {
-        String returned = versionCodeKey + "=" + LocalStorage.getBuildNumber();
+    public String getQueryString(String params, boolean authToken) {
+        String returned = versionCodeKey + "=" + localStorage.getBuildNumber();
 
         if (authToken) {
-            boolean loggedIn = AuthModel.isLogin();
-            String token = loggedIn ? LocalStorage.getAuthToken() : "";
+            boolean loggedIn = authModel.isLogin();
+            String token = loggedIn ? localStorage.getAuthToken() : "";
             returned = returned + "&authToken=" + token;
         }
 

@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -9,21 +11,28 @@ import id.laukpauk.core.Json;
 
 /** Port of lib/models/HistoriPenjualanModel.dart. Every method is BLOCKING (network). */
 public final class HistoriPenjualanModel {
-    private HistoriPenjualanModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public HistoriPenjualanModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
     /**
      * Dart: getHistoriPenjualan({String? idPenjual, String? select, String? statusTransaksi})
      * -> Future&lt;List&gt;. Every argument may be null.
      */
-    public static JsonArray getHistoriPenjualan(String idPenjual, String select,
+    public JsonArray getHistoriPenjualan(String idPenjual, String select,
                                                 String statusTransaksi) {
         String idPenjualPath = (idPenjual == null) ? "" : "/" + idPenjual;
 
         String selectTransaksi = (select == null) ? "" : "selectTransaksi=" + select;
         String statusTransaksiQS = (statusTransaksi == null) ? "" : "&statusTransaksi=" + statusTransaksi;
 
-        String params = HTTPRequest.getQueryString(selectTransaksi + statusTransaksiQS, true);
-        Http.Response httpResponse = Http.getApi(
+        String params = httpRequest.getQueryString(selectTransaksi + statusTransaksiQS, true);
+        Http.Response httpResponse = http.getApi(
                 "/Penjual/getHistoriPenjualan" + idPenjualPath + "?" + params);
 
         if (httpResponse.statusCode == 200) {
@@ -34,16 +43,16 @@ public final class HistoriPenjualanModel {
         return new JsonArray();
     }
 
-    public static JsonArray getHistoriPenjualan() {
+    public JsonArray getHistoriPenjualan() {
         return getHistoriPenjualan(null, null, null);
     }
 
     /** Dart: getTotalTransaksiForThisPenjual(idTransaksi, {String? idPenjual}) -> Future&lt;int&gt;. `idPenjual` may be null. */
-    public static int getTotalTransaksiForThisPenjual(String idTransaksi, String idPenjual) {
-        String params = HTTPRequest.getQueryString(null, true);
+    public int getTotalTransaksiForThisPenjual(String idTransaksi, String idPenjual) {
+        String params = httpRequest.getQueryString(null, true);
         String idPenjualPath = (idPenjual == null) ? "" : "/" + idPenjual;
 
-        Http.Response httpResponse = Http.getApi(
+        Http.Response httpResponse = http.getApi(
                 "/Transaksi/getTotalTransaksiForThisPenjual/" + idTransaksi + idPenjualPath + "?" + params);
 
         if (httpResponse.statusCode == 200) {
@@ -54,7 +63,7 @@ public final class HistoriPenjualanModel {
         return 0;
     }
 
-    public static int getTotalTransaksiForThisPenjual(String idTransaksi) {
+    public int getTotalTransaksiForThisPenjual(String idTransaksi) {
         return getTotalTransaksiForThisPenjual(idTransaksi, null);
     }
 }

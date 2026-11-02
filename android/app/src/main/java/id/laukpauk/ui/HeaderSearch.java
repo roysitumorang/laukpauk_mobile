@@ -1,5 +1,7 @@
 package id.laukpauk.ui;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -42,6 +44,9 @@ import id.laukpauk.view.pembeli.components.homepage.ProdukPasarSekitar;
  * (showDialog(useSafeArea: false)). Use {@link #show(Activity)}.
  */
 public class HeaderSearch extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final Runnable onBack;
     private final EditText pencarianField;
     private final ImageView cancelButton;
@@ -184,9 +189,9 @@ public class HeaderSearch extends LinearLayout {
         final FrameLayout pasarHolder = new FrameLayout(ctx);
         pasarHolder.addView(Loading.view(ctx, null, null, 25f, 25f), new FrameLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
         column.addView(pasarHolder, new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
-        final boolean isADJDSet = AppState.get().isADJDSet();
-        final JsonObject savedADJD = AppState.get().getSavedADJD();
-        Async.run(() -> HomepageModel.getDataPasar(isADJDSet, false, 1, null, savedADJD), (JsonArray dataPasar) -> {
+        final boolean isADJDSet = deps.appState.isADJDSet();
+        final JsonObject savedADJD = deps.appState.getSavedADJD();
+        deps.async.run(() -> deps.homepageModel.getDataPasar(isADJDSet, false, 1, null, savedADJD), (JsonArray dataPasar) -> {
             pasarHolder.removeAllViews();
             if (dataPasar != null) {
                 pasarHolder.addView(new ProdukPasarSekitar(ctx, dataPasar),
@@ -198,7 +203,7 @@ public class HeaderSearch extends LinearLayout {
         final FrameLayout kontenHolder = new FrameLayout(ctx);
         kontenHolder.addView(Loading.view(ctx), new FrameLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
         column.addView(kontenHolder, new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
-        Async.run(() -> KontenModel.getKontenAplikasi("headersearch"), (JsonArray dataKonten) -> {
+        deps.async.run(() -> deps.kontenModel.getKontenAplikasi("headersearch"), (JsonArray dataKonten) -> {
             kontenHolder.removeAllViews();
             if (dataKonten == null || dataKonten.size() < 1) {
                 return;
@@ -218,7 +223,7 @@ public class HeaderSearch extends LinearLayout {
                 final FrameLayout itemHolder = new FrameLayout(ctx);
                 itemHolder.addView(Loading.view(ctx), new FrameLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
                 item.addView(itemHolder, new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
-                Async.run(() -> KontenModel.getProdukKonten(idKonten), (JsonArray kontenItem) -> {
+                deps.async.run(() -> deps.kontenModel.getProdukKonten(idKonten), (JsonArray kontenItem) -> {
                     itemHolder.removeAllViews();
                     if (kontenItem == null || kontenItem.size() < 1) {
                         return;

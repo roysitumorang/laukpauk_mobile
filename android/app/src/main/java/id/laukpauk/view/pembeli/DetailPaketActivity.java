@@ -70,8 +70,8 @@ public class DetailPaketActivity extends BaseActivity {
     private void load() {
         async(() -> {
             Loaded l = new Loaded();
-            l.currentUserID = LocalStorage.getCurrentUserID();
-            l.detailPaket = PaketModel.detailPaket(idPaket);
+            l.currentUserID = container().localStorage.getCurrentUserID();
+            l.detailPaket = container().paketModel.detailPaket(idPaket);
             return l;
         }, data -> {
             currentUserIDState = data.currentUserID != null ? data.currentUserID : "";
@@ -196,40 +196,40 @@ public class DetailPaketActivity extends BaseActivity {
     }
 
     private void updateJumlahCart() {
-        Async.run(() -> HeaderModel.getJumlahCart(), (Integer jumlahKeranjang) -> {
+        container().async.run(() -> container().headerModel.getJumlahCart(), (Integer jumlahKeranjang) -> {
             if (jumlahKeranjang != null) {
-                AppState.get().setJumlahCart(jumlahKeranjang);
+                container().appState.setJumlahCart(jumlahKeranjang);
             }
         });
     }
 
     private void onBeliOrEdit(boolean isItMyProduct) {
         if (!isItMyProduct) {
-            boolean isADJDSet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+            boolean isADJDSet = container().localStorage.isAlamatDeliveryDanJadwalDeliverySet();
             if (isADJDSet) {
-                async(() -> PaketModel.addToCart(idPaket), statusAddToCart -> {
+                async(() -> container().paketModel.addToCart(idPaket), statusAddToCart -> {
                     if (statusAddToCart != null && statusAddToCart) {
                         String snackbarText = "Berhasil menambahkan paket ke dalam keranjang";
-                        PaketModel.addToCartSnackBar(this, snackbarText);
+                        container().paketModel.addToCartSnackBar(this, snackbarText);
                         updateJumlahCart();
                     }
                 });
             } else {
-                ProdukModel.adjdNotSetAlert(this, tentukanADJD -> {
+                container().produkModel.adjdNotSetAlert(this, tentukanADJD -> {
                     if (tentukanADJD != null && tentukanADJD) {
-                        HeaderModel.adjd(this, null, null, null, (JsonObject adjdSet) -> {
+                        container().headerModel.adjd(this, null, null, null, (JsonObject adjdSet) -> {
                             String latitude = Json.strOrNull(adjdSet, "latitude");
                             String longitude = Json.strOrNull(adjdSet, "longitude");
                             String jadwalDeliveryCode = Json.strOrNull(adjdSet, "kodeJadwalDelivery");
 
                             if (latitude != null && longitude != null && jadwalDeliveryCode != null) {
-                                async(() -> PaketModel.addToCart(idPaket), statusAddToCart -> {
+                                async(() -> container().paketModel.addToCart(idPaket), statusAddToCart -> {
                                     boolean ok = statusAddToCart != null && statusAddToCart;
                                     String text = ok ? "Produk berhasil ditambahkan ke keranjang !"
                                             : "Produk gagal ditambahkan ke keranjang, silahkan coba lagi.";
                                     DetailSnack.show(this, text, 1, Ui.hb(this) * 3.25f);
                                     updateJumlahCart();
-                                    AppState.get().setADJDSet(true);
+                                    container().appState.setADJDSet(true);
                                 });
                             }
                         });

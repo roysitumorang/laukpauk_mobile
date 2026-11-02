@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,12 +16,19 @@ import id.laukpauk.element.Gift;
 
 /** Port of lib/models/GiftModel.dart. Both methods are BLOCKING (network). */
 public final class GiftModel {
-    private GiftModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
 
-    public static List<Gift> getGifts() {
-        String params = HTTPRequest.getQueryString();
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public GiftModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
-        Http.Response httpResponse = Http.getApi("/Gift/getGift?" + params);
+    public List<Gift> getGifts() {
+        String params = httpRequest.getQueryString();
+
+        Http.Response httpResponse = http.getApi("/Gift/getGift?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
 
@@ -36,10 +45,10 @@ public final class GiftModel {
     }
 
     /** null when the gift does not exist (the API answers `false`) or the request failed. */
-    public static Gift getGift(String idGift) {
-        String params = HTTPRequest.getQueryString();
+    public Gift getGift(String idGift) {
+        String params = httpRequest.getQueryString();
 
-        Http.Response httpResponse = Http.getApi("/Gift/getGift/" + idGift + "?" + params);
+        Http.Response httpResponse = http.getApi("/Gift/getGift/" + idGift + "?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
 

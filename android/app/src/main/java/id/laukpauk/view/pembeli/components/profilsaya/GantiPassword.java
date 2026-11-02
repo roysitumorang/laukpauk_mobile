@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.profilsaya;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -27,6 +29,9 @@ import id.laukpauk.view.pembeli.UserAndDashboardActivity;
 
 /** Port of lib/views/pembeli/components/ProfilSaya/GantiPassword.dart. */
 public class GantiPassword extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final BaseActivity activity;
 
     private EditText passwordLamaController;
@@ -50,9 +55,9 @@ public class GantiPassword extends LinearLayout {
         dataUser.put("konfirmasiPasswordBaru", ulangiPasswordBaruController.getText().toString());
 
         activity.async(() -> {
-            String params = HTTPRequest.getQueryString(null, true);
-            Map<String, String> body = HTTPRequest.postBody(dataUser);
-            Http.Response httpResponse = Http.postApi("/User/gantiPassword?" + params, body);
+            String params = deps.httpRequest.getQueryString(null, true);
+            Map<String, String> body = deps.httpRequest.postBody(dataUser);
+            Http.Response httpResponse = deps.http.postApi("/User/gantiPassword?" + params, body);
             if (httpResponse.statusCode == 200) {
                 return Boolean.valueOf(Json.bool(httpResponse.jsonObject(), "statusGantiPassword"));
             }

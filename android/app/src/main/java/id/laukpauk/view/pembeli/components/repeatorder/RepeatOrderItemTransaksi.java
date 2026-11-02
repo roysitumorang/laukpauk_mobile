@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.repeatorder;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -31,6 +33,9 @@ import id.laukpauk.view.pembeli.components.detailtransaksi.TransaksiUi;
 
 /** Port of lib/views/pembeli/components/RepeatOrder/RepeatOrderItemTransaksi.dart. */
 public class RepeatOrderItemTransaksi extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final BaseActivity activity;
     private final String idTransaksi;
     private final Runnable onRefresh;
@@ -49,7 +54,7 @@ public class RepeatOrderItemTransaksi extends FrameLayout {
 
         // Center(SizedBox(15x15, CircularProgressIndicator(strokeWidth: 1.5)))
         addView(DetailUi.smallSpinner(ctx, 15f), new LayoutParams(Ui.MATCH, Ui.MATCH));
-        activity.async(() -> ROModel.getItemTransaksiPerPenjual(idTransaksi), this::showItems);
+        activity.async(() -> deps.roModel.getItemTransaksiPerPenjual(idTransaksi), this::showItems);
     }
 
     private void showItems(JsonArray itemTransaksiState) {
@@ -148,7 +153,7 @@ public class RepeatOrderItemTransaksi extends FrameLayout {
         for (String s : selectedSellers) {
             sellers.add(s);
         }
-        activity.async(() -> ROModel.addToCartThesePenjual(idTransaksi, sellers), addToCartResponse -> {
+        activity.async(() -> deps.roModel.addToCartThesePenjual(idTransaksi, sellers), addToCartResponse -> {
             String text = "Gagal menambahkan ke keranjang belanjaan, coba lagi!";
 
             final boolean statusAddToCart = Json.bool(addToCartResponse, "statusAddCart");
@@ -168,8 +173,8 @@ public class RepeatOrderItemTransaksi extends FrameLayout {
                     () -> Nav.push(getContext(), KeranjangActivity.class, null));
 
             if (statusAddToCart) {
-                activity.async(() -> HeaderModel.getJumlahCart(), jumlahCart -> {
-                    AppState.get().setJumlahCart(jumlahCart);
+                activity.async(() -> deps.headerModel.getJumlahCart(), jumlahCart -> {
+                    deps.appState.setJumlahCart(jumlahCart);
                     isProcessingRO = false;
                     updateFab();
                 });

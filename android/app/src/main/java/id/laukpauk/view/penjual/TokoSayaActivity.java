@@ -45,12 +45,12 @@ public class TokoSayaActivity extends BaseActivity {
 
     /** Dart getDetailToko(): the `detailPenjual` entry (an object) or null (= false). BLOCKING. */
     private JsonObject getDetailToko() {
-        String params = HTTPRequest.getQueryString(null, true);
+        String params = container().httpRequest.getQueryString(null, true);
 
-        int idPenjualInt = LocalStorage.getIdPenjualFromActiveUser();
+        int idPenjualInt = container().localStorage.getIdPenjualFromActiveUser();
         String idPenjual = String.valueOf(idPenjualInt);
 
-        Http.Response httpResponse = Http.getApi("/Penjual/getDetailPenjual/" + idPenjual + "?" + params);
+        Http.Response httpResponse = container().http.getApi("/Penjual/getDetailPenjual/" + idPenjual + "?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -86,7 +86,7 @@ public class TokoSayaActivity extends BaseActivity {
     private void load() {
         async(() -> {
             Loaded loaded = new Loaded();
-            loaded.isLogin = AuthModel.isLogin();
+            loaded.isLogin = container().authModel.isLogin();
             if (loaded.isLogin) {
                 loaded.dataPenjual = getDetailToko();
             }
@@ -181,7 +181,7 @@ public class TokoSayaActivity extends BaseActivity {
         }
         lokasi.addView(Ui.spaceW(this, 5));
         ImageView pin = Ui.icon(this, R.drawable.ic_pin_drop, hb * 4.5f, CustomColors.textPrimary);
-        Ui.onTap(pin, () -> TokoSayaModel.showModalUbahLokasiBerjualan(this, dataPenjual,
+        Ui.onTap(pin, () -> container().tokoSayaModel.showModalUbahLokasiBerjualan(this, dataPenjual,
                 statusUpdateLokasiBerjualan -> {
                     if (statusUpdateLokasiBerjualan != null) {
                         String message = statusUpdateLokasiBerjualan ? "Berhasil mengubah lokasi berjualan."

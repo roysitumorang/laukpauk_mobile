@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.checkout;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
@@ -30,6 +32,9 @@ import id.laukpauk.ui.Ui;
  * The promo-code text field (a State field in Dart) survives updates.
  */
 public class RingkasanPembayaran extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
 
     /** Dart: void Function(Map dataVoucher, String statusVoucher). */
     public interface VoucherSelected {
@@ -346,10 +351,10 @@ public class RingkasanPembayaran extends LinearLayout {
         if (a == null) {
             return;
         }
-        CheckoutModel.showVoucher(a, (int) totalBelanja, usedVoucher, (JsonObject selectedVoucher) -> {
+        deps.checkoutModel.showVoucher(a, (int) totalBelanja, usedVoucher, (JsonObject selectedVoucher) -> {
             final String idSelectedVoucher = Json.str(selectedVoucher, "id");
-            a.async(() -> LocalStorage.getStatusVoucher(idSelectedVoucher), (String status) -> {
-                LocalStorage.setUsedVoucher(idSelectedVoucher);
+            a.async(() -> deps.localStorage.getStatusVoucher(idSelectedVoucher), (String status) -> {
+                deps.localStorage.setUsedVoucher(idSelectedVoucher);
                 if (onVoucherSelected != null) {
                     onVoucherSelected.run(selectedVoucher, status);
                 }

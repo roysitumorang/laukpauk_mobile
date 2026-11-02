@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -30,6 +32,9 @@ import id.laukpauk.view.pembeli.SemuaPasarActivity;
  * isADJDSet / savedADJD) or the search text changes.
  */
 public class PasarSekitarSaya extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final boolean showPilihLokasiLain;
     private final boolean showTitle;
     private final boolean showAll;
@@ -74,7 +79,7 @@ public class PasarSekitarSaya extends LinearLayout {
     }
 
     private String stateKey() {
-        AppState s = AppState.get();
+        AppState s = deps.appState;
         return s.isADJDSet() + "|" + (s.getSavedADJD() == null ? "" : Json.toJson(s.getSavedADJD()));
     }
 
@@ -94,12 +99,12 @@ public class PasarSekitarSaya extends LinearLayout {
 
     private void load() {
         lastKey = stateKey();
-        final boolean isADJDSet = AppState.get().isADJDSet();
-        final JsonObject savedADJD = AppState.get().getSavedADJD();
+        final boolean isADJDSet = deps.appState.isADJDSet();
+        final JsonObject savedADJD = deps.appState.getSavedADJD();
         final String search = pencarian;
         final int mine = ++requestCounter;
         HomeUi.act(getContext()).async(
-                () -> HomepageModel.getDataPasar(isADJDSet, showAll, 2, search, savedADJD),
+                () -> deps.homepageModel.getDataPasar(isADJDSet, showAll, 2, search, savedADJD),
                 result -> {
                     if (mine != requestCounter) {
                         return;
@@ -145,8 +150,8 @@ public class PasarSekitarSaya extends LinearLayout {
 
         if (showPilihLokasiLain) {
             addView(CustomButton.button(ctx, "Pilih Lokasi Lain", () -> {
-                ADJDModel.deleteAlamatDanJadwalDelivery();
-                HeaderModel.adjd(act, null, null, null, null);
+                deps.adjdModel.deleteAlamatDanJadwalDelivery();
+                deps.headerModel.adjd(act, null, null, null, null);
             }, new CustomButton.Opts().size(CustomButton.smSize).pill().color(CustomButton.themeColor)),
                     new LayoutParams(Ui.WRAP, Ui.WRAP));
         }
@@ -210,7 +215,7 @@ public class PasarSekitarSaya extends LinearLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        AppState.get().addListener(listener);
+        deps.appState.addListener(listener);
         if (built && !stateKey().equals(lastKey)) {
             load();
         }
@@ -218,7 +223,7 @@ public class PasarSekitarSaya extends LinearLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        AppState.get().removeListener(listener);
+        deps.appState.removeListener(listener);
         super.onDetachedFromWindow();
     }
 }

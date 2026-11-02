@@ -194,7 +194,7 @@ public class EditSatuanProdukActivity extends BaseActivity {
         dataSatuanProduk.addProperty("jenisHarga", jenisHarga);
         dataSatuanProduk.addProperty("keterangan", keteranganController.getText().toString());
 
-        async(() -> UpdateHargaModel.editSatuanProduk(idSatuan, dataSatuanProduk),
+        async(() -> container().updateHargaModel.editSatuanProduk(idSatuan, dataSatuanProduk),
                 statusEditSatuan -> finishWithResult(statusEditSatuan));
     }
 }

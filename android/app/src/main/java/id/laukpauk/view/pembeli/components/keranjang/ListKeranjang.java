@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.keranjang;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -27,6 +29,9 @@ import id.laukpauk.view.penjual.PesananScreenUi;
  * this view a weighted/MATCH layout).
  */
 public class ListKeranjang extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public ListKeranjang(Context ctx, JsonArray dataKeranjangPerPenjual, final Runnable onRefresh,
                          final Async.Done<String> onRemoveItemSuccessed, final Runnable onEditItemSuccessed) {
         super(ctx);
@@ -59,7 +64,7 @@ public class ListKeranjang extends FrameLayout {
 
             // FutureBuilder<String>(future: LocalStorage.getCartCode()) -> GiftTransaksiPembeli(cartCode, useCard: true)
             final Context c = ctx;
-            PesananScreenUi.run(ctx, () -> LocalStorage.getCartCode(), (String cartCode) -> {
+            PesananScreenUi.run(ctx, () -> deps.localStorage.getCartCode(), (String cartCode) -> {
                 if (cartCode != null) {
                     giftHolder.addView(new GiftTransaksiPembeli(c, null, cartCode, false, true),
                             new FrameLayout.LayoutParams(Ui.MATCH, Ui.WRAP));

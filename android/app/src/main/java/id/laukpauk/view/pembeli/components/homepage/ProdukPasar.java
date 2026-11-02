@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,6 +24,9 @@ import id.laukpauk.view.pembeli.components.produkdidalampasar.ProdukInThisPasarI
 
 /** Port of class ProdukPasar in lib/views/pembeli/components/HomePage/ProdukPasarSekitar.dart. */
 public class ProdukPasar extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public ProdukPasar(final Context ctx, JsonObject pasar) {
         super(ctx);
         setOrientation(VERTICAL);
@@ -74,7 +79,7 @@ public class ProdukPasar extends LinearLayout {
         addView(produkHolder, new LayoutParams(Ui.MATCH, Ui.WRAP));
 
         final float ww = hb * 35;
-        act.async(() -> PasarModel.getProdukInThisPasar(idPasar, "y", "0", null), (JsonArray produkPasar) -> {
+        act.async(() -> deps.pasarModel.getProdukInThisPasar(idPasar, "y", "0", null), (JsonArray produkPasar) -> {
             produkHolder.removeAllViews();
             LinearLayout list = new LinearLayout(ctx);
             list.setOrientation(HORIZONTAL);

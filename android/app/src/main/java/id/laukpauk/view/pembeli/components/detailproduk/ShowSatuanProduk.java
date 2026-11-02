@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.detailproduk;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -26,6 +28,9 @@ import id.laukpauk.ui.Ui;
  * "Pilihan Satuan" bottom sheet opened by ProdukModel.showSatuanProduk).
  */
 public class ShowSatuanProduk extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String idProduk;
     private final Async.Done<JsonObject> addCartCallback;
 
@@ -156,7 +161,7 @@ public class ShowSatuanProduk extends FrameLayout {
         final String qty = quantity;
         final String promo = idPromo;
         ((BaseActivity) getContext()).async(
-                () -> ProdukModel.addToCart(idProduk, satuan, qty, promo),
+                () -> deps.produkModel.addToCart(idProduk, satuan, qty, promo),
                 response -> {
                     if (addCartCallback != null) {
                         addCartCallback.run(response);

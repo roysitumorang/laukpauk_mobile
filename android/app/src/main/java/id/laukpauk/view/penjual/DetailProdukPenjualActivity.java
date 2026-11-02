@@ -56,9 +56,9 @@ public class DetailProdukPenjualActivity extends BaseActivity {
     /** Dart getDetailProduk(): the detail object or null (= false). BLOCKING. */
     private JsonObject getDetailProduk() {
         if (isSatuan()) {
-            String params = HTTPRequest.getQueryString("idProduk=" + id);
+            String params = container().httpRequest.getQueryString("idProduk=" + id);
 
-            Http.Response httpResponse = Http.getApi("/Produk/getHargaProduk?" + params);
+            Http.Response httpResponse = container().http.getApi("/Produk/getHargaProduk?" + params);
 
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();
@@ -66,9 +66,9 @@ public class DetailProdukPenjualActivity extends BaseActivity {
                 return Json.isObject(detail) ? Json.obj(detail) : null;
             }
         } else {
-            String params = HTTPRequest.getQueryString("idPaket=" + id);
+            String params = container().httpRequest.getQueryString("idPaket=" + id);
 
-            Http.Response httpResponse = Http.getApi("/Produk/detailPaket?" + params);
+            Http.Response httpResponse = container().http.getApi("/Produk/detailPaket?" + params);
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();
                 JsonElement detail = dataObject.get("detailPaket");
@@ -81,7 +81,7 @@ public class DetailProdukPenjualActivity extends BaseActivity {
 
     /** Dart getKategoriProduk(). BLOCKING. */
     private JsonArray getKategoriProduk() {
-        Http.Response httpResponse = Http.getApi("/KategoriProduk/getKategoriProduk");
+        Http.Response httpResponse = container().http.getApi("/KategoriProduk/getKategoriProduk");
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -185,7 +185,7 @@ public class DetailProdukPenjualActivity extends BaseActivity {
         toggle.setOnClickListener(v -> {
             // The Flutter Switch only changes with its `value`: undo the local flip until the server agreed.
             toggle.setChecked(!toggle.isChecked());
-            async(() -> ProdukPenjualModel.toggleProdukPalingLaris(id, jenisProduk), statusToggleProdukPalingLaris -> {
+            async(() -> container().produkPenjualModel.toggleProdukPalingLaris(id, jenisProduk), statusToggleProdukPalingLaris -> {
                 if (statusToggleProdukPalingLaris) {
                     load();
                 }
@@ -257,7 +257,7 @@ public class DetailProdukPenjualActivity extends BaseActivity {
             TextView simpan = PenjualUi.textButton(this, "Simpan Perubahan Deskripsi Produk", hb * 3f,
                     CustomColors.green, false, () -> {
                         final String text = deskripsiProdukController.getText().toString();
-                        async(() -> ProdukPenjualModel.ubahDeskripsiProduk(id, jenisProduk, text),
+                        async(() -> container().produkPenjualModel.ubahDeskripsiProduk(id, jenisProduk, text),
                                 statusUbahDeskripsiProduk -> {
                                     if (statusUbahDeskripsiProduk) {
                                         isUpdateDeskripsiProduk = false;
@@ -300,7 +300,7 @@ public class DetailProdukPenjualActivity extends BaseActivity {
             col.addView(Ui.spaceH(this, 5));
             col.addView(PenjualUi.dropdown(this, values, labels, kategoriProdukSelected, dropdownSp, selected -> {
                 final String idProduk = Json.str(detail, "id");
-                async(() -> ProdukPenjualModel.ubahKategoriProduk(idProduk, selected), statusUbahKategoriProduk -> {
+                async(() -> container().produkPenjualModel.ubahKategoriProduk(idProduk, selected), statusUbahKategoriProduk -> {
                     if (statusUbahKategoriProduk) {
                         load();
                     } else {

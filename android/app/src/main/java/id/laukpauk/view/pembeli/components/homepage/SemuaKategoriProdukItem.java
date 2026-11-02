@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -20,6 +22,9 @@ import id.laukpauk.view.pembeli.ListProdukActivity;
 
 /** Port of lib/views/pembeli/components/HomePage/SemuaKategoriProdukItem.dart. */
 public class SemuaKategoriProdukItem extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public SemuaKategoriProdukItem(final Context ctx, JsonObject dataKategori) {
         super(ctx);
         final BaseActivity act = HomeUi.act(ctx);
@@ -45,7 +50,7 @@ public class SemuaKategoriProdukItem extends FrameLayout {
         lp.setMargins(Ui.dp(ctx, 7.5f), 0, Ui.dp(ctx, 7.5f), Ui.dp(ctx, 7.5f));
         addView(label, lp);
 
-        Ui.onTap(this, () -> act.async(() -> KategoriProdukModel.getProdukInThisCategory(idKategoriProduk),
+        Ui.onTap(this, () -> act.async(() -> deps.kategoriProdukModel.getProdukInThisCategory(idKategoriProduk),
                 productInThisCategory -> {
                     String title = "Daftar Produk";
                     String subTitle = "Berikut ini adalah produk di dalam kategori \"" + nama.toUpperCase() + "\"";

@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -29,13 +31,32 @@ import id.laukpauk.view.pembeli.components.detailproduk.ShowSatuanProduk;
 
 /** Port of lib/models/ProdukModel.dart. */
 public final class ProdukModel {
-    private ProdukModel() {}
+    private final AppState appState;
+    private final Async async;
+    private final AuthModel authModel;
+    private final HTTPRequest httpRequest;
+    private final Http http;
+    private final LocalStorage localStorage;
+    private final HeaderModel headerModel;
+    private final SettingModel settingModel;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public ProdukModel(AppState appState, Async async, AuthModel authModel, HTTPRequest httpRequest, Http http, LocalStorage localStorage, HeaderModel headerModel, SettingModel settingModel) {
+        this.appState = appState;
+        this.async = async;
+        this.authModel = authModel;
+        this.httpRequest = httpRequest;
+        this.http = http;
+        this.localStorage = localStorage;
+        this.headerModel = headerModel;
+        this.settingModel = settingModel;
+    }
 
     /**
      * Dart: adjdNotSetAlert(context, {namaProduk = ''}) -> Future&lt;bool?&gt;.
      * `done` receives true ("Pilih Jadwal"), false ("Tutup") or null.
      */
-    public static void adjdNotSetAlert(final BaseActivity activity, String namaProduk,
+    public void adjdNotSetAlert(final BaseActivity activity, String namaProduk,
                                        Async.Done<Boolean> done) {
         String title = "Pilih Jadwal Dulu";
         String subTitle = "Untuk bisa order sayur, ikan, daging segar, tentukan lokasi pengantaran dulu ya...";
@@ -48,7 +69,7 @@ public final class ProdukModel {
         CustomAlert.<Boolean>textComponent(activity, null, title, subTitle, actions, null, false, done);
     }
 
-    public static void adjdNotSetAlert(BaseActivity activity, Async.Done<Boolean> done) {
+    public void adjdNotSetAlert(BaseActivity activity, Async.Done<Boolean> done) {
         adjdNotSetAlert(activity, "", done);
     }
 
@@ -64,14 +85,14 @@ public final class ProdukModel {
      * bottom sheet with ShowSatuanProduk; like the Dart code `done` runs as soon as the sheet is
      * shown (the sheet itself is not awaited). `dataPromo` is accepted but unused (as in Dart).
      */
-    public static void showSatuanProduk(final BaseActivity activity, final JsonObject dataProduk,
+    public void showSatuanProduk(final BaseActivity activity, final JsonObject dataProduk,
                                         JsonObject dataPromo, final Async.Done<Void> done) {
         final String idProduk = Json.str(dataProduk, "id");
 
         activity.async(() -> {
             SatuanData data = new SatuanData();
 
-            JsonObject adjdSet = LocalStorage.getSavedLatitudeAndLongitude();
+            JsonObject adjdSet = localStorage.getSavedLatitudeAndLongitude();
             String latitude = Json.strOrNull(adjdSet, "latitude");
             String longitude = Json.strOrNull(adjdSet, "longitude");
             String jadwalDeliveryCode = Json.strOrNull(adjdSet, "jadwalDeliveryCode");
@@ -79,7 +100,7 @@ public final class ProdukModel {
             if (latitude != null && longitude != null && jadwalDeliveryCode != null) {
                 data.isThisProductInCAVariable = isThisProductInCA(idProduk, latitude, longitude);
                 data.isPenjualAvailable = isProductSellerAvailable(idProduk, jadwalDeliveryCode);
-                JsonElement getCostPerKM = SettingModel.getSettingValue("costPerKm");
+                JsonElement getCostPerKM = settingModel.getSettingValue("costPerKm");
                 if (getCostPerKM != null && !Json.isFalse(getCostPerKM) && !Json.isNull(getCostPerKM)) {
                     int costPerKM = Json.parseInt(Json.asStr(getCostPerKM), Integer.MIN_VALUE);
                     if (costPerKM != Integer.MIN_VALUE) {
@@ -117,13 +138,13 @@ public final class ProdukModel {
         });
     }
 
-    public static void showSatuanProduk(BaseActivity activity, JsonObject dataProduk,
+    public void showSatuanProduk(BaseActivity activity, JsonObject dataProduk,
                                         Async.Done<Void> done) {
         showSatuanProduk(activity, dataProduk, null, done);
     }
 
     /** The addCartCallback of ShowSatuanProduk (after the sheet was popped). */
-    private static void onAddToCartResponse(final BaseActivity activity, JsonObject addToCartResponse) {
+    private void onAddToCartResponse(final BaseActivity activity, JsonObject addToCartResponse) {
         if (addToCartResponse == null) {
             return;
         }
@@ -131,9 +152,9 @@ public final class ProdukModel {
         if (statusAddCart) {
             ShopModelUi.keranjangSnackbar(activity, "Berhasil ditambahkan ke dalam keranjang !", 2);
 
-            Async.run(() -> HeaderModel.getJumlahCart(), (Integer jumlahKeranjang) -> {
+            async.run(() -> headerModel.getJumlahCart(), (Integer jumlahKeranjang) -> {
                 if (jumlahKeranjang != null) {
-                    AppState.get().setJumlahCart(jumlahKeranjang);
+                    appState.setJumlahCart(jumlahKeranjang);
                 }
             });
         } else {
@@ -160,14 +181,14 @@ public final class ProdukModel {
      * Dart: addToCart(idProduk, idSatuan, quantity, {idPromo}) -> Future&lt;Map?&gt;. BLOCKING.
      * Null when the request failed (or no delivery schedule is saved).
      */
-    public static JsonObject addToCart(String idProduk, String idSatuan, String quantity,
+    public JsonObject addToCart(String idProduk, String idSatuan, String quantity,
                                        String idPromo) {
-        boolean isLoggedIn = AuthModel.isLogin();
+        boolean isLoggedIn = authModel.isLogin();
 
-        String cartCode = LocalStorage.getCartCode();
+        String cartCode = localStorage.getCartCode();
 
-        JsonObject jadwalDeliveryTerpilih = LocalStorage.savedJadwalDeliveryMap();
-        JsonObject savedADJD = LocalStorage.getSavedLatitudeAndLongitude();
+        JsonObject jadwalDeliveryTerpilih = localStorage.savedJadwalDeliveryMap();
+        JsonObject savedADJD = localStorage.getSavedLatitudeAndLongitude();
 
         String dayDelivery = (jadwalDeliveryTerpilih != null)
                 ? Json.str(jadwalDeliveryTerpilih, "day")
@@ -190,13 +211,13 @@ public final class ProdukModel {
             cartData.put("idPromo", idPromo);
         }
         if (isLoggedIn) {
-            String currentUserID = LocalStorage.getCurrentUserID();
+            String currentUserID = localStorage.getCurrentUserID();
             cartData.put("idUser", currentUserID);
         }
 
-        Map<String, String> body = HTTPRequest.postBody(cartData);
+        Map<String, String> body = httpRequest.postBody(cartData);
 
-        Http.Response httpResponse = Http.postApi("/Keranjang/saveCart", body);
+        Http.Response httpResponse = http.postApi("/Keranjang/saveCart", body);
 
         if (httpResponse.statusCode == 200) {
             return httpResponse.jsonObject();
@@ -204,16 +225,16 @@ public final class ProdukModel {
         return null;
     }
 
-    public static JsonObject addToCart(String idProduk, String idSatuan, String quantity) {
+    public JsonObject addToCart(String idProduk, String idSatuan, String quantity) {
         return addToCart(idProduk, idSatuan, quantity, null);
     }
 
     /** Dart: isThisProductInCA(idProduk, {latitude, longitude}) -> Future&lt;bool?&gt;. BLOCKING. */
-    public static Boolean isThisProductInCA(String idProduk, String latitude, String longitude) {
-        String params = HTTPRequest.getQueryString(
+    public Boolean isThisProductInCA(String idProduk, String latitude, String longitude) {
+        String params = httpRequest.getQueryString(
                 "idProduk=" + idProduk + "&latitude=" + latitude + "&longitude=" + longitude);
 
-        Http.Response httpResponse = Http.getApi("/Produk/isThisProductInCA?" + params);
+        Http.Response httpResponse = http.getApi("/Produk/isThisProductInCA?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject serverResponse = httpResponse.jsonObject();
@@ -223,11 +244,11 @@ public final class ProdukModel {
     }
 
     /** Dart: isProductSellerAvailable(idProduk, {jadwalDeliveryCode}) -> Future&lt;bool?&gt;. BLOCKING. */
-    public static Boolean isProductSellerAvailable(String idProduk, String jadwalDeliveryCode) {
-        String params = HTTPRequest.getQueryString(
+    public Boolean isProductSellerAvailable(String idProduk, String jadwalDeliveryCode) {
+        String params = httpRequest.getQueryString(
                 "idProduk=" + idProduk + "&jadwalDeliveryCode=" + jadwalDeliveryCode);
 
-        Http.Response httpResponse = Http.getApi("/Produk/isProductSellerAvailable?" + params);
+        Http.Response httpResponse = http.getApi("/Produk/isProductSellerAvailable?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject serverResponse = httpResponse.jsonObject();
@@ -242,12 +263,12 @@ public final class ProdukModel {
      * member (an object, or JSON null / false when the product does not exist); the JSON
      * primitive false when the request failed.
      */
-    public static JsonElement getDetailProduk(String idProduk) {
+    public JsonElement getDetailProduk(String idProduk) {
         idProduk = idProduk == null ? "" : idProduk;
 
-        String params = HTTPRequest.getQueryString("idProduk=" + idProduk);
+        String params = httpRequest.getQueryString("idProduk=" + idProduk);
 
-        Http.Response httpResponse = Http.getApi("/Produk/detailProduk?" + params);
+        Http.Response httpResponse = http.getApi("/Produk/detailProduk?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -258,8 +279,8 @@ public final class ProdukModel {
     }
 
     /** Dart: getLowestPrice(idProduk) -> Future&lt;dynamic&gt;. BLOCKING. `lowestPrice`, or false on failure. */
-    public static JsonElement getLowestPrice(String idProduk) {
-        Http.Response httpResponse = Http.getApi("/Produk/getLowestPriceOfThisProduct/" + idProduk);
+    public JsonElement getLowestPrice(String idProduk) {
+        Http.Response httpResponse = http.getApi("/Produk/getLowestPriceOfThisProduct/" + idProduk);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return ShopModelUi.dyn(dataObject.get("lowestPrice"));

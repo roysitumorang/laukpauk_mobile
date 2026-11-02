@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -21,16 +23,23 @@ import id.laukpauk.ui.Ui;
 
 /** Port of lib/models/PesananSayaModel.dart. */
 public final class PesananSayaModel {
-    private PesananSayaModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public PesananSayaModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
     /** Material (M2) default text colour of dialog title / content: Colors.black87. */
     private static final int BLACK87 = 0xDD000000;
 
     /** POST /Transaksi/pesananDiterima/{id} (no form body). BLOCKING (network). */
-    public static boolean pesananDiterima(String idTransaksi) {
-        String params = HTTPRequest.getQueryString(null, true);
+    public boolean pesananDiterima(String idTransaksi) {
+        String params = httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.postApi(
+        Http.Response httpResponse = http.postApi(
                 "/Transaksi/pesananDiterima/" + idTransaksi + "?" + params, null);
 
         if (httpResponse.statusCode == 200) {
@@ -47,7 +56,7 @@ public final class PesananSayaModel {
      * default labels are used when noText / yesText are null. `done` gets true / false, or null when
      * the dialog is dismissed by tapping outside / back.
      */
-    public static void konfirmasii(final BaseActivity activity, final String title, final String content,
+    public void konfirmasii(final BaseActivity activity, final String title, final String content,
                                    final String noText, final String yesText, final Async.Done<Boolean> done) {
         Modal.<Boolean>dialog(activity, true, false, new Modal.Content<Boolean>() {
             @Override
@@ -99,12 +108,12 @@ public final class PesananSayaModel {
     }
 
     /** Dart: konfirmasii(context, title, content) with the default button labels. */
-    public static void konfirmasii(BaseActivity activity, String title, String content, Async.Done<Boolean> done) {
+    public void konfirmasii(BaseActivity activity, String title, String content, Async.Done<Boolean> done) {
         konfirmasii(activity, title, content, null, null, done);
     }
 
     /** Status text shown to the buyer ('' for an unknown status). */
-    public static String readAbleStatusForUser(String status) {
+    public String readAbleStatusForUser(String status) {
         String statusLC = status.toLowerCase();
         String readAbleStatusForUserVariable = "";
         if (statusLC.equals("pending")) {

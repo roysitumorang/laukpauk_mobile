@@ -63,7 +63,7 @@ public class LupaPasswordActivity extends BaseActivity {
         async(() -> {
             Map<String, String> lupaPasswordData = new LinkedHashMap<>();
             lupaPasswordData.put("nomorHP", nomorHP);
-            return Http.postApi("/Auth/lupaPassword", HTTPRequest.postBody(lupaPasswordData));
+            return container().http.postApi("/Auth/lupaPassword", container().httpRequest.postBody(lupaPasswordData));
         }, httpResponse -> {
             if (httpResponse.statusCode != 200) {
                 return;

@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.tokosaya;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -17,6 +19,9 @@ import id.laukpauk.view.penjual.PenjualUi;
 
 /** Port of lib/views/penjual/components/TokoSaya/TagihanToko.dart. */
 public class TagihanToko extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public TagihanToko(final Context ctx) {
         super(ctx);
         setOrientation(VERTICAL);
@@ -42,9 +47,9 @@ public class TagihanToko extends LinearLayout {
 
     /** Dart getTotalTagihan(). BLOCKING. */
     private int getTotalTagihan() {
-        String params = HTTPRequest.getQueryString(null, true);
+        String params = deps.httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/TagihanPenjual/getTagihan?" + params);
+        Http.Response httpResponse = deps.http.getApi("/TagihanPenjual/getTagihan?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();

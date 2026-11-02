@@ -52,9 +52,9 @@ public class EditKeranjangItemActivity extends BaseActivity {
         Map<String, String> httpBody = new HashMap<String, String>();
         httpBody.put("quantity", quantity);
         httpBody.put("catatan", catatanTambahan);
-        Map<String, String> body = HTTPRequest.postBody(httpBody);
+        Map<String, String> body = container().httpRequest.postBody(httpBody);
 
-        Http.Response httpResponse = Http.postApi("/Keranjang/saveCart/" + idItem, body);
+        Http.Response httpResponse = container().http.postApi("/Keranjang/saveCart/" + idItem, body);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.bool(dataObject, "statusAddCart");

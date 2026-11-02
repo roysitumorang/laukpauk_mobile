@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.listprodukpenjual;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -26,6 +28,9 @@ import id.laukpauk.view.penjual.TambahProdukActivity;
 
 /** Port of lib/views/penjual/components/ListProdukPenjual/ProdukPaketPenjual.dart (the "Produk Paketan" tab). */
 public class ProdukPaketPenjual extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public ProdukPaketPenjual(Context ctx) {
         super(ctx);
         showSpinner();
@@ -47,9 +52,9 @@ public class ProdukPaketPenjual extends FrameLayout {
 
     /** Dart getProdukPaketPenjual(). BLOCKING. */
     private JsonArray getProdukPaketPenjual() {
-        String params = HTTPRequest.getQueryString(null, true);
+        String params = deps.httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Penjual/getPaketPenjual?" + params);
+        Http.Response httpResponse = deps.http.getApi("/Penjual/getPaketPenjual?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();

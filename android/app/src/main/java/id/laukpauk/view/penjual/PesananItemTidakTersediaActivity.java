@@ -84,10 +84,10 @@ public class PesananItemTidakTersediaActivity extends BaseActivity {
         httpBody.put("idItem", Json.str(pesananItem, "id"));
         httpBody.put("keterangan", keterangan);
 
-        String params = HTTPRequest.getQueryString(null, true);
-        Map<String, String> body = HTTPRequest.postBody(httpBody);
+        String params = container().httpRequest.getQueryString(null, true);
+        Map<String, String> body = container().httpRequest.postBody(httpBody);
 
-        Http.Response httpResponse = Http.postApi("/Transaksi/klaimProdukTidakTersedia?" + params, body);
+        Http.Response httpResponse = container().http.postApi("/Transaksi/klaimProdukTidakTersedia?" + params, body);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.bool(dataObject, "statusKlaim");

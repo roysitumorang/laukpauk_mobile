@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,6 +33,9 @@ import id.laukpauk.ui.Ui;
  * {location: {lat, lng}, formattedAddress: String}.
  */
 public class CariGoogleMaps extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private static final long DEBOUNCE_MS = 300L;
 
     private final Async.Done<JsonObject> onSuggestionSelected;
@@ -63,7 +68,7 @@ public class CariGoogleMaps extends LinearLayout {
         Ui.pad(this, 10, 0, 10, 0);
         float hb = Ui.hb(ctx);
 
-        apiKeyState = LocalStorage.getGoogleMapsApiKey();
+        apiKeyState = deps.localStorage.getGoogleMapsApiKey();
 
         // Material(elevation: 5, borderRadius: 50) around the TypeAheadField's TextField
         LinearLayout fieldCard = Ui.column(ctx);
@@ -135,7 +140,7 @@ public class CariGoogleMaps extends LinearLayout {
     /** BLOCKING. Dart: getWilayahFromGMaps(string: ...). */
     private JsonArray getWilayahFromGMaps(String string) {
         if (string.length() >= 1) {
-            Http.Response httpResponse = Http.get(
+            Http.Response httpResponse = deps.http.get(
                     "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + Http.enc(string)
                             + "&key=" + apiKeyState);
 

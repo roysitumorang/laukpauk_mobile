@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.checkout;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.text.Editable;
@@ -125,10 +127,10 @@ public final class CheckoutUi {
                                  final String moreData, final Async.Done<JsonObject> checkoutCallback,
                                  final Async.Done<Boolean> busy) {
         busy.run(true);
-        a.async(() -> PembayaranModel.buatOrder(metodePembayaranTerpilihMap, checkoutData, moreData),
+        a.async(() -> AppContainer.from(a).pembayaranModel.buatOrder(metodePembayaranTerpilihMap, checkoutData, moreData),
                 (JsonObject returnedData) -> {
                     busy.run(false);
-                    PembayaranModel.buatOrderNextStep(a, channelCodeTerpilihLC, returnedData, checkoutData,
+                    AppContainer.from(a).pembayaranModel.buatOrderNextStep(a, channelCodeTerpilihLC, returnedData, checkoutData,
                             metodePembayaranTerpilihMap, moreData, checkoutCallback, null);
                 }, error -> busy.run(false));
     }

@@ -39,12 +39,12 @@ public class PromoActivity extends BaseActivity implements AppState.Listener {
     @Override
     protected void onStart() {
         super.onStart();
-        AppState.get().addListener(this);
+        container().appState.addListener(this);
     }
 
     @Override
     protected void onStop() {
-        AppState.get().removeListener(this);
+        container().appState.removeListener(this);
         super.onStop();
     }
 
@@ -55,7 +55,7 @@ public class PromoActivity extends BaseActivity implements AppState.Listener {
     }
 
     private void renderBody(boolean fromChange) {
-        boolean isADJDSet = AppState.get().isADJDSet();
+        boolean isADJDSet = container().appState.isADJDSet();
         int state = isADJDSet ? 1 : 0;
         if (state == shownState) {
             if (fromChange && produkPromo != null) {
@@ -89,7 +89,7 @@ public class PromoActivity extends BaseActivity implements AppState.Listener {
 
         column.addView(Ui.spaceH(this, 15));
         View button = CustomButton.button(this, "Tentukan Lokasi dan Jadwal Delivery", () -> {
-            HeaderModel.adjd(this, null, null, null, (JsonObject adjdSet) -> {
+            container().headerModel.adjd(this, null, null, null, (JsonObject adjdSet) -> {
                 if (adjdSet == null) {
                     return;
                 }
@@ -101,7 +101,7 @@ public class PromoActivity extends BaseActivity implements AppState.Listener {
                 if (latitude != null && longitude != null && jadwalDeliveryCode != null) {
                     isADJDCompleted = true;
                 }
-                AppState.get().setADJDSet(isADJDCompleted);
+                container().appState.setADJDSet(isADJDCompleted);
             });
         }, new CustomButton.Opts().color(CustomButton.themeColor).pill());
         LinearLayout.LayoutParams btnLp = new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP);

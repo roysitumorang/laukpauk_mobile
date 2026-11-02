@@ -74,10 +74,10 @@ public class DetailProdukActivity extends BaseActivity {
     private void load() {
         async(() -> {
             Loaded l = new Loaded();
-            l.isLogin = AuthModel.isLogin();
-            int currentUserIDInt = LocalStorage.getIdPenjualFromActiveUser();
+            l.isLogin = container().authModel.isLogin();
+            int currentUserIDInt = container().localStorage.getIdPenjualFromActiveUser();
             l.currentUserID = String.valueOf(currentUserIDInt);
-            l.detailProduk = ProdukModel.getDetailProduk(idProdukArg);
+            l.detailProduk = container().produkModel.getDetailProduk(idProdukArg);
             return l;
         }, data -> {
             loadedOnce = true;
@@ -201,14 +201,14 @@ public class DetailProdukActivity extends BaseActivity {
 
     private void onBeliOrEdit(boolean isItMyProduct, String idProduk, final JsonObject detailProduk) {
         if (!isItMyProduct) {
-            boolean isADJDSet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+            boolean isADJDSet = container().localStorage.isAlamatDeliveryDanJadwalDeliverySet();
             if (isADJDSet) {
                 setBusy(true);
-                ProdukModel.showSatuanProduk(this, detailProduk, v -> setBusy(false));
+                container().produkModel.showSatuanProduk(this, detailProduk, v -> setBusy(false));
             } else {
-                ProdukModel.adjdNotSetAlert(this, tentukanADJD -> {
+                container().produkModel.adjdNotSetAlert(this, tentukanADJD -> {
                     if (tentukanADJD != null && tentukanADJD) {
-                        HeaderModel.adjd(this, null, null, null, (JsonObject adjdSet) -> {
+                        container().headerModel.adjd(this, null, null, null, (JsonObject adjdSet) -> {
                             String latitude = Json.strOrNull(adjdSet, "latitude");
                             String longitude = Json.strOrNull(adjdSet, "longitude");
                             String kodeJadwalDelivery = Json.strOrNull(adjdSet, "kodeJadwalDelivery");
@@ -216,9 +216,9 @@ public class DetailProdukActivity extends BaseActivity {
                             boolean adjdCompleted = false;
                             if (latitude != null && longitude != null && kodeJadwalDelivery != null) {
                                 adjdCompleted = true;
-                                ProdukModel.showSatuanProduk(this, detailProduk, null);
+                                container().produkModel.showSatuanProduk(this, detailProduk, null);
                             }
-                            AppState.get().setADJDSet(adjdCompleted);
+                            container().appState.setADJDSet(adjdCompleted);
                         });
                     }
                 });

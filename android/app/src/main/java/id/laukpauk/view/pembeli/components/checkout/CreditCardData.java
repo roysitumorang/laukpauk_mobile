@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.checkout;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.Gravity;
@@ -29,6 +31,9 @@ import id.laukpauk.ui.Ui;
  * autofill / suggestions are disabled for all of them.
  */
 public class CreditCardData extends ScrollView {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final long totalTagihan;
     private final JsonObject metodePembayaranTerpilihMap, checkoutData;
     private final String channelCodeTerpilihLC;
@@ -201,7 +206,7 @@ public class CreditCardData extends ScrollView {
         dataTransaksi.addProperty("expiryYear", expiryYear);
         dataTransaksi.addProperty("cardCVN", cardCVN);
 
-        XenditModel.createCreditCardToken(a, dataTransaksi, (JsonObject tokenAndAuthentication) -> {
+        deps.xenditModel.createCreditCardToken(a, dataTransaksi, (JsonObject tokenAndAuthentication) -> {
             setProcessButtonBusy(false);
             if (tokenAndAuthentication == null) {
                 return; // Dart: token creation failed, nothing else happens

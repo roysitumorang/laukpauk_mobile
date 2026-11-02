@@ -82,7 +82,7 @@ public class TambahProdukActivity extends BaseActivity {
     }
 
     private void initialization() {
-        async(() -> KategoriProdukModel.getKategoriProduk(), kategoriProduk -> {
+        async(() -> container().kategoriProdukModel.getKategoriProduk(), kategoriProduk -> {
             kategoriProdukState = kategoriProduk == null ? new JsonArray() : kategoriProduk;
             render();
             if (idProduk != null) {
@@ -97,7 +97,7 @@ public class TambahProdukActivity extends BaseActivity {
     private void initEditProduk() {
         final String id = idProduk;
         if (jenisProduk.toLowerCase(Locale.ROOT).equals("satuan")) {
-            async(() -> ProdukModel.getDetailProduk(id), detail -> {
+            async(() -> container().produkModel.getDetailProduk(id), detail -> {
                 if (detail != null && Json.isObject(detail)) {
                     JsonObject d = Json.obj(detail);
                     namaProdukController.setText(Json.str(d, "nama"));
@@ -110,7 +110,7 @@ public class TambahProdukActivity extends BaseActivity {
                 }
             });
         } else {
-            async(() -> PaketModel.detailPaket(id), detail -> {
+            async(() -> container().paketModel.detailPaket(id), detail -> {
                 if (detail != null && Json.isObject(detail)) {
                     JsonObject d = Json.obj(detail);
                     namaProdukController.setText(Json.str(d, "nama"));
@@ -191,9 +191,9 @@ public class TambahProdukActivity extends BaseActivity {
             Ui.padAll(icon, hb * 10);
             holder.addView(icon, new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
         }
-        Ui.onTap(holder, () -> ImagePickerModel.showImagePicker(this, source -> {
+        Ui.onTap(holder, () -> container().imagePickerModel.showImagePicker(this, source -> {
             if (source != null) {
-                ImagePickerModel.takePicture(this, source, file -> {
+                container().imagePickerModel.takePicture(this, source, file -> {
                     if (file != null) {
                         imageProdukData = file.getPath();
                         render();
@@ -337,7 +337,7 @@ public class TambahProdukActivity extends BaseActivity {
 
         isButtonSimpanBusy = true;
         btn.setBusy(true);
-        TambahProdukModel.saveProduk(this, idProduk == null ? "" : idProduk, dataProdukMap, statusSaveProduk -> {
+        container().tambahProdukModel.saveProduk(this, idProduk == null ? "" : idProduk, dataProdukMap, statusSaveProduk -> {
             isButtonSimpanBusy = false;
             btn.setBusy(false);
             finishWithResult(statusSaveProduk != null && statusSaveProduk);

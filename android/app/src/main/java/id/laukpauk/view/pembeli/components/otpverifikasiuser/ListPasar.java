@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.otpverifikasiuser;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -30,6 +32,9 @@ import id.laukpauk.ui.Ui;
  * available markets. The parent calls {@link #setPasarSelected(String)} where Dart rebuilt the widget.
  */
 public class ListPasar extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private boolean isReadyToShowState = false;
     private List<JsonObject> dataPasarState = new ArrayList<>();
     private List<JsonObject> dataPasarImmutableState = new ArrayList<>();
@@ -56,7 +61,7 @@ public class ListPasar extends LinearLayout {
         listHolder.addView(bar, new FrameLayout.LayoutParams(Ui.dp(ctx, 15), Ui.dp(ctx, 15), Gravity.CENTER));
         addView(listHolder, new LinearLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
 
-        Async.run(() -> getPasar(), (List<JsonObject> dataPasar) -> {
+        deps.async.run(() -> getPasar(), (List<JsonObject> dataPasar) -> {
             dataPasarState = dataPasar;
             dataPasarImmutableState = dataPasar;
             isReadyToShowState = true;
@@ -72,8 +77,8 @@ public class ListPasar extends LinearLayout {
     }
 
     private List<JsonObject> getPasar() {
-        String params = HTTPRequest.getQueryString("jenisPasar=pasarTersedia");
-        Http.Response httpResponse = Http.getApi("/Pasar/getPasar?" + params);
+        String params = deps.httpRequest.getQueryString("jenisPasar=pasarTersedia");
+        Http.Response httpResponse = deps.http.getApi("/Pasar/getPasar?" + params);
         List<JsonObject> out = new ArrayList<>();
         if (httpResponse.statusCode == 200) {
             JsonArray dataPasar = Json.array(httpResponse.jsonObject(), "dataPasar");

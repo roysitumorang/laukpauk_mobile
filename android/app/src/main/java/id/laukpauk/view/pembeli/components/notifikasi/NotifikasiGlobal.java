@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.notifikasi;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +24,9 @@ import id.laukpauk.view.pembeli.DetailUi;
  * The host gives it weight 1 (Dart Expanded).
  */
 public class NotifikasiGlobal extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final Runnable reloadJumlahNotifikasi;
     private int requestId = 0;
     private SwipeRefreshLayout currentRefresh;
@@ -42,7 +47,7 @@ public class NotifikasiGlobal extends LinearLayout {
         currentRefresh = null;
         addView(Loading.spinner(a), new LayoutParams(Ui.MATCH, Ui.MATCH));
 
-        a.async(NotifikasiModel::getUpdateNotifikasi, notifikasi -> {
+        a.async(deps.notifikasiModel::getUpdateNotifikasi, notifikasi -> {
             if (thisRequest != requestId || notifikasi == null) {
                 return;
             }
@@ -56,7 +61,7 @@ public class NotifikasiGlobal extends LinearLayout {
         requestId++;
         final int thisRequest = requestId;
         final SwipeRefreshLayout old = currentRefresh;
-        a.async(NotifikasiModel::getUpdateNotifikasi, notifikasi -> {
+        a.async(deps.notifikasiModel::getUpdateNotifikasi, notifikasi -> {
             if (thisRequest != requestId) {
                 return;
             }

@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.profilsaya;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,6 +36,9 @@ import id.laukpauk.view.pembeli.AccountUi;
 
 /** Port of lib/views/pembeli/components/ProfilSaya/GantiFotoProfil.dart. */
 public class GantiFotoProfil extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final BaseActivity activity;
     private final JsonObject dataUser;
     private final Async.Done<Boolean> gantiFotoProfilCallback;
@@ -54,14 +59,14 @@ public class GantiFotoProfil extends LinearLayout {
     }
 
     private boolean saveFotoProfil() {
-        String params = HTTPRequest.getQueryString(null, true);
+        String params = deps.httpRequest.getQueryString(null, true);
 
         Map<String, String> dataFotoProfil = new LinkedHashMap<>();
         dataFotoProfil.put("fotoProfil", AccountUi.fileToBase64(fotoProfilBaruData));
 
-        Map<String, String> body = HTTPRequest.postBody(dataFotoProfil);
+        Map<String, String> body = deps.httpRequest.postBody(dataFotoProfil);
 
-        Http.Response httpResponse = Http.postApi("/User/updateFotoProfil?" + params, body);
+        Http.Response httpResponse = deps.http.postApi("/User/updateFotoProfil?" + params, body);
         if (httpResponse.statusCode == 200) {
             return Json.bool(httpResponse.jsonObject(), "saveFotoProfil");
         }
@@ -135,8 +140,8 @@ public class GantiFotoProfil extends LinearLayout {
     }
 
     private void pickPhoto() {
-        ImagePickerModel.showImagePicker(activity, imageSource -> {
-            ImagePickerModel.takePicture(activity, imageSource, pickedFile -> {
+        deps.imagePickerModel.showImagePicker(activity, imageSource -> {
+            deps.imagePickerModel.takePicture(activity, imageSource, pickedFile -> {
                 if (pickedFile != null) {
                     fotoProfilBaruData = pickedFile;
                     Bitmap bmp = BitmapFactory.decodeFile(pickedFile.getPath());

@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.useranddashboard;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +28,9 @@ import id.laukpauk.view.pembeli.KodeReferalActivity;
 
 /** Port of lib/views/pembeli/components/UserAndDashboard/UserMenu.dart. */
 public class UserMenu extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final BaseActivity activity;
 
     public UserMenu(Context ctx) {
@@ -33,7 +38,7 @@ public class UserMenu extends FrameLayout {
         this.activity = (BaseActivity) ctx;
         addView(Loading.view(ctx), new LayoutParams(Ui.MATCH, Ui.WRAP));
 
-        activity.async(UserMenu::getNilaiDompetReferral, nilaiDompet -> {
+        activity.async(this::getNilaiDompetReferral, nilaiDompet -> {
             if (nilaiDompet == null) {
                 return;
             }
@@ -42,8 +47,8 @@ public class UserMenu extends FrameLayout {
         });
     }
 
-    private static Integer getNilaiDompetReferral() {
-        JsonElement settingValue = SettingModel.getSettingValue("referralWallet");
+    private Integer getNilaiDompetReferral() {
+        JsonElement settingValue = deps.settingModel.getSettingValue("referralWallet");
         if (settingValue != null && !Json.isFalse(settingValue)) {
             int nilaiDompetReferral;
             if (settingValue.isJsonPrimitive() && settingValue.getAsJsonPrimitive().isString()) {
@@ -103,7 +108,7 @@ public class UserMenu extends FrameLayout {
 
     private void openKebijakanPrivasi() {
         activity.async(() -> {
-            JsonElement v = SettingModel.getSettingValue("kebijakanPrivasiURL");
+            JsonElement v = deps.settingModel.getSettingValue("kebijakanPrivasiURL");
             return (v == null) ? "" : Json.asStr(v, "");
         }, url -> {
             try {

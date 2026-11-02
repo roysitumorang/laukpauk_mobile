@@ -19,7 +19,7 @@ public class DoPaymentActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        TransaksiModel.removeTransactionSession(this, null);
+        container().transaksiModel.removeTransactionSession(this, null);
 
         float hb = Ui.hb(this);
         setStatusBarScrimColor(CustomColors.aliceBlue);

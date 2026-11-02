@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.listprodukpenjual;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.View;
@@ -26,6 +28,9 @@ import id.laukpauk.view.penjual.TambahProdukActivity;
 
 /** Port of lib/views/penjual/components/ListProdukPenjual/ListProdukPenjualItem.dart. */
 public class ListProdukPenjualItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public ListProdukPenjualItem(final Context ctx, final JsonObject dataProduk,
                                  final Async.Done<Boolean> hapusProdukCallback,
                                  final Async.Done<Boolean> editProdukCallback) {
@@ -76,14 +81,14 @@ public class ListProdukPenjualItem extends LinearLayout {
                         Json.of("id", idProduk, "jenisProduk", "satuan")),
                 () -> {
                     final BaseActivity activity = (BaseActivity) ctx;
-                    ProdukPenjualModel.showKonfirmasi(activity, "Konfirmasi Hapus Produk",
+                    deps.produkPenjualModel.showKonfirmasi(activity, "Konfirmasi Hapus Produk",
                             "Apakah anda yakin akan menghapus produk " + nama + " ini?",
                             handle -> ShopModelUi.alertActions(activity,
                                     CustomAlert.textButton(activity, "Batal", () -> handle.close(Boolean.FALSE)),
                                     CustomAlert.textButton(activity, "Lanjutkan", () -> handle.close(Boolean.TRUE))),
                             konfirmasiHapus -> {
                                 if (konfirmasiHapus != null && konfirmasiHapus) {
-                                    activity.async(() -> ProdukPenjualModel.hapusProduk(idProduk),
+                                    activity.async(() -> deps.produkPenjualModel.hapusProduk(idProduk),
                                             statusHapusProduk -> hapusProdukCallback.run(statusHapusProduk));
                                 }
                             });

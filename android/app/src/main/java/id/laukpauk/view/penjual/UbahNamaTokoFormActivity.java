@@ -28,10 +28,10 @@ public class UbahNamaTokoFormActivity extends BaseActivity {
         Map<String, String> body = new LinkedHashMap<>();
         body.put("namaToko", namaToko);
 
-        String params = HTTPRequest.getQueryString(null, true);
-        Map<String, String> postBody = HTTPRequest.postBody(body);
+        String params = container().httpRequest.getQueryString(null, true);
+        Map<String, String> postBody = container().httpRequest.postBody(body);
 
-        Http.Response httpResponse = Http.postApi("/Penjual/ubahNamaToko?" + params, postBody);
+        Http.Response httpResponse = container().http.postApi("/Penjual/ubahNamaToko?" + params, postBody);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.bool(dataObject, "statusUbahNamaToko");

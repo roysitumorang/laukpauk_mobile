@@ -72,8 +72,8 @@ public class DetailTransaksiActivity extends BaseActivity {
 
     private void initialization() {
         async(() -> {
-            String nomorRekeningLP = Json.asStr(SettingModel.getSettingValue("nomorRekeningLP"), "");
-            String pemilikNomorRekeningLP = Json.asStr(SettingModel.getSettingValue("pemilikNomorRekeningLP"), "");
+            String nomorRekeningLP = Json.asStr(container().settingModel.getSettingValue("nomorRekeningLP"), "");
+            String pemilikNomorRekeningLP = Json.asStr(container().settingModel.getSettingValue("pemilikNomorRekeningLP"), "");
             return Json.of("nomorRekening", nomorRekeningLP, "pemilikNomorRekening", pemilikNomorRekeningLP);
         }, data -> {
             rekeningData = data;
@@ -89,7 +89,7 @@ public class DetailTransaksiActivity extends BaseActivity {
             contentFrame.addView(Loading.view(this), new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
         }
         final int seq = ++requestSeq;
-        async(() -> TransaksiModel.getDetailTransaksi(idTransaksi), (JsonElement result) -> {
+        async(() -> container().transaksiModel.getDetailTransaksi(idTransaksi), (JsonElement result) -> {
             if (seq != requestSeq) {
                 return;
             }
@@ -170,7 +170,7 @@ public class DetailTransaksiActivity extends BaseActivity {
 
         final String statusLC = status.toLowerCase();
         boolean isRejected = statusLC.equals("rejected");
-        String statusReadable = PesananSayaModel.readAbleStatusForUser(status).toUpperCase();
+        String statusReadable = container().pesananSayaModel.readAbleStatusForUser(status).toUpperCase();
 
         final int refundedOngkir = num(d, "refundedOngkir");
         final int refundedUangBelanja = num(d, "refundedUangBelanja");
@@ -316,7 +316,7 @@ public class DetailTransaksiActivity extends BaseActivity {
             final FrameLayout slot = new FrameLayout(this);
             slot.addView(Loading.view(this), new FrameLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
             card.addView(slot, new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
-            async(() -> TransaksiModel.jumlahItemDiantar(idTransaksi), jumlahItemDiantar -> {
+            async(() -> container().transaksiModel.jumlahItemDiantar(idTransaksi), jumlahItemDiantar -> {
                 // FutureBuilder<int?>: null never has data -> the spinner stays.
                 if (jumlahItemDiantar == null) {
                     return;
@@ -433,7 +433,7 @@ public class DetailTransaksiActivity extends BaseActivity {
         String subTitle = "Lakukan konfirmasi jika pesanan sudah diterima ya mak ...";
         CustomAlert.konfirmasi(this, title, subTitle, null, konfirmasi -> {
             if (konfirmasi != null && konfirmasi) {
-                async(() -> PesananSayaModel.pesananDiterima(idTransaksi), statusPesananDiterima -> {
+                async(() -> container().pesananSayaModel.pesananDiterima(idTransaksi), statusPesananDiterima -> {
                     String message = "Gagal menandai pesanan sebagai SUDAH DITERIMA. Silahkan coba lagi!";
                     if (statusPesananDiterima) {
                         doReload();
@@ -453,7 +453,7 @@ public class DetailTransaksiActivity extends BaseActivity {
     }
 
     private void onBelanjaUlang() {
-        if (LocalStorage.isAlamatDeliveryDanJadwalDeliverySet()) {
+        if (container().localStorage.isAlamatDeliveryDanJadwalDeliverySet()) {
             setBelanjaUlangBusy(true);
 
             String adjdTitle = "Jadwal dan Alamat Antar";
@@ -481,9 +481,9 @@ public class DetailTransaksiActivity extends BaseActivity {
                         if (useSameADJD != null) {
                             if (!useSameADJD) {
                                 async(() -> {
-                                    ADJDModel.deleteAlamatDanJadwalDelivery();
+                                    container().adjdModel.deleteAlamatDanJadwalDelivery();
                                     return Boolean.TRUE;
-                                }, ok -> HeaderModel.adjd(this, null, null, null, r -> doBelanjaUlang()));
+                                }, ok -> container().headerModel.adjd(this, null, null, null, r -> doBelanjaUlang()));
                             } else {
                                 doBelanjaUlang();
                             }
@@ -504,9 +504,9 @@ public class DetailTransaksiActivity extends BaseActivity {
     }
 
     private void doBelanjaUlang() {
-        async(() -> TransaksiModel.belanjaUlang(idTransaksi), responseBelanjaUlang -> {
+        async(() -> container().transaksiModel.belanjaUlang(idTransaksi), responseBelanjaUlang -> {
             if (responseBelanjaUlang != null) {
-                TransaksiModel.responseBelanjaUlang(this, responseBelanjaUlang,
+                container().transaksiModel.responseBelanjaUlang(this, responseBelanjaUlang,
                         v -> setBelanjaUlangBusy(false));
             } else {
                 setBelanjaUlangBusy(false);

@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.tokosaya;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -29,6 +31,9 @@ import id.laukpauk.view.penjual.TambahProdukActivity;
  * `saveProdukCallback` gets the result of TambahProduk (true / false) or null when it was dismissed.
  */
 public class ProdukPenjual extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final Async.Done<Boolean> saveProdukCallback;
 
     private FrameLayout jumlahHolder;
@@ -43,9 +48,9 @@ public class ProdukPenjual extends LinearLayout {
 
     /** Dart getJumlahProdukPenjual(): the `jumlahProduk` map, or null (= false). BLOCKING. */
     private JsonObject getJumlahProdukPenjual() {
-        String params = HTTPRequest.getQueryString(null, true);
+        String params = deps.httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Penjual/getJumlahProdukPenjual?" + params);
+        Http.Response httpResponse = deps.http.getApi("/Penjual/getJumlahProdukPenjual?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -99,11 +104,11 @@ public class ProdukPenjual extends LinearLayout {
         }
 
         View satuan = column(ctx, "Produk Satuan", Json.asInt(Json.get(dataProduk, "produk"), 0), () -> {
-            String idUser = LocalStorage.getApplicationID();
+            String idUser = deps.localStorage.getApplicationID();
             Nav.push(ctx, PenjualActivity.class, Json.of("id", idUser, "jenisProdukSelected", "satuan"));
         });
         View paket = column(ctx, "Produk Paketan", Json.asInt(Json.get(dataProduk, "paket"), 0), () -> {
-            String idUser = LocalStorage.getCurrentUserID();
+            String idUser = deps.localStorage.getCurrentUserID();
             Nav.push(ctx, PenjualActivity.class, Json.of("id", idUser, "jenisProdukSelected", "paket"));
         });
         jumlahHolder.addView(PenjualUi.spaceAround(ctx, satuan, paket),

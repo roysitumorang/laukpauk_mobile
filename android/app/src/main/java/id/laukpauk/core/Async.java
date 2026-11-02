@@ -16,11 +16,14 @@ import java.util.concurrent.Executors;
  * In Activities prefer BaseActivity.async(...) which skips the UI callback once the screen is gone.
  */
 public final class Async {
-    private Async() {}
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public Async() {
+    }
 
     private static final String TAG = "Async";
-    private static final ExecutorService POOL = Executors.newFixedThreadPool(4);
-    private static final Handler MAIN = new Handler(Looper.getMainLooper());
+    private final ExecutorService POOL = Executors.newFixedThreadPool(4);
+    private final Handler MAIN = new Handler(Looper.getMainLooper());
 
     /** Background work that may throw. */
     public interface Work<T> {
@@ -38,11 +41,11 @@ public final class Async {
     }
 
     /** Runs `work` off the main thread, then `done` on the main thread. On exception: done(null). */
-    public static <T> void run(final Work<T> work, final Done<T> done) {
+    public <T> void run(final Work<T> work, final Done<T> done) {
         run(work, done, null);
     }
 
-    public static <T> void run(final Work<T> work, final Done<T> done, final Failed failed) {
+    public <T> void run(final Work<T> work, final Done<T> done, final Failed failed) {
         POOL.execute(new Runnable() {
             @Override
             public void run() {
@@ -71,16 +74,16 @@ public final class Async {
     }
 
     /** Fire-and-forget background task. */
-    public static void bg(Runnable task) {
+    public void bg(Runnable task) {
         POOL.execute(task);
     }
 
     /** Post to the main thread. */
-    public static void main(Runnable task) {
+    public void main(Runnable task) {
         MAIN.post(task);
     }
 
-    public static void mainDelayed(Runnable task, long delayMillis) {
+    public void mainDelayed(Runnable task, long delayMillis) {
         MAIN.postDelayed(task, delayMillis);
     }
 

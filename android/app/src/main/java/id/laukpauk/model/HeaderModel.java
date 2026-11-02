@@ -1,5 +1,9 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.Lazy;
+
+import id.laukpauk.core.AppContainer;
+
 import android.view.Gravity;
 import android.widget.TextView;
 
@@ -30,14 +34,39 @@ import id.laukpauk.view.pembeli.components.homepage.GiftAlert;
 
 /** Port of lib/models/HeaderModel.dart. */
 public final class HeaderModel {
-    private HeaderModel() {}
+    private final AppState appState;
+    private final Async async;
+    private final HTTPRequest httpRequest;
+    private final Http http;
+    private final LocalStorage localStorage;
+    private final Prefs prefs;
+    private final ADJDModel adjdModel;
+    private final CheckoutModel checkoutModel;
+    private final GiftModel giftModel;
+    private final NotifikasiModel notifikasiModel;
+    private final Lazy<TransaksiModel> transaksiModel;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public HeaderModel(AppState appState, Async async, HTTPRequest httpRequest, Http http, LocalStorage localStorage, Prefs prefs, ADJDModel adjdModel, CheckoutModel checkoutModel, GiftModel giftModel, NotifikasiModel notifikasiModel, Lazy<TransaksiModel> transaksiModel) {
+        this.appState = appState;
+        this.async = async;
+        this.httpRequest = httpRequest;
+        this.http = http;
+        this.localStorage = localStorage;
+        this.prefs = prefs;
+        this.adjdModel = adjdModel;
+        this.checkoutModel = checkoutModel;
+        this.giftModel = giftModel;
+        this.notifikasiModel = notifikasiModel;
+        this.transaksiModel = transaksiModel;
+    }
 
     /** BLOCKING. */
-    public static int getJumlahCart() {
-        String cartCode = LocalStorage.getCartCode();
-        String params = HTTPRequest.getQueryString("cartCode=" + cartCode);
+    public int getJumlahCart() {
+        String cartCode = localStorage.getCartCode();
+        String params = httpRequest.getQueryString("cartCode=" + cartCode);
 
-        Http.Response httpResponse = Http.getApi("/User/getJumlahCart?" + params);
+        Http.Response httpResponse = http.getApi("/User/getJumlahCart?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -47,14 +76,14 @@ public final class HeaderModel {
     }
 
     /** BLOCKING. */
-    public static int getJumlahNotifikasi() {
-        int jumlahNotifikasiVariable = NotifikasiModel.getJumlahNotifikasi("unread");
-        int jumlahNotifikasiKhususVariable = NotifikasiModel.getJumlahNotifikasiKhusus("unread");
+    public int getJumlahNotifikasi() {
+        int jumlahNotifikasiVariable = notifikasiModel.getJumlahNotifikasi("unread");
+        int jumlahNotifikasiKhususVariable = notifikasiModel.getJumlahNotifikasiKhusus("unread");
         return jumlahNotifikasiVariable + jumlahNotifikasiKhususVariable;
     }
 
     /** Dart: showAlamatPengantaran(context, alamatPengantaran) -> bool?. true = "Ubah". */
-    public static void showAlamatPengantaran(final BaseActivity activity, String alamatPengantaran,
+    public void showAlamatPengantaran(final BaseActivity activity, String alamatPengantaran,
                                              Async.Done<Boolean> done) {
         String title = "Alamat Pengantaran";
         String subTitle = "Alamat pengantaran yang anda tentukan berada di sekitar : ";
@@ -66,7 +95,7 @@ public final class HeaderModel {
         Modal.Content<Boolean> actions = handle -> CustomAlert.actionsRow(activity,
                 CustomAlert.textButton(activity, "Tutup", () -> handle.close(Boolean.FALSE)),
                 CustomAlert.textButton(activity, "Reset", () ->
-                        TransaksiModel.removeTransactionSession(activity, v -> handle.close(Boolean.FALSE))),
+                        transaksiModel.get().removeTransactionSession(activity, v -> handle.close(Boolean.FALSE))),
                 CustomAlert.textButton(activity, "Ubah", () -> handle.close(Boolean.TRUE)));
         CustomAlert.<Boolean>textComponent(activity, null, title, subTitle, actions, moreWidgets, false, done);
     }
@@ -84,19 +113,19 @@ public final class HeaderModel {
      * Dart: adjd(context, {callback, nantiSajaCallback, okSajaCallback}) -> {latitude, longitude, kodeJadwalDelivery}.
      * The three callbacks are never invoked by the Dart code either.
      */
-    public static void adjd(final BaseActivity activity, Async.Done<JsonObject> callback, Runnable nantiSajaCallback,
+    public void adjd(final BaseActivity activity, Async.Done<JsonObject> callback, Runnable nantiSajaCallback,
                             Runnable okSajaCallback, final Async.Done<JsonObject> done) {
         final AdjdState st = new AdjdState();
 
-        boolean isLocationAndTimeOfDeliverySet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+        boolean isLocationAndTimeOfDeliverySet = localStorage.isAlamatDeliveryDanJadwalDeliverySet();
 
         if (!isLocationAndTimeOfDeliverySet) {
-            ADJDModel.detectMyLocation(activity, (JsonObject myLocation) -> {
+            adjdModel.detectMyLocation(activity, (JsonObject myLocation) -> {
                 if (myLocation != null) {
                     st.latitude = Json.strOrNull(myLocation, "latitude");
                     st.longitude = Json.strOrNull(myLocation, "longitude");
 
-                    ADJDModel.askAlamatPengantaran(activity, st.latitude, st.longitude, null, null,
+                    adjdModel.askAlamatPengantaran(activity, st.latitude, st.longitude, null, null,
                             (JsonObject diantarKeLokasiSekarangMap) -> {
                         if (diantarKeLokasiSekarangMap != null) {
                             st.readAbleSelectedLocation = Json.strOrNull(diantarKeLokasiSekarangMap, "address");
@@ -133,7 +162,7 @@ public final class HeaderModel {
                 }
             });
         } else {
-            JsonObject getSavedLatitudeAndLongitudeMap = LocalStorage.getSavedLatitudeAndLongitude();
+            JsonObject getSavedLatitudeAndLongitudeMap = localStorage.getSavedLatitudeAndLongitude();
 
             st.latitude = Json.strOrNull(getSavedLatitudeAndLongitudeMap, "latitude");
             st.longitude = Json.strOrNull(getSavedLatitudeAndLongitudeMap, "longitude");
@@ -142,8 +171,8 @@ public final class HeaderModel {
         }
     }
 
-    private static void askJadwal(final BaseActivity activity, final AdjdState st, final Async.Done<JsonObject> done) {
-        ADJDModel.askJadwalDelivery(activity, st.latitude, st.longitude, st.readAbleSelectedLocation,
+    private void askJadwal(final BaseActivity activity, final AdjdState st, final Async.Done<JsonObject> done) {
+        adjdModel.askJadwalDelivery(activity, st.latitude, st.longitude, st.readAbleSelectedLocation,
                 (JsonObject jadwalDeliveryMap) -> {
             boolean adjdSelectionCompleted = false;
             if (jadwalDeliveryMap != null) {
@@ -157,7 +186,7 @@ public final class HeaderModel {
         });
     }
 
-    private static void setNewADJDAndFinish(BaseActivity activity, final AdjdState st, boolean completed,
+    private void setNewADJDAndFinish(BaseActivity activity, final AdjdState st, boolean completed,
                                             final Async.Done<JsonObject> done) {
         // jsonEncode(null) is the text "null" in Dart
         String jadwalDeliveryMap = st.jadwalDeliveryTerpilihMap != null
@@ -166,7 +195,7 @@ public final class HeaderModel {
                 st.readAbleSelectedLocation, jadwalDeliveryMap, v -> finishAdjd(st, done));
     }
 
-    private static void finishAdjd(AdjdState st, Async.Done<JsonObject> done) {
+    private void finishAdjd(AdjdState st, Async.Done<JsonObject> done) {
         JsonObject adjdSet = new JsonObject();
         adjdSet.addProperty("latitude", st.latitude);
         adjdSet.addProperty("longitude", st.longitude);
@@ -180,13 +209,13 @@ public final class HeaderModel {
      * Dart: setNewADJD(context, isADJDSelectionCompleted, {latitude, longitude, jadwalDeliveryCode, alamat,
      * jadwalDeliveryMap}). jadwalDeliveryMap is the JSON text of the chosen schedule.
      */
-    public static void setNewADJD(final BaseActivity activity, boolean isADJDSelectionCompleted, String latitude,
+    public void setNewADJD(final BaseActivity activity, boolean isADJDSelectionCompleted, String latitude,
                                   String longitude, String jadwalDeliveryCode, String alamat,
                                   String jadwalDeliveryMap, final Async.Done<Void> done) {
         boolean clearKeranjang = isADJDSelectionCompleted;
         boolean isAlamatDeliveryDanJadwalDeliverySet;
 
-        JsonObject coppiedADJD = ADJDModel.getCoppiedADJD();
+        JsonObject coppiedADJD = adjdModel.getCoppiedADJD();
 
         String coppiedLatitude = Json.strOrNull(coppiedADJD, "coppiedLatitude");
         String coppiedLongitude = Json.strOrNull(coppiedADJD, "coppiedLongitude");
@@ -217,16 +246,16 @@ public final class HeaderModel {
         }
 
         if (isADJDSelectionCompleted) {
-            Prefs.setBool("isAlamatDeliveryDanJadwalDeliverySet", isAlamatDeliveryDanJadwalDeliverySet);
+            prefs.setBool("isAlamatDeliveryDanJadwalDeliverySet", isAlamatDeliveryDanJadwalDeliverySet);
 
             if (latitude != null) {
-                Prefs.setString("savedLatitude", latitude);
+                prefs.setString("savedLatitude", latitude);
             }
             if (longitude != null) {
-                Prefs.setString("savedLongitude", longitude);
+                prefs.setString("savedLongitude", longitude);
             }
             if (jadwalDeliveryCode != null) {
-                Prefs.setString("savedJadwalDeliveryCode", jadwalDeliveryCode);
+                prefs.setString("savedJadwalDeliveryCode", jadwalDeliveryCode);
             }
             if (jadwalDeliveryMap != null) {
                 Calendar now = Calendar.getInstance();
@@ -246,22 +275,22 @@ public final class HeaderModel {
 
                 jadwalDeliveryMap = jadwalDelivery.toString();
 
-                Prefs.setString("savedJadwalDeliveryMap", jadwalDeliveryMap);
+                prefs.setString("savedJadwalDeliveryMap", jadwalDeliveryMap);
             }
             if (alamat != null) {
-                Prefs.setString("savedAlamat", alamat);
+                prefs.setString("savedAlamat", alamat);
             }
 
-            JsonObject savedADJD = LocalStorage.getSavedLatitudeAndLongitude();
+            JsonObject savedADJD = localStorage.getSavedLatitudeAndLongitude();
 
-            AppState state = AppState.get();
+            AppState state = appState;
             state.setADJDSet(isAlamatDeliveryDanJadwalDeliverySet);
             state.setAlamatDelivery(alamat == null ? "" : alamat);
             state.setSavedADJD(savedADJD);
 
             if (clearKeranjang) {
-                Async.run(() -> CheckoutModel.bersihkanKeranjang(), ok -> {
-                    AppState.get().setJumlahCart(0);
+                async.run(() -> checkoutModel.bersihkanKeranjang(), ok -> {
+                    appState.setJumlahCart(0);
                     if (done != null) {
                         done.run(null);
                     }
@@ -275,14 +304,14 @@ public final class HeaderModel {
     }
 
     /** Dart: makeSureADJD(context): after 3 s asks (once) to confirm the delivery location. */
-    public static void makeSureADJD(final BaseActivity activity, final Async.Done<Void> done) {
-        Async.mainDelayed(() -> {
+    public void makeSureADJD(final BaseActivity activity, final Async.Done<Void> done) {
+        async.mainDelayed(() -> {
             boolean show = showMakeSure();
             if (show && activity.isAlive()) {
                 String subTitle = "Mak, pastikan lokasi pengantaran sebelum belanjaannya diantar ya...";
                 Modal.Content<Object> actions = handle -> CustomAlert.actionsRow(activity,
                         CustomButton.button(activity, "OK", () -> {
-                            Prefs.setBool("showMakeSureADJD", false);
+                            prefs.setBool("showMakeSureADJD", false);
 
                             handle.close();
                         }, new CustomButton.Opts().color(CustomColors.green)));
@@ -303,10 +332,10 @@ public final class HeaderModel {
      * Dart: _showGift. GiftAlert.show must dismiss its own dialog and then run `onClose`
      * (Dart: GiftAlert(onClose: () { setBool('showAlertGift', false); onClose(); }) with onClose = Navigator.pop).
      */
-    private static void showGift(BaseActivity activity, List<Gift> gifts, final Runnable onClose) {
+    private void showGift(BaseActivity activity, List<Gift> gifts, final Runnable onClose) {
         if (gifts.size() >= 1) {
             GiftAlert.show(activity, gifts, () -> {
-                Prefs.setBool("showAlertGift", false);
+                prefs.setBool("showAlertGift", false);
                 onClose.run();
             });
         } else {
@@ -315,16 +344,16 @@ public final class HeaderModel {
     }
 
     /** Dart: giftChecking(context): after 3 s shows the gifts dialog (once). */
-    public static void giftChecking(final BaseActivity activity, final Async.Done<Void> done) {
+    public void giftChecking(final BaseActivity activity, final Async.Done<Void> done) {
         final Runnable finish = () -> {
             if (done != null) {
                 done.run(null);
             }
         };
-        Async.mainDelayed(() -> {
+        async.mainDelayed(() -> {
             boolean show = showAlertGift();
             if (show && activity.isAlive()) {
-                Async.run(() -> GiftModel.getGifts(), (List<Gift> gift) -> {
+                async.run(() -> giftModel.getGifts(), (List<Gift> gift) -> {
                     if (gift == null || !activity.isAlive()) {
                         finish.run();
                         return;
@@ -337,16 +366,16 @@ public final class HeaderModel {
         }, 3000);
     }
 
-    public static boolean showMakeSure() {
-        return Prefs.getBool("showMakeSureADJD", true);
+    public boolean showMakeSure() {
+        return prefs.getBool("showMakeSureADJD", true);
     }
 
-    public static boolean showAlertGift() {
-        return Prefs.getBool("showAlertGift", true);
+    public boolean showAlertGift() {
+        return prefs.getBool("showAlertGift", true);
     }
 
     /** Dart: alertADJDKadaluarsa(context). `done` runs when the dialog is closed. */
-    public static void alertADJDKadaluarsa(final BaseActivity activity, Async.Done<Void> done) {
+    public void alertADJDKadaluarsa(final BaseActivity activity, Async.Done<Void> done) {
         android.view.View icon = Ui.asset(activity, "laukpauk-icon.png", 50f);
         String subTitle = "Mak, jadwal pengantaran yang mamak pilih sudah kadaluarsa. Keranjang belanja dikosongkan "
                 + "dan mamak harus tentukan alamat dan jadwal pengantaran lagi ya mak.....";

@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.listprodukpenjual;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -25,6 +27,9 @@ import id.laukpauk.view.penjual.TambahProdukActivity;
 
 /** Port of lib/views/penjual/components/ListProdukPenjual/ProdukPaketPenjualItem.dart. */
 public class ProdukPaketPenjualItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public ProdukPaketPenjualItem(final Context ctx, final JsonObject dataProduk,
                                   final Async.Done<Boolean> hapusPaketCallback,
                                   final Async.Done<Boolean> editProdukCallback) {
@@ -70,14 +75,14 @@ public class ProdukPaketPenjualItem extends LinearLayout {
                         Json.of("id", idProduk, "jenisProduk", "paket")),
                 () -> {
                     final BaseActivity activity = (BaseActivity) ctx;
-                    ProdukPenjualModel.showKonfirmasi(activity, "Konfirmasi Hapus Produk",
+                    deps.produkPenjualModel.showKonfirmasi(activity, "Konfirmasi Hapus Produk",
                             "Apakah anda yakin akan menghapus produk " + nama + " ini?",
                             handle -> ShopModelUi.alertActions(activity,
                                     CustomAlert.textButton(activity, "Batal", () -> handle.close(Boolean.FALSE)),
                                     CustomAlert.textButton(activity, "Lanjutkan", () -> handle.close(Boolean.TRUE))),
                             konfirmasiHapus -> {
                                 if (konfirmasiHapus != null && konfirmasiHapus) {
-                                    activity.async(() -> ProdukPenjualModel.hapusPaket(idProduk),
+                                    activity.async(() -> deps.produkPenjualModel.hapusPaket(idProduk),
                                             statusHapusPaket -> hapusPaketCallback.run(statusHapusPaket));
                                 }
                             });

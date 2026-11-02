@@ -35,11 +35,14 @@ import okhttp3.RequestBody;
  *     if (r.statusCode == 200) { ... }
  */
 public final class Http {
-    private Http() {}
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public Http() {
+    }
 
     private static final String TAG = "Http";
 
-    private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
+    private final OkHttpClient CLIENT = new OkHttpClient.Builder()
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
@@ -78,7 +81,7 @@ public final class Http {
     // ------------------------------------------------------------------ GET
 
     /** GET an absolute URL. */
-    public static Response get(String url) {
+    public Response get(String url) {
         try {
             Request request = new Request.Builder().url(url).get().build();
             return execute(request);
@@ -89,14 +92,14 @@ public final class Http {
     }
 
     /** GET ServerPath.apiBaseURL + pathAndQuery  (pathAndQuery starts with "/"). */
-    public static Response getApi(String pathAndQuery) {
+    public Response getApi(String pathAndQuery) {
         return get(ServerPath.apiBaseURL + pathAndQuery);
     }
 
     // ------------------------------------------------------------------ POST (form-urlencoded)
 
     /** POST an application/x-www-form-urlencoded body to an absolute URL. */
-    public static Response post(String url, Map<String, String> form) {
+    public Response post(String url, Map<String, String> form) {
         try {
             FormBody.Builder body = new FormBody.Builder();
             if (form != null) {
@@ -113,12 +116,12 @@ public final class Http {
     }
 
     /** POST form to ServerPath.apiBaseURL + pathAndQuery. */
-    public static Response postApi(String pathAndQuery, Map<String, String> form) {
+    public Response postApi(String pathAndQuery, Map<String, String> form) {
         return post(ServerPath.apiBaseURL + pathAndQuery, form);
     }
 
     /** POST a raw body (e.g. JSON text) with the given content type. */
-    public static Response postRaw(String url, String body, String contentType) {
+    public Response postRaw(String url, String body, String contentType) {
         try {
             RequestBody rb = RequestBody.create(body == null ? "" : body, MediaType.parse(contentType));
             Request request = new Request.Builder().url(url).post(rb).build();
@@ -135,7 +138,7 @@ public final class Http {
      * POST multipart/form-data. `fields` are plain text parts, `files` maps the part name to a
      * local image file (sent as image/jpeg unless the name ends with .png).
      */
-    public static Response postMultipart(String url, Map<String, String> fields,
+    public Response postMultipart(String url, Map<String, String> fields,
                                          Map<String, File> files) {
         try {
             MultipartBody.Builder body = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -164,7 +167,7 @@ public final class Http {
         }
     }
 
-    public static Response postMultipartApi(String pathAndQuery, Map<String, String> fields,
+    public Response postMultipartApi(String pathAndQuery, Map<String, String> fields,
                                             Map<String, File> files) {
         return postMultipart(ServerPath.apiBaseURL + pathAndQuery, fields, files);
     }
@@ -183,7 +186,7 @@ public final class Http {
         }
     }
 
-    private static Response execute(Request request) {
+    private Response execute(Request request) {
         try (okhttp3.Response r = CLIENT.newCall(request).execute()) {
             String text = r.body() != null ? r.body().string() : "";
             return new Response(r.code(), text);

@@ -67,7 +67,7 @@ public class KirimUlangOTPActivity extends BaseActivity {
         setRoot(AuthUi.page(this, column, AuthUi.PAGE_BG));
 
         // _initialization(): fill in the phone number of the active user.
-        async(() -> UserModel.getDetailActiveUser(), (JsonElement detailUser) -> {
+        async(() -> container().userModel.getDetailActiveUser(), (JsonElement detailUser) -> {
             if (detailUser != null && !Json.isFalse(detailUser) && detailUser.isJsonObject()) {
                 nomorTeleponField.setText(Json.str(detailUser.getAsJsonObject(), "nomorHP"));
             }
@@ -79,8 +79,8 @@ public class KirimUlangOTPActivity extends BaseActivity {
         Map<String, String> httpBody = new LinkedHashMap<>();
         httpBody.put("nomorTelepon", nomorTelepon);
 
-        String params = HTTPRequest.getQueryString(null, true);
-        Http.Response response = Http.postApi("/Auth/resendOTP?" + params, HTTPRequest.postBody(httpBody));
+        String params = container().httpRequest.getQueryString(null, true);
+        Http.Response response = container().http.postApi("/Auth/resendOTP?" + params, container().httpRequest.postBody(httpBody));
         if (response.statusCode == 200) {
             return response.jsonObject();
         }

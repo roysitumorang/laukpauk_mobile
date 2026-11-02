@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.resep;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -19,6 +21,9 @@ import id.laukpauk.ui.Ui;
 
 /** Port of lib/views/pembeli/components/Resep/ResepLangkah.dart. */
 public class ResepLangkah extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String idResep;
     private final LinearLayout content;
 
@@ -43,15 +48,15 @@ public class ResepLangkah extends LinearLayout {
                 Gravity.CENTER));
         content.addView(spinner, new LayoutParams(Ui.MATCH, Ui.WRAP));
 
-        Async.run(() -> getResepLangkah(), this::render);
+        deps.async.run(() -> getResepLangkah(), this::render);
     }
 
     /** Dart: getResepLangkah(). BLOCKING. */
     private JsonArray getResepLangkah() {
         String entitasResepLangkah = "id, langkah";
-        String params = HTTPRequest.getQueryString("entitasResepLangkah=" + entitasResepLangkah);
+        String params = deps.httpRequest.getQueryString("entitasResepLangkah=" + entitasResepLangkah);
 
-        Http.Response httpResponse = Http.getApi(
+        Http.Response httpResponse = deps.http.getApi(
                 "/Resep/getResepLangkahFromThisResep/" + idResep + "?" + params);
 
         if (httpResponse.statusCode == 200) {

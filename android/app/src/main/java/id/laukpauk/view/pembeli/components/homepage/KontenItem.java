@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -18,6 +20,9 @@ import id.laukpauk.view.pembeli.components.produkdidalampasar.ProdukInThisPasarI
 
 /** Port of lib/views/pembeli/components/HomePage/KontenItem.dart. */
 public class KontenItem extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final JsonObject detailKonten;
 
     public KontenItem(Context ctx, JsonObject detailKonten) {
@@ -25,7 +30,7 @@ public class KontenItem extends FrameLayout {
         this.detailKonten = detailKonten;
         addView(Loading.view(ctx));
         final String idKonten = Json.asStr(Json.get(detailKonten, "id"));
-        HomeUi.act(ctx).async(() -> KontenModel.getProdukKonten(idKonten, 8), this::show);
+        HomeUi.act(ctx).async(() -> deps.kontenModel.getProdukKonten(idKonten, 8), this::show);
     }
 
     private void show(JsonArray kontenItem) {

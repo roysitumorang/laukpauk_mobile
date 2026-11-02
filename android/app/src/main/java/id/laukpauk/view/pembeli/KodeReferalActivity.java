@@ -50,7 +50,7 @@ public class KodeReferalActivity extends BaseActivity {
 
     /** The FutureBuilder chain: isLogin -> getReferralConfiguration. */
     private void load() {
-        async(() -> AuthModel.isLogin(), (Boolean isUserLoggedIn) -> {
+        async(() -> container().authModel.isLogin(), (Boolean isUserLoggedIn) -> {
             if (!isUserLoggedIn) {
                 // return Login(routeTo: KodeReferal());
                 Nav.pushReplacement(this, LoginActivity.class,
@@ -69,8 +69,8 @@ public class KodeReferalActivity extends BaseActivity {
     }
 
     private JsonElement getReferralConfiguration() {
-        String params = HTTPRequest.getQueryString(null, true);
-        Http.Response httpResponse = Http.getApi("/Pengaturan/getReferralConfiguration?" + params);
+        String params = container().httpRequest.getQueryString(null, true);
+        Http.Response httpResponse = container().http.getApi("/Pengaturan/getReferralConfiguration?" + params);
         if (httpResponse.statusCode == 200) {
             JsonElement v = Json.get(httpResponse.jsonObject(), "referralConfiguration");
             return v == null || Json.isNull(v) ? new JsonPrimitive(false) : v;
@@ -79,8 +79,8 @@ public class KodeReferalActivity extends BaseActivity {
     }
 
     private JsonElement getDetailUser() {
-        String params = HTTPRequest.getQueryString(null, true);
-        Http.Response httpResponse = Http.getApi("/User/getDetailUser?" + params);
+        String params = container().httpRequest.getQueryString(null, true);
+        Http.Response httpResponse = container().http.getApi("/User/getDetailUser?" + params);
         if (httpResponse.statusCode == 200) {
             JsonElement v = Json.get(httpResponse.jsonObject(), "detailUser");
             return v == null || Json.isNull(v) ? new JsonPrimitive(false) : v;
@@ -90,8 +90,8 @@ public class KodeReferalActivity extends BaseActivity {
 
     private int getReferralUserWallet() {
         int referralUserWallet = 0;
-        String params = HTTPRequest.getQueryString(null, true);
-        Http.Response httpResponse = Http.getApi("/Pengaturan/getSettingValue/referralUserWallet?" + params);
+        String params = container().httpRequest.getQueryString(null, true);
+        Http.Response httpResponse = container().http.getApi("/Pengaturan/getSettingValue/referralUserWallet?" + params);
         if (httpResponse.statusCode == 200) {
             referralUserWallet = Json.parseInt(Json.str(httpResponse.jsonObject(), "settingValue"), 0);
         }

@@ -43,7 +43,7 @@ public class SemuaKategoriProdukActivity extends BaseActivity {
     }
 
     private void initialization() {
-        async(() -> KategoriProdukModel.getKategoriProduk(), kategoriProduk -> {
+        async(() -> container().kategoriProdukModel.getKategoriProduk(), kategoriProduk -> {
             boolean first = !isReadyToShow;
             isReadyToShow = true;
             kategoriProdukState = kategoriProduk;

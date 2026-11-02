@@ -1,5 +1,7 @@
 package id.laukpauk.view.components.penjual;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -32,6 +34,9 @@ import id.laukpauk.view.penjual.TambahProdukActivity;
 
 /** Port of lib/views/components/Penjual/PaketPenjualCard.dart. */
 public class PaketPenjualCard extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final JsonObject dataProduk;
     private final Runnable deteksiADJD;
     private final Runnable reload;
@@ -53,7 +58,7 @@ public class PaketPenjualCard extends LinearLayout {
     }
 
     private void initialization() {
-        String currentUserIDString = LocalStorage.getCurrentUserID();
+        String currentUserIDString = deps.localStorage.getCurrentUserID();
         try {
             currentUserIDState = Integer.parseInt(currentUserIDString.trim());
         } catch (NumberFormatException e) {
@@ -155,20 +160,20 @@ public class PaketPenjualCard extends LinearLayout {
     private void onButton(boolean produkPenjual, final String idPaket) {
         final BaseActivity activity = activity();
         if (!produkPenjual) {
-            boolean isADJDSet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+            boolean isADJDSet = deps.localStorage.isAlamatDeliveryDanJadwalDeliverySet();
             if (isADJDSet) {
-                activity.async(() -> PaketModel.addToCart(idPaket), statusAddToCart -> {
+                activity.async(() -> deps.paketModel.addToCart(idPaket), statusAddToCart -> {
                     String text = (statusAddToCart != null && statusAddToCart)
                             ? "Produk berhasil ditambahkan ke keranjang !"
                             : "Produk gagal ditambahkan ke keranjang, silahkan coba lagi.";
 
-                    PaketModel.addToCartSnackBar(activity, text);
+                    deps.paketModel.addToCartSnackBar(activity, text);
 
-                    activity.async(() -> HeaderModel.getJumlahCart(), jumlahKeranjang ->
-                            AppState.get().setJumlahCart(jumlahKeranjang == null ? 0 : jumlahKeranjang));
+                    activity.async(() -> deps.headerModel.getJumlahCart(), jumlahKeranjang ->
+                            deps.appState.setJumlahCart(jumlahKeranjang == null ? 0 : jumlahKeranjang));
                 });
             } else {
-                PaketModel.adjdNotSetAlert(activity, tentukanADJD -> {
+                deps.paketModel.adjdNotSetAlert(activity, tentukanADJD -> {
                     if (tentukanADJD != null && tentukanADJD) {
                         deteksiADJD.run();
                     }

@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -26,6 +28,9 @@ import id.laukpauk.view.pembeli.ListProdukActivity;
 
 /** Port of lib/views/pembeli/components/HomePage/Kategori.dart. */
 public class Kategori extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private String isThisKategoriFetchingProduct = ""; // id kategori
     private JsonArray kategoriProduk; // null while loading
     private final FrameLayout content;
@@ -48,7 +53,7 @@ public class Kategori extends LinearLayout {
         addView(content, new LayoutParams(Ui.MATCH, Ui.WRAP));
         content.addView(Loading.view(ctx));
 
-        HomeUi.act(ctx).async(() -> KategoriProdukModel.getKategoriProduk(7), result -> {
+        HomeUi.act(ctx).async(() -> deps.kategoriProdukModel.getKategoriProduk(7), result -> {
             kategoriProduk = result;
             render();
         });
@@ -119,7 +124,7 @@ public class Kategori extends LinearLayout {
             isThisKategoriFetchingProduct = idKategoriProduk;
             render();
 
-            act.async(() -> KategoriProdukModel.getProdukInThisCategory(idKategoriProduk,
+            act.async(() -> deps.kategoriProdukModel.getProdukInThisCategory(idKategoriProduk,
                     "id, idPenjual, namaToko, foto, nama, namaKategoriProduk"), productInThisCategory -> {
                 String title = "Daftar Produk";
                 String subTitle = "Berikut ini adalah produk di dalam kategori \"" + namaKategoriProduk.toUpperCase()

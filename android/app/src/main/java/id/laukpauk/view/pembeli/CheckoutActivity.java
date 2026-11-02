@@ -115,16 +115,16 @@ public class CheckoutActivity extends BaseActivity {
 
     private void initializeState() {
         async(() -> {
-            if (!AuthModel.isLogin()) {
+            if (!container().authModel.isLogin()) {
                 return 0;
             }
-            if (!LocalStorage.isUserVerified()) {
+            if (!container().localStorage.isUserVerified()) {
                 return 1;
             }
-            if (!SplashScreenModel.hasOTPConfirmed()) {
+            if (!container().splashScreenModel.hasOTPConfirmed()) {
                 return 2;
             }
-            if (!CheckoutModel.isJadwalDeliveryOpened()) {
+            if (!container().checkoutModel.isJadwalDeliveryOpened()) {
                 return 3;
             }
             return 4;
@@ -161,14 +161,14 @@ public class CheckoutActivity extends BaseActivity {
                 actions, null, false, (Boolean konfirmasi) -> {
                     if (konfirmasi != null && konfirmasi) {
                         async(() -> {
-                            ADJDModel.deleteAlamatDanJadwalDelivery();
+                            container().adjdModel.deleteAlamatDanJadwalDelivery();
                             return Boolean.TRUE;
-                        }, ok -> HeaderModel.adjd(this, null, null, null, (JsonObject newADJD) -> {
+                        }, ok -> container().headerModel.adjd(this, null, null, null, (JsonObject newADJD) -> {
                             String latitude = Json.strOrNull(newADJD, "latitude");
                             String longitude = Json.strOrNull(newADJD, "longitude");
                             String kodeJadwalDelivery = Json.strOrNull(newADJD, "kodeJadwalDelivery");
                             if (latitude != null && longitude != null && kodeJadwalDelivery != null) {
-                                AppState.get().setADJDSet(true);
+                                container().appState.setADJDSet(true);
                                 Nav.pushAndRemoveUntil(this, SplashScreenActivity.class, null);
                             }
                         }));
@@ -183,31 +183,31 @@ public class CheckoutActivity extends BaseActivity {
     private void dataInitialization() {
         async(() -> {
             InitData d = new InitData();
-            long totalBelanja = CheckoutModel.getTotalKeranjang();
+            long totalBelanja = container().checkoutModel.getTotalKeranjang();
             d.totalBelanja = totalBelanja;
             if (totalBelanja >= 1) {
                 d.enough = true;
-                JsonElement walletConfiguration = CheckoutModel.getWalletConfiguration();
+                JsonElement walletConfiguration = container().checkoutModel.getWalletConfiguration();
                 d.walletConfiguration = (walletConfiguration != null && walletConfiguration.isJsonObject())
                         ? walletConfiguration.getAsJsonObject() : null;
-                d.totalOngkir = CheckoutModel.getTotalOngkir();
-                d.jumlahBarang = CheckoutModel.getJumlahCart();
-                JsonElement jenisOngkirElement = CheckoutModel.getJenisOngkir();
+                d.totalOngkir = container().checkoutModel.getTotalOngkir();
+                d.jumlahBarang = container().checkoutModel.getJumlahCart();
+                JsonElement jenisOngkirElement = container().checkoutModel.getJenisOngkir();
                 JsonObject jenisOngkir = (jenisOngkirElement != null && jenisOngkirElement.isJsonObject())
                         ? jenisOngkirElement.getAsJsonObject() : null;
-                d.diskonKategori = CheckoutModel.getDiskonKategori();
+                d.diskonKategori = container().checkoutModel.getDiskonKategori();
                 String penjelasanOngkir = "";
 
-                d.totalDompetSaya = HomepageModel.getTotalDompet();
+                d.totalDompetSaya = container().homepageModel.getTotalDompet();
 
-                d.detailUser = Json.obj(ProfilSayaModel.getDetailActiveUser("nama, nomorHP, alamat"));
+                d.detailUser = Json.obj(container().profilSayaModel.getDetailActiveUser("nama, nomorHP, alamat"));
 
-                d.cartCode = LocalStorage.getCartCode();
+                d.cartCode = container().localStorage.getCartCode();
 
                 if (jenisOngkir != null) {
                     if (Json.str(jenisOngkir, "jenisOngkir").equals("perpasar")) {
                         if (Json.intVal(jenisOngkir, "banyakPasar") >= 2) {
-                            long tarifOngkirPerPasar = Json.asLong(SettingModel.getSettingValue("costDelivery"), 0);
+                            long tarifOngkirPerPasar = Json.asLong(container().settingModel.getSettingValue("costDelivery"), 0);
                             long banyakPasar = Json.longVal(jenisOngkir, "banyakPasar");
 
                             penjelasanOngkir = "Anda dikenakan  " + Currency.formatSatuan(banyakPasar)
@@ -222,7 +222,7 @@ public class CheckoutActivity extends BaseActivity {
                         if (namaPasarTerjauh == null) {
                             namaPasarTerjauh = "Pasar Tidak Dikenal";
                         }
-                        long tarifOngkirPerKM = Json.asLong(SettingModel.getSettingValue("costPerKm"), 0);
+                        long tarifOngkirPerKM = Json.asLong(container().settingModel.getSettingValue("costPerKm"), 0);
                         penjelasanOngkir = "Anda dikenakan ongkir PERKM karena anda sudah berbelanja di luar "
                                 + "Coverage Area anda. Jarak yang harus ditempuh kurir adalah "
                                 + Currency.formatSatuan(Json.longVal(jenisOngkir, "jarakPasarTerjauh"), "KM")
@@ -230,11 +230,11 @@ public class CheckoutActivity extends BaseActivity {
                                 + ". Tarif ongkir per km adalah " + Currency.formatRupiah(tarifOngkirPerKM, 0);
                     }
 
-                    JsonElement getPoint = PointModel.getPoint("point=true");
+                    JsonElement getPoint = container().pointModel.getPoint("point=true");
                     d.point = (getPoint != null && getPoint.isJsonObject() && !Json.isFalse(getPoint))
                             ? Json.longVal(getPoint.getAsJsonObject(), "point") : 0;
 
-                    JsonElement minimalPointTukarPoint = SettingModel.getSettingValue("minimalPointTukarPoint");
+                    JsonElement minimalPointTukarPoint = container().settingModel.getSettingValue("minimalPointTukarPoint");
                     if (minimalPointTukarPoint != null && !minimalPointTukarPoint.isJsonNull()
                             && !Json.isFalse(minimalPointTukarPoint)) {
                         d.minimalPointTukarPoint = Json.asLong(minimalPointTukarPoint, 0);
@@ -525,7 +525,7 @@ public class CheckoutActivity extends BaseActivity {
 
     private void onKodePromoFilled(final String kodePromo) {
         final int seq = ++kodePromoRequestSeq;
-        async(() -> KodePromoModel.cekKodePromo(kodePromo), (JsonObject checkKodePromo) -> {
+        async(() -> container().kodePromoModel.cekKodePromo(kodePromo), (JsonObject checkKodePromo) -> {
             if (seq != kodePromoRequestSeq) {
                 return; // a newer code was typed meanwhile
             }
@@ -568,7 +568,7 @@ public class CheckoutActivity extends BaseActivity {
     }
 
     private void onVoucherRemoved() {
-        LocalStorage.clearUsedVoucher();
+        container().localStorage.clearUsedVoucher();
         usedVoucherState = null;
         statusVoucherState = null;
         refreshAll();

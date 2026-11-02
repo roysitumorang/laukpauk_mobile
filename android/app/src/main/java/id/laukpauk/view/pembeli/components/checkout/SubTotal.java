@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.checkout;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
@@ -27,6 +29,9 @@ import id.laukpauk.ui.Ui;
  * parent calls {@link #update(CheckoutGlobalState)}.
  */
 public class SubTotal extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final Context checkoutContext;
     private CheckoutGlobalState cgs;
 
@@ -78,7 +83,7 @@ public class SubTotal extends LinearLayout {
                 walletState = 1;
                 final BaseActivity a = CheckoutUi.activity(ctx);
                 if (a != null) {
-                    a.async(() -> CheckoutModel.getWalletConfiguration(), (JsonElement w) -> {
+                    a.async(() -> deps.checkoutModel.getWalletConfiguration(), (JsonElement w) -> {
                         walletConfiguration = w;
                         walletState = 2;
                         render();
@@ -117,7 +122,7 @@ public class SubTotal extends LinearLayout {
             if (c.jadwalDelivery == null) {
                 return; // Dart: `_jadwalDeliverySelected!` throws and nothing happens
             }
-            JsonObject savedADJD = LocalStorage.getSavedLatitudeAndLongitude();
+            JsonObject savedADJD = deps.localStorage.getSavedLatitudeAndLongitude();
             String latDelivery = Json.str(savedADJD, "latitude");
             String longDelivery = Json.str(savedADJD, "longitude");
 
@@ -140,7 +145,7 @@ public class SubTotal extends LinearLayout {
                     c.hasDiskonKategori() ? Json.toJson(c.diskonKategori) : "");
             checkoutData.addProperty("kodePromo", c.kodePromo);
 
-            CheckoutModel.showMetodePembayaran(a, checkoutData, (int) c.totalKeseluruhan, null);
+            deps.checkoutModel.showMetodePembayaran(a, checkoutData, (int) c.totalKeseluruhan, null);
         } else {
             Modal.Content<Object> actions = handle -> CustomAlert.actionsRow(a,
                     CheckoutUi.textButton(a, "OK", 0xFF0069D9, handle::close));

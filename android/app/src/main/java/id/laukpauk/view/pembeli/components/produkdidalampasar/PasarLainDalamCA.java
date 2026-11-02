@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.produkdidalampasar;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 
 import com.google.gson.JsonArray;
@@ -12,6 +14,9 @@ import id.laukpauk.core.LocalStorage;
 
 /** Port of lib/views/pembeli/components/ProdukDiDalamPasar/PasarLainDalamCA.dart. */
 public class PasarLainDalamCA extends PasarLainSection {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String currentPasar;
 
     public PasarLainDalamCA(Context ctx, String currentPasar) {
@@ -22,9 +27,9 @@ public class PasarLainDalamCA extends PasarLainSection {
 
     @Override
     JsonArray fetchPasar() {
-        boolean isADJDSet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+        boolean isADJDSet = deps.localStorage.isAlamatDeliveryDanJadwalDeliverySet();
         if (isADJDSet) {
-            JsonObject savedADJD = LocalStorage.getSavedLatitudeAndLongitude();
+            JsonObject savedADJD = deps.localStorage.getSavedLatitudeAndLongitude();
             String latitude = Json.strOrNull(savedADJD, "latitude");
             String longitude = Json.strOrNull(savedADJD, "longitude");
             String jadwalDeliveryCode = Json.strOrNull(savedADJD, "jadwalDeliveryCode");
@@ -34,10 +39,10 @@ public class PasarLainDalamCA extends PasarLainSection {
 
             String excludePasar = currentPasar != null ? currentPasar : "";
 
-            String params = HTTPRequest.getQueryString("latitude=" + latitude + "&longitude=" + longitude
+            String params = deps.httpRequest.getQueryString("latitude=" + latitude + "&longitude=" + longitude
                     + "&exclude=" + excludePasar + "&jadwalDeliveryCode=" + jadwalDeliveryCode);
 
-            Http.Response httpResponse = Http.getApi("/Pasar/getPasarAroundOfThisLatLong?" + params);
+            Http.Response httpResponse = deps.http.getApi("/Pasar/getPasarAroundOfThisLatLong?" + params);
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();
                 return Json.array(dataObject, "listPasar");

@@ -57,12 +57,12 @@ public class DetailVoucherActivity extends BaseActivity {
     private void load() {
         async(() -> {
             Loaded l = new Loaded();
-            String usedVoucherString = LocalStorage.getUsedVoucher();
+            String usedVoucherString = container().localStorage.getUsedVoucher();
             if (usedVoucherString != null) {
-                JsonElement used = VoucherModel.getVoucherDetail(usedVoucherString);
+                JsonElement used = container().voucherModel.getVoucherDetail(usedVoucherString);
                 l.usedVoucherId = Json.isObject(used) ? Json.str(used.getAsJsonObject(), "id") : null;
             }
-            l.detailVoucher = VoucherModel.getVoucherDetail(idVoucher);
+            l.detailVoucher = container().voucherModel.getVoucherDetail(idVoucher);
             return l;
         }, l -> {
             usedVoucherId = l.usedVoucherId;
@@ -80,10 +80,10 @@ public class DetailVoucherActivity extends BaseActivity {
         String message;
 
         if (isUsed) {
-            LocalStorage.clearUsedVoucher();
+            container().localStorage.clearUsedVoucher();
             message = "Penggunaan voucher " + namaVoucher + " dibatalkan!";
         } else {
-            LocalStorage.setUsedVoucher(idVoucher);
+            container().localStorage.setUsedVoucher(idVoucher);
             message = "Voucher " + namaVoucher + " digunakan!";
         }
 

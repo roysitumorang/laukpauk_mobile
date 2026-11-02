@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -10,21 +12,30 @@ import id.laukpauk.core.LocalStorage;
 
 /** Port of lib/models/PasarModel.dart. BLOCKING (network). */
 public final class PasarModel {
-    private PasarModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+    private final LocalStorage localStorage;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public PasarModel(HTTPRequest httpRequest, Http http, LocalStorage localStorage) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+        this.localStorage = localStorage;
+    }
 
     /**
      * Dart: getProdukInThisPasar(idPasar, {required useLimit, startFrom, cariProduk}) -> Future&lt;List&gt;.
      * `startFrom` and `cariProduk` may be null.
      */
-    public static JsonArray getProdukInThisPasar(String idPasar, String useLimit, String startFrom,
+    public JsonArray getProdukInThisPasar(String idPasar, String useLimit, String startFrom,
                                                  String cariProduk) {
         // auth token dipakai untuk mencegah mendapatkan produk user yang sedang login jika dia seorang penjual
         // hal ini bertujuan supaya user tsb tidak bisa order produknya sendiri
 
-        boolean isADJDSet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+        boolean isADJDSet = localStorage.isAlamatDeliveryDanJadwalDeliverySet();
         String jadwalDeliveryCodeQS = "";
         if (isADJDSet) {
-            JsonObject adjdSet = LocalStorage.getSavedLatitudeAndLongitude();
+            JsonObject adjdSet = localStorage.getSavedLatitudeAndLongitude();
             String jadwalDeliveryCode = Json.strOrNull(adjdSet, "jadwalDeliveryCode");
             if (jadwalDeliveryCode == null) {
                 return new JsonArray(); // Dart: 'jadwalDeliveryCode=' + null throws
@@ -43,9 +54,9 @@ public final class PasarModel {
             cariProdukQS = "&cariProduk=" + Http.enc(cariProduk);
         }
 
-        String params = HTTPRequest.getQueryString(
+        String params = httpRequest.getQueryString(
                 jadwalDeliveryCodeQS + startFromQS + useLimitQS + cariProdukQS, true);
-        Http.Response httpResponse = Http.getApi("/Pasar/getProdukInThisPasar/" + idPasar + "?" + params);
+        Http.Response httpResponse = http.getApi("/Pasar/getProdukInThisPasar/" + idPasar + "?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();

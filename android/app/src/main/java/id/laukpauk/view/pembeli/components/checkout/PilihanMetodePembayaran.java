@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.checkout;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.Gravity;
@@ -32,6 +34,9 @@ import id.laukpauk.ui.Ui;
  * card order (see PembayaranModel.buatOrderNextStep).
  */
 public class PilihanMetodePembayaran extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final long totalTagihan;
     private final JsonObject checkoutData;
     private final Async.Done<JsonObject> checkoutCallback;
@@ -66,7 +71,7 @@ public class PilihanMetodePembayaran extends LinearLayout {
 
         BaseActivity a = CheckoutUi.activity(ctx);
         if (a != null) {
-            a.async(() -> PaymentChannelModel.getPaymentChannels(), (JsonArray list) -> {
+            a.async(() -> deps.paymentChannelModel.getPaymentChannels(), (JsonArray list) -> {
                 channels = list;
                 render();
             });

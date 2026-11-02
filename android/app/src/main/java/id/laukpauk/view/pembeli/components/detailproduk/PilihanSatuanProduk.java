@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.detailproduk;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -22,6 +24,9 @@ import id.laukpauk.view.pembeli.DetailUi;
 
 /** Port of lib/views/pembeli/components/DetailProduk/PilihanSatuanProduk.dart. */
 public class PilihanSatuanProduk extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String idProduk;
     private final Async.Done<JsonObject> onSatuanAndQuantitySelected;
 
@@ -50,14 +55,14 @@ public class PilihanSatuanProduk extends LinearLayout {
         if (ctx instanceof BaseActivity) {
             ((BaseActivity) ctx).async(work, done);
         } else {
-            Async.run(work, done);
+            deps.async.run(work, done);
         }
     }
 
     private JsonArray getHargaProduk() {
-        String params = HTTPRequest.getQueryString("idProduk=" + idProduk);
+        String params = deps.httpRequest.getQueryString("idProduk=" + idProduk);
 
-        Http.Response httpResponse = Http.getApi("/Produk/getHargaProduk?" + params);
+        Http.Response httpResponse = deps.http.getApi("/Produk/getHargaProduk?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.array(dataObject, "hargaProduk");

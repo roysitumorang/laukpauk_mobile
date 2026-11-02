@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +18,9 @@ import id.laukpauk.view.pembeli.ListProdukActivity;
 
 /** Port of lib/views/pembeli/components/HomePage/Konten.dart. */
 public class Konten extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public Konten(final Context ctx, JsonObject detailKonten) {
         super(ctx);
         setOrientation(VERTICAL);
@@ -33,7 +38,7 @@ public class Konten extends LinearLayout {
         row.addView(Ui.spacer(ctx));
         if (jenisItemLC.equals("produk")) {
             TextView lihat = Ui.text(ctx, "Lihat Semua", hb * 3.0f, CustomColors.darkGreen);
-            Ui.onTap(lihat, () -> act.async(() -> KontenModel.getProdukKonten(idKonten), getProdukKontenItem -> {
+            Ui.onTap(lihat, () -> act.async(() -> deps.kontenModel.getProdukKonten(idKonten), getProdukKontenItem -> {
                 String title = namaDivisi.toUpperCase();
                 String subTitle = "Berikut ini adalah produk - produk " + namaDivisi.toUpperCase();
                 Nav.push(act, ListProdukActivity.class, Json.of(

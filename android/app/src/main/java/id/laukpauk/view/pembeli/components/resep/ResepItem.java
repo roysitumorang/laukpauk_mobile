@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.resep;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -30,6 +32,9 @@ import id.laukpauk.view.pembeli.KeranjangActivity;
 
 /** Port of lib/views/pembeli/components/Resep/ResepItem.dart (ingredient list + "Belanja Resep"). */
 public class ResepItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final BaseActivity activity;
     private final String idResep;
     /** idItem -> {idProduk, quantity, idSatuan, subTotal}; insertion ordered like a Dart Map. */
@@ -56,7 +61,7 @@ public class ResepItem extends LinearLayout {
         content.addView(DetailUi.smallSpinner(ctx, 15),
                 new FrameLayout.LayoutParams(Ui.MATCH, Ui.dp(ctx, 15)));
 
-        activity.async(() -> ResepModel.getResepItem(this.idResep), resepItem -> {
+        activity.async(() -> deps.resepModel.getResepItem(this.idResep), resepItem -> {
             if (resepItem == null) {
                 return; // FutureBuilder never got data
             }
@@ -167,8 +172,8 @@ public class ResepItem extends LinearLayout {
 
     /** Dart: deteksiADJD closure. */
     private void deteksiADJD() {
-        ADJDModel.deleteAlamatDanJadwalDelivery();
-        HeaderModel.adjd(activity, null, null, null, (JsonObject adjdSet) -> {
+        deps.adjdModel.deleteAlamatDanJadwalDelivery();
+        deps.headerModel.adjd(activity, null, null, null, (JsonObject adjdSet) -> {
             if (adjdSet == null) {
                 return;
             }
@@ -177,7 +182,7 @@ public class ResepItem extends LinearLayout {
             String kodeJadwalDelivery = Json.strOrNull(adjdSet, "kodeJadwalDelivery");
 
             if (latitude != null && longitude != null && kodeJadwalDelivery != null) {
-                AppState.get().setADJDSet(true);
+                deps.appState.setADJDSet(true);
 
                 ResepUi.snackbar(activity,
                         "Anda sudah bisa berbelanja resep, silahkan lanjutkan belanjanya ya mak!",
@@ -220,10 +225,10 @@ public class ResepItem extends LinearLayout {
 
     private void belanjaResep() {
         activity.async(() -> {
-            String cartCode = LocalStorage.getCartCode();
+            String cartCode = deps.localStorage.getCartCode();
 
-            JsonObject jadwalDeliveryTerpilih = LocalStorage.savedJadwalDeliveryMap();
-            JsonObject savedADJD = LocalStorage.getSavedLatitudeAndLongitude();
+            JsonObject jadwalDeliveryTerpilih = deps.localStorage.savedJadwalDeliveryMap();
+            JsonObject savedADJD = deps.localStorage.getSavedLatitudeAndLongitude();
 
             String dayDelivery = jadwalDeliveryTerpilih != null
                     ? Json.str(jadwalDeliveryTerpilih, "day") : "Hari Pengataran";
@@ -238,11 +243,11 @@ public class ResepItem extends LinearLayout {
             if (httpBody == null) {
                 return;
             }
-            ResepModel.belanjaResep(activity, httpBody, statusAddToCart -> {
+            deps.resepModel.belanjaResep(activity, httpBody, statusAddToCart -> {
                 if (statusAddToCart != null && statusAddToCart) {
-                    activity.async(() -> HeaderModel.getJumlahCart(), jumlahKeranjang -> {
+                    activity.async(() -> deps.headerModel.getJumlahCart(), jumlahKeranjang -> {
                         if (jumlahKeranjang != null) {
-                            AppState.get().setJumlahCart(jumlahKeranjang);
+                            deps.appState.setJumlahCart(jumlahKeranjang);
                         }
                         ResepUi.snackbar(activity,
                                 "Berhasil menambah resep item ke keranjang belanja !", 2000,

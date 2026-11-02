@@ -70,7 +70,7 @@ public class PesananSayaActivity extends BaseActivity {
 
         // FutureBuilder(AuthModel.isLogin()) -> Scaffold(body: Loading())
         setRoot(Loading.view(this));
-        async(AuthModel::isLogin, isLogin -> {
+        async(container().authModel::isLogin, isLogin -> {
             if (isLogin) {
                 buildScreen();
                 load(true);
@@ -311,7 +311,7 @@ public class PesananSayaActivity extends BaseActivity {
     }
 
     /** BLOCKING: GET /User/getRiwayatTransaksi. */
-    private static JsonArray getRiwayatTransaksi(String statusTransaksi, String statusTransaksiHariIni,
+    private JsonArray getRiwayatTransaksi(String statusTransaksi, String statusTransaksiHariIni,
                                                  String tglAwal, String tglAkhir) {
         String statusTransaksiQS = (statusTransaksi == null) ? "" : "statusTransaksi=" + statusTransaksi;
         String statusTransaksiHariIniQS = (statusTransaksi == null && !statusTransaksiHariIni.equals(""))
@@ -324,10 +324,10 @@ public class PesananSayaActivity extends BaseActivity {
             rentangWaktuQS = rentangWaktuAwal + rentangWaktuAkhir;
         }
 
-        String params = HTTPRequest.getQueryString(
+        String params = container().httpRequest.getQueryString(
                 statusTransaksiQS + statusTransaksiHariIniQS + rentangWaktuQS, true);
 
-        Http.Response httpResponse = Http.getApi("/User/getRiwayatTransaksi?" + params);
+        Http.Response httpResponse = container().http.getApi("/User/getRiwayatTransaksi?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();

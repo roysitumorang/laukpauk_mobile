@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -51,7 +53,7 @@ public class GiftAlert extends LinearLayout {
             return;
         }
         Modal.<Object>dialog(a, true, handle -> new GiftAlert(a, gifts, () -> {
-            Prefs.setBool("showAlertGift", false);
+            AppContainer.from(a).prefs.setBool("showAlertGift", false);
             handle.close();
             if (onClose != null) {
                 onClose.run();

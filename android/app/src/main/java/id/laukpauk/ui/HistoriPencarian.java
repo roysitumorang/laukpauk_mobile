@@ -1,5 +1,7 @@
 package id.laukpauk.ui;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.widget.LinearLayout;
 
@@ -14,13 +16,16 @@ import id.laukpauk.model.HistoriPencarianModel;
 
 /** lib/global-components/HistoriPencarian.dart: the saved search history card. */
 public class HistoriPencarian extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private JsonArray historiPencarianState = new JsonArray();
 
     public HistoriPencarian(Context ctx) {
         super(ctx);
         setOrientation(VERTICAL);
         render();
-        Async.run(() -> HistoriPencarianModel.getHistoriPencarian(), (JsonArray historiPencarian) -> {
+        deps.async.run(() -> deps.historiPencarianModel.getHistoriPencarian(), (JsonArray historiPencarian) -> {
             historiPencarianState = historiPencarian;
             render();
         });
@@ -51,8 +56,8 @@ public class HistoriPencarian extends LinearLayout {
                 item.addView(Ui.text(ctx, Json.str(histori, "title"), 14f, CustomColors.grey));
                 item.addView(Ui.spaceH(ctx, 3));
                 item.addView(Ui.text(ctx, Json.str(histori, "onTime"), 11.5f, CustomColors.textMuted));
-                item.setOnClickListener(v -> Async.run(
-                        () -> HistoriPencarianModel.addHistoriPencarian(Json.str(histori, "title")),
+                item.setOnClickListener(v -> deps.async.run(
+                        () -> deps.historiPencarianModel.addHistoriPencarian(Json.str(histori, "title")),
                         (Boolean ok) -> { }));
                 list.addView(item, new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP));
             }

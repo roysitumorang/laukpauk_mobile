@@ -61,7 +61,7 @@ public class HistoriPoinActivity extends BaseActivity {
         listHolder.removeAllViews();
         listHolder.addView(Loading.view(this), new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
 
-        async(UserModel::getHistoriPoint, historiPoint -> {
+        async(container().userModel::getHistoriPoint, historiPoint -> {
             if (thisRequest != requestId) {
                 return;
             }

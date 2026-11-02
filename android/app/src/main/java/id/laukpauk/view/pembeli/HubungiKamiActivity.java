@@ -52,9 +52,9 @@ public class HubungiKamiActivity extends BaseActivity {
 
     /** Future&lt;dynamic&gt; getContactUsWhatsappConfiguration(): the value, or JSON false. */
     private JsonElement getContactUsWhatsappConfiguration() {
-        String params = HTTPRequest.getQueryString(null, true);
+        String params = container().httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Pengaturan/getContactUsWhatsappConfiguration?" + params);
+        Http.Response httpResponse = container().http.getApi("/Pengaturan/getContactUsWhatsappConfiguration?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonElement value = Json.get(httpResponse.jsonObject(), "contactUsWhatsappConfiguration");

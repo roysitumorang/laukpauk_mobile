@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
@@ -43,7 +45,7 @@ public final class AccountUi {
                                     final JsonObject routeArgs, boolean plainSpinner,
                                     final Runnable onLogin) {
         a.setRoot(plainSpinner ? Loading.spinner(a) : Loading.view(a));
-        a.async(AuthModel::isLogin, isLogin -> {
+        a.async(AppContainer.from(a).authModel::isLogin, isLogin -> {
             if (isLogin != null && isLogin) {
                 onLogin.run();
             } else {

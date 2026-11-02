@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.produkdidalampasar;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -42,6 +44,9 @@ import id.laukpauk.view.pembeli.DetailProdukActivity;
  * constraints).
  */
 public class ProdukDiDalamPasarItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final JsonObject dataProduk;
     private final Runnable deteksiADJD;
     private final Double widgetWidth;
@@ -76,7 +81,7 @@ public class ProdukDiDalamPasarItem extends LinearLayout {
 
     private void initialization() {
         final String idProduk = Json.str(dataProduk, "id");
-        Async.Work<JsonElement> work = () -> ProdukModel.getLowestPrice(idProduk);
+        Async.Work<JsonElement> work = () -> deps.produkModel.getLowestPrice(idProduk);
         Async.Done<JsonElement> done = lowestPrice -> {
             lowestPriceState = lowestPrice;
             render();
@@ -84,7 +89,7 @@ public class ProdukDiDalamPasarItem extends LinearLayout {
         if (getContext() instanceof BaseActivity) {
             ((BaseActivity) getContext()).async(work, done);
         } else {
-            Async.run(work, done);
+            deps.async.run(work, done);
         }
     }
 
@@ -274,11 +279,11 @@ public class ProdukDiDalamPasarItem extends LinearLayout {
     private void onBeli() {
         final BaseActivity activity = (BaseActivity) getContext();
         setBusy(true);
-        boolean isADJDSet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+        boolean isADJDSet = deps.localStorage.isAlamatDeliveryDanJadwalDeliverySet();
         if (isADJDSet) {
-            ProdukModel.showSatuanProduk(activity, dataProduk, v -> setBusy(false));
+            deps.produkModel.showSatuanProduk(activity, dataProduk, v -> setBusy(false));
         } else {
-            ProdukModel.adjdNotSetAlert(activity, lakukanDeteksiADJD -> {
+            deps.produkModel.adjdNotSetAlert(activity, lakukanDeteksiADJD -> {
                 if (lakukanDeteksiADJD != null && lakukanDeteksiADJD) {
                     if (deteksiADJD != null) {
                         deteksiADJD.run();

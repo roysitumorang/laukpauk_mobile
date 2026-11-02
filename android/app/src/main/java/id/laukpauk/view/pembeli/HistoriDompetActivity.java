@@ -63,9 +63,9 @@ public class HistoriDompetActivity extends BaseActivity {
             jenisDompetString = "jenisDompet=potongantransaksi";
         }
 
-        String params = HTTPRequest.getQueryString(jenisDompetString, true);
+        String params = container().httpRequest.getQueryString(jenisDompetString, true);
 
-        Http.Response httpResponse = Http.getApi("/User/getRiwayatDompet?" + params);
+        Http.Response httpResponse = container().http.getApi("/User/getRiwayatDompet?" + params);
 
         if (httpResponse.statusCode == 200) {
             return Json.array(httpResponse.jsonObject(), "riwayatDompet");

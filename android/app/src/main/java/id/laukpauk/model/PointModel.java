@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -8,7 +10,14 @@ import id.laukpauk.core.Http;
 
 /** Port of lib/models/PointModel.dart. */
 public final class PointModel {
-    private PointModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public PointModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
     public static final String createdFrom_admin = "admin";
     public static final String createdFrom_transaksi = "transaksi";
@@ -18,15 +27,15 @@ public final class PointModel {
      * be null. Dart quirk kept: a given queryString REPLACES the default
      * 'historiPoint=true&amp;point=true' (it is not appended). Returns the `response` member, or false.
      */
-    public static JsonElement getPoint(String queryString) {
+    public JsonElement getPoint(String queryString) {
         String queryStringParams = "historiPoint=true&point=true";
         if (queryString != null) {
             queryStringParams = "&" + queryString;
         }
 
-        String params = HTTPRequest.getQueryString(queryStringParams, true);
+        String params = httpRequest.getQueryString(queryStringParams, true);
 
-        Http.Response httpResponse = Http.getApi("/Point/getPoint?" + params);
+        Http.Response httpResponse = http.getApi("/Point/getPoint?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject body = httpResponse.jsonObject();
@@ -36,7 +45,7 @@ public final class PointModel {
         return ShopModelUi.FALSE;
     }
 
-    public static JsonElement getPoint() {
+    public JsonElement getPoint() {
         return getPoint(null);
     }
 }

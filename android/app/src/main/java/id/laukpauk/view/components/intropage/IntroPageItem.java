@@ -1,5 +1,7 @@
 package id.laukpauk.view.components.intropage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -20,6 +22,9 @@ import id.laukpauk.view.SplashScreenActivity;
  * BuildContext is the Context here. dataPage['img'] is ClientPath.assetsImg + '/intro-2.jpg'.
  */
 public class IntroPageItem extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public IntroPageItem(final Context ctx, int indexPage, JsonObject dataPage) {
         super(ctx);
         float hb = Ui.hb(ctx);
@@ -47,7 +52,7 @@ public class IntroPageItem extends FrameLayout {
     }
 
     private void startApp() {
-        Prefs.setBool("isAppStarted", true);
+        deps.prefs.setBool("isAppStarted", true);
         Nav.push(getContext(), SplashScreenActivity.class, null);
     }
 }

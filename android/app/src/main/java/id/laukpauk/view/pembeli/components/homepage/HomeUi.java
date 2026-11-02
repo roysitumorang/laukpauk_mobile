@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -117,8 +119,8 @@ public final class HomeUi {
      * when `produk` is not null, ProdukModel.showSatuanProduk(context, produk).
      */
     public static void pilihAdjd(final BaseActivity a, final JsonObject produk) {
-        ADJDModel.deleteAlamatDanJadwalDelivery();
-        HeaderModel.adjd(a, null, null, null, (JsonObject adjdSet) -> {
+        AppContainer.from(a).adjdModel.deleteAlamatDanJadwalDelivery();
+        AppContainer.from(a).headerModel.adjd(a, null, null, null, (JsonObject adjdSet) -> {
             if (adjdSet == null) {
                 return;
             }
@@ -126,9 +128,9 @@ public final class HomeUi {
             String longitude = Json.strOrNull(adjdSet, "longitude");
             String kodeJadwalDelivery = Json.strOrNull(adjdSet, "kodeJadwalDelivery");
             if (latitude != null && longitude != null && kodeJadwalDelivery != null) {
-                AppState.get().setADJDSet(true);
+                AppContainer.from(a).appState.setADJDSet(true);
                 if (produk != null) {
-                    ProdukModel.showSatuanProduk(a, produk, null);
+                    AppContainer.from(a).produkModel.showSatuanProduk(a, produk, null);
                 }
             }
         });

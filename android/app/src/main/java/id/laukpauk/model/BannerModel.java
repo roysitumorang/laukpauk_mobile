@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -8,11 +10,16 @@ import id.laukpauk.core.Json;
 
 /** Port of lib/models/BannerModel.dart. */
 public final class BannerModel {
-    private BannerModel() {}
+    private final Http http;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public BannerModel(Http http) {
+        this.http = http;
+    }
 
     /** Dart: getBanner() -> Future&lt;List&gt;. BLOCKING. */
-    public static JsonArray getBanner() {
-        Http.Response httpResponse = Http.getApi("/Banner/getBanner");
+    public JsonArray getBanner() {
+        Http.Response httpResponse = http.getApi("/Banner/getBanner");
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataBannerObject = httpResponse.jsonObject();

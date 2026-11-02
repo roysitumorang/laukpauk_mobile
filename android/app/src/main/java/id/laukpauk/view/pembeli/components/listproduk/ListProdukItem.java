@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.listproduk;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -30,6 +32,9 @@ import id.laukpauk.view.pembeli.components.homepage.HomeUi;
 
 /** Port of lib/views/pembeli/components/ListProduk/ListProdukItem.dart (a product card in the ListProduk grid). */
 public class ListProdukItem extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final JsonObject dataProduk;
     private final Runnable deteksiADJD;
     private final Double widgetWidth;
@@ -97,7 +102,7 @@ public class ListProdukItem extends FrameLayout {
         Ui.onTap(this, () -> Nav.push(ctx, DetailProdukActivity.class,
                 Json.of("idProduk", idProduk, "id", idProduk)));
 
-        act.async(() -> ProdukModel.getLowestPrice(idProduk), this::showPrice);
+        act.async(() -> deps.produkModel.getLowestPrice(idProduk), this::showPrice);
     }
 
     @Override
@@ -154,11 +159,11 @@ public class ListProdukItem extends FrameLayout {
         column.addView(Ui.spaceH(ctx, 10));
 
         View beli = CustomButton.button(ctx, "Beli", () -> act.async(
-                () -> LocalStorage.isAlamatDeliveryDanJadwalDeliverySet(), (Boolean isADJDSet) -> {
+                () -> deps.localStorage.isAlamatDeliveryDanJadwalDeliverySet(), (Boolean isADJDSet) -> {
                     if (Boolean.TRUE.equals(isADJDSet)) {
-                        ProdukModel.showSatuanProduk(act, dataProduk, null);
+                        deps.produkModel.showSatuanProduk(act, dataProduk, null);
                     } else {
-                        ProdukModel.adjdNotSetAlert(act, (Boolean lakukanDeteksiADJD) -> {
+                        deps.produkModel.adjdNotSetAlert(act, (Boolean lakukanDeteksiADJD) -> {
                             if (lakukanDeteksiADJD != null && lakukanDeteksiADJD && deteksiADJD != null) {
                                 deteksiADJD.run();
                             }

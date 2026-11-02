@@ -49,7 +49,7 @@ public class NotifikasiActivity extends BaseActivity {
         renderBody();
         initialization();
 
-        async(UserModel::getDetailActiveUser, detail -> {
+        async(container().userModel::getDetailActiveUser, detail -> {
             userLoaded = (detail != null);
             if (detail != null) {
                 if (Json.isFalse(detail)) {
@@ -64,8 +64,8 @@ public class NotifikasiActivity extends BaseActivity {
 
     private void initialization() {
         async(() -> new int[]{
-                NotifikasiModel.getJumlahNotifikasi("unread"),
-                NotifikasiModel.getJumlahNotifikasiKhusus("unread")
+                container().notifikasiModel.getJumlahNotifikasi("unread"),
+                container().notifikasiModel.getJumlahNotifikasiKhusus("unread")
         }, jumlah -> {
             if (jumlah == null) {
                 return;

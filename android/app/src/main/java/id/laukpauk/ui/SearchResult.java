@@ -1,5 +1,7 @@
 package id.laukpauk.ui;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
@@ -31,6 +33,9 @@ import id.laukpauk.view.pembeli.DetailProdukActivity;
  * ({@link #setSearchString(String)} = didUpdateWidget).
  */
 public class SearchResult extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private String searchString;
     private String searchStringState;
     private int generation = 0;
@@ -61,8 +66,8 @@ public class SearchResult extends FrameLayout {
     private JsonArray getSuggestions(String term) {
         Async.sleep(500);
 
-        String params = HTTPRequest.getQueryString("term=" + Http.enc(term));
-        Http.Response httpResponse = Http.getApi("/Konten/pencarian?" + params);
+        String params = deps.httpRequest.getQueryString("term=" + Http.enc(term));
+        Http.Response httpResponse = deps.http.getApi("/Konten/pencarian?" + params);
 
         if (httpResponse.statusCode == 200) {
             return Json.array(httpResponse.jsonObject(), "hasilPencarian");
@@ -92,7 +97,7 @@ public class SearchResult extends FrameLayout {
         addView(Loading.view(ctx), new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
         final int myGeneration = ++generation;
         final String term = searchStringState;
-        Async.run(() -> getSuggestions(term), (JsonArray hasilPencarian) -> {
+        deps.async.run(() -> getSuggestions(term), (JsonArray hasilPencarian) -> {
             if (myGeneration != generation) {
                 return;
             }
@@ -196,7 +201,7 @@ public class SearchResult extends FrameLayout {
         final SwipeRefreshLayout refresh = new SwipeRefreshLayout(ctx);
         refresh.setColorSchemeColors(CustomColors.green);
         refresh.addView(scroll, new ViewGroupLayoutParams());
-        refresh.setOnRefreshListener(() -> Async.run(() -> getSuggestions(term), (JsonArray ignored) -> refresh.setRefreshing(false),
+        refresh.setOnRefreshListener(() -> deps.async.run(() -> getSuggestions(term), (JsonArray ignored) -> refresh.setRefreshing(false),
                 error -> refresh.setRefreshing(false)));
         return refresh;
     }

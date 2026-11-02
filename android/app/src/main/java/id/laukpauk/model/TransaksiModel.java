@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -24,15 +26,34 @@ import id.laukpauk.view.pembeli.KeranjangActivity;
 
 /** Port of lib/models/TransaksiModel.dart. */
 public final class TransaksiModel {
-    private TransaksiModel() {}
+    private final AppState appState;
+    private final Async async;
+    private final HTTPRequest httpRequest;
+    private final Http http;
+    private final LocalStorage localStorage;
+    private final ADJDModel adjdModel;
+    private final CheckoutModel checkoutModel;
+    private final HeaderModel headerModel;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public TransaksiModel(AppState appState, Async async, HTTPRequest httpRequest, Http http, LocalStorage localStorage, ADJDModel adjdModel, CheckoutModel checkoutModel, HeaderModel headerModel) {
+        this.appState = appState;
+        this.async = async;
+        this.httpRequest = httpRequest;
+        this.http = http;
+        this.localStorage = localStorage;
+        this.adjdModel = adjdModel;
+        this.checkoutModel = checkoutModel;
+        this.headerModel = headerModel;
+    }
 
     /** BLOCKING. Returns dataObject['transaksi'] or the JSON boolean false. */
-    public static JsonElement getDetailTransaksi(String idTransaksi, String select) {
+    public JsonElement getDetailTransaksi(String idTransaksi, String select) {
         String entitasTransaksiQS = (select == null) ? "" : "entitasTransaksi=" + select;
 
-        String params = HTTPRequest.getQueryString(entitasTransaksiQS, true);
+        String params = httpRequest.getQueryString(entitasTransaksiQS, true);
 
-        Http.Response httpResponse = Http.getApi("/Transaksi/getTransaksi/" + idTransaksi + "?" + params);
+        Http.Response httpResponse = http.getApi("/Transaksi/getTransaksi/" + idTransaksi + "?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -42,40 +63,40 @@ public final class TransaksiModel {
         return new JsonPrimitive(Boolean.FALSE);
     }
 
-    public static JsonElement getDetailTransaksi(String idTransaksi) {
+    public JsonElement getDetailTransaksi(String idTransaksi) {
         return getDetailTransaksi(idTransaksi, null);
     }
 
     /** Dart: removeTransactionSession(context). UI flow (see CONVENTIONS); `done` runs on the main thread once. */
-    public static void removeTransactionSession(BaseActivity activity, final Async.Done<Void> done) {
+    public void removeTransactionSession(BaseActivity activity, final Async.Done<Void> done) {
         // Not tied to the screen's lifetime (Async.run, not activity.async): the session must be cleared even
         // when the screen is gone.
-        Async.run(() -> {
-            LocalStorage.clearCartCode();
-            LocalStorage.clearUsedVoucher();
-            ADJDModel.deleteAlamatDanJadwalDelivery();
-            ADJDModel.deleteCoppiedADJD();
+        async.run(() -> {
+            localStorage.clearCartCode();
+            localStorage.clearUsedVoucher();
+            adjdModel.deleteAlamatDanJadwalDelivery();
+            adjdModel.deleteCoppiedADJD();
 
-            CheckoutModel.bersihkanKeranjang();
+            checkoutModel.bersihkanKeranjang();
             return Boolean.TRUE;
         }, ok -> {
-            AppState.get().setJumlahCart(0);
-            AppState.get().setADJDSet(false);
+            appState.setJumlahCart(0);
+            appState.setADJDSet(false);
             if (done != null) {
                 done.run(null);
             }
         });
     }
 
-    public static void melewatiBatasRangeJadwalDeliveryBelumCheckout(BaseActivity activity,
+    public void melewatiBatasRangeJadwalDeliveryBelumCheckout(BaseActivity activity,
                                                                     final Async.Done<Void> done) {
-        Async.run(() -> {
-            ADJDModel.deleteAlamatDanJadwalDelivery();
+        async.run(() -> {
+            adjdModel.deleteAlamatDanJadwalDelivery();
 
-            CheckoutModel.bersihkanKeranjang();
+            checkoutModel.bersihkanKeranjang();
             return Boolean.TRUE;
         }, ok -> {
-            AppState.get().setJumlahCart(0);
+            appState.setJumlahCart(0);
             if (done != null) {
                 done.run(null);
             }
@@ -83,10 +104,10 @@ public final class TransaksiModel {
     }
 
     /** BLOCKING. null when the request failed. */
-    public static Integer jumlahItemDiantar(String idTransaksi) {
-        String params = HTTPRequest.getQueryString(null, true);
+    public Integer jumlahItemDiantar(String idTransaksi) {
+        String params = httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Transaksi/getJumlahItemDiantar/" + idTransaksi + "?" + params);
+        Http.Response httpResponse = http.getApi("/Transaksi/getJumlahItemDiantar/" + idTransaksi + "?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -97,10 +118,10 @@ public final class TransaksiModel {
     }
 
     /** BLOCKING. null when the request failed. */
-    public static Integer getLastTransactionID() {
-        String params = HTTPRequest.getQueryString(null, true);
+    public Integer getLastTransactionID() {
+        String params = httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Transaksi/getLastTransactionID?" + params);
+        Http.Response httpResponse = http.getApi("/Transaksi/getLastTransactionID?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -111,11 +132,11 @@ public final class TransaksiModel {
     }
 
     /** BLOCKING. null when the request failed. */
-    public static JsonObject belanjaUlang(String idTransaksi) {
-        String cartCode = LocalStorage.getCartCode();
+    public JsonObject belanjaUlang(String idTransaksi) {
+        String cartCode = localStorage.getCartCode();
 
-        JsonObject jadwalDeliveryTerpilih = LocalStorage.savedJadwalDeliveryMap();
-        JsonObject savedADJD = LocalStorage.getSavedLatitudeAndLongitude();
+        JsonObject jadwalDeliveryTerpilih = localStorage.savedJadwalDeliveryMap();
+        JsonObject savedADJD = localStorage.getSavedLatitudeAndLongitude();
 
         String dayDelivery = (jadwalDeliveryTerpilih != null)
                 ? Json.str(jadwalDeliveryTerpilih, "day")
@@ -128,7 +149,7 @@ public final class TransaksiModel {
         body.put("cartCode", cartCode);
 
         // Dart quirk kept: '/api-v2/' + '/Transaksi/belanjaUlang/$id' (double slash).
-        Http.Response httpResponse = Http.post(
+        Http.Response httpResponse = http.post(
                 ServerPath.baseURL + "/api-v2/" + "/Transaksi/belanjaUlang/" + idTransaksi, body);
 
         if (httpResponse.statusCode == 200) {
@@ -139,7 +160,7 @@ public final class TransaksiModel {
     }
 
     /** Dart: responseBelanjaUlang(context, response). `done` runs when the dialog is closed. */
-    public static void responseBelanjaUlang(final BaseActivity activity, JsonObject response,
+    public void responseBelanjaUlang(final BaseActivity activity, JsonObject response,
                                             Async.Done<Void> done) {
         String title = "Belanja Ulang";
         final boolean statusBelanjaUlang = Json.bool(response, "statusBelanjaUlang");
@@ -163,8 +184,8 @@ public final class TransaksiModel {
         Modal.Content<Void> actions = handle -> CustomAlert.actionsRow(activity,
                 CustomButton.button(activity, btn, () -> {
                     if (statusBelanjaUlang) {
-                        Async.run(() -> HeaderModel.getJumlahCart(), (Integer jumlahKeranjang) -> {
-                            AppState.get().setJumlahCart(jumlahKeranjang == null ? 0 : jumlahKeranjang);
+                        async.run(() -> headerModel.getJumlahCart(), (Integer jumlahKeranjang) -> {
+                            appState.setJumlahCart(jumlahKeranjang == null ? 0 : jumlahKeranjang);
 
                             // Dart: Navigator.pushReplacement(context, Keranjang) replaces the topmost route,
                             // which is this dialog: the dialog goes away and Keranjang opens over the screen.

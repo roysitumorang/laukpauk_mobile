@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.pesanansaya;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
@@ -30,6 +32,9 @@ import id.laukpauk.view.pembeli.components.detailtransaksi.TransaksiUi;
 
 /** Port of lib/views/pembeli/components/PesananSaya/PesananSayaItem.dart. */
 public class PesananSayaItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final BaseActivity activity;
     private final JsonObject riwayat;
     private final Async.Done<Boolean> pesananDiterimaCallback;
@@ -82,7 +87,7 @@ public class PesananSayaItem extends LinearLayout {
             totalBelanjaBersih += kodeUnik;
         }
 
-        String statusReadable = PesananSayaModel.readAbleStatusForUser(status);
+        String statusReadable = deps.pesananSayaModel.readAbleStatusForUser(status);
         final String statusLC = status.toLowerCase();
         boolean rejected = statusLC.equals("rejected");
 
@@ -179,7 +184,7 @@ public class PesananSayaItem extends LinearLayout {
                 CustomAlert.textButton(activity, "OK", () -> handle.close(Boolean.TRUE)));
         CustomAlert.<Boolean>textComponent(activity, null, title, subTitle, actions, null, false, konfirmasi -> {
             if (konfirmasi != null && konfirmasi) {
-                activity.async(() -> PesananSayaModel.pesananDiterima(idTransaksi), statusPesananDiterima -> {
+                activity.async(() -> deps.pesananSayaModel.pesananDiterima(idTransaksi), statusPesananDiterima -> {
                     if (pesananDiterimaCallback != null) {
                         pesananDiterimaCallback.run(statusPesananDiterima);
                     }
@@ -189,7 +194,7 @@ public class PesananSayaItem extends LinearLayout {
     }
 
     private void onKonfirmasiBayar(final String nomorTransaksi, final String namaMetodePembayaran) {
-        activity.async(SettingModel::getContactUsWhatsappConfiguration, (JsonElement contactUsWhatsapp) -> {
+        activity.async(deps.settingModel::getContactUsWhatsappConfiguration, (JsonElement contactUsWhatsapp) -> {
             // `contactUsWhatsapp != false`
             if (contactUsWhatsapp != null && !Json.isFalse(contactUsWhatsapp)) {
                 String text = "Hai LaukPauk, saya ingin konfirmasi bahwa transaksi saya " + nomorTransaksi

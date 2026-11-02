@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -20,6 +22,9 @@ import id.laukpauk.view.pembeli.DetailUi;
 
 /** Port of lib/views/pembeli/components/HomePage/JadwalPengantaran.dart. */
 public class JadwalPengantaran extends FrameLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final Async.Done<JsonObject> onJadwalDeliverySelected;
     private String selectedJadwalPengantaran = "";
     private JsonArray jadwalDelivery; // null while loading
@@ -35,8 +40,8 @@ public class JadwalPengantaran extends FrameLayout {
     }
 
     /** BLOCKING. */
-    private static JsonArray getJadwalDelivery() {
-        Http.Response httpResponse = Http.get(ServerPath.apiBaseURL + "/JadwalDelivery/getAvailableJadwalDelivery");
+    private JsonArray getJadwalDelivery() {
+        Http.Response httpResponse = deps.http.get(ServerPath.apiBaseURL + "/JadwalDelivery/getAvailableJadwalDelivery");
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.array(dataObject, "availableJadwalDelivery");

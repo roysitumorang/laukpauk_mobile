@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.profilsaya;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.Gravity;
@@ -14,7 +16,6 @@ import com.google.gson.JsonObject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import id.laukpauk.core.App;
 import id.laukpauk.core.CustomColors;
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
@@ -32,6 +33,9 @@ import id.laukpauk.view.pembeli.UserAndDashboardActivity;
 
 /** Port of lib/views/pembeli/components/ProfilSaya/GantiNomorHP.dart. */
 public class GantiNomorHP extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private static final String KEY_ID_PENGGANTIAN = "flutter.idPenggantianNomor";
 
     private final BaseActivity activity;
@@ -66,11 +70,11 @@ public class GantiNomorHP extends LinearLayout {
 
     // ------------------------------------------------------------------ SharedPreferences getInt / setInt / remove
 
-    private static SharedPreferences sp() {
-        return App.context().getSharedPreferences(Prefs.FILE_NAME, Context.MODE_PRIVATE);
+    private SharedPreferences sp() {
+        return getContext().getApplicationContext().getSharedPreferences(Prefs.FILE_NAME, Context.MODE_PRIVATE);
     }
 
-    private static long readId() {
+    private long readId() {
         try {
             return sp().getLong(KEY_ID_PENGGANTIAN, 0L);
         } catch (ClassCastException e) {
@@ -88,10 +92,10 @@ public class GantiNomorHP extends LinearLayout {
         Map<String, String> httpBody = new LinkedHashMap<>();
         httpBody.put("nomorBaru", nomorHPController.getText().toString());
 
-        String params = HTTPRequest.getQueryString(null, true);
-        Map<String, String> body = HTTPRequest.postBody(httpBody);
+        String params = deps.httpRequest.getQueryString(null, true);
+        Map<String, String> body = deps.httpRequest.postBody(httpBody);
 
-        Http.Response httpResponse = Http.postApi("/Auth/gantiNomor?" + params, body);
+        Http.Response httpResponse = deps.http.postApi("/Auth/gantiNomor?" + params, body);
         if (httpResponse.statusCode == 200) {
             return httpResponse.jsonObject();
         }
@@ -106,10 +110,10 @@ public class GantiNomorHP extends LinearLayout {
         httpBody.put("idPenggantianNomor", idPenggantianNomor);
         httpBody.put("kodeVerifikasi", kodeVerifikasiController.getText().toString());
 
-        String params = HTTPRequest.getQueryString(null, true);
-        Map<String, String> body = HTTPRequest.postBody(httpBody);
+        String params = deps.httpRequest.getQueryString(null, true);
+        Map<String, String> body = deps.httpRequest.postBody(httpBody);
 
-        Http.Response httpResponse = Http.postApi("/Auth/verifikasiNomor?" + params, body);
+        Http.Response httpResponse = deps.http.postApi("/Auth/verifikasiNomor?" + params, body);
         if (httpResponse.statusCode == 200) {
             return Json.bool(httpResponse.jsonObject(), "statusVerifikasiNomor");
         }
@@ -117,9 +121,9 @@ public class GantiNomorHP extends LinearLayout {
     }
 
     private int cekJumlahGantiNomorHPForToday() {
-        String params = HTTPRequest.getQueryString(null, true);
+        String params = deps.httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Auth/jumlahGantiNomorHPForToday?" + params);
+        Http.Response httpResponse = deps.http.getApi("/Auth/jumlahGantiNomorHPForToday?" + params);
         if (httpResponse.statusCode == 200) {
             return Json.intVal(httpResponse.jsonObject(), "jumlahGantiNomorHPForToday");
         }
@@ -193,7 +197,7 @@ public class GantiNomorHP extends LinearLayout {
         titleRow.addView(Ui.text(ctx, "Verifikasi Nomor Telepon", hb * 4.0f, 0xDD000000, true), Ui.weightW(1f));
         TextView batal = Ui.text(ctx, "Batal", hb * 3.5f, CustomColors.textDanger, true);
         batal.setOnClickListener(v -> {
-            Prefs.remove("idPenggantianNomor");
+            deps.prefs.remove("idPenggantianNomor");
             idPenggantianNomorState = 0;
             updateState();
             loadCek();
@@ -277,7 +281,7 @@ public class GantiNomorHP extends LinearLayout {
     private void onVerifikasi() {
         activity.async(this::verifikasi, statusVerifikasiNomorTelepon -> {
             if (statusVerifikasiNomorTelepon != null && statusVerifikasiNomorTelepon) {
-                Prefs.remove("idPenggantianNomor");
+                deps.prefs.remove("idPenggantianNomor");
                 Nav.pushReplacement(activity, UserAndDashboardActivity.class, null);
             } else {
                 AccountUi.alert(activity, "Verifikasi Nomor Telepon",

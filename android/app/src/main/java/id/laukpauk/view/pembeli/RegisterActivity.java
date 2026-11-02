@@ -108,7 +108,7 @@ public class RegisterActivity extends BaseActivity {
         registrasiData.put("konfirmasiPassword", konfirmasiPasswordField.getText().toString());
         registrasiData.put("kodeReferal", kodeReferalField.getText().toString());
 
-        async(() -> Http.postApi("/Auth/register", HTTPRequest.postBody(registrasiData)), httpResponse -> {
+        async(() -> container().http.postApi("/Auth/register", container().httpRequest.postBody(registrasiData)), httpResponse -> {
             registerButton.setBusy(false);
 
             if (httpResponse.statusCode != 200) {
@@ -124,9 +124,9 @@ public class RegisterActivity extends BaseActivity {
             if (statusTrue) {
                 alertMessage = "Registrasi berhasil ! Silahkan konfirmasikan kode OTP yang kami kirim ke nomor yang anda gunakan untuk mendaftar!";
 
-                Prefs.setBool("otpHasSent", true);
-                Prefs.setBool("otpHasConfirmed", false);
-                Prefs.setString("idUser", Json.str(returnData, "idUser"));
+                container().prefs.setBool("otpHasSent", true);
+                container().prefs.setBool("otpHasConfirmed", false);
+                container().prefs.setString("idUser", Json.str(returnData, "idUser"));
             } else {
                 alertMessage = "Gagal Registrasi ! " + Json.str(returnData, "message");
             }

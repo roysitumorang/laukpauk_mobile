@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonElement;
 
 import id.laukpauk.core.Async;
@@ -8,14 +10,21 @@ import id.laukpauk.core.Prefs;
 
 /** Port of lib/models/SplashScreenModel.dart. All methods are BLOCKING (call from a background thread). */
 public final class SplashScreenModel {
-    private SplashScreenModel() {}
+    private final Prefs prefs;
+    private final UserModel userModel;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public SplashScreenModel(Prefs prefs, UserModel userModel) {
+        this.prefs = prefs;
+        this.userModel = userModel;
+    }
 
     /** Includes Dart's one second Future.delayed. */
-    public static boolean checkHasAppStarted() {
+    public boolean checkHasAppStarted() {
         Async.sleep(1000);
         boolean isAppStarted = false;
 
-        Boolean isAppStartedSavedStorage = Prefs.getBoolOrNull("isAppStarted");
+        Boolean isAppStartedSavedStorage = prefs.getBoolOrNull("isAppStarted");
         if (isAppStartedSavedStorage != null) {
             if (isAppStartedSavedStorage) {
                 isAppStarted = isAppStartedSavedStorage;
@@ -25,26 +34,26 @@ public final class SplashScreenModel {
         return isAppStarted;
     }
 
-    public static boolean checkHasUserLoggedIn() {
+    public boolean checkHasUserLoggedIn() {
         boolean hasUserLoggedIn = false;
-        if (Prefs.getString("authToken") != null) {
+        if (prefs.getString("authToken") != null) {
             hasUserLoggedIn = true;
         }
 
         return hasUserLoggedIn;
     }
 
-    public static boolean checkHasOTPSent() {
-        return Prefs.getBool("otpHasSent", false);
+    public boolean checkHasOTPSent() {
+        return prefs.getBool("otpHasSent", false);
     }
 
-    public static boolean checkHasOTPConfirmed() {
-        return Prefs.getBool("otpHasConfirmed", false);
+    public boolean checkHasOTPConfirmed() {
+        return prefs.getBool("otpHasConfirmed", false);
     }
 
     /** NETWORK. */
-    public static boolean hasOTPConfirmed() {
-        JsonElement detailUser = UserModel.getDetailActiveUser();
+    public boolean hasOTPConfirmed() {
+        JsonElement detailUser = userModel.getDetailActiveUser();
         if (!Json.isFalse(detailUser)) {
             String isOTPConfirmed = Json.str(Json.obj(detailUser), "statusOTP");
             return "1".equals(isOTPConfirmed);

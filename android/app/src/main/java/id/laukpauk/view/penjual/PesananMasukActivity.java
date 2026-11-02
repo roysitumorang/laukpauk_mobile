@@ -48,13 +48,13 @@ public class PesananMasukActivity extends BaseActivity {
     }
 
     /** Dart: getPesananMasuk({String? statusTransaksi}). Blocking. */
-    private static JsonArray getPesananMasuk(String statusTransaksi) {
+    private JsonArray getPesananMasuk(String statusTransaksi) {
         String statusTransaksiQS = "";
         if (statusTransaksi != null) {
             statusTransaksiQS = "statusTransaksi=" + statusTransaksi;
         }
-        String params = HTTPRequest.getQueryString(statusTransaksiQS, true);
-        Http.Response httpResponse = Http.getApi("/Penjual/getPesananMasuk?" + params);
+        String params = container().httpRequest.getQueryString(statusTransaksiQS, true);
+        Http.Response httpResponse = container().http.getApi("/Penjual/getPesananMasuk?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.array(dataObject, "pesananMasuk");

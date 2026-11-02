@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.produkdidalampasar;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -23,6 +25,9 @@ import id.laukpauk.view.pembeli.DetailUi;
  * for the request, the texts and the list height). Package private.
  */
 abstract class PasarLainSection extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String title;
     private final String emptyText;
     private final float listHeightHb;
@@ -68,7 +73,7 @@ abstract class PasarLainSection extends LinearLayout {
         if (getContext() instanceof BaseActivity) {
             ((BaseActivity) getContext()).async(work, done);
         } else {
-            Async.run(work, done);
+            deps.async.run(work, done);
         }
     }
 

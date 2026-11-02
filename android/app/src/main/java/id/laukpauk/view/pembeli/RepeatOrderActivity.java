@@ -43,18 +43,18 @@ public class RepeatOrderActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        AppState.get().addListener(stateListener);
+        container().appState.addListener(stateListener);
     }
 
     @Override
     protected void onStop() {
-        AppState.get().removeListener(stateListener);
+        container().appState.removeListener(stateListener);
         super.onStop();
     }
 
     private void initialization() {
         final String id = idTransaksi;
-        async(() -> TransaksiModel.getDetailTransaksi(id, "nomorTransaksi, tanggalDelivery"), detailTransaksi -> {
+        async(() -> container().transaksiModel.getDetailTransaksi(id, "nomorTransaksi, tanggalDelivery"), detailTransaksi -> {
             isReadyToShow = true;
             detailTransaksiState = (detailTransaksi == null || Json.isFalse(detailTransaksi)) ? null
                     : detailTransaksi;
@@ -117,7 +117,7 @@ public class RepeatOrderActivity extends BaseActivity {
         }
         float hb = Ui.hb(this);
         lowerHolder.removeAllViews();
-        boolean isADJDSet = AppState.get().isADJDSet();
+        boolean isADJDSet = container().appState.isADJDSet();
 
         if (isADJDSet) {
             lowerHolder.addView(new RepeatOrderItemTransaksi(this, idTransaksi, this::initialization),
@@ -135,7 +135,7 @@ public class RepeatOrderActivity extends BaseActivity {
             col.addView(t);
             col.addView(Ui.spaceH(this, 15));
             View btn = CustomButton.button(this, "Tentukan Lokasi dan Jadwal Delivery", () -> {
-                HeaderModel.adjd(this, null, null, null, (JsonObject adjdSet) -> {
+                container().headerModel.adjd(this, null, null, null, (JsonObject adjdSet) -> {
                     String latitude = Json.strOrNull(adjdSet, "latitude");
                     String longitude = Json.strOrNull(adjdSet, "longitude");
                     String jadwalDeliveryCode = Json.strOrNull(adjdSet, "kodeJadwalDelivery");
@@ -144,7 +144,7 @@ public class RepeatOrderActivity extends BaseActivity {
                     if (latitude != null && longitude != null && jadwalDeliveryCode != null) {
                         isADJDCompleted = true;
                     }
-                    AppState.get().setADJDSet(isADJDCompleted);
+                    container().appState.setADJDSet(isADJDCompleted);
                 });
             }, new CustomButton.Opts().color(CustomButton.themeColor).pill());
             col.addView(btn, new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP));

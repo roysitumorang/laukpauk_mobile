@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.historipenjualan;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -27,6 +29,9 @@ import id.laukpauk.view.penjual.PesananScreenUi;
  * Dart: HistoriPenjualanItem(Map dataPenjualan).
  */
 public class HistoriPenjualanItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final JsonObject dataPenjualan;
 
     public HistoriPenjualanItem(Context ctx, JsonObject dataPenjualan) {
@@ -60,7 +65,7 @@ public class HistoriPenjualanItem extends LinearLayout {
                 PesananScreenUi.run(ctx, new Async.Work<Integer>() {
                     @Override
                     public Integer run() {
-                        return LocalStorage.getIdPenjualFromActiveUser();
+                        return deps.localStorage.getIdPenjualFromActiveUser();
                     }
                 }, new Async.Done<Integer>() {
                     @Override
@@ -95,7 +100,7 @@ public class HistoriPenjualanItem extends LinearLayout {
         PesananScreenUi.run(ctx, new Async.Work<Integer>() {
             @Override
             public Integer run() {
-                return HistoriPenjualanModel.getTotalTransaksiForThisPenjual(idTransaksi, null);
+                return deps.historiPenjualanModel.getTotalTransaksiForThisPenjual(idTransaksi, null);
             }
         }, new Async.Done<Integer>() {
             @Override

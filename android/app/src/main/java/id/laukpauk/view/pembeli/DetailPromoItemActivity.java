@@ -77,14 +77,14 @@ public class DetailPromoItemActivity extends BaseActivity {
 
     private Data getDetailPromoItem() {
         Data data = new Data();
-        boolean isLogin = AuthModel.isLogin();
-        int currentUserIDInt = LocalStorage.getIdPenjualFromActiveUser();
+        boolean isLogin = container().authModel.isLogin();
+        int currentUserIDInt = container().localStorage.getIdPenjualFromActiveUser();
         String currentUserID = String.valueOf(currentUserIDInt);
 
         String select = "namaPromo, statusPromo, catatan, idPromo, diskon";
-        String params = HTTPRequest.getQueryString("select=" + select);
+        String params = container().httpRequest.getQueryString("select=" + select);
 
-        Http.Response httpResponse = Http.getApi("/Promo/getPromoItem/" + idPromoItem + "?" + params);
+        Http.Response httpResponse = container().http.getApi("/Promo/getPromoItem/" + idPromoItem + "?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();

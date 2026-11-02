@@ -24,11 +24,7 @@ public final class AppState {
         void onChanged();
     }
 
-    private static final AppState INSTANCE = new AppState();
 
-    public static AppState get() {
-        return INSTANCE;
-    }
 
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
 
@@ -38,7 +34,18 @@ public final class AppState {
     private volatile String alamatDelivery = "";
     private volatile JsonObject savedADJD = null;
 
-    private AppState() {}
+    private final Async async;
+    private final AuthModel authModel;
+    private final LocalStorage localStorage;
+    private final Lazy<HeaderModel> headerModel;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public AppState(Async async, AuthModel authModel, LocalStorage localStorage, Lazy<HeaderModel> headerModel) {
+        this.async = async;
+        this.authModel = authModel;
+        this.localStorage = localStorage;
+        this.headerModel = headerModel;
+    }
 
     public void addListener(Listener l) {
         if (l != null && !listeners.contains(l)) {
@@ -51,7 +58,7 @@ public final class AppState {
     }
 
     private void notifyListeners() {
-        Async.main(new Runnable() {
+        async.main(new Runnable() {
             @Override
             public void run() {
                 for (Listener l : listeners) {
@@ -113,7 +120,7 @@ public final class AppState {
      * runs in the background.
      */
     public void init() {
-        Async.bg(new Runnable() {
+        async.bg(new Runnable() {
             @Override
             public void run() {
                 refreshAll();
@@ -123,18 +130,18 @@ public final class AppState {
 
     /** BLOCKING (network). Reloads everything the header displays. */
     public void refreshAll() {
-        jumlahCart = HeaderModel.getJumlahCart();
+        jumlahCart = headerModel.get().getJumlahCart();
 
-        if (AuthModel.isLogin()) {
-            jumlahNotifikasi = HeaderModel.getJumlahNotifikasi();
+        if (authModel.isLogin()) {
+            jumlahNotifikasi = headerModel.get().getJumlahNotifikasi();
         } else {
             jumlahNotifikasi = 0;
         }
 
-        boolean adjdSet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+        boolean adjdSet = localStorage.isAlamatDeliveryDanJadwalDeliverySet();
         isADJDSet = adjdSet;
         if (adjdSet) {
-            JsonObject saved = LocalStorage.getSavedLatitudeAndLongitude();
+            JsonObject saved = localStorage.getSavedLatitudeAndLongitude();
             String alamat = Json.strOrNull(saved, "alamat");
             alamatDelivery = alamat != null ? alamat : ADJDModel.defaultAlamat;
             savedADJD = saved;
@@ -144,12 +151,12 @@ public final class AppState {
 
     /** Background refresh of just the two badges (cart + notifications). */
     public void refreshBadges() {
-        Async.bg(new Runnable() {
+        async.bg(new Runnable() {
             @Override
             public void run() {
-                jumlahCart = HeaderModel.getJumlahCart();
-                if (AuthModel.isLogin()) {
-                    jumlahNotifikasi = HeaderModel.getJumlahNotifikasi();
+                jumlahCart = headerModel.get().getJumlahCart();
+                if (authModel.isLogin()) {
+                    jumlahNotifikasi = headerModel.get().getJumlahNotifikasi();
                 } else {
                     jumlahNotifikasi = 0;
                 }

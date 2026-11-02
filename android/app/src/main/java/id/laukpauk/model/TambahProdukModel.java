@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.net.Uri;
 import android.util.Base64;
 
@@ -22,7 +24,14 @@ import id.laukpauk.ui.BaseActivity;
 
 /** Port of lib/models/TambahProdukModel.dart. */
 public final class TambahProdukModel {
-    private TambahProdukModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public TambahProdukModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
     /**
      * Dart: saveProduk(context, {idProduk = '', required Map dataProdukMap}) -> Future&lt;bool&gt;.
@@ -33,7 +42,7 @@ public final class TambahProdukModel {
      * path (a JSON string, or an object with a "path" member; a content:// URI also works),
      * or null / absent for "no image". `done` gets the `saveProduk` flag (false on failure).
      */
-    public static void saveProduk(final BaseActivity activity, final String idProduk,
+    public void saveProduk(final BaseActivity activity, final String idProduk,
                                   final JsonObject dataProdukMap, final Async.Done<Boolean> done) {
         activity.async(() -> {
             String idProdukPath = (idProduk == null) ? "" : idProduk;
@@ -71,10 +80,10 @@ public final class TambahProdukModel {
                 dataProduk.put("diskon", diskon);
             }
 
-            String params = HTTPRequest.getQueryString(null, true);
-            Map<String, String> body = HTTPRequest.postBody(dataProduk);
+            String params = httpRequest.getQueryString(null, true);
+            Map<String, String> body = httpRequest.postBody(dataProduk);
 
-            Http.Response httpResponse = Http.postApi("/Produk/saveProduk" + idProdukPath + "?" + params, body);
+            Http.Response httpResponse = http.postApi("/Produk/saveProduk" + idProdukPath + "?" + params, body);
 
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();
@@ -90,7 +99,7 @@ public final class TambahProdukModel {
     }
 
     /** The path out of `imageProdukData` (string or {"path": ...}); null when there is no image. */
-    private static String imagePath(JsonElement e) {
+    private String imagePath(JsonElement e) {
         if (e == null || e.isJsonNull()) {
             return null;
         }
@@ -106,7 +115,7 @@ public final class TambahProdukModel {
     }
 
     /** XFile.readAsBytes(): the whole file, or null when it cannot be read. */
-    private static byte[] readBytes(BaseActivity activity, String path) {
+    private byte[] readBytes(BaseActivity activity, String path) {
         InputStream in = null;
         try {
             if (path.startsWith("content://")) {

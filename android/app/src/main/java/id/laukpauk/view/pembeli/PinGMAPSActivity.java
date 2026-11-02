@@ -66,7 +66,7 @@ public class PinGMAPSActivity extends BaseActivity {
             // initial marker: MarkerId('defaultMarker') at Merdeka Walk Medan
             map.addMarker(new MarkerOptions().position(new LatLng(DEFAULT_LAT, DEFAULT_LNG)));
             map.setOnMapLongClickListener(newLatLong -> async(
-                    () -> ADJDModel.reverseGeocoding(newLatLong.latitude, newLatLong.longitude),
+                    () -> container().adjdModel.reverseGeocoding(newLatLong.latitude, newLatLong.longitude),
                     formattedAddress -> pindahLokasi(formattedAddress, newLatLong.latitude,
                             newLatLong.longitude)));
             List<Runnable> pending = new ArrayList<>(whenMapReady);
@@ -120,7 +120,7 @@ public class PinGMAPSActivity extends BaseActivity {
         } catch (NumberFormatException e) {
             return; // Dart: double.parse throws inside an un-awaited future
         }
-        async(() -> ADJDModel.reverseGeocoding(currentLatitude, currentLongitude),
+        async(() -> container().adjdModel.reverseGeocoding(currentLatitude, currentLongitude),
                 formattedAddress -> pindahLokasi(formattedAddress, currentLatitude, currentLongitude));
     }
 

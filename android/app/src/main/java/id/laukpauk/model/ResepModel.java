@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.view.View;
 
 import com.google.gson.JsonArray;
@@ -17,7 +19,14 @@ import id.laukpauk.ui.Modal;
 
 /** Port of lib/models/ResepModel.dart. */
 public final class ResepModel {
-    private ResepModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public ResepModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
     /** Result of the background part of getResep: the list, or the text of the exception Dart would have caught. */
     private static final class ResepResult {
@@ -30,10 +39,10 @@ public final class ResepModel {
      * than 200, an unexpected body) shows the "Exception Occured" dialog (not awaited, as in
      * Dart) and yields an empty list.
      */
-    public static void getResep(final BaseActivity activity, final Async.Done<JsonArray> done) {
+    public void getResep(final BaseActivity activity, final Async.Done<JsonArray> done) {
         activity.async(() -> {
             ResepResult result = new ResepResult();
-            Http.Response httpResponse = Http.getApi("/Resep/getResep");
+            Http.Response httpResponse = http.getApi("/Resep/getResep");
             if (httpResponse.statusCode == 0) {
                 result.exception = "SocketException: Connection failed";
             } else if (httpResponse.statusCode == 200) {
@@ -67,11 +76,11 @@ public final class ResepModel {
     }
 
     /** Dart: getResepItem(idResep) -> Future&lt;List&gt;. BLOCKING. */
-    public static JsonArray getResepItem(String idResep) {
+    public JsonArray getResepItem(String idResep) {
         String entitasResepItem = "id, namaProduk, takaran, idProduk";
-        String params = HTTPRequest.getQueryString("entitasResepItem=" + entitasResepItem);
+        String params = httpRequest.getQueryString("entitasResepItem=" + entitasResepItem);
 
-        Http.Response httpResponse = Http.getApi(
+        Http.Response httpResponse = http.getApi(
                 "/Resep/getResepItemFromThisResep/" + idResep + "?" + params);
 
         if (httpResponse.statusCode == 200) {
@@ -86,12 +95,12 @@ public final class ResepModel {
      * Dart: belanjaResep(context, Map httpBody) -> Future&lt;bool&gt;. `done` gets the
      * `statusBelanjaResep` flag (false on failure).
      */
-    public static void belanjaResep(BaseActivity activity, final JsonObject httpBody,
+    public void belanjaResep(BaseActivity activity, final JsonObject httpBody,
                                     final Async.Done<Boolean> done) {
         activity.async(() -> {
-            Map<String, String> body = HTTPRequest.postBody(ShopModelUi.form(httpBody));
+            Map<String, String> body = httpRequest.postBody(ShopModelUi.form(httpBody));
 
-            Http.Response httpResponse = Http.postApi("/Keranjang/belanjaResep", body);
+            Http.Response httpResponse = http.postApi("/Keranjang/belanjaResep", body);
 
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();

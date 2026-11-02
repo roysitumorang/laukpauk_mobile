@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.promo;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -27,6 +29,9 @@ import id.laukpauk.view.pembeli.DetailUi;
 
 /** Port of lib/views/pembeli/components/Promo/ProdukPromo.dart. */
 public class ProdukPromo extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private JsonArray produkPromoState = new JsonArray();
     private JsonArray produkPromoImmutableState = new JsonArray();
     private String pencarianString = "";
@@ -69,7 +74,7 @@ public class ProdukPromo extends LinearLayout {
     /** Dart: initialization() (initState and didUpdateWidget). */
     public void initialization() {
         final BaseActivity activity = (BaseActivity) getContext();
-        activity.async(() -> PromoModel.getProdukPromo(), produkPromo -> {
+        activity.async(() -> deps.promoModel.getProdukPromo(), produkPromo -> {
             if (produkPromo == null) {
                 produkPromo = new JsonArray();
             }
@@ -112,7 +117,7 @@ public class ProdukPromo extends LinearLayout {
 
         refresh = DetailUi.refreshable(ctx, content, () -> {
             final BaseActivity activity = (BaseActivity) getContext();
-            activity.async(() -> PromoModel.getProdukPromo(), produkPromo -> {
+            activity.async(() -> deps.promoModel.getProdukPromo(), produkPromo -> {
                 if (produkPromo == null) {
                     produkPromo = new JsonArray();
                 }

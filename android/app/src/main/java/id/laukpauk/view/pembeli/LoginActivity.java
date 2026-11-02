@@ -102,10 +102,10 @@ public class LoginActivity extends BaseActivity {
         final String password = passwordField.getText().toString();
 
         async(() -> {
-            String cartCode = LocalStorage.getCartCode();
-            String params = HTTPRequest.getQueryString("nomorHP=" + Http.enc(nomorHP) + "&password="
+            String cartCode = container().localStorage.getCartCode();
+            String params = container().httpRequest.getQueryString("nomorHP=" + Http.enc(nomorHP) + "&password="
                     + Http.enc(password) + "&cartCode=" + cartCode);
-            return Http.getApi("/Auth/loginAuthentication?" + params);
+            return container().http.getApi("/Auth/loginAuthentication?" + params);
         }, httpResponse -> {
             if (httpResponse.statusCode != 200) {
                 loginButton.setBusy(false);
@@ -118,17 +118,17 @@ public class LoginActivity extends BaseActivity {
                 async(() -> {
                     String authToken = Json.str(response, "authToken");
                     String idUser = Json.str(response, "idUser");
-                    Prefs.setString("authToken", authToken);
-                    Prefs.setString("idUser", idUser);
+                    container().prefs.setString("authToken", authToken);
+                    container().prefs.setString("idUser", idUser);
 
                     OneSignal.login(idUser);
-                    LocalStorage.setExternalUserID(idUser);
+                    container().localStorage.setExternalUserID(idUser);
 
-                    int jumlahSeluruhNotifikasi = HeaderModel.getJumlahNotifikasi();
-                    int jumlahCart = HeaderModel.getJumlahCart();
+                    int jumlahSeluruhNotifikasi = container().headerModel.getJumlahNotifikasi();
+                    int jumlahCart = container().headerModel.getJumlahCart();
 
-                    AppState.get().setJumlahCart(jumlahCart);
-                    AppState.get().setJumlahNotifikasi(jumlahSeluruhNotifikasi);
+                    container().appState.setJumlahCart(jumlahCart);
+                    container().appState.setJumlahNotifikasi(jumlahSeluruhNotifikasi);
                     return Json.bool(response, "isVerified");
                 }, isVerified -> {
                     loginButton.setBusy(false);

@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.detailtransaksi;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -21,6 +23,9 @@ import id.laukpauk.view.pembeli.DetailUi;
 
 /** Port of lib/views/pembeli/components/DetailTransaksi/GiftTransaksiPembeli.dart. */
 public class GiftTransaksiPembeli extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final BaseActivity activity;
     private final String cartCode;
     private final boolean useCard;
@@ -69,7 +74,7 @@ public class GiftTransaksiPembeli extends LinearLayout {
             return;
         }
         bodyHolder.addView(Loading.view(ctx));
-        activity.async(() -> GiftTransaksiModel.getGiftTransaksi(cartCode), list -> {
+        activity.async(() -> deps.giftTransaksiModel.getGiftTransaksi(cartCode), list -> {
             bodyHolder.removeAllViews();
             if (list == null) {
                 bodyHolder.addView(Loading.view(ctx));
@@ -89,7 +94,7 @@ public class GiftTransaksiPembeli extends LinearLayout {
             final LinearLayout slot = Ui.column(ctx);
             slot.addView(Loading.view(ctx, null, null, 15f, 15f));
             col.addView(slot, new LayoutParams(Ui.MATCH, Ui.WRAP));
-            activity.async(() -> GiftModel.getGift(idGift), gift -> {
+            activity.async(() -> deps.giftModel.getGift(idGift), gift -> {
                 // FutureBuilder<Gift?>: a null result never has data, so the spinner stays (Dart quirk).
                 if (gift != null) {
                     slot.removeAllViews();

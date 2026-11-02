@@ -27,7 +27,7 @@ public class BuatOrderanBerhasilActivity extends BaseActivity {
         final JsonObject returnedDataFromCheckout = Json.object(args(), "returnedDataFromCheckout");
         boolean removeTransactionSession = Json.bool(args(), "removeTransactionSession", false);
         if (removeTransactionSession) {
-            TransaksiModel.removeTransactionSession(this, null);
+            container().transaksiModel.removeTransactionSession(this, null);
         }
 
         float hb = Ui.hb(this);

@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -51,7 +53,16 @@ import id.laukpauk.view.SplashScreenActivity;
  * (delivery-schedule expiry watcher, Play in-app update check). MyJobService did nothing useful and is not ported.
  */
 public final class MainModel {
-    private MainModel() {}
+    private final Prefs prefs;
+    private final HeaderModel headerModel;
+    private final TransaksiModel transaksiModel;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public MainModel(Prefs prefs, HeaderModel headerModel, TransaksiModel transaksiModel) {
+        this.prefs = prefs;
+        this.headerModel = headerModel;
+        this.transaksiModel = transaksiModel;
+    }
 
     private static final String PLAY_URL = "https://play.google.com/store/apps/details?id=id.laukpauk";
     private static final long WATCH_INTERVAL_MS = 5000L;
@@ -59,7 +70,7 @@ public final class MainModel {
     // ------------------------------------------------------------------ OneSignal
 
     /** Dart: initOneSignal(globalKey, buildContext). Call from Application.onCreate. */
-    public static void initOneSignal(final Application app) {
+    public void initOneSignal(final Application app) {
         String oneSignalKey;
         if (Environment.isProduction()) {
             oneSignalKey = BuildConfig.ONESIGNAL_APP_ID_PRODUCTION;
@@ -82,7 +93,7 @@ public final class MainModel {
         });
     }
 
-    private static void onNotificationOpened(Application app, INotificationClickEvent event) {
+    private void onNotificationOpened(Application app, INotificationClickEvent event) {
         INotification notification = event.getNotification();
         JSONObject additionalData = notification.getAdditionalData();
 
@@ -124,7 +135,7 @@ public final class MainModel {
      * Replaces firebaseOnLink (Firebase Dynamic Links is shut down): an ACTION_VIEW intent whose data is
      * https://host/<route>?<params> starts the routed screen as the only screen. Returns true when handled.
      */
-    public static boolean handleDeepLink(Activity a, Intent intent) {
+    public boolean handleDeepLink(Activity a, Intent intent) {
         if (a == null || intent == null) {
             return false;
         }
@@ -154,7 +165,7 @@ public final class MainModel {
     // ------------------------------------------------------------------ update dialog
 
     /** Dart: askToUpdate(context) -> bool?. */
-    public static void askToUpdate(final BaseActivity activity, Async.Done<Boolean> done) {
+    public void askToUpdate(final BaseActivity activity, Async.Done<Boolean> done) {
         View icon = Ui.asset(activity, "laukpauk-icon.png", 50f);
         String subTitle = "Update Yuk! Banyak fitur-fitur baru menanti kamu nih...";
 
@@ -171,21 +182,21 @@ public final class MainModel {
 
     // ------------------------------------------------------------------ background watchers
 
-    private static final Handler HANDLER = new Handler(Looper.getMainLooper());
-    private static WeakReference<BaseActivity> resumed = new WeakReference<>(null);
-    private static boolean started;
-    private static boolean notificationPermissionAsked;
-    private static boolean updateChecked;
-    private static boolean updateAvailable;
-    private static boolean updatePromptShowing;
-    private static String expiredHandledMap;
-    private static boolean expiryRunning;
+    private final Handler HANDLER = new Handler(Looper.getMainLooper());
+    private WeakReference<BaseActivity> resumed = new WeakReference<>(null);
+    private boolean started;
+    private boolean notificationPermissionAsked;
+    private boolean updateChecked;
+    private boolean updateAvailable;
+    private boolean updatePromptShowing;
+    private String expiredHandledMap;
+    private boolean expiryRunning;
 
     /**
      * Replaces MyIntentService (Timer every 5 s) + the MainActivity update check + the native.code channel:
      * a main-thread Handler loop while the app process lives, acting on the resumed BaseActivity.
      */
-    public static void startBackgroundWatchers(final Application app) {
+    public void startBackgroundWatchers(final Application app) {
         if (started) {
             return;
         }
@@ -252,7 +263,7 @@ public final class MainModel {
         }, WATCH_INTERVAL_MS);
     }
 
-    private static void checkForUpdate(Application app) {
+    private void checkForUpdate(Application app) {
         try {
             AppUpdateManager manager = AppUpdateManagerFactory.create(app);
             manager.getAppUpdateInfo().addOnSuccessListener(info -> {
@@ -270,7 +281,7 @@ public final class MainModel {
     }
 
     /** Dart: native.code 'updateAvailable'. */
-    private static void promptUpdate(final BaseActivity activity) {
+    private void promptUpdate(final BaseActivity activity) {
         if (updatePromptShowing || !activity.isAlive()) {
             return;
         }
@@ -293,8 +304,8 @@ public final class MainModel {
     }
 
     /** Dart: native.code 'jadwalDeliveryKadaluarsa', fired by the 5 s expiry check. */
-    private static void checkExpiry() {
-        String saved = Prefs.getString("savedJadwalDeliveryMap");
+    private void checkExpiry() {
+        String saved = prefs.getString("savedJadwalDeliveryMap");
         if (saved == null) {
             expiredHandledMap = null;
             return;
@@ -310,14 +321,14 @@ public final class MainModel {
 
         expiredHandledMap = saved;
         expiryRunning = true;
-        TransaksiModel.removeTransactionSession(activity, v -> {
+        transaksiModel.removeTransactionSession(activity, v -> {
             BaseActivity current = resumed.get();
-            HeaderModel.alertADJDKadaluarsa(current != null ? current : activity, d -> expiryRunning = false);
+            headerModel.alertADJDKadaluarsa(current != null ? current : activity, d -> expiryRunning = false);
         });
     }
 
     /** The rules of MyIntentService.java. */
-    private static boolean isExpired(String savedJadwalDeliveryMap) {
+    private boolean isExpired(String savedJadwalDeliveryMap) {
         try {
             JsonObject saved = Json.parseObject(savedJadwalDeliveryMap);
 

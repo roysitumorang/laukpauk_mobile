@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
@@ -146,7 +148,7 @@ public final class PesananScreenUi {
         if (ctx instanceof BaseActivity) {
             ((BaseActivity) ctx).async(work, done);
         } else {
-            Async.run(work, done);
+            AppContainer.from(ctx).async.run(work, done);
         }
     }
 }

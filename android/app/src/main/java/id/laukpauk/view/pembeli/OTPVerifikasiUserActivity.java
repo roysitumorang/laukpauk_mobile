@@ -144,8 +144,8 @@ public class OTPVerifikasiUserActivity extends BaseActivity {
 
     private void initialization() {
         async(() -> {
-            String params = HTTPRequest.getQueryString("getUserEntities=isSeller", true);
-            Http.Response httpResponse = Http.getApi("/User/getDetailUser?" + params);
+            String params = container().httpRequest.getQueryString("getUserEntities=isSeller", true);
+            Http.Response httpResponse = container().http.getApi("/User/getDetailUser?" + params);
             if (httpResponse.statusCode == 200) {
                 String isSeller = Json.str(Json.object(httpResponse.jsonObject(), "detailUser"), "isSeller");
                 return Boolean.valueOf("1".equals(isSeller));
@@ -164,7 +164,7 @@ public class OTPVerifikasiUserActivity extends BaseActivity {
         final boolean seller = isSellerState;
         final String idPasar = pasarSelected;
         async(() -> {
-            String idUser = LocalStorage.getCurrentUserID();
+            String idUser = container().localStorage.getCurrentUserID();
             Map<String, String> otpData = new LinkedHashMap<>();
             otpData.put("idUser", idUser);
             otpData.put("verificationCode", code);
@@ -172,7 +172,7 @@ public class OTPVerifikasiUserActivity extends BaseActivity {
             if (seller) {
                 otpData.put("idPasar", idPasar);
             }
-            return Http.postApi("/Auth/verifikasiUser", HTTPRequest.postBody(otpData));
+            return container().http.postApi("/Auth/verifikasiUser", container().httpRequest.postBody(otpData));
         }, httpResponse -> {
             if (httpResponse.statusCode != 200) {
                 return;

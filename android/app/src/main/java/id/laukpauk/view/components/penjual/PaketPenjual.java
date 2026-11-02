@@ -1,5 +1,7 @@
 package id.laukpauk.view.components.penjual;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -30,6 +32,9 @@ import id.laukpauk.view.penjual.PenjualUi;
 
 /** Port of lib/views/components/Penjual/PaketPenjual.dart (the "Paket" tab of the seller storefront). */
 public class PaketPenjual extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String idPenjual;
 
     private boolean isReadyToShow = false;
@@ -54,9 +59,9 @@ public class PaketPenjual extends LinearLayout {
 
     private JsonArray getPaketPenjual() {
         String getPaketEntities = "nama, foto, id, harga, diskon, idPenjual";
-        String params = HTTPRequest.getQueryString("getPaketEntities=" + getPaketEntities);
+        String params = deps.httpRequest.getQueryString("getPaketEntities=" + getPaketEntities);
 
-        Http.Response httpResponse = Http.getApi("/Penjual/getPaketPenjual/" + idPenjual + "?" + params);
+        Http.Response httpResponse = deps.http.getApi("/Penjual/getPaketPenjual/" + idPenjual + "?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.array(dataObject, "paketPenjual");
@@ -76,7 +81,7 @@ public class PaketPenjual extends LinearLayout {
 
     private void deteksiADJD(final JsonObject produk) {
         final BaseActivity activity = activity();
-        HeaderModel.adjd(activity, null, null, null, adjdSet -> {
+        deps.headerModel.adjd(activity, null, null, null, adjdSet -> {
             String latitude = Json.strOrNull(adjdSet, "latitude");
             String longitude = Json.strOrNull(adjdSet, "longitude");
             String jadwalDeliveryCode = Json.strOrNull(adjdSet, "kodeJadwalDelivery");
@@ -86,21 +91,21 @@ public class PaketPenjual extends LinearLayout {
                 isADJDCompleted = true;
                 final String idPaket = Json.str(produk, "id");
                 final boolean completed = isADJDCompleted;
-                activity.async(() -> PaketModel.addToCart(idPaket), statusAddToCart -> {
+                activity.async(() -> deps.paketModel.addToCart(idPaket), statusAddToCart -> {
                     String text = (statusAddToCart != null && statusAddToCart)
                             ? "Produk berhasil ditambahkan ke keranjang !"
                             : "Produk gagal ditambahkan ke keranjang, silahkan coba lagi.";
 
-                    PaketModel.addToCartSnackBar(activity, text);
+                    deps.paketModel.addToCartSnackBar(activity, text);
 
-                    activity.async(() -> HeaderModel.getJumlahCart(), jumlahKeranjang -> {
-                        AppState.get().setJumlahCart(jumlahKeranjang == null ? 0 : jumlahKeranjang);
-                        AppState.get().setADJDSet(completed);
+                    activity.async(() -> deps.headerModel.getJumlahCart(), jumlahKeranjang -> {
+                        deps.appState.setJumlahCart(jumlahKeranjang == null ? 0 : jumlahKeranjang);
+                        deps.appState.setADJDSet(completed);
                     });
                 });
                 return;
             }
-            AppState.get().setADJDSet(isADJDCompleted);
+            deps.appState.setADJDSet(isADJDCompleted);
         });
     }
 

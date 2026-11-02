@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.detailproduk;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 
 import com.google.gson.JsonArray;
@@ -14,6 +16,9 @@ import id.laukpauk.view.pembeli.DetailPaketActivity;
 
 /** Port of lib/views/pembeli/components/DetailProduk/PaketPenjualLainnya.dart. */
 public class PaketPenjualLainnya extends LainnyaList {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String currentProduct;
 
     public PaketPenjualLainnya(Context ctx, String currentProduct) {
@@ -26,9 +31,9 @@ public class PaketPenjualLainnya extends LainnyaList {
     @Override
     JsonArray fetch() {
         String idPaket = currentProduct;
-        String params = HTTPRequest.getQueryString("idPaket=" + idPaket);
+        String params = deps.httpRequest.getQueryString("idPaket=" + idPaket);
 
-        Http.Response httpResponse = Http.getApi("/Produk/getPaketLainnya?" + params);
+        Http.Response httpResponse = deps.http.getApi("/Produk/getPaketLainnya?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.array(dataObject, "paketLainnya");

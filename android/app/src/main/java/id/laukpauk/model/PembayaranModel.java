@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -29,19 +31,28 @@ import id.laukpauk.view.pembeli.DoPaymentActivity;
 
 /** Port of lib/models/PembayaranModel.dart. */
 public final class PembayaranModel {
-    private PembayaranModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+    private final LocalStorage localStorage;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public PembayaranModel(HTTPRequest httpRequest, Http http, LocalStorage localStorage) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+        this.localStorage = localStorage;
+    }
 
     /**
      * BLOCKING. Dart: buatOrder({metodePembayaranTerpilihMap, checkoutData, moreData}).
      * Returns the decoded response, or {statusCheckout: false, message: 'Nande'} on any failure.
      */
-    public static JsonObject buatOrder(JsonObject metodePembayaranTerpilihMap, JsonObject checkoutData,
+    public JsonObject buatOrder(JsonObject metodePembayaranTerpilihMap, JsonObject checkoutData,
                                        String moreData) {
         try {
             String channelCode = Json.str(metodePembayaranTerpilihMap, "channel_code");
             String namaMetodePembayaran = Json.str(metodePembayaranTerpilihMap, "name");
 
-            JsonObject delivery = LocalStorage.getSavedLatitudeAndLongitude();
+            JsonObject delivery = localStorage.getSavedLatitudeAndLongitude();
             String alamatDelivery = Json.str(delivery, "alamat");
 
             // {...checkoutData, 'metodePembayaran': ..., ...}
@@ -56,10 +67,10 @@ public final class PembayaranModel {
             httpBody.addProperty("moreDataMetodePembayaran", moreData);
             httpBody.addProperty("alamatDelivery", alamatDelivery);
 
-            String params = HTTPRequest.getQueryString(null, true);
-            Map<String, String> body = HTTPRequest.postBody(ShopModelUi.form(httpBody));
+            String params = httpRequest.getQueryString(null, true);
+            Map<String, String> body = httpRequest.postBody(ShopModelUi.form(httpBody));
 
-            Http.Response httpResponse = Http.post(
+            Http.Response httpResponse = http.post(
                     ServerPath.baseURL + "/api-v2/Transaksi/checkout?" + params, body);
 
             if (httpResponse.statusCode == 200) {
@@ -75,7 +86,7 @@ public final class PembayaranModel {
         return failed;
     }
 
-    private static void urlTidakValid(final BaseActivity activity) {
+    private void urlTidakValid(final BaseActivity activity) {
         String title = "Laukpauk";
         String subTitle = "URL Tidak Valid! Silahkan coba lagi!";
         Modal.Content<Object> actions = handle -> CustomAlert.actionsRow(activity,
@@ -85,7 +96,7 @@ public final class PembayaranModel {
     }
 
     /** url_launcher canLaunchUrl: true when an installed app handles the URL. */
-    private static boolean canLaunch(BaseActivity activity, Intent intent) {
+    private boolean canLaunch(BaseActivity activity, Intent intent) {
         if (intent.resolveActivity(activity.getPackageManager()) != null) {
             return true;
         }
@@ -96,7 +107,7 @@ public final class PembayaranModel {
                 && !scheme.equalsIgnoreCase("http") && !scheme.equalsIgnoreCase("https");
     }
 
-    private static void launch(BaseActivity activity, Intent intent) {
+    private void launch(BaseActivity activity, Intent intent) {
         try {
             activity.startActivity(intent);
         } catch (RuntimeException e) {
@@ -104,7 +115,7 @@ public final class PembayaranModel {
         }
     }
 
-    private static Intent viewIntent(String url) {
+    private Intent viewIntent(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         intent.addCategory(Intent.CATEGORY_BROWSABLE);
         return intent;
@@ -114,7 +125,7 @@ public final class PembayaranModel {
      * Dart: buatOrderNextStep({context, channelCodeTerpilihLC, returnedData, checkoutData,
      * metodePembayaranTerpilihMap, moreData, checkoutCallback}). `done` runs once, right after the branch is dispatched.
      */
-    public static void buatOrderNextStep(BaseActivity activity, String channelCodeTerpilihLC,
+    public void buatOrderNextStep(BaseActivity activity, String channelCodeTerpilihLC,
                                          JsonObject returnedData, JsonObject checkoutData,
                                          JsonObject metodePembayaranTerpilihMap, String moreData,
                                          Async.Done<JsonObject> checkoutCallback, Async.Done<Void> done) {
@@ -189,7 +200,7 @@ public final class PembayaranModel {
         }
     }
 
-    private static void checkoutFailedAlert(final BaseActivity activity, String channelCodeLC,
+    private void checkoutFailedAlert(final BaseActivity activity, String channelCodeLC,
                                             JsonElement paymentResponse) {
         String title = "Checkout";
         String content = "Checkout gagal ! Coba lagi ya bun...";

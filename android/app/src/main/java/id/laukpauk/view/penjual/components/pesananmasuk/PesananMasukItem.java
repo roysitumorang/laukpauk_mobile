@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.pesananmasuk;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.widget.LinearLayout;
@@ -20,6 +22,9 @@ import id.laukpauk.view.penjual.ProsesPesananActivity;
 
 /** Port of lib/views/penjual/components/PesananMasuk/PesananMasukItem.dart. */
 public class PesananMasukItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public PesananMasukItem(Context ctx, JsonObject riwayatTransaksi) {
         super(ctx);
         setOrientation(VERTICAL);
@@ -51,7 +56,7 @@ public class PesananMasukItem extends LinearLayout {
         int potonganWallet = Json.parseInt(Json.str(riwayat, "potonganWallet"), 0);
 
         int totalBelanjaBersih = (totalBelanja + ongkir) - potonganWallet;
-        String statusReadable = PesananSayaModel.readAbleStatusForUser(status);
+        String statusReadable = deps.pesananSayaModel.readAbleStatusForUser(status);
         boolean rejected = status.toLowerCase().equals("rejected");
 
         // Card(elevation: 5, radius 10) > Container(decoration: color + border 1.5, padding 15)

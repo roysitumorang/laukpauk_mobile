@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.checkout;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -29,6 +31,9 @@ import id.laukpauk.view.SplashScreenActivity;
  * parent once at start (Dart initState) through `jadwalPengirimanTerpilih` (null = none saved).
  */
 public class JadwalPengiriman extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final Async.Done<JsonObject> jadwalPengirimanTerpilih;
     private boolean readyToShow = true;
     private final LinearLayout body;
@@ -50,8 +55,8 @@ public class JadwalPengiriman extends LinearLayout {
         renderBody();
 
         // initJadwalPengirimanToParent()
-        final JsonObject saved = LocalStorage.savedJadwalDeliveryMap();
-        Async.main(() -> {
+        final JsonObject saved = deps.localStorage.savedJadwalDeliveryMap();
+        deps.async.main(() -> {
             if (this.jadwalPengirimanTerpilih != null) {
                 this.jadwalPengirimanTerpilih.run(saved);
             }
@@ -68,7 +73,7 @@ public class JadwalPengiriman extends LinearLayout {
             return;
         }
 
-        JsonObject savedJadwal = LocalStorage.savedJadwalDeliveryMap();
+        JsonObject savedJadwal = deps.localStorage.savedJadwalDeliveryMap();
         if (savedJadwal != null) {
             LinearLayout box = Ui.column(ctx);
             Ui.background(box, 0x35FFC107, 10);
@@ -83,7 +88,7 @@ public class JadwalPengiriman extends LinearLayout {
         }
         body.addView(Ui.spaceH(ctx, 5));
 
-        JsonObject savedLatLong = LocalStorage.getSavedLatitudeAndLongitude();
+        JsonObject savedLatLong = deps.localStorage.getSavedLatitudeAndLongitude();
         if (savedLatLong != null) {
             String alamat = Json.strOrNull(savedLatLong, "alamat");
             LinearLayout box = Ui.column(ctx);
@@ -118,16 +123,16 @@ public class JadwalPengiriman extends LinearLayout {
                     readyToShow = false;
                     renderBody();
                     a.async(() -> {
-                        ADJDModel.deleteAlamatDanJadwalDelivery();
+                        deps.adjdModel.deleteAlamatDanJadwalDelivery();
                         return Boolean.TRUE;
-                    }, ok -> HeaderModel.adjd(a, null, null, null, (JsonObject newADJD) -> {
+                    }, ok -> deps.headerModel.adjd(a, null, null, null, (JsonObject newADJD) -> {
                         String latitude = Json.strOrNull(newADJD, "latitude");
                         String longitude = Json.strOrNull(newADJD, "longitude");
                         String kodeJadwalDelivery = Json.strOrNull(newADJD, "kodeJadwalDelivery");
                         readyToShow = true;
                         renderBody();
                         if (latitude != null && longitude != null && kodeJadwalDelivery != null) {
-                            AppState.get().setADJDSet(true);
+                            deps.appState.setADJDSet(true);
                             Nav.pushAndRemoveUntil(a, SplashScreenActivity.class, null);
                         }
                     }));

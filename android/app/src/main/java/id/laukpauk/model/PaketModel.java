@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -22,7 +24,16 @@ import id.laukpauk.ui.Ui;
 
 /** Port of lib/models/PaketModel.dart. */
 public final class PaketModel {
-    private PaketModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+    private final LocalStorage localStorage;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public PaketModel(HTTPRequest httpRequest, Http http, LocalStorage localStorage) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+        this.localStorage = localStorage;
+    }
 
     /**
      * Dart: addToCartSnackBar({context, text}) -> SnackBar (the caller then did
@@ -32,17 +43,17 @@ public final class PaketModel {
      * the returned Snackbar is only for callers that want to keep or dismiss it, calling
      * {@code show()} on it again is harmless.
      */
-    public static Snackbar addToCartSnackBar(BaseActivity activity, String text) {
+    public Snackbar addToCartSnackBar(BaseActivity activity, String text) {
         return ShopModelUi.keranjangSnackbar(activity, text, 3);
     }
 
     /** Dart: detailPaket(idPaket) -> Future&lt;dynamic&gt;. BLOCKING. `detailPaket`, or false on failure. */
-    public static JsonElement detailPaket(String idPaket) {
+    public JsonElement detailPaket(String idPaket) {
         idPaket = idPaket == null ? "" : idPaket;
 
-        String params = HTTPRequest.getQueryString("idPaket=" + idPaket);
+        String params = httpRequest.getQueryString("idPaket=" + idPaket);
 
-        Http.Response httpResponse = Http.getApi("/Produk/detailPaket?" + params);
+        Http.Response httpResponse = http.getApi("/Produk/detailPaket?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return ShopModelUi.dyn(dataObject.get("detailPaket"));
@@ -52,11 +63,11 @@ public final class PaketModel {
     }
 
     /** Dart: addToCart(idPaket) -> Future&lt;bool&gt;. BLOCKING. */
-    public static boolean addToCart(String idPaket) {
-        String cartCode = LocalStorage.getCartCode();
+    public boolean addToCart(String idPaket) {
+        String cartCode = localStorage.getCartCode();
 
-        JsonObject jadwalDeliveryTerpilih = LocalStorage.savedJadwalDeliveryMap();
-        JsonObject savedADJD = LocalStorage.getSavedLatitudeAndLongitude();
+        JsonObject jadwalDeliveryTerpilih = localStorage.savedJadwalDeliveryMap();
+        JsonObject savedADJD = localStorage.getSavedLatitudeAndLongitude();
 
         String dayDelivery = (jadwalDeliveryTerpilih != null)
                 ? Json.str(jadwalDeliveryTerpilih, "day")
@@ -73,9 +84,9 @@ public final class PaketModel {
         body.put("quantity", "1");
         body.put("jadwalDeliveryCode", jadwalDeliveryCode);
         body.put("dayDelivery", dayDelivery);
-        Map<String, String> httpBody = HTTPRequest.postBody(body);
+        Map<String, String> httpBody = httpRequest.postBody(body);
 
-        Http.Response httpResponse = Http.postApi("/Keranjang/saveCart", httpBody);
+        Http.Response httpResponse = http.postApi("/Keranjang/saveCart", httpBody);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.bool(dataObject, "statusAddCart");
@@ -88,7 +99,7 @@ public final class PaketModel {
      * AlertDialog). `done` receives false ("Tutup"), true ("Tentukan Alamat &amp; Jadwal") or null
      * (dismissed by tapping outside).
      */
-    public static void adjdNotSetAlert(final BaseActivity activity, String namaProduk,
+    public void adjdNotSetAlert(final BaseActivity activity, String namaProduk,
                                        Async.Done<Boolean> done) {
         final String nama = namaProduk == null ? "" : namaProduk;
         final float hb = Ui.hb(activity);
@@ -105,7 +116,7 @@ public final class PaketModel {
         }, done);
     }
 
-    public static void adjdNotSetAlert(BaseActivity activity, Async.Done<Boolean> done) {
+    public void adjdNotSetAlert(BaseActivity activity, Async.Done<Boolean> done) {
         adjdNotSetAlert(activity, "", done);
     }
 }

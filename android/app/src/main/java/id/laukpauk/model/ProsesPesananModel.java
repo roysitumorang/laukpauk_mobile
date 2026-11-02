@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -11,13 +13,20 @@ import id.laukpauk.core.Json;
 
 /** Port of lib/models/ProsesPesananModel.dart. Every method is BLOCKING (network). */
 public final class ProsesPesananModel {
-    private ProsesPesananModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public ProsesPesananModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
     /** Dart: prosesPesanan(idTransaksi) -> Future&lt;bool&gt; (a POST without a body). */
-    public static boolean prosesPesanan(String idTransaksi) {
-        String params = HTTPRequest.getQueryString(null, true);
+    public boolean prosesPesanan(String idTransaksi) {
+        String params = httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.postApi(
+        Http.Response httpResponse = http.postApi(
                 "/Transaksi/prosesPesanan/" + idTransaksi + "?" + params, new HashMap<String, String>());
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -27,12 +36,12 @@ public final class ProsesPesananModel {
     }
 
     /** Dart: getPesananMasukItem(idTransaksi) -> Future&lt;List&gt;. */
-    public static JsonArray getPesananMasukItem(String idTransaksi) {
+    public JsonArray getPesananMasukItem(String idTransaksi) {
         String pesananEntity =
                 "id, quantity, namaProduk, namaSatuan, harga, diskon, fotoProduk, catatan, jenisProduk, status";
-        String params = HTTPRequest.getQueryString("pesananEntity=" + pesananEntity, true);
+        String params = httpRequest.getQueryString("pesananEntity=" + pesananEntity, true);
 
-        Http.Response httpResponse = Http.getApi(
+        Http.Response httpResponse = http.getApi(
                 "/Penjual/getPesananMasukItem/" + idTransaksi + "?" + params);
 
         if (httpResponse.statusCode == 200) {

@@ -35,10 +35,10 @@ public class UpdateHargaActivity extends BaseActivity {
     private JsonArray getProduk(String term) {
         if (term.length() >= 1) {
             String getProductEntities = "id, foto, nama, namaKategoriProduk";
-            String params = HTTPRequest.getQueryString(
+            String params = container().httpRequest.getQueryString(
                     "getProductEntities=" + getProductEntities + "&term=" + Http.enc(term), true);
 
-            Http.Response httpResponse = Http.getApi("/Penjual/getProdukPenjual?" + params);
+            Http.Response httpResponse = container().http.getApi("/Penjual/getProdukPenjual?" + params);
 
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();

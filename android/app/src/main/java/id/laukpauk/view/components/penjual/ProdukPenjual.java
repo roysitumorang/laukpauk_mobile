@@ -1,5 +1,7 @@
 package id.laukpauk.view.components.penjual;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -32,6 +34,9 @@ import id.laukpauk.view.penjual.PenjualUi;
 
 /** Port of lib/views/components/Penjual/ProdukPenjual.dart (the "Produk" tab of the seller storefront). */
 public class ProdukPenjual extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final String idPenjual;
 
     private boolean isReadyToShow = false;
@@ -56,9 +61,9 @@ public class ProdukPenjual extends LinearLayout {
     private JsonArray getProdukPenjual() {
         String getProductEntities = "nama, foto, id, namaToko, namaKategoriProduk, idPenjual, stokAvailable";
 
-        String params = HTTPRequest.getQueryString("getProductEntities=" + getProductEntities);
+        String params = deps.httpRequest.getQueryString("getProductEntities=" + getProductEntities);
 
-        Http.Response httpResponse = Http.getApi("/Penjual/getProdukPenjual/" + idPenjual + "?" + params);
+        Http.Response httpResponse = deps.http.getApi("/Penjual/getProdukPenjual/" + idPenjual + "?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.array(dataObject, "produkPenjual");
@@ -77,16 +82,16 @@ public class ProdukPenjual extends LinearLayout {
 
     private void deteksiADJD(final JsonObject produk) {
         final BaseActivity activity = activity();
-        HeaderModel.adjd(activity, null, null, null, adjdSet -> {
+        deps.headerModel.adjd(activity, null, null, null, adjdSet -> {
             String latitude = Json.strOrNull(adjdSet, "latitude");
             String longitude = Json.strOrNull(adjdSet, "longitude");
             String jadwalDeliveryCode = Json.strOrNull(adjdSet, "kodeJadwalDelivery");
 
             if (latitude != null && longitude != null && jadwalDeliveryCode != null) {
-                ProdukModel.showSatuanProduk(activity, produk, v -> AppState.get().setADJDSet(true));
+                deps.produkModel.showSatuanProduk(activity, produk, v -> deps.appState.setADJDSet(true));
                 return;
             }
-            AppState.get().setADJDSet(false);
+            deps.appState.setADJDSet(false);
         });
     }
 

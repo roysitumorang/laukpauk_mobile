@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import id.laukpauk.core.AppContainer;
 import id.laukpauk.core.Async;
 import id.laukpauk.core.CustomColors;
 import id.laukpauk.core.Json;
@@ -191,6 +192,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * The app's dependency container (services and models). Android creates Activities itself, so
+     * they cannot take constructor parameters: this is the one place a screen obtains its dependencies,
+     * and it passes them on to the components it creates.
+     */
+    public AppContainer container() {
+        return AppContainer.from(this);
+    }
+
     /** False once the screen is finishing/destroyed. Dart: `mounted`. */
     public boolean isAlive() {
         return alive && !isFinishing() && !isDestroyed();
@@ -230,7 +240,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /** Runs `work` in the background and `done` on the main thread ONLY while the screen is alive. */
     public <T> void async(Async.Work<T> work, final Async.Done<T> done) {
-        Async.run(work, result -> {
+        container().async.run(work, result -> {
             if (isAlive() && done != null) {
                 done.run(result);
             }
@@ -238,7 +248,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public <T> void async(Async.Work<T> work, final Async.Done<T> done, final Async.Failed failed) {
-        Async.run(work, result -> {
+        container().async.run(work, result -> {
             if (isAlive() && done != null) {
                 done.run(result);
             }
@@ -251,7 +261,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /** Post to the main thread when still alive. */
     public void post(Runnable r) {
-        Async.main(() -> {
+        container().async.main(() -> {
             if (isAlive()) {
                 r.run();
             }
@@ -259,7 +269,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void postDelayed(Runnable r, long millis) {
-        Async.mainDelayed(() -> {
+        container().async.mainDelayed(() -> {
             if (isAlive()) {
                 r.run();
             }

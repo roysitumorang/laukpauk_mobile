@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.keranjang;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
@@ -33,6 +35,9 @@ import id.laukpauk.view.penjual.PesananScreenUi;
 
 /** Port of lib/views/pembeli/components/Keranjang/ProductPenjual.dart. */
 public class ProductPenjual extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final JsonObject dataProduk;
     private final Async.Done<String> onRemoveItemSuccessed;
     private final Runnable onEditItemSuccessed;
@@ -78,19 +83,19 @@ public class ProductPenjual extends LinearLayout {
     /** Dart: hapusCart(context, idCart); `after` runs once it is finished (Navigator.pop(context)). */
     private void hapusCart(final String idCart, final Runnable after) {
         PesananScreenUi.run(getContext(), () -> {
-            Http.Response httpResponse = Http.postApi("/Keranjang/deleteCart/" + idCart,
+            Http.Response httpResponse = deps.http.postApi("/Keranjang/deleteCart/" + idCart,
                     new HashMap<String, String>());
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();
                 boolean statusDeleteCart = Json.bool(dataObject, "statusDeleteCart");
                 if (statusDeleteCart) {
-                    return Integer.valueOf(HeaderModel.getJumlahCart());
+                    return Integer.valueOf(deps.headerModel.getJumlahCart());
                 }
             }
             return null;
         }, (Integer jumlahKeranjang) -> {
             if (jumlahKeranjang != null) {
-                AppState.get().setJumlahCart(jumlahKeranjang);
+                deps.appState.setJumlahCart(jumlahKeranjang);
                 if (onRemoveItemSuccessed != null) {
                     onRemoveItemSuccessed.run(idCart);
                 }

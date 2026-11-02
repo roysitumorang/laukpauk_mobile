@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.notifikasi;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Intent;
 import android.widget.LinearLayout;
 
@@ -21,6 +23,9 @@ import id.laukpauk.ui.Ui;
 
 /** Port of lib/views/pembeli/components/Notifikasi/NotifikasiKhususItem.dart. */
 public class NotifikasiKhususItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
 
     public NotifikasiKhususItem(final BaseActivity ctx, JsonObject dataNotifikasiKhususItem,
                                 final Async.Done<Boolean> toggleNotifikasiCallback) {
@@ -61,7 +66,7 @@ public class NotifikasiKhususItem extends LinearLayout {
         setOnClickListener(v -> ctx.async(() -> {
             boolean setAsRead;
             if (!isRead) {
-                setAsRead = NotifikasiModel.setAs(id, "read", "khususuntukkamu");
+                setAsRead = deps.notifikasiModel.setAs(id, "read", "khususuntukkamu");
             } else {
                 setAsRead = true;
             }
@@ -72,8 +77,8 @@ public class NotifikasiKhususItem extends LinearLayout {
                 ctx.startActivity(intent);
                 toggleNotifikasiCallback.run(true);
 
-                ctx.async(HeaderModel::getJumlahNotifikasi,
-                        jumlahNotifikasi -> AppState.get().setJumlahNotifikasi(jumlahNotifikasi));
+                ctx.async(deps.headerModel::getJumlahNotifikasi,
+                        jumlahNotifikasi -> deps.appState.setJumlahNotifikasi(jumlahNotifikasi));
             }
         }));
     }

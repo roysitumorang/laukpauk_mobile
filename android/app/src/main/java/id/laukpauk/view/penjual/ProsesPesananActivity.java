@@ -57,7 +57,7 @@ public class ProsesPesananActivity extends BaseActivity {
         host.addView(content, new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
         content.addView(DetailUi.smallSpinner(this, 25), new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
 
-        async(() -> TransaksiModel.getDetailTransaksi(idTransaksi), (JsonElement detailTransaksi) -> {
+        async(() -> container().transaksiModel.getDetailTransaksi(idTransaksi), (JsonElement detailTransaksi) -> {
             if (myGeneration != generation || detailTransaksi == null || detailTransaksi.isJsonNull()) {
                 return; // snapshot.hasData is false: the indicator stays
             }
@@ -117,7 +117,7 @@ public class ProsesPesananActivity extends BaseActivity {
             row.addView(texts, Ui.weightW(1f));
 
             row.addView(CustomButton.button(this, "Proses", () -> {
-                async(() -> Boolean.valueOf(ProsesPesananModel.prosesPesanan(idTransaksi)),
+                async(() -> Boolean.valueOf(container().prosesPesananModel.prosesPesanan(idTransaksi)),
                         (Boolean statusProsesPesanan) -> {
                             if (statusProsesPesanan != null && statusProsesPesanan) {
                                 finish();
@@ -150,7 +150,7 @@ public class ProsesPesananActivity extends BaseActivity {
             final FrameLayout listSlot = new FrameLayout(this);
             listSlot.addView(DetailUi.smallSpinner(this, 25), new FrameLayout.LayoutParams(Ui.MATCH, Ui.MATCH));
             column.addView(listSlot, Ui.weightH(1f));
-            async(() -> ProsesPesananModel.getPesananMasukItem(idTransaksi), (JsonArray pesanan) -> {
+            async(() -> container().prosesPesananModel.getPesananMasukItem(idTransaksi), (JsonArray pesanan) -> {
                 if (myGeneration != generation || pesanan == null) {
                     return;
                 }

@@ -68,7 +68,7 @@ public class HistoriPenjualanActivity extends BaseActivity {
 
         final String select = "namaUser, waktuCheckout, nomorTransaksi, status, id";
         final String status = statusTransaksiString;
-        async(() -> HistoriPenjualanModel.getHistoriPenjualan(idPenjual, select, status),
+        async(() -> container().historiPenjualanModel.getHistoriPenjualan(idPenjual, select, status),
                 (JsonArray historiPenjualan) -> {
                     if (myGeneration != generation || historiPenjualan == null) {
                         return;

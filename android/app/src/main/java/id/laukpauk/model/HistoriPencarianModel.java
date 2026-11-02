@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonArray;
 
 import java.util.Calendar;
@@ -9,11 +11,16 @@ import id.laukpauk.core.Prefs;
 
 /** Port of lib/models/HistoriPencarianModel.dart (search history kept in SharedPreferences). */
 public final class HistoriPencarianModel {
-    private HistoriPencarianModel() {}
+    private final Prefs prefs;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public HistoriPencarianModel(Prefs prefs) {
+        this.prefs = prefs;
+    }
 
     /** Items are maps {title, onTime}. */
-    public static JsonArray getHistoriPencarian() {
-        String encodedHistoriPencarian = Prefs.getString("historiPencarian");
+    public JsonArray getHistoriPencarian() {
+        String encodedHistoriPencarian = prefs.getString("historiPencarian");
         if (encodedHistoriPencarian != null) {
             return Json.parseArray(encodedHistoriPencarian);
         }
@@ -22,8 +29,8 @@ public final class HistoriPencarianModel {
     }
 
     /** Always returns true, like the Dart version. */
-    public static boolean addHistoriPencarian(String search) {
-        String encodedHistoriPencarian = Prefs.getString("historiPencarian");
+    public boolean addHistoriPencarian(String search) {
+        String encodedHistoriPencarian = prefs.getString("historiPencarian");
 
         Calendar now = Calendar.getInstance();
 
@@ -46,7 +53,7 @@ public final class HistoriPencarianModel {
         decoded.add(Json.of("title", search, "onTime", onTime));
         encodedHistoriPencarian = decoded.toString();
 
-        Prefs.setString("historiPencarian", encodedHistoriPencarian);
+        prefs.setString("historiPencarian", encodedHistoriPencarian);
 
         return true;
     }

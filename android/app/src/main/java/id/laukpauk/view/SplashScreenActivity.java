@@ -34,7 +34,7 @@ public class SplashScreenActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (MainModel.handleDeepLink(this, getIntent())) {
+        if (container().mainModel.handleDeepLink(this, getIntent())) {
             return;
         }
 
@@ -61,19 +61,19 @@ public class SplashScreenActivity extends BaseActivity {
         boolean removeTransactionSession = id.laukpauk.core.Json.bool(args(), "removeTransactionSession");
 
         if (removeTransactionSession) {
-            TransaksiModel.removeTransactionSession(this, null);
+            container().transaksiModel.removeTransactionSession(this, null);
         } else {
             if (routeToClass != null && AuthRoute.resolve(routeToClass) != null) {
                 postDelayed(() -> AuthRoute.pushAndRemoveUntil(this, routeToClass, routeToArgs,
                         HomePageActivity.class), 3000);
             } else {
                 postDelayed(() -> async(() -> {
-                    boolean hasAppStarted = SplashScreenModel.checkHasAppStarted();
+                    boolean hasAppStarted = container().splashScreenModel.checkHasAppStarted();
 
                     if (hasAppStarted) {
-                        boolean otpHasSent = SplashScreenModel.checkHasOTPSent();
-                        boolean otpHasConfirmed = SplashScreenModel.checkHasOTPConfirmed();
-                        boolean isOTPRegistrasiPassed = LocalStorage.isOTPRegistrasiPassed();
+                        boolean otpHasSent = container().splashScreenModel.checkHasOTPSent();
+                        boolean otpHasConfirmed = container().splashScreenModel.checkHasOTPConfirmed();
+                        boolean isOTPRegistrasiPassed = container().localStorage.isOTPRegistrasiPassed();
 
                         if (otpHasSent && (!otpHasConfirmed || isOTPRegistrasiPassed)) {
                             return isOTPRegistrasiPassed ? GO_HOME : GO_OTP_REGISTRASI;

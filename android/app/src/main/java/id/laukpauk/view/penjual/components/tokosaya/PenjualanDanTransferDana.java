@@ -1,5 +1,7 @@
 package id.laukpauk.view.penjual.components.tokosaya;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -23,6 +25,9 @@ import id.laukpauk.view.penjual.RequestPencairanDanaActivity;
 
 /** Port of lib/views/penjual/components/TokoSaya/PenjualanDanTransferDana.dart. */
 public class PenjualanDanTransferDana extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     public PenjualanDanTransferDana(final Context ctx) {
         super(ctx);
         setOrientation(HORIZONTAL);
@@ -73,9 +78,9 @@ public class PenjualanDanTransferDana extends LinearLayout {
 
     /** Dart getTotalPenjualan(). BLOCKING. */
     private int getTotalPenjualan() {
-        String params = HTTPRequest.getQueryString(null, true);
+        String params = deps.httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Penjual/getTotalPenjualan?" + params);
+        Http.Response httpResponse = deps.http.getApi("/Penjual/getTotalPenjualan?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();

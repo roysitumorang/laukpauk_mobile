@@ -44,10 +44,10 @@ public class RequestPencairanDanaActivity extends BaseActivity {
     private void getDetailCurrentSeller() {
         async(() -> {
             String getPenjualEntities = "nomorRekening, namaUser";
-            String params = HTTPRequest.getQueryString("getPenjualEntities=" + getPenjualEntities);
-            String idPenjual = LocalStorage.getCurrentUserID();
+            String params = container().httpRequest.getQueryString("getPenjualEntities=" + getPenjualEntities);
+            String idPenjual = container().localStorage.getCurrentUserID();
 
-            Http.Response httpResponse = Http.getApi("/Penjual/getDetailPenjual/" + idPenjual + "?" + params);
+            Http.Response httpResponse = container().http.getApi("/Penjual/getDetailPenjual/" + idPenjual + "?" + params);
 
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();
@@ -70,10 +70,10 @@ public class RequestPencairanDanaActivity extends BaseActivity {
         dataRequest.put("keterangan", keteranganController.getText().toString());
 
         async(() -> {
-            String params = HTTPRequest.getQueryString(null, true);
-            Map<String, String> body = HTTPRequest.postBody(dataRequest);
+            String params = container().httpRequest.getQueryString(null, true);
+            Map<String, String> body = container().httpRequest.postBody(dataRequest);
 
-            Http.Response httpResponse = Http.postApi("/Penjual/ajukanRPD?" + params, body);
+            Http.Response httpResponse = container().http.postApi("/Penjual/ajukanRPD?" + params, body);
 
             if (httpResponse.statusCode == 200) {
                 JsonObject dataObject = httpResponse.jsonObject();
@@ -96,9 +96,9 @@ public class RequestPencairanDanaActivity extends BaseActivity {
 
     /** Dart getTotalSaldo(). BLOCKING. */
     private int getTotalSaldo() {
-        String params = HTTPRequest.getQueryString(null, true);
+        String params = container().httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Penjual/getTotalSaldo?" + params);
+        Http.Response httpResponse = container().http.getApi("/Penjual/getTotalSaldo?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.intVal(dataObject, "totalSaldo", 0);

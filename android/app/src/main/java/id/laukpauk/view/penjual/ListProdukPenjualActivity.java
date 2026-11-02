@@ -36,9 +36,9 @@ public class ListProdukPenjualActivity extends BaseActivity {
     /** Dart getProdukPenjual(). BLOCKING. */
     private JsonArray getProdukPenjual() {
         String getProductEntities = "id, nama, foto, namaKategoriProduk, keterangan";
-        String params = HTTPRequest.getQueryString("getProductEntities=" + getProductEntities);
+        String params = container().httpRequest.getQueryString("getProductEntities=" + getProductEntities);
 
-        Http.Response httpResponse = Http.getApi("/Penjual/getProdukPenjual?" + params);
+        Http.Response httpResponse = container().http.getApi("/Penjual/getProdukPenjual?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();

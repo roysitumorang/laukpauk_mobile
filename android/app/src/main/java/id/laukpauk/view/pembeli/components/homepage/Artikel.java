@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.homepage;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +24,9 @@ import id.laukpauk.ui.Ui;
 
 /** Port of lib/views/pembeli/components/HomePage/Artikel.dart. */
 public class Artikel extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final FrameLayout box;
 
     public Artikel(Context ctx) {
@@ -34,7 +39,7 @@ public class Artikel extends LinearLayout {
         titleRow.addView(HomeUi.sectionTitle(ctx, "Artikel"));
         titleRow.addView(Ui.spacer(ctx));
         TextView lihatSemua = Ui.text(ctx, "Lihat Semua", hb * 3.0f, CustomColors.darkGreen);
-        Ui.onTap(lihatSemua, () -> act.async(() -> SettingModel.getSettingValue("seeAllArticleURL"), value -> {
+        Ui.onTap(lihatSemua, () -> act.async(() -> deps.settingModel.getSettingValue("seeAllArticleURL"), value -> {
             String urlLihatSemua = Json.asStr(value);
             HomeUi.launchUrl(act, urlLihatSemua);
         }));
@@ -46,7 +51,7 @@ public class Artikel extends LinearLayout {
         addView(box, new LayoutParams(Ui.MATCH, Ui.dp(ctx, Ui.vb(ctx) * 22.5f)));
         box.addView(Loading.view(ctx));
 
-        act.async(() -> HomepageModel.getArtikel(), this::showArtikel);
+        act.async(() -> deps.homepageModel.getArtikel(), this::showArtikel);
     }
 
     private void showArtikel(final JsonArray banners) {

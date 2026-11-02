@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import com.google.gson.JsonObject;
 
 import java.util.LinkedHashMap;
@@ -15,19 +17,26 @@ import id.laukpauk.ui.Ui;
 
 /** Port of lib/models/ProdukPenjualModel.dart. */
 public final class ProdukPenjualModel {
-    private ProdukPenjualModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public ProdukPenjualModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
     /**
      * Dart: toggleProdukPalingLaris(idProduk, jenisProduk) -> Future&lt;bool&gt;. BLOCKING.
      * jenisProduk 'satuan' toggles a product, anything else a package.
      */
-    public static boolean toggleProdukPalingLaris(String idProduk, String jenisProduk) {
-        String params = HTTPRequest.getQueryString(null, true);
+    public boolean toggleProdukPalingLaris(String idProduk, String jenisProduk) {
+        String params = httpRequest.getQueryString(null, true);
 
         boolean satuan = jenisProduk.equalsIgnoreCase("satuan");
         String endPoint = satuan ? "toggleProdukPalingLaris" : "togglePaketPalingLaris";
 
-        Http.Response httpResponse = Http.getApi("/Produk/" + endPoint + "/" + idProduk + "?" + params);
+        Http.Response httpResponse = http.getApi("/Produk/" + endPoint + "/" + idProduk + "?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
 
@@ -42,13 +51,13 @@ public final class ProdukPenjualModel {
     }
 
     /** Dart: ubahKategoriProduk(idProduk, idKategoriProdukBaru) -> Future&lt;bool&gt;. BLOCKING. */
-    public static boolean ubahKategoriProduk(String idProduk, String idKategoriProdukBaru) {
-        String params = HTTPRequest.getQueryString(null, true);
+    public boolean ubahKategoriProduk(String idProduk, String idKategoriProdukBaru) {
+        String params = httpRequest.getQueryString(null, true);
         Map<String, String> data = new LinkedHashMap<>();
         data.put("kategoriProduk", idKategoriProdukBaru);
-        Map<String, String> body = HTTPRequest.postBody(data);
+        Map<String, String> body = httpRequest.postBody(data);
 
-        Http.Response httpResponse = Http.postApi("/Produk/ubahKategoriProduk/" + idProduk + "?" + params, body);
+        Http.Response httpResponse = http.postApi("/Produk/ubahKategoriProduk/" + idProduk + "?" + params, body);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -59,18 +68,18 @@ public final class ProdukPenjualModel {
     }
 
     /** Dart: ubahDeskripsiProduk(idProduk, jenisProduk, deskripsiProduk) -> Future&lt;bool&gt;. BLOCKING. */
-    public static boolean ubahDeskripsiProduk(String idProduk, String jenisProduk,
+    public boolean ubahDeskripsiProduk(String idProduk, String jenisProduk,
                                               String deskripsiProduk) {
-        String params = HTTPRequest.getQueryString(null, true);
+        String params = httpRequest.getQueryString(null, true);
         boolean satuan = jenisProduk.equalsIgnoreCase("satuan");
         String endPoint = satuan ? "ubahDeskripsiProduk" : "ubahDeskripsiPaket";
 
         Map<String, String> data = new LinkedHashMap<>();
         data.put(satuan ? "deskripsiProduk" : "deskripsiPaket", deskripsiProduk);
 
-        Map<String, String> body = HTTPRequest.postBody(data);
+        Map<String, String> body = httpRequest.postBody(data);
 
-        Http.Response httpResponse = Http.postApi("/Produk/" + endPoint + "/" + idProduk + "?" + params, body);
+        Http.Response httpResponse = http.postApi("/Produk/" + endPoint + "/" + idProduk + "?" + params, body);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -96,7 +105,7 @@ public final class ProdukPenjualModel {
      * </pre>
      * (may be null = no buttons). `done` gets the closed value, or null when dismissed.
      */
-    public static void showKonfirmasi(final BaseActivity activity, final String title,
+    public void showKonfirmasi(final BaseActivity activity, final String title,
                                       final String content, final Modal.Content<Boolean> actions,
                                       Async.Done<Boolean> done) {
         final float hb = Ui.hb(activity);
@@ -106,10 +115,10 @@ public final class ProdukPenjualModel {
     }
 
     /** Dart: hapusProduk(idProduk) -> Future&lt;bool&gt;. BLOCKING. */
-    public static boolean hapusProduk(String idProduk) {
-        String params = HTTPRequest.getQueryString(null, true);
+    public boolean hapusProduk(String idProduk) {
+        String params = httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Produk/hapusProduk/" + idProduk + "?" + params);
+        Http.Response httpResponse = http.getApi("/Produk/hapusProduk/" + idProduk + "?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
@@ -120,10 +129,10 @@ public final class ProdukPenjualModel {
     }
 
     /** Dart: hapusPaket(idProduk) -> Future&lt;bool&gt;. BLOCKING. */
-    public static boolean hapusPaket(String idProduk) {
-        String params = HTTPRequest.getQueryString(null, true);
+    public boolean hapusPaket(String idProduk) {
+        String params = httpRequest.getQueryString(null, true);
 
-        Http.Response httpResponse = Http.getApi("/Produk/hapusPaket/" + idProduk + "?" + params);
+        Http.Response httpResponse = http.getApi("/Produk/hapusPaket/" + idProduk + "?" + params);
 
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();

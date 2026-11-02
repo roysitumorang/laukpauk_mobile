@@ -55,14 +55,14 @@ public class UserAndDashboardActivity extends BaseActivity {
     }
 
     private void load() {
-        async(AuthModel::isLogin, isLogin -> {
+        async(container().authModel::isLogin, isLogin -> {
             if (isLogin == null || !isLogin) {
                 // Dart: return Login();
                 Nav.pushReplacement(this, LoginActivity.class, null);
                 return;
             }
             showLoading(true);
-            async(UserModel::getDetailActiveUser, dataUser -> {
+            async(container().userModel::getDetailActiveUser, dataUser -> {
                 if (dataUser == null) {
                     return; // Dart: snapshot without data keeps the loader
                 }

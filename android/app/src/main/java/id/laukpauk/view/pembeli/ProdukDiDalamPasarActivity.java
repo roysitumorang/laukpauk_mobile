@@ -69,7 +69,7 @@ public class ProdukDiDalamPasarActivity extends BaseActivity {
 
     private void initialization() {
         final String startFromString = String.valueOf(startFrom);
-        async(() -> PasarModel.getProdukInThisPasar(idPasar, "y", startFromString, null), dataProduk -> {
+        async(() -> container().pasarModel.getProdukInThisPasar(idPasar, "y", startFromString, null), dataProduk -> {
             JsonArray data = dataProduk != null ? dataProduk : new JsonArray();
             dataProdukState = data;
             dataProdukStateImmutable = data;
@@ -97,7 +97,7 @@ public class ProdukDiDalamPasarActivity extends BaseActivity {
         final boolean searching = isSearching;
         final String cari = cariProduk;
         final String from = searching ? String.valueOf(startFromSearch) : String.valueOf(startFrom);
-        async(() -> PasarModel.getProdukInThisPasar(idPasar, "y", from, cari), nextDataProduk -> {
+        async(() -> container().pasarModel.getProdukInThisPasar(idPasar, "y", from, cari), nextDataProduk -> {
             JsonArray next = nextDataProduk != null ? nextDataProduk : new JsonArray();
             if (searching) {
                 startFromSearch = startFromSearch + 10;
@@ -141,7 +141,7 @@ public class ProdukDiDalamPasarActivity extends BaseActivity {
         Pencarian pencarianView = new Pencarian(this, string -> {
             hideKeyboard();
             if (string.length() >= 1) {
-                async(() -> PasarModel.getProdukInThisPasar(idPasar, "y", null, string), fetched -> {
+                async(() -> container().pasarModel.getProdukInThisPasar(idPasar, "y", null, string), fetched -> {
                     pencarian = string;
                     searchTyped = true;
                     dataProdukState = fetched != null ? fetched : new JsonArray();
@@ -198,15 +198,15 @@ public class ProdukDiDalamPasarActivity extends BaseActivity {
             for (int i = 0; i < dataProdukState.size(); i++) {
                 final JsonObject dataProduk = Json.objAt(dataProdukState, i);
                 children.add(new ProdukDiDalamPasarItem(this, dataProduk, () -> {
-                    ADJDModel.deleteAlamatDanJadwalDelivery();
-                    HeaderModel.adjd(this, null, null, null, (JsonObject adjdSet) -> {
+                    container().adjdModel.deleteAlamatDanJadwalDelivery();
+                    container().headerModel.adjd(this, null, null, null, (JsonObject adjdSet) -> {
                         String latitude = Json.strOrNull(adjdSet, "latitude");
                         String longitude = Json.strOrNull(adjdSet, "longitude");
                         String kodeJadwalDelivery = Json.strOrNull(adjdSet, "kodeJadwalDelivery");
 
                         if (latitude != null && longitude != null && kodeJadwalDelivery != null) {
-                            AppState.get().setADJDSet(true);
-                            ProdukModel.showSatuanProduk(this, dataProduk, null);
+                            container().appState.setADJDSet(true);
+                            container().produkModel.showSatuanProduk(this, dataProduk, null);
                         }
                     });
                 }, (double) (hb * 25)));

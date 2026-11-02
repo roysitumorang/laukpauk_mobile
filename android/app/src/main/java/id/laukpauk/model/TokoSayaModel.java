@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.view.View;
 
 import com.google.gson.JsonObject;
@@ -16,14 +18,21 @@ import id.laukpauk.view.penjual.components.tokosaya.UpdateLokasiBerjualan;
 
 /** Port of lib/models/TokoSayaModel.dart. */
 public final class TokoSayaModel {
-    private TokoSayaModel() {}
+    private final HTTPRequest httpRequest;
+    private final Http http;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public TokoSayaModel(HTTPRequest httpRequest, Http http) {
+        this.httpRequest = httpRequest;
+        this.http = http;
+    }
 
     /**
      * Dart: showModalUbahLokasiBerjualan(context, Map dataToko) -> Future&lt;bool?&gt;. Shows the
      * bottom sheet with UpdateLokasiBerjualan; `done` gets the status passed by the sheet
      * (statusUbahLokasiBerjualan) or null when the sheet was dismissed.
      */
-    public static void showModalUbahLokasiBerjualan(final BaseActivity activity,
+    public void showModalUbahLokasiBerjualan(final BaseActivity activity,
                                                     final JsonObject dataToko,
                                                     Async.Done<Boolean> done) {
         Modal.<Boolean>bottomSheet(activity, true, handle -> {
@@ -35,12 +44,12 @@ public final class TokoSayaModel {
     }
 
     /** Dart: ubahLokasiBerjualan(idPenjual, Map lokasiBaruBerjualan) -> Future&lt;bool&gt;. BLOCKING. */
-    public static boolean ubahLokasiBerjualan(String idPenjual, JsonObject lokasiBaruBerjualan) {
-        String params = HTTPRequest.getQueryString(null, true);
+    public boolean ubahLokasiBerjualan(String idPenjual, JsonObject lokasiBaruBerjualan) {
+        String params = httpRequest.getQueryString(null, true);
 
-        Map<String, String> body = HTTPRequest.postBody(ShopModelUi.form(lokasiBaruBerjualan));
+        Map<String, String> body = httpRequest.postBody(ShopModelUi.form(lokasiBaruBerjualan));
 
-        Http.Response httpResponse = Http.postApi(
+        Http.Response httpResponse = http.postApi(
                 "/Penjual/ubahLokasiBerjualan/" + idPenjual + "?" + params, body);
 
         if (httpResponse.statusCode == 200) {

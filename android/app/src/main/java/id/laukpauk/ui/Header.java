@@ -1,5 +1,7 @@
 package id.laukpauk.ui;
 
+import id.laukpauk.core.AppContainer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
@@ -30,6 +32,9 @@ import id.laukpauk.view.pembeli.NotifikasiActivity;
  * (Dart: didUpdateWidget with a changed askADJDListener).
  */
 public class Header extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final boolean askADJDOnCreate;
     private final Async.Done<JsonObject> adjdSetCallback;
     private boolean askedOnce = false;
@@ -141,7 +146,7 @@ public class Header extends LinearLayout {
 
     /** Applies the HeaderViewModel values (isADJDSet, alamatDelivery, jumlahCart, jumlahNotifikasi). */
     private void bindState() {
-        AppState s = AppState.get();
+        AppState s = deps.appState;
         adjdRow.setVisibility(s.isADJDSet() ? VISIBLE : GONE);
         String alamatDelivery = s.getAlamatDelivery();
         if (alamatDelivery == null) {
@@ -164,9 +169,9 @@ public class Header extends LinearLayout {
         if (a == null) {
             return;
         }
-        HeaderModel.showAlamatPengantaran(a, AppState.get().getAlamatDelivery(), (Boolean ubahLokasi) -> {
+        deps.headerModel.showAlamatPengantaran(a, deps.appState.getAlamatDelivery(), (Boolean ubahLokasi) -> {
             if (ubahLokasi != null && ubahLokasi) {
-                ADJDModel.deleteAlamatDanJadwalDelivery();
+                deps.adjdModel.deleteAlamatDanJadwalDelivery();
                 askADJD();
             }
         });
@@ -178,7 +183,7 @@ public class Header extends LinearLayout {
         if (a == null) {
             return;
         }
-        HeaderModel.adjd(a, null, null, null, (JsonObject adjdFromHeader) -> {
+        deps.headerModel.adjd(a, null, null, null, (JsonObject adjdFromHeader) -> {
             if (adjdSetCallback != null) {
                 adjdSetCallback.run(adjdFromHeader);
             }
@@ -188,7 +193,7 @@ public class Header extends LinearLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        AppState.get().addListener(listener);
+        deps.appState.addListener(listener);
         bindState();
         if (askADJDOnCreate && !askedOnce) {
             askedOnce = true;
@@ -198,7 +203,7 @@ public class Header extends LinearLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        AppState.get().removeListener(listener);
+        deps.appState.removeListener(listener);
         super.onDetachedFromWindow();
     }
 }

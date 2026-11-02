@@ -1,5 +1,7 @@
 package id.laukpauk.model;
 
+import id.laukpauk.core.AppContainer;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -33,14 +35,19 @@ import id.laukpauk.R;
  * Gallery = the system photo picker (no storage permission), camera = ACTION_IMAGE_CAPTURE into a FileProvider file.
  */
 public final class ImagePickerModel {
-    private ImagePickerModel() {}
+    private final Async async;
+
+    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    public ImagePickerModel(Async async) {
+        this.async = async;
+    }
 
     /** Dart ImageSource.camera / ImageSource.gallery. */
     public static final String CAMERA = "camera";
     public static final String GALLERY = "gallery";
 
     /** Dart: showImagePicker(context) -> ImageSource?. `done` gets CAMERA, GALLERY or null (sheet dismissed). */
-    public static void showImagePicker(final BaseActivity activity, Async.Done<String> done) {
+    public void showImagePicker(final BaseActivity activity, Async.Done<String> done) {
         Modal.<String>bottomSheet(activity, true, handle -> {
             LinearLayout column = Ui.column(activity);
             column.addView(tile(activity, R.drawable.ic_camera_alt, "Dari Kamera", () -> handle.close(CAMERA)),
@@ -52,7 +59,7 @@ public final class ImagePickerModel {
     }
 
     /** A ListTile(leading: icon, title: text, onTap). */
-    private static View tile(Activity a, int iconRes, String title, final Runnable onTap) {
+    private View tile(Activity a, int iconRes, String title, final Runnable onTap) {
         LinearLayout row = Ui.row(a);
         row.setGravity(Gravity.CENTER_VERTICAL);
         Ui.pad(row, 16, 0, 16, 0);
@@ -69,7 +76,7 @@ public final class ImagePickerModel {
      * Dart: takePicture(context, imageSource) -> XFile?. `done` gets the picked image as a local file (ready for
      * Http.postMultipartApi) or null when cancelled / denied / failed.
      */
-    public static void takePicture(final BaseActivity activity, String imageSource, final Async.Done<File> done) {
+    public void takePicture(final BaseActivity activity, String imageSource, final Async.Done<File> done) {
         try {
             if (imageSource == null) {
                 finish(done, null);
@@ -83,13 +90,13 @@ public final class ImagePickerModel {
         }
     }
 
-    private static void finish(Async.Done<File> done, File file) {
+    private void finish(Async.Done<File> done, File file) {
         if (done != null) {
             done.run(file);
         }
     }
 
-    private static File imagesDir(Activity a) {
+    private File imagesDir(Activity a) {
         File dir = new File(a.getCacheDir(), "images");
         if (!dir.exists()) {
             dir.mkdirs();
@@ -97,7 +104,7 @@ public final class ImagePickerModel {
         return dir;
     }
 
-    private static void fromCamera(final BaseActivity activity, final Async.Done<File> done) {
+    private void fromCamera(final BaseActivity activity, final Async.Done<File> done) {
         activity.askPermissions(new String[]{Manifest.permission.CAMERA}, (Map<String, Boolean> granted) -> {
             Boolean ok = granted == null ? null : granted.get(Manifest.permission.CAMERA);
             if (ok == null || !ok) {
@@ -124,7 +131,7 @@ public final class ImagePickerModel {
         });
     }
 
-    private static void fromGallery(final BaseActivity activity, final Async.Done<File> done) {
+    private void fromGallery(final BaseActivity activity, final Async.Done<File> done) {
         Intent intent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
@@ -140,12 +147,12 @@ public final class ImagePickerModel {
                 return;
             }
             final Uri uri = result.getData().getData();
-            Async.run(() -> copyToCache(activity, uri), (File file) -> finish(done, file));
+            async.run(() -> copyToCache(activity, uri), (File file) -> finish(done, file));
         });
     }
 
     /** BLOCKING. Copies the picked content Uri into cacheDir/images (the upload code needs a File). */
-    private static File copyToCache(Activity a, Uri uri) throws java.io.IOException {
+    private File copyToCache(Activity a, Uri uri) throws java.io.IOException {
         ContentResolver resolver = a.getContentResolver();
         String type = resolver.getType(uri);
         String extension = (type != null && type.equals("image/png")) ? ".png" : ".jpg";

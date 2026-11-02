@@ -2,27 +2,36 @@ package id.laukpauk;
 
 import android.app.Application;
 
-import id.laukpauk.core.App;
-import id.laukpauk.core.AppState;
-import id.laukpauk.model.MainModel;
+import id.laukpauk.core.AppContainer;
 
 /**
  * Replaces Flutter's main(): WidgetsFlutterBinding.ensureInitialized(), the HeaderViewModel provider
  * and the push-notification set-up that lived in _MyAppState._initialization.
+ *
+ * Also the owner of the composition root: the {@link AppContainer} is built once here, before any
+ * Activity is created, and lives as long as the process.
  */
 public class LaukpaukApp extends Application {
+
+    private AppContainer container;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        App.init(this);
+        container = new AppContainer(this);
 
         // main.dart: _sP.setBool('showMakeSureADJD', true); _sP.setBool('showAlertGift', true);
-        id.laukpauk.core.Prefs.setBool("showMakeSureADJD", true);
-        id.laukpauk.core.Prefs.setBool("showAlertGift", true);
+        container.prefs.setBool("showMakeSureADJD", true);
+        container.prefs.setBool("showAlertGift", true);
 
-        MainModel.initOneSignal(this);
+        container.mainModel.initOneSignal(this);
         // MainActivity.java (delivery-schedule expiry timer + Play in-app update check), now process-wide
-        MainModel.startBackgroundWatchers(this);
-        AppState.get().init();
+        container.mainModel.startBackgroundWatchers(this);
+        container.appState.init();
+    }
+
+    /** The app's single dependency container. */
+    public AppContainer container() {
+        return container;
     }
 }

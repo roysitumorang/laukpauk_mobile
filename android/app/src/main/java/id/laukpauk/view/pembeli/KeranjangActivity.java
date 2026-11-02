@@ -49,10 +49,10 @@ public class KeranjangActivity extends BaseActivity {
     }
 
     /** Dart: getKeranjangPerPenjual(). Blocking. */
-    private static JsonArray getKeranjangPerPenjual() {
-        String cartCode = LocalStorage.getCartCode();
-        String params = HTTPRequest.getQueryString("cartCode=" + cartCode);
-        Http.Response httpResponse = Http.getApi("/User/getCartDividedBySeller?" + params);
+    private JsonArray getKeranjangPerPenjual() {
+        String cartCode = container().localStorage.getCartCode();
+        String params = container().httpRequest.getQueryString("cartCode=" + cartCode);
+        Http.Response httpResponse = container().http.getApi("/User/getCartDividedBySeller?" + params);
         if (httpResponse.statusCode == 200) {
             JsonObject dataObject = httpResponse.jsonObject();
             return Json.array(dataObject, "listCart");
@@ -62,8 +62,8 @@ public class KeranjangActivity extends BaseActivity {
 
     private void initializationState() {
         async(() -> {
-            boolean loggedIn = AuthModel.isLogin();
-            int jumlahKeranjang = HeaderModel.getJumlahCart();
+            boolean loggedIn = container().authModel.isLogin();
+            int jumlahKeranjang = container().headerModel.getJumlahCart();
             return new int[]{loggedIn ? 1 : 0, jumlahKeranjang};
         }, (int[] r) -> {
             isAnyCart = r[1] >= 1;
@@ -101,7 +101,7 @@ public class KeranjangActivity extends BaseActivity {
                     Ui.dp(this, 15), Gravity.CENTER));
             subtotal.addView(totalSlot, new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP));
             top.addView(subtotal, new LinearLayout.LayoutParams(Ui.WRAP, Ui.WRAP));
-            async(() -> Integer.valueOf(CheckoutModel.getTotalKeranjang()), (Integer totalKeranjang) -> {
+            async(() -> Integer.valueOf(container().checkoutModel.getTotalKeranjang()), (Integer totalKeranjang) -> {
                 if (myGeneration != generation || totalKeranjang == null) {
                     return;
                 }
@@ -118,7 +118,7 @@ public class KeranjangActivity extends BaseActivity {
             walletSlot.addView(CartUi.smallSpinner(this, 15), new FrameLayout.LayoutParams(Ui.dp(this, 15),
                     Ui.dp(this, 15), Gravity.CENTER));
             card.addView(walletSlot, new LinearLayout.LayoutParams(Ui.MATCH, Ui.WRAP));
-            async(() -> CheckoutModel.getWalletConfiguration(), (JsonElement walletConfiguration) -> {
+            async(() -> container().checkoutModel.getWalletConfiguration(), (JsonElement walletConfiguration) -> {
                 if (myGeneration != generation) {
                     return;
                 }
@@ -151,7 +151,7 @@ public class KeranjangActivity extends BaseActivity {
             listSlot.removeAllViews();
             listSlot.addView(new ListKeranjang(this, keranjangPerPenjual,
                     () -> initializationState(),
-                    removedItemID -> async(() -> Integer.valueOf(HeaderModel.getJumlahCart()), (Integer jumlah) -> {
+                    removedItemID -> async(() -> Integer.valueOf(container().headerModel.getJumlahCart()), (Integer jumlah) -> {
                         removedItem = removedItemID;
                         isAnyCart = jumlah >= 1;
                         render();
@@ -208,19 +208,19 @@ public class KeranjangActivity extends BaseActivity {
     }
 
     private void onBersihkan() {
-        CheckoutModel.konfirmasi(this, (Boolean konfirmasiResult) -> {
+        container().checkoutModel.konfirmasi(this, (Boolean konfirmasiResult) -> {
             boolean konfirmasi = konfirmasiResult != null && konfirmasiResult;
             if (!konfirmasi) {
                 return;
             }
-            async(() -> Boolean.valueOf(CheckoutModel.bersihkanKeranjang()), (Boolean statusBersihkanKeranjang) -> {
+            async(() -> Boolean.valueOf(container().checkoutModel.bersihkanKeranjang()), (Boolean statusBersihkanKeranjang) -> {
                 if (statusBersihkanKeranjang != null && statusBersihkanKeranjang) {
                     updatedItemInt++;
                     isAnyCart = false;
                     render();
                 }
-                async(() -> Integer.valueOf(HeaderModel.getJumlahCart()), (Integer jumlahKeranjang) ->
-                        AppState.get().setJumlahCart(jumlahKeranjang));
+                async(() -> Integer.valueOf(container().headerModel.getJumlahCart()), (Integer jumlahKeranjang) ->
+                        container().appState.setJumlahCart(jumlahKeranjang));
             });
         });
     }

@@ -1,5 +1,7 @@
 package id.laukpauk.view.pembeli.components.resep;
 
+import id.laukpauk.core.AppContainer;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -29,6 +31,9 @@ import id.laukpauk.view.pembeli.DetailUi;
 
 /** Port of lib/views/pembeli/components/Resep/ResepItemItem.dart (one ingredient row). */
 public class ResepItemItem extends LinearLayout {
+    /** Dependencies of this component, resolved once from its Context (see AppContainer). */
+    private final AppContainer deps = AppContainer.from(getContext());
+
     private final BaseActivity activity;
     private final int indexData;
     private final JsonObject resepItem;
@@ -85,9 +90,9 @@ public class ResepItemItem extends LinearLayout {
 
     /** Dart: getSatuanProdukResep(idProduk). BLOCKING. */
     private JsonArray getSatuanProdukResep(String idProduk) {
-        String params = HTTPRequest.getQueryString("idProduk=" + idProduk);
+        String params = deps.httpRequest.getQueryString("idProduk=" + idProduk);
 
-        Http.Response httpResponse = Http.getApi("/Produk/getHargaProduk?" + params);
+        Http.Response httpResponse = deps.http.getApi("/Produk/getHargaProduk?" + params);
         if (httpResponse.statusCode == 200) {
             return Json.array(httpResponse.jsonObject(), "hargaProduk");
         }
@@ -238,7 +243,7 @@ public class ResepItemItem extends LinearLayout {
 
     /** The cart/trash icon's GestureDetector.onTap. */
     private void onCartTap(final boolean isSelected) {
-        boolean isADJDSet = LocalStorage.isAlamatDeliveryDanJadwalDeliverySet();
+        boolean isADJDSet = deps.localStorage.isAlamatDeliveryDanJadwalDeliverySet();
         if (isADJDSet) {
             String satuanTerpilih = satuanProdukResepSelected;
             int harga, diskon, hargaBersih, subTotal;
@@ -271,7 +276,7 @@ public class ResepItemItem extends LinearLayout {
                 cancelSelectedItemCallback.run(dataToManipulate);
             }
         } else {
-            ProdukModel.adjdNotSetAlert(activity, lakukanDeteksiADJD -> {
+            deps.produkModel.adjdNotSetAlert(activity, lakukanDeteksiADJD -> {
                 if (lakukanDeteksiADJD != null && lakukanDeteksiADJD) {
                     deteksiADJD.run();
                 }

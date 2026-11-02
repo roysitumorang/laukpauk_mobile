@@ -27,7 +27,7 @@ public class TransferBankActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        TransaksiModel.removeTransactionSession(this, null);
+        container().transaksiModel.removeTransactionSession(this, null);
 
         JsonObject returnedDataFromCheckout = Json.object(args(), "returnedDataFromCheckout");
         final JsonObject responseCheckout = Json.object(returnedDataFromCheckout, "responseCheckout");

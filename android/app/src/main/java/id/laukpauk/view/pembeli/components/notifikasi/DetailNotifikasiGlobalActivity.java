@@ -32,7 +32,7 @@ public class DetailNotifikasiGlobalActivity extends BaseActivity {
         render();
 
         String idNotifikasi = Json.str(args(), "idNotifikasi");
-        async(() -> NotifikasiModel.getDetailNotifikasiGlobal(idNotifikasi), detail -> {
+        async(() -> container().notifikasiModel.getDetailNotifikasiGlobal(idNotifikasi), detail -> {
             detailNotifikasiGlobalState = detail;
             render();
         });
