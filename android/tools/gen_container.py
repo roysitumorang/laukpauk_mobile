@@ -2,7 +2,9 @@
 """Regenerates app/src/main/java/id/laukpauk/di/AppContainer.java.
 
 Every concrete class `public class XxxRepository extends BaseRepository` in data/repository gets one
-singleton field `xxxRepository`, built with the shared RepositoryDeps. Run it after adding or removing a
+singleton field `xxxRepository`. Its constructor must start with the shared RepositoryDeps and may then
+take other repositories (`public CartRepository(RepositoryDeps deps, DeliveryRepository delivery)`);
+they are built in dependency order, and a cycle is an error. Run it after adding or removing a
 repository (CI fails if the committed file is out of date):
 
     python3 android/tools/gen_container.py
@@ -22,13 +24,40 @@ def field(cls):
     return lead.lower() + cls[len(lead):]
 
 
-repos = []
+repos, params = [], {}
 for f in sorted(os.listdir(REPO_DIR)):
     if not f.endswith(".java"):
         continue
+    cls = f[:-5]
     text = open(os.path.join(REPO_DIR, f), encoding="utf-8").read()
-    if re.search(r"public\s+(final\s+)?class\s+%s\s+extends\s+BaseRepository\b" % f[:-5], text):
-        repos.append(f[:-5])
+    if re.search(r"public\s+(final\s+)?class\s+%s\s+extends\s+BaseRepository\b" % cls, text):
+        repos.append(cls)
+        m = re.search(r"public\s+%s\s*\(([^)]*)\)" % cls, text)
+        types = [p.strip().split()[-2] for p in m.group(1).split(",") if p.strip()] if m else ["RepositoryDeps"]
+        if not types or types[0] != "RepositoryDeps":
+            raise SystemExit("%s: the constructor must start with RepositoryDeps" % cls)
+        params[cls] = types[1:]
+
+# constructor injection between repositories: build in dependency order
+order, state = [], {}
+
+
+def visit(r, path):
+    if state.get(r) == 2:
+        return
+    if state.get(r) == 1:
+        raise SystemExit("repository dependency cycle: " + " -> ".join(path + [r]))
+    state[r] = 1
+    for d in params[r]:
+        if d not in params:
+            raise SystemExit("%s depends on %s, which is not a repository" % (r, d))
+        visit(d, path + [r])
+    state[r] = 2
+    order.append(r)
+
+
+for r in repos:
+    visit(r, [])
 
 lines = [
     "package id.laukpauk.di;",
@@ -76,7 +105,7 @@ lines += [
     "        this.executors = new AppExecutors();",
     "        this.repositoryDeps = new RepositoryDeps(application, apiClient, session, prefs, executors);",
 ]
-lines += ["        this.%s = new %s(repositoryDeps);" % (field(r), r) for r in repos]
+lines += ["        this.%s = new %s(%s);" % (field(r), r, ", ".join(["repositoryDeps"] + ["this." + field(d) for d in params[r]])) for r in order]
 lines += [
     "    }",
     "",
