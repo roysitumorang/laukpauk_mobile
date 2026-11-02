@@ -1,6 +1,5 @@
 package id.laukpauk.data.repository;
 
-import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +11,7 @@ import id.laukpauk.data.remote.AuthApi;
 
 /**
  * Login, registration, OTP confirmation, user verification and password recovery. A successful login /
- * OTP confirmation stores the session (as legacy did), tells OneSignal who the user is and refreshes the
+ * OTP confirmation stores the session (as legacy did), registers the device for push notifications and refreshes the
  * cart and notification badges.
  */
 public class AuthRepository extends BaseRepository {
@@ -46,12 +45,15 @@ public class AuthRepository extends BaseRepository {
     private final AuthApi api;
     private final CartRepository cart;
     private final NotifikasiRepository notifikasi;
+    private final PushRepository push;
 
-    public AuthRepository(RepositoryDeps deps, CartRepository cart, NotifikasiRepository notifikasi) {
+    public AuthRepository(RepositoryDeps deps, CartRepository cart, NotifikasiRepository notifikasi,
+                          PushRepository push) {
         super(deps);
         this.api = api(AuthApi.class);
         this.cart = cart;
         this.notifikasi = notifikasi;
+        this.push = push;
     }
 
     /** Auth/loginAuthentication; on success the session is saved and the badges refreshed. */
@@ -134,8 +136,7 @@ public class AuthRepository extends BaseRepository {
     }
 
     private void onSignedIn(String idUser) {
-        OneSignal.login(idUser);
-        session.setExternalUserID(idUser);
+        push.onSignedIn();
         cart.refreshCartCount();
         notifikasi.refreshUnreadCount();
     }

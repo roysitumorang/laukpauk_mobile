@@ -61,8 +61,14 @@ android {
         buildConfigField 'String', 'UPLOAD_GAMBAR_USER', q(cfg('UPLOAD_GAMBAR_USER', 'upload/gambar/user'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_VOUCHER', q(cfg('UPLOAD_GAMBAR_VOUCHER', 'upload/gambar/voucher'))
         buildConfigField 'String', 'ENVIRONMENT', q(cfg('ENVIRONMENT', 'production'))
-        buildConfigField 'String', 'ONESIGNAL_APP_ID_PRODUCTION', q(cfg('ONESIGNAL_APP_ID_PRODUCTION', '7314cba5-1b0d-455a-916b-700a566b207f'))
-        buildConfigField 'String', 'ONESIGNAL_APP_ID_DEVELOPMENT', q(cfg('ONESIGNAL_APP_ID_DEVELOPMENT', 'f8ffb130-45e4-413f-87d2-cd75f5dfc97b'))
+        // Firebase Cloud Messaging: the values of google-services.json ("Project settings > Your apps"), read from
+        // laukpauk.properties so no Firebase file is committed. Empty -> push notifications are disabled.
+        buildConfigField 'String', 'FIREBASE_APP_ID', q(cfg('FIREBASE_APP_ID', ''))
+        buildConfigField 'String', 'FIREBASE_API_KEY', q(cfg('FIREBASE_API_KEY', ''))
+        buildConfigField 'String', 'FIREBASE_PROJECT_ID', q(cfg('FIREBASE_PROJECT_ID', ''))
+        buildConfigField 'String', 'FIREBASE_SENDER_ID', q(cfg('FIREBASE_SENDER_ID', ''))
+        // Topic every install subscribes to, for broadcast ("Info") notifications.
+        buildConfigField 'String', 'FCM_BROADCAST_TOPIC', q(cfg('FCM_BROADCAST_TOPIC', 'info'))
         buildConfigField 'String', 'XENDIT_PUBLIC_KEY', q(cfg('XENDIT_PUBLIC_KEY', 'CHANGE_ME'))
         // Also used by LocalStorage.getGoogleMapsApiKey() for the Geocoding / Places web-service calls.
         buildConfigField 'String', 'MAPS_API_KEY', q(cfg('MAPS_API_KEY', 'CHANGE_ME'))
@@ -163,8 +169,9 @@ dependencies {
     // In-app updates (replaces the deprecated com.google.android.play:core used before)
     implementation 'com.google.android.play:app-update:2.1.0'
 
-    // Push notifications (replaces onesignal_flutter)
-    implementation 'com.onesignal:OneSignal:5.11.0'
+    // Push notifications: Firebase Cloud Messaging (replaces OneSignal)
+    implementation platform('com.google.firebase:firebase-bom:34.4.0')
+    implementation 'com.google.firebase:firebase-messaging'
 
     // Xendit card tokenization + 3-D Secure. 3.7.0+ no longer needs the CardinalCommerce repository
     // (it returns HTTP 401 to anonymous requests, which broke the build of the 3.6.1 + cardinal setup).

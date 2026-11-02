@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Push notifications (Firebase Cloud Messaging). The channel id is also the FCM default channel. -->
+    <string name="push_channel_id" translatable="false">laukpauk_default</string>
+    <string name="push_channel_name">Notifikasi</string>
+    <string name="push_channel_description">Info, promo dan status pesanan Laukpauk</string>
+</resources>

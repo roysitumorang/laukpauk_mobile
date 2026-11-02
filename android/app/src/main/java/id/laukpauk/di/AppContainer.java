@@ -25,6 +25,7 @@ import id.laukpauk.data.repository.PesananMasukRepository;
 import id.laukpauk.data.repository.ProdukPenjualRepository;
 import id.laukpauk.data.repository.ProdukRepository;
 import id.laukpauk.data.repository.PromoRepository;
+import id.laukpauk.data.repository.PushRepository;
 import id.laukpauk.data.repository.RepeatOrderRepository;
 import id.laukpauk.data.repository.ResepRepository;
 import id.laukpauk.data.repository.SearchRepository;
@@ -68,6 +69,7 @@ public final class AppContainer {
     public final ProdukPenjualRepository produkPenjualRepository;
     public final ProdukRepository produkRepository;
     public final PromoRepository promoRepository;
+    public final PushRepository pushRepository;
     public final RepeatOrderRepository repeatOrderRepository;
     public final ResepRepository resepRepository;
     public final SearchRepository searchRepository;
@@ -89,8 +91,9 @@ public final class AppContainer {
         this.deliveryRepository = new DeliveryRepository(repositoryDeps);
         this.cartRepository = new CartRepository(repositoryDeps, this.deliveryRepository);
         this.notifikasiRepository = new NotifikasiRepository(repositoryDeps);
-        this.accountRepository = new AccountRepository(repositoryDeps, this.cartRepository, this.notifikasiRepository);
-        this.authRepository = new AuthRepository(repositoryDeps, this.cartRepository, this.notifikasiRepository);
+        this.pushRepository = new PushRepository(repositoryDeps);
+        this.accountRepository = new AccountRepository(repositoryDeps, this.cartRepository, this.notifikasiRepository, this.pushRepository);
+        this.authRepository = new AuthRepository(repositoryDeps, this.cartRepository, this.notifikasiRepository, this.pushRepository);
         this.settingRepository = new SettingRepository(repositoryDeps);
         this.checkoutRepository = new CheckoutRepository(repositoryDeps, this.settingRepository);
         this.tokoSayaRepository = new TokoSayaRepository(repositoryDeps);

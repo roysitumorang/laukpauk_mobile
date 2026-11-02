@@ -21,16 +21,18 @@ import id.laukpauk.util.Json;
  * Legacy ui/Routing (named routes of push notifications and deep links) on top of the navigation graph.
  *
  * {@link #handle} understands deep links (https://lp.me/&lt;route&gt;?params, lp2021.page.link) and the intent
- * {@link AppStartup} builds when a OneSignal notification is tapped.
+ * push notifications open (see push/PushNotifications).
  */
 public final class MainRouter {
     private MainRouter() {}
 
     /** Notification tap extras (see {@link AppStartup}). */
-    public static final String EXTRA_NOTIFICATION = "id.laukpauk.extra.NOTIFICATION";
-    public static final String EXTRA_ROUTE_NAME = "id.laukpauk.extra.ROUTE_NAME";
-    public static final String EXTRA_ROUTE_PARAMS = "id.laukpauk.extra.ROUTE_PARAMS";
-    public static final String EXTRA_ID_NOTIFIKASI = "id.laukpauk.extra.ID_NOTIFIKASI";
+    // The push payload's data keys, used as-is as intent extras: the system puts them there when a
+    // background notification is tapped, and push/PushNotifications does the same for the ones it shows.
+    public static final String EXTRA_NOTIFICATION = "notifikasi";
+    public static final String EXTRA_ROUTE_NAME = "routeName";
+    public static final String EXTRA_ROUTE_PARAMS = "routeParams";
+    public static final String EXTRA_ID_NOTIFIKASI = "idNotifikasi";
 
     /** Deep links (VIEW intents) and notification taps that opened MainActivity. Each intent is handled once. */
     public static void handle(MainActivity activity, NavController nav, Intent intent) {
