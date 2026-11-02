@@ -108,7 +108,7 @@ public class PesananSayaViewModel extends ViewModel {
     }
 
     /** The shop's WhatsApp number setting (legacy getContactUsWhatsappConfiguration). */
-    public void contactWhatsapp(BaseRepository.ResultCallback<com.google.gson.JsonElement> callback) {
+    public void contactWhatsapp(BaseRepository.ResultCallback<Object> callback) {
         settings.getContactUsWhatsappConfiguration(callback);
     }
 }

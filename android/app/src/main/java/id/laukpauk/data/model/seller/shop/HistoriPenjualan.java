@@ -1,18 +1,18 @@
 package id.laukpauk.data.model.seller.shop;
 
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
 
 /** One row of the sales history. {@link #total} is loaded separately per transaction (not part of the JSON). */
 public class HistoriPenjualan {
-    @SerializedName("id")
+    @Json(name = "id")
     public String id;
-    @SerializedName("namaUser")
+    @Json(name = "namaUser")
     public String namaUser;
-    @SerializedName("waktuCheckout")
+    @Json(name = "waktuCheckout")
     public String waktuCheckout;
-    @SerializedName("nomorTransaksi")
+    @Json(name = "nomorTransaksi")
     public String nomorTransaksi;
-    @SerializedName("status")
+    @Json(name = "status")
     public String status;
 
     /** Total of this transaction for the seller; null until loaded. */

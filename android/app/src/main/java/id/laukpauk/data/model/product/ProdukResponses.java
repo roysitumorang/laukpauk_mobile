@@ -1,7 +1,7 @@
 package id.laukpauk.data.model.product;
 
 import androidx.annotation.Nullable;
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public final class ProdukResponses {
     }
 
     public static class InCa {
-        @SerializedName("isThisProductInCA")
+        @Json(name = "isThisProductInCA")
         public boolean isThisProductInCA;
     }
 

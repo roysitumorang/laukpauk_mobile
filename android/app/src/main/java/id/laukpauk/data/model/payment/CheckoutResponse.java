@@ -1,6 +1,5 @@
 package id.laukpauk.data.model.payment;
 
-import com.google.gson.JsonElement;
 
 /** The answer of POST Transaksi/checkout (legacy "responseCheckout"). */
 public class CheckoutResponse {
@@ -9,7 +8,7 @@ public class CheckoutResponse {
     public String idTransaksi;
     public String metodePembayaran;
     /** Dynamic: its shape depends on the payment channel (bank account, checkout_url, actions, message...). */
-    public JsonElement paymentResponse;
+    public Object paymentResponse;
 
     public static CheckoutResponse failed() {
         CheckoutResponse r = new CheckoutResponse();

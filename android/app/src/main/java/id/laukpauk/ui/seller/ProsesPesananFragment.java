@@ -57,7 +57,7 @@ public class ProsesPesananFragment extends Fragment {
                 viewModel.pembatalanKlaim(item.id, r -> klaimResult(r.isSuccess() && Boolean.TRUE.equals(r.data)));
             } else {
                 Bundle args = new Bundle();
-                args.putString("pesananItem", c.apiClient.gson().toJson(item));
+                args.putString("pesananItem", c.apiClient.toJson(item, PesananMasukItem.class));
                 NavHostFragment.findNavController(this).navigate(R.id.pesananItemTidakTersediaFragment, args);
             }
         });

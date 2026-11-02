@@ -1,8 +1,11 @@
 package id.laukpauk.data.repository;
 
+import id.laukpauk.util.Json;
+
+import java.util.Map;
+
 import androidx.lifecycle.LiveData;
 
-import com.google.gson.JsonObject;
 
 import java.util.Collections;
 import java.util.List;
@@ -86,17 +89,17 @@ public class ResepRepository extends BaseRepository {
             callback.onResult(Resource.error("jadwalDeliveryCode", 0));
             return;
         }
-        JsonObject selected = new JsonObject();
+        Map<String, Object> selected = Json.newObject();
         for (SelectedItem item : items) {
-            JsonObject o = new JsonObject();
-            o.addProperty("idProduk", item.idProduk);
-            o.addProperty("quantity", String.valueOf(item.quantity));
-            o.addProperty("idSatuan", item.idSatuan);
-            o.addProperty("subTotal", item.subTotal);
-            selected.add(item.idItem, o);
+            Map<String, Object> o = Json.newObject();
+            o.put("idProduk", item.idProduk);
+            o.put("quantity", String.valueOf(item.quantity));
+            o.put("idSatuan", item.idSatuan);
+            o.put("subTotal", item.subTotal);
+            selected.put(item.idItem, o);
         }
         String day = s.dayDelivery != null ? s.dayDelivery : DEFAULT_DAY;
-        enqueue(api.belanjaResep(session.getCartCode(), selected.toString(), day, s.jadwalDeliveryCode),
+        enqueue(api.belanjaResep(session.getCartCode(), Json.toJson(selected), day, s.jadwalDeliveryCode),
                 (RecipeResponses.Belanja body) -> body != null && body.statusBelanjaResep, callback);
     }
 }

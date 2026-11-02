@@ -1,20 +1,20 @@
 package id.laukpauk.data.model.notifikasi;
 
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
 
 /** An "Info" notification (GET User/getNotifikasi, Notifikasi/getNotifikasi/{id}). */
 public class Notifikasi {
-    @SerializedName("idNotifikasi")
+    @Json(name = "idNotifikasi")
     public String idNotifikasi;
-    @SerializedName("judul")
+    @Json(name = "judul")
     public String judul;
-    @SerializedName("pesan")
+    @Json(name = "pesan")
     public String pesan;
     /** File name in ServerPath.uploadGambarPushNotifikasi; empty when there is no picture. */
-    @SerializedName("foto")
+    @Json(name = "foto")
     public String foto;
-    @SerializedName("isRead")
+    @Json(name = "isRead")
     public boolean isRead;
-    @SerializedName("createdAt")
+    @Json(name = "createdAt")
     public String createdAt;
 }

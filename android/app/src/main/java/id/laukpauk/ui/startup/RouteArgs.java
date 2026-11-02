@@ -4,9 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
 import java.util.Map;
 
@@ -24,23 +21,18 @@ final class RouteArgs {
         if (json == null || json.trim().isEmpty()) {
             return b;
         }
-        JsonObject o = Json.parseObject(json);
-        for (Map.Entry<String, JsonElement> e : o.entrySet()) {
-            JsonElement v = e.getValue();
-            if (v == null || v.isJsonNull()) {
+        Map<String, Object> o = Json.parseObject(json);
+        for (Map.Entry<String, Object> e : o.entrySet()) {
+            Object v = e.getValue();
+            if (v == null) {
                 continue;
             }
-            if (v.isJsonPrimitive()) {
-                JsonPrimitive p = v.getAsJsonPrimitive();
-                if (p.isBoolean()) {
-                    b.putBoolean(e.getKey(), p.getAsBoolean());
-                } else if (p.isNumber() && p.getAsString().matches("-?\\d{1,9}")) {
-                    b.putInt(e.getKey(), p.getAsInt());
-                } else {
-                    b.putString(e.getKey(), p.getAsString());
-                }
+            if (v instanceof Boolean) {
+                b.putBoolean(e.getKey(), (Boolean) v);
+            } else if (v instanceof Number && Json.asStr(v).matches("-?\\d{1,9}")) {
+                b.putInt(e.getKey(), ((Number) v).intValue());
             } else {
-                b.putString(e.getKey(), v.toString());
+                b.putString(e.getKey(), Json.asStr(v));
             }
         }
         return b;

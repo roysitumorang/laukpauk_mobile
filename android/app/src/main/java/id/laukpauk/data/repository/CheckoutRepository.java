@@ -1,10 +1,10 @@
 package id.laukpauk.data.repository;
 
+import java.util.Map;
+
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +78,8 @@ public class CheckoutRepository extends BaseRepository {
     /** The saved delivery schedule, or null (legacy LocalStorage.savedJadwalDeliveryMap). */
     @Nullable
     public JadwalPengiriman savedJadwal() {
-        JsonObject o = session.savedJadwalDeliveryMap();
-        return o == null ? null : deps.apiClient.gson().fromJson(o, JadwalPengiriman.class);
+        Map<String, Object> o = session.savedJadwalDeliveryMap();
+        return o == null ? null : deps.apiClient.fromTree(o, JadwalPengiriman.class);
     }
 
     private String savedLatitude() {
@@ -173,9 +173,8 @@ public class CheckoutRepository extends BaseRepository {
                     d.jumlahBarang = v;
                     all.step();
                 });
-        this.<CheckoutResponses.DiskonKategori, JsonObject>call(api.getDiskonKategori(d.cartCode),
-                b -> b.diskonKategori != null && b.diskonKategori.isJsonObject()
-                        ? b.diskonKategori.getAsJsonObject() : null, null, v -> {
+        this.<CheckoutResponses.DiskonKategori, Map<String, Object>>call(api.getDiskonKategori(d.cartCode),
+                b -> Json.isObject(b.diskonKategori) ? Json.obj(b.diskonKategori) : null, null, v -> {
                     d.diskonKategori = v;
                     all.step();
                 });
@@ -213,7 +212,7 @@ public class CheckoutRepository extends BaseRepository {
                     });
                     if (needsCost) {
                         final String key = perPasar ? "costDelivery" : "costPerKm";
-                        ResultCallback<JsonElement> onCost = res -> {
+                        ResultCallback<Object> onCost = res -> {
                             long tarif = res.isSuccess() ? Json.asLong(res.data, 0) : 0;
                             d.penjelasanOngkir = penjelasan(jenis, perPasar, tarif);
                             inner.step();
@@ -225,7 +224,7 @@ public class CheckoutRepository extends BaseRepository {
                                 d.point = v;
                                 inner.step();
                             });
-                    ResultCallback<JsonElement> onMinimal = res -> {
+                    ResultCallback<Object> onMinimal = res -> {
                         if (res.isSuccess() && res.data != null) {
                             d.minimalPointTukarPoint = Json.asLong(res.data, 0);
                         }

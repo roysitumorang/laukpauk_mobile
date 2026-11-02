@@ -1,5 +1,7 @@
 package id.laukpauk.ui.account;
 
+import java.util.Map;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.util.AttributeSet;
@@ -12,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.gson.JsonObject;
 
 import java.util.Locale;
 
@@ -26,7 +27,7 @@ import id.laukpauk.util.Json;
 /**
  * Legacy RMP component ("Response Menjadi Penjual"): shown on Toko Saya while a seller request is pending or
  * rejected. Use in a layout as {@code <id.laukpauk.ui.account.RmpView .../>} and call
- * {@link #bind(Fragment, JsonObject)} with the "dataPenjual" object (namaToko, status, statusReason).
+ * {@link #bind(Fragment, Map<String, Object>)} with the "dataPenjual" object (namaToko, status, statusReason).
  */
 public class RmpView extends LinearLayout {
 
@@ -41,7 +42,7 @@ public class RmpView extends LinearLayout {
         binding = ViewAccountRmpBinding.inflate(LayoutInflater.from(context), this);
     }
 
-    public void bind(Fragment owner, JsonObject dataPenjual) {
+    public void bind(Fragment owner, Map<String, Object> dataPenjual) {
         String status = Json.str(dataPenjual, "status").toLowerCase(Locale.ROOT);
         boolean pending = status.equals("pending");
         Images.asset(binding.image, pending ? "RMP_Pending.png" : "RMP_Rejected.png");
@@ -62,8 +63,8 @@ public class RmpView extends LinearLayout {
                 return;
             }
             binding.progress.setVisibility(View.GONE);
-            if (result.isSuccess() && result.data != null && result.data.isJsonObject()) {
-                final String number = Json.str(result.data.getAsJsonObject(), "contactUsWhatsapp");
+            if (result.isSuccess() && Json.isObject(result.data)) {
+                final String number = Json.str(Json.obj(result.data), "contactUsWhatsapp");
                 binding.whatsapp.setVisibility(View.VISIBLE);
                 binding.whatsapp.setOnClickListener(v -> {
                     try {

@@ -1,6 +1,5 @@
 package id.laukpauk.data.model.home;
 
-import com.google.gson.JsonElement;
 
 /**
  * A product tile (market products, konten items, category products, ListProduk). Only the keys the tiles use
@@ -17,13 +16,13 @@ public class HomeProduk {
     /** Missing = available. */
     public Boolean stokAvailable;
     /** Active promos; only "is there any" matters (dynamic: array, or false/"" when none). */
-    public JsonElement promo;
+    public Object promo;
 
     public boolean isStokAvailable() {
         return stokAvailable == null || stokAvailable;
     }
 
     public boolean isInActivePromo() {
-        return promo != null && promo.isJsonArray() && promo.getAsJsonArray().size() >= 1;
+        return promo instanceof java.util.List && !((java.util.List<?>) promo).isEmpty();
     }
 }

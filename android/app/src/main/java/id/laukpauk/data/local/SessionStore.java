@@ -1,12 +1,12 @@
 package id.laukpauk.data.local;
 
+import java.util.Map;
+
 import id.laukpauk.util.Json;
 import androidx.core.content.pm.PackageInfoCompat;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.Calendar;
 
@@ -35,12 +35,12 @@ public final class SessionStore {
      * Keys: latitude, longitude, jadwalDeliveryCode, alamat. Missing values are JSON null
      * (read them with Json.strOrNull).
      */
-    public JsonObject getSavedLatitudeAndLongitude() {
-        JsonObject o = new JsonObject();
-        o.addProperty("latitude", prefs.getString("savedLatitude"));
-        o.addProperty("longitude", prefs.getString("savedLongitude"));
-        o.addProperty("jadwalDeliveryCode", prefs.getString("savedJadwalDeliveryCode"));
-        o.addProperty("alamat", prefs.getString("savedAlamat"));
+    public Map<String, Object> getSavedLatitudeAndLongitude() {
+        Map<String, Object> o = Json.newObject();
+        o.put("latitude", prefs.getString("savedLatitude"));
+        o.put("longitude", prefs.getString("savedLongitude"));
+        o.put("jadwalDeliveryCode", prefs.getString("savedJadwalDeliveryCode"));
+        o.put("alamat", prefs.getString("savedAlamat"));
         return o;
     }
 
@@ -127,12 +127,12 @@ public final class SessionStore {
 
 
     /** The saved delivery schedule (JSON map) or null. */
-    public JsonObject savedJadwalDeliveryMap() {
+    public Map<String, Object> savedJadwalDeliveryMap() {
         String encoded = prefs.getString("savedJadwalDeliveryMap");
         if (encoded != null) {
-            JsonElement e = Json.parse(encoded);
-            if (e != null && e.isJsonObject()) {
-                return e.getAsJsonObject();
+            Object e = Json.parse(encoded);
+            if (Json.isObject(e)) {
+                return Json.obj(e);
             }
         }
         return null;
@@ -157,17 +157,17 @@ public final class SessionStore {
         }
     }
 
-    public void setPasarPalingDekat(JsonObject pasarPalingDekat) {
-        prefs.setString("pasarPalingDekat", pasarPalingDekat.toString());
+    public void setPasarPalingDekat(Map<String, Object> pasarPalingDekat) {
+        prefs.setString("pasarPalingDekat", Json.toJson(pasarPalingDekat));
     }
 
     /** null when nothing is stored. */
-    public JsonObject getPasarPalingDekat() {
+    public Map<String, Object> getPasarPalingDekat() {
         String s = prefs.getString("pasarPalingDekat");
         if (s == null) {
             return null;
         }
-        JsonElement e = Json.parse(s);
-        return (e != null && e.isJsonObject()) ? e.getAsJsonObject() : null;
+        Object e = Json.parse(s);
+        return Json.isObject(e) ? Json.obj(e) : null;
     }
 }

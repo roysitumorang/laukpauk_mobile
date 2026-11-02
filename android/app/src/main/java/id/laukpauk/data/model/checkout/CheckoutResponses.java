@@ -1,6 +1,5 @@
 package id.laukpauk.data.model.checkout;
 
-import com.google.gson.JsonElement;
 
 import java.util.List;
 
@@ -40,7 +39,7 @@ public final class CheckoutResponses {
 
     public static class DiskonKategori {
         /** Dynamic: an object, or false when there is no category discount. */
-        public JsonElement diskonKategori;
+        public Object diskonKategori;
     }
 
     public static class Point {

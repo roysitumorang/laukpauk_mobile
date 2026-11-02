@@ -2,7 +2,6 @@ package id.laukpauk.data.model.product;
 
 import androidx.annotation.Nullable;
 
-import com.google.gson.JsonElement;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class Produk {
     /** null when the endpoint doesn't send it (= available). */
     @Nullable public Boolean stokAvailable;
     /** Active promos; only the size matters (dynamic payload). */
-    @Nullable public List<JsonElement> promo;
+    @Nullable public List<Object> promo;
 
     public boolean isStockAvailable() {
         return stokAvailable == null || stokAvailable;

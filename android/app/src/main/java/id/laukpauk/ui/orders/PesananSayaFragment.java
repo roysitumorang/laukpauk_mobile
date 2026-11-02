@@ -18,7 +18,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.gson.JsonElement;
 
 import java.util.Calendar;
 import java.util.List;
@@ -113,7 +112,7 @@ public class PesananSayaFragment extends Fragment {
                     if (!isAdded() || !result.isSuccess() || result.data == null || Json.isFalse(result.data)) {
                         return;
                     }
-                    JsonElement data = result.data;
+                    Object data = result.data;
                     String text = getString(R.string.orders_wa_konfirmasi_format, OrderUi.nz(t.nomorTransaksi),
                             OrderUi.nz(t.namaMetodePembayaran));
                     String config = Json.str(Json.obj(data), "contactUsWhatsapp");

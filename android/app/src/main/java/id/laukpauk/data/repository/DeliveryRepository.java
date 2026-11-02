@@ -1,11 +1,12 @@
 package id.laukpauk.data.repository;
 
+import java.util.Map;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import androidx.annotation.Nullable;
 
-import com.google.gson.JsonObject;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -104,7 +105,7 @@ public class DeliveryRepository extends BaseRepository {
         enqueue(api.getAvailableJadwalDelivery(), body -> {
             List<JadwalDelivery> list = new ArrayList<>();
             if (body != null && body.availableJadwalDelivery != null) {
-                for (JsonObject o : body.availableJadwalDelivery) {
+                for (Map<String, Object> o : body.availableJadwalDelivery) {
                     if (o != null) {
                         list.add(new JadwalDelivery(o));
                     }
@@ -158,7 +159,7 @@ public class DeliveryRepository extends BaseRepository {
      * (main thread) gets true when a selection is set afterwards.
      */
     public void save(boolean completed, @Nullable String latitude, @Nullable String longitude,
-                     @Nullable String jadwalDeliveryCode, @Nullable String alamat, @Nullable JsonObject jadwalDeliveryMap,
+                     @Nullable String jadwalDeliveryCode, @Nullable String alamat, @Nullable Map<String, Object> jadwalDeliveryMap,
                      ResultCallback<Boolean> callback) {
         String cLat = prefs.getString("coppiedLatitude");
         String cLng = prefs.getString("coppiedLongitude");
@@ -168,7 +169,7 @@ public class DeliveryRepository extends BaseRepository {
         boolean copiedComplete = cLat != null && cLng != null && cCode != null && cAlamat != null && cMap != null;
 
         boolean isSet = completed || copiedComplete;
-        String mapText = jadwalDeliveryMap != null ? jadwalDeliveryMap.toString() : "null";
+        String mapText = jadwalDeliveryMap != null ? Json.toJson(jadwalDeliveryMap) : "null";
         if (!completed) {
             latitude = cLat;
             longitude = cLng;
@@ -188,9 +189,9 @@ public class DeliveryRepository extends BaseRepository {
                 prefs.setString("savedJadwalDeliveryCode", jadwalDeliveryCode);
             }
             if (mapText != null) {
-                JsonObject map = Json.parseObject(mapText);
-                map.addProperty("setOn", nowText());
-                prefs.setString("savedJadwalDeliveryMap", map.toString());
+                Map<String, Object> map = Json.parseObject(mapText);
+                map.put("setOn", nowText());
+                prefs.setString("savedJadwalDeliveryMap", Json.toJson(map));
             }
             if (alamat != null) {
                 prefs.setString("savedAlamat", alamat);
@@ -227,7 +228,7 @@ public class DeliveryRepository extends BaseRepository {
             return false;
         }
         try {
-            JsonObject map = Json.parseObject(saved);
+            Map<String, Object> map = Json.parseObject(saved);
             String id = Json.str(map, "id");
             String day = Json.str(map, "day").toLowerCase(Locale.ROOT);
             LocalDateTime now = LocalDateTime.now();
@@ -281,7 +282,7 @@ public class DeliveryRepository extends BaseRepository {
     private DeliverySelection read() {
         boolean isSet = session.isAlamatDeliveryDanJadwalDeliverySet();
         String alamat = prefs.getString("savedAlamat");
-        JsonObject jadwal = session.savedJadwalDeliveryMap();
+        Map<String, Object> jadwal = session.savedJadwalDeliveryMap();
         String day = jadwal != null ? Json.strOrNull(jadwal, "day") : null;
         if (!isSet && alamat == null) {
             return DeliverySelection.NOT_SET;

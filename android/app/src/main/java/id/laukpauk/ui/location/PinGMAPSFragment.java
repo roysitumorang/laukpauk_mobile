@@ -1,5 +1,7 @@
 package id.laukpauk.ui.location;
 
+import java.util.Map;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
@@ -23,7 +25,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -131,9 +132,9 @@ public class PinGMAPSFragment extends Fragment {
             if (p == null) {
                 return;
             }
-            JsonObject result = Json.of("formattedAddress", p.formattedAddress,
+            Map<String, Object> result = Json.of("formattedAddress", p.formattedAddress,
                     "lat", String.valueOf(p.lat), "lng", String.valueOf(p.lng));
-            NavResults.setResult(this, RESULT_KEY, result.toString());
+            NavResults.setResult(this, RESULT_KEY, Json.toJson(result));
             NavHostFragment.findNavController(this).popBackStack();
         });
         viewModel.init(lat, lng);

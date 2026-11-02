@@ -1,8 +1,9 @@
 package id.laukpauk.data.model.checkout;
 
+import java.util.Map;
+
 import androidx.annotation.Nullable;
 
-import com.google.gson.JsonObject;
 
 /**
  * Everything the Checkout screen needs once the cart total is known (legacy
@@ -24,7 +25,7 @@ public class CheckoutInit {
     @Nullable public WalletConfiguration walletConfiguration;
     @Nullable public CheckoutResponses.JenisOngkir jenisOngkir;
     /** Dynamic server object ({diskon, ...}) forwarded verbatim to the checkout request; null = no discount. */
-    @Nullable public JsonObject diskonKategori;
+    @Nullable public Map<String, Object> diskonKategori;
     public String nama = "";
     public String nomorHP = "";
     public String alamat = "";

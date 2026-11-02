@@ -1,5 +1,7 @@
 package id.laukpauk.ui.checkout;
 
+import java.util.Map;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -19,8 +21,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -293,7 +293,7 @@ public class CheckoutFragment extends Fragment {
     private void onOrderOutcome(CheckoutViewModel.OrderOutcome o) {
         CheckoutResponse r = o.response;
         String channel = o.channelCodeLC;
-        JsonElement payment = r.paymentResponse;
+        Object payment = r.paymentResponse;
         if (!r.statusCheckout) {
             checkoutFailed(channel, payment);
             return;
@@ -301,7 +301,7 @@ public class CheckoutFragment extends Fragment {
         if (channel.equals("dana") || channel.equals("linkaja")) {
             launchExternal(Json.strOrNull(Json.obj(payment), "checkout_url"));
         } else if (channel.equals("shopeepay")) {
-            JsonObject actions = Json.object(Json.obj(payment), "actions");
+            Map<String, Object> actions = Json.object(Json.obj(payment), "actions");
             launchExternal(Json.strOrNull(actions, "mobile_deeplink_checkout_url"));
         } else if (channel.equals("ovo")) {
             closeSheet();
@@ -313,7 +313,7 @@ public class CheckoutFragment extends Fragment {
             data.responseCheckout = r;
             data.dataCheckout = o.dataCheckout;
             Bundle args = new Bundle();
-            args.putString("returnedDataFromCheckout", c.apiClient.gson().toJson(data));
+            args.putString("returnedDataFromCheckout", c.apiClient.toJson(data, ReturnedDataFromCheckout.class));
             if (channel.equals("tf_bca")) {
                 CheckoutNav.toResult(this, R.id.transferBankFragment, args);
             } else {
@@ -330,7 +330,7 @@ public class CheckoutFragment extends Fragment {
         }
     }
 
-    private void checkoutFailed(String channelLC, JsonElement payment) {
+    private void checkoutFailed(String channelLC, Object payment) {
         String content = getString(R.string.checkout_gagal);
         if (SHOW_PAYMENT_MESSAGE.contains(channelLC)) {
             content = Json.str(Json.obj(payment), "message");

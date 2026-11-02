@@ -26,7 +26,7 @@ public final class CartResponses {
         public boolean statusDeleteCart;
     }
 
-    /** walletConfiguration is {@code false} on the server when unavailable (lenient Gson maps it to null). */
+    /** walletConfiguration is {@code false} on the server when unavailable (the lenient Moshi adapters map it to null). */
     public static final class Wallet {
         public WalletConfiguration walletConfiguration;
     }

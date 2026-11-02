@@ -44,7 +44,7 @@ public class PesananItemTidakTersediaFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         AppBars.setup(this, binding.appBar, getString(R.string.seller_pesanan_tidak_tersedia_title));
         AppContainer c = AppContainer.from(requireContext());
-        PesananMasukItem item = c.apiClient.gson().fromJson(requireArguments().getString("pesananItem"),
+        PesananMasukItem item = c.apiClient.fromJson(requireArguments().getString("pesananItem"),
                 PesananMasukItem.class);
         PesananItemTidakTersediaViewModel viewModel = new ViewModelProvider(this, ViewModelFactory.of(
                 () -> new PesananItemTidakTersediaViewModel(c.pesananMasukRepository, item.id)))

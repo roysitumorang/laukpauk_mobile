@@ -1,6 +1,6 @@
 package id.laukpauk.data.model.seller.shop;
 
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
 
 import java.util.List;
 
@@ -9,100 +9,100 @@ public final class TokoSayaResponses {
     private TokoSayaResponses() {}
 
     public static class DetailUser {
-        @SerializedName("detailUser")
+        @Json(name = "detailUser")
         public IdOnly detailUser;
     }
 
     public static class IdOnly {
-        @SerializedName("id")
+        @Json(name = "id")
         public int id;
     }
 
     public static class Detail {
         /** null when the server answers false. */
-        @SerializedName("detailPenjual")
+        @Json(name = "detailPenjual")
         public DetailPenjual detailPenjual;
     }
 
     public static class TotalPenjualan {
-        @SerializedName("totalPenjualan")
+        @Json(name = "totalPenjualan")
         public int totalPenjualan;
     }
 
     public static class TotalSaldo {
-        @SerializedName("totalSaldo")
+        @Json(name = "totalSaldo")
         public int totalSaldo;
     }
 
     public static class Tagihan {
-        @SerializedName("tagihan")
+        @Json(name = "tagihan")
         public int tagihan;
     }
 
     public static class JumlahProduk {
-        @SerializedName("jumlahProduk")
+        @Json(name = "jumlahProduk")
         public Jumlah jumlahProduk;
     }
 
     public static class Jumlah {
-        @SerializedName("produk")
+        @Json(name = "produk")
         public int produk;
-        @SerializedName("paket")
+        @Json(name = "paket")
         public int paket;
     }
 
     public static class JadwalList {
-        @SerializedName("jadwalDeliveryPenjual")
+        @Json(name = "jadwalDeliveryPenjual")
         public List<Jadwal> jadwalDeliveryPenjual;
     }
 
     public static class Jadwal {
-        @SerializedName("jadwalDeliveryCode")
+        @Json(name = "jadwalDeliveryCode")
         public int jadwalDeliveryCode;
     }
 
     public static class Toggle {
-        @SerializedName("toggleStatus")
+        @Json(name = "toggleStatus")
         public boolean toggleStatus;
     }
 
     public static class PasarList {
-        @SerializedName("dataPasar")
+        @Json(name = "dataPasar")
         public List<Pasar> dataPasar;
     }
 
     public static class UbahLokasi {
-        @SerializedName("statusUbahLokasiBerjualan")
+        @Json(name = "statusUbahLokasiBerjualan")
         public boolean statusUbahLokasiBerjualan;
     }
 
     public static class UbahNama {
-        @SerializedName("statusUbahNamaToko")
+        @Json(name = "statusUbahNamaToko")
         public boolean statusUbahNamaToko;
     }
 
     public static class AjukanRpd {
-        @SerializedName("statusRequest")
+        @Json(name = "statusRequest")
         public boolean statusRequest;
     }
 
     public static class Geocode {
-        @SerializedName("results")
+        @Json(name = "results")
         public List<GeocodeResult> results;
     }
 
     public static class GeocodeResult {
-        @SerializedName("formatted_address")
+        @Json(name = "formatted_address")
         public String formattedAddress;
     }
 
     public static class HistoriList {
-        @SerializedName("historiPenjualan")
+        @Json(name = "historiPenjualan")
         public List<HistoriPenjualan> historiPenjualan;
     }
 
     public static class TotalTransaksi {
-        @SerializedName("totalTransaksi")
+        @Json(name = "totalTransaksi")
         public int totalTransaksi;
     }
 }

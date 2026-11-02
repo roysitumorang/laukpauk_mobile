@@ -2,7 +2,7 @@ package id.laukpauk.data.model.orders;
 
 /**
  * A buyer transaction, both as a row of the history list (User/getRiwayatTransaksi) and as the detail
- * (Transaksi/getTransaksi). Numbers arrive as numeric strings; the lenient Gson turns them into ints.
+ * (Transaksi/getTransaksi). Numbers arrive as numeric strings; the lenient Moshi adapters turn them into ints.
  */
 public class Transaksi {
     public String id;

@@ -57,7 +57,7 @@ public class SatuanProdukView extends LinearLayout {
             @Override
             public void onEdit(SatuanProdukData item) {
                 Bundle args = new Bundle();
-                args.putString("dataSatuan", AppContainer.from(getContext()).apiClient.gson().toJson(item));
+                args.putString("dataSatuan", AppContainer.from(getContext()).apiClient.toJson(item, SatuanProdukData.class));
                 args.putString("idProduk", item.idProduk);
                 args.putBoolean("isUpdate", true);
                 SatuanProdukView.this.host.startEdit(SatuanProdukView.this, false, args);

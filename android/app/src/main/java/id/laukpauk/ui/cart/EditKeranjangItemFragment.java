@@ -43,7 +43,7 @@ public class EditKeranjangItemFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         AppContainer c = AppContainer.from(requireContext());
         AppBars.setup(this, binding.appBar, getString(R.string.cart_edit_title));
-        CartProduct parsed = c.apiClient.gson().fromJson(requireArguments().getString("dataKeranjangItem"),
+        CartProduct parsed = c.apiClient.fromJson(requireArguments().getString("dataKeranjangItem"),
                 CartProduct.class);
         final CartProduct product = parsed != null ? parsed : new CartProduct();
         final EditKeranjangItemViewModel viewModel = new ViewModelProvider(this,
