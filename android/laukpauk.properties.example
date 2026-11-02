@@ -34,8 +34,14 @@ UPLOAD_GAMBAR_VOUCHER=upload/gambar/voucher
 MAPS_API_KEY=CHANGE_ME
 # Environment: development | testing | production
 ENVIRONMENT=production
-# OneSignal app ids (these two were hard-coded in lib/models/MainModel.dart).
-ONESIGNAL_APP_ID_PRODUCTION=7314cba5-1b0d-455a-916b-700a566b207f
-ONESIGNAL_APP_ID_DEVELOPMENT=f8ffb130-45e4-413f-87d2-cd75f5dfc97b
+# Firebase Cloud Messaging: copy from the Firebase console (Project settings > General > Your apps > id.laukpauk)
+# or from google-services.json: mobilesdk_app_id, api_key[0].current_key, project_id, project_number.
+# Use a separate Firebase project (or app) per ENVIRONMENT. Left empty, the app runs without push notifications.
+FIREBASE_APP_ID=
+FIREBASE_API_KEY=
+FIREBASE_PROJECT_ID=
+FIREBASE_SENDER_ID=
+# Topic all installs subscribe to for broadcast "Info" notifications.
+FCM_BROADCAST_TOPIC=info
 # Xendit *public* key (hard-coded in the old MainActivity.java).
 XENDIT_PUBLIC_KEY=CHANGE_ME

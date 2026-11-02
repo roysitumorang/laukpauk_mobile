@@ -22,11 +22,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.install.model.UpdateAvailability;
-import com.onesignal.OneSignal;
-import com.onesignal.debug.LogLevel;
-import com.onesignal.notifications.INotification;
-
-import org.json.JSONObject;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 
 import java.lang.ref.WeakReference;
 import java.time.LocalDate;
@@ -46,7 +43,7 @@ import id.laukpauk.util.Json;
 
 /**
  * Everything the app does at start (legacy MainModel + LaukpaukApp + native MainActivity/MyIntentService):
- * preference flags, OneSignal (init, external user id, notification taps), the delivery-schedule expiry
+ * preference flags, push notifications (Firebase Cloud Messaging), the delivery-schedule expiry
  * watcher (every 5 s while MainActivity is resumed), the Play in-app update check and the notification
  * permission request.
  */
@@ -70,58 +67,33 @@ public final class AppStartup {
         container.prefs.setBool("showMakeSureADJD", true);
         container.prefs.setBool("showAlertGift", true);
 
-        initOneSignal(app, container);
+        initPush(app, container);
         app.registerActivityLifecycleCallbacks(new Watcher(app, container));
     }
 
-    // ------------------------------------------------------------------ OneSignal
+    // ------------------------------------------------------------------ push notifications (FCM)
 
-    private static void initOneSignal(final Application app, AppContainer container) {
-        String oneSignalKey = Environment.isProduction()
-                ? BuildConfig.ONESIGNAL_APP_ID_PRODUCTION
-                : BuildConfig.ONESIGNAL_APP_ID_DEVELOPMENT;
-
-        OneSignal.getDebug().setLogLevel(LogLevel.VERBOSE);
-        OneSignal.getDebug().setAlertLevel(LogLevel.NONE);
-        OneSignal.setConsentRequired(false);
-        OneSignal.initWithContext(app, oneSignalKey);
-
-        // signed-in users are known to OneSignal by their user id
-        String idUser = container.session.getCurrentUserID();
-        if (!container.session.getAuthToken().isEmpty() && !idUser.isEmpty()) {
-            OneSignal.login(idUser);
-        }
-
-        OneSignal.getNotifications().addClickListener(event -> {
-            try {
-                onNotificationOpened(app, event.getNotification());
-            } catch (RuntimeException e) {
-                // malformed additionalData: ignore the tap
+    /**
+     * Initialises Firebase from the FIREBASE_* build values (no google-services.json is committed), creates the
+     * notification channel and lets PushRepository subscribe / register. Without configuration the app runs
+     * without push notifications. Taps open MainActivity, routed by {@link MainRouter#handle}.
+     */
+    private static void initPush(Application app, AppContainer container) {
+        id.laukpauk.push.PushNotifications.createChannel(app);
+        if (FirebaseApp.getApps(app).isEmpty()) {
+            if (BuildConfig.FIREBASE_APP_ID.isEmpty() || BuildConfig.FIREBASE_API_KEY.isEmpty()
+                    || BuildConfig.FIREBASE_PROJECT_ID.isEmpty()) {
+                android.util.Log.w("AppStartup", "Firebase is not configured: push notifications are disabled");
+                return;
             }
-        });
-    }
-
-    /** Opens MainActivity with an intent {@link MainRouter#handle} understands. */
-    private static void onNotificationOpened(Application app, INotification notification) {
-        JSONObject additionalData = notification.getAdditionalData();
-        if (additionalData == null) {
-            return;
+            FirebaseApp.initializeApp(app, new FirebaseOptions.Builder()
+                    .setApplicationId(BuildConfig.FIREBASE_APP_ID)
+                    .setApiKey(BuildConfig.FIREBASE_API_KEY)
+                    .setProjectId(BuildConfig.FIREBASE_PROJECT_ID)
+                    .setGcmSenderId(BuildConfig.FIREBASE_SENDER_ID)
+                    .build());
         }
-        String notifikasi = additionalData.optString("notifikasi", null);
-        if (notifikasi == null) {
-            return;
-        }
-        Intent intent = new Intent(app, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(MainRouter.EXTRA_NOTIFICATION, notifikasi);
-        intent.putExtra(MainRouter.EXTRA_ROUTE_NAME, additionalData.optString("routeName", null));
-        intent.putExtra(MainRouter.EXTRA_ROUTE_PARAMS, additionalData.optString("routeParams", null));
-        Object rawId = additionalData.opt("idNotifikasi");
-        if (rawId != null) {
-            intent.putExtra(MainRouter.EXTRA_ID_NOTIFIKASI, String.valueOf(rawId));
-        }
-        app.startActivity(intent);
+        container.pushRepository.start();
     }
 
     // ------------------------------------------------------------------ watchers

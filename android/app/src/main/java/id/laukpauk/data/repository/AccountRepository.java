@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
-import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -29,36 +28,39 @@ public class AccountRepository extends BaseRepository {
     private final AccountApi api;
     private final CartRepository cart;
     private final NotifikasiRepository notifikasi;
+    private final PushRepository push;
 
-    public AccountRepository(RepositoryDeps deps, CartRepository cart, NotifikasiRepository notifikasi) {
+    public AccountRepository(RepositoryDeps deps, CartRepository cart, NotifikasiRepository notifikasi,
+                             PushRepository push) {
         super(deps);
         this.api = api(AccountApi.class);
         this.cart = cart;
         this.notifikasi = notifikasi;
+        this.push = push;
     }
 
     // ------------------------------------------------------------------ logout
 
     /**
-     * Legacy ProfilSayaActivity.logout: Auth/removeToken, then the stored token / OneSignal / external id are
-     * cleared, the transaction session is removed and the badges reset. Callback gets true when logged out.
+     * Legacy ProfilSayaActivity.logout: the push token is unregistered first (that call needs the still-valid
+     * auth token), then Auth/removeToken; on success the stored token is cleared, the transaction session is
+     * removed and the badges reset. Callback gets true when logged out. If removeToken fails the user stays
+     * signed in and the next app start registers a fresh push token.
      */
     public void logout(ResultCallback<Boolean> callback) {
-        enqueue(api.removeToken(authToken(), session.getCartCode()),
+        push.onSigningOut(() -> enqueue(api.removeToken(authToken(), session.getCartCode()),
                 (AccountResponses.RemoveToken body) -> body != null && body.removeToken, result -> {
                     if (!(result.isSuccess() && Boolean.TRUE.equals(result.data))) {
                         callback.onResult(result.isSuccess() ? Resource.success(false) : result);
                         return;
                     }
                     prefs.remove("authToken");
-                    OneSignal.logout();
-                    session.removeExternalUserID();
                     cart.clearTransactionSession(done -> {
                         cart.refreshCartCount();
                         notifikasi.refreshUnreadCount();
                         callback.onResult(Resource.success(true));
                     });
-                });
+                }));
     }
 
     // ------------------------------------------------------------------ phone number change

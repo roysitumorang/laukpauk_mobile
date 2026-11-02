@@ -106,21 +106,6 @@ public final class SessionStore {
         prefs.remove("usedVoucher");
     }
 
-
-    public void setExternalUserID(String externalUserID) {
-        prefs.setString("externalUserID", externalUserID);
-    }
-
-    /** null when unset. */
-    public String getExternalUserID() {
-        return prefs.getString("externalUserID");
-    }
-
-    public void removeExternalUserID() {
-        prefs.remove("externalUserID");
-    }
-
-
     public String getApplicationID() {
         return "id.laukpauk";
     }
