@@ -1,30 +1,30 @@
 package id.laukpauk.data.model.seller.shop;
 
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
 
 /** {@code Penjual/getDetailPenjual}: the seller's own shop (only the fields the shop screens use). */
 public class DetailPenjual {
-    @SerializedName("id")
+    @Json(name = "id")
     public String id;
     /** pending / approved / rejected. */
-    @SerializedName("status")
+    @Json(name = "status")
     public String status;
-    @SerializedName("statusReason")
+    @Json(name = "statusReason")
     public String statusReason;
-    @SerializedName("namaToko")
+    @Json(name = "namaToko")
     public String namaToko;
     /** "0" = the seller sells at a location of their own instead of a market. */
-    @SerializedName("pasarUmum")
+    @Json(name = "pasarUmum")
     public String pasarUmum;
-    @SerializedName("namaPasar")
+    @Json(name = "namaPasar")
     public String namaPasar;
-    @SerializedName("alamatToko")
+    @Json(name = "alamatToko")
     public String alamatToko;
-    @SerializedName("banner")
+    @Json(name = "banner")
     public String banner;
-    @SerializedName("nomorRekening")
+    @Json(name = "nomorRekening")
     public String nomorRekening;
-    @SerializedName("namaUser")
+    @Json(name = "namaUser")
     public String namaUser;
 
     public boolean isApproved() {

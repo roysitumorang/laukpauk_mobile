@@ -1,13 +1,13 @@
 package id.laukpauk.data.model.seller.shop;
 
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
 
 /** A market the seller can pick as selling location ({@code Pasar/getPasar?jenisPasar=pasarTersedia}). */
 public class Pasar {
-    @SerializedName("id")
+    @Json(name = "id")
     public String id;
-    @SerializedName("nama")
+    @Json(name = "nama")
     public String nama;
-    @SerializedName("gambar")
+    @Json(name = "gambar")
     public String gambar;
 }

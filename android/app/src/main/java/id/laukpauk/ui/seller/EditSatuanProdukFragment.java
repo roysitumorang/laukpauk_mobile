@@ -53,7 +53,7 @@ public class EditSatuanProdukFragment extends Fragment {
         String title = args.getString("appBarTitle");
         final boolean isUpdate = args.getBoolean("isUpdate", false);
         AppContainer c = AppContainer.from(requireContext());
-        SatuanProdukData data = json == null ? null : c.apiClient.gson().fromJson(json, SatuanProdukData.class);
+        SatuanProdukData data = json == null ? null : c.apiClient.fromJson(json, SatuanProdukData.class);
         viewModel = new ViewModelProvider(this, ViewModelFactory.of(
                 () -> new EditSatuanProdukViewModel(c.produkPenjualRepository, idProduk, data)))
                 .get(EditSatuanProdukViewModel.class);

@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.JsonElement;
 
 import java.util.List;
 
@@ -145,7 +144,7 @@ public class TokoSayaViewModel extends ViewModel {
     }
 
     /** The WhatsApp contact configuration (pending / rejected seller screen). */
-    public void loadWhatsapp(BaseRepository.ResultCallback<JsonElement> callback) {
+    public void loadWhatsapp(BaseRepository.ResultCallback<Object> callback) {
         settings.getContactUsWhatsappConfiguration(callback);
     }
 }

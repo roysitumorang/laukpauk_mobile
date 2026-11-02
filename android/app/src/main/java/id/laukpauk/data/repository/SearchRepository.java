@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import com.google.gson.reflect.TypeToken;
 
 import id.laukpauk.data.model.search.HistoriPencarian;
 import id.laukpauk.data.model.search.SearchSuggestion;
@@ -12,6 +11,9 @@ import id.laukpauk.data.remote.SearchApi;
 
 /** Search suggestions (legacy SearchResult) and the saved search history (legacy HistoriPencarianModel). */
 public class SearchRepository extends BaseRepository {
+
+    private static final java.lang.reflect.Type HISTORI_TYPE =
+            com.squareup.moshi.Types.newParameterizedType(List.class, HistoriPencarian.class);
 
     private static final String KEY_HISTORI = "historiPencarian";
 
@@ -36,13 +38,8 @@ public class SearchRepository extends BaseRepository {
         if (json == null) {
             return new ArrayList<>();
         }
-        try {
-            List<HistoriPencarian> list = deps.apiClient.gson().fromJson(json,
-                    new TypeToken<List<HistoriPencarian>>() { }.getType());
-            return list == null ? new ArrayList<HistoriPencarian>() : list;
-        } catch (RuntimeException e) {
-            return new ArrayList<>();
-        }
+        List<HistoriPencarian> list = deps.apiClient.fromJson(json, HISTORI_TYPE);
+        return list == null ? new ArrayList<HistoriPencarian>() : new ArrayList<>(list);
     }
 
     /** Appends a search with the time as "H:m:s d/M/yyyy" (legacy format). */
@@ -53,6 +50,6 @@ public class SearchRepository extends BaseRepository {
                 + now.get(Calendar.YEAR);
         List<HistoriPencarian> list = getHistoriPencarian();
         list.add(new HistoriPencarian(search, onTime));
-        prefs.setString(KEY_HISTORI, deps.apiClient.gson().toJson(list));
+        prefs.setString(KEY_HISTORI, deps.apiClient.toJson(list, HISTORI_TYPE));
     }
 }

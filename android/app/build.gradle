@@ -25,6 +25,15 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    testOptions {
+        unitTests.all {
+            testLogging {
+                events 'failed'
+                exceptionFormat 'full'
+            }
+        }
+    }
+
     namespace = 'id.laukpauk'
     compileSdk 37
 
@@ -117,6 +126,8 @@ android {
 }
 
 dependencies {
+    testImplementation 'junit:junit:4.13.2'
+
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
     // AndroidX / Material
@@ -141,8 +152,8 @@ dependencies {
     // Networking / JSON / images
     implementation 'com.squareup.okhttp3:okhttp:5.5.1'
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
-    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
-    implementation 'com.google.code.gson:gson:2.15.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:3.0.0'
+    implementation 'com.squareup.moshi:moshi:1.15.2'
     implementation 'com.github.bumptech.glide:glide:5.0.9'
 
     // Google Play services (replaces google_maps_flutter + geolocator)

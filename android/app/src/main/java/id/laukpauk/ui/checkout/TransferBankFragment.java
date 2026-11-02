@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.google.gson.JsonElement;
 
 import id.laukpauk.R;
 import id.laukpauk.data.model.payment.ReturnedDataFromCheckout;
@@ -43,13 +42,13 @@ public class TransferBankFragment extends Fragment {
         if (savedInstanceState == null) {
             c.cartRepository.clearTransactionSession(res -> { });
         }
-        ReturnedDataFromCheckout data = c.apiClient.gson().fromJson(
+        ReturnedDataFromCheckout data = c.apiClient.fromJson(
                 requireArguments().getString("returnedDataFromCheckout"), ReturnedDataFromCheckout.class);
         final String idTransaksi = data != null && data.responseCheckout != null
                 && data.responseCheckout.idTransaksi != null ? data.responseCheckout.idTransaksi : "";
-        JsonElement pr = data != null && data.responseCheckout != null ? data.responseCheckout.paymentResponse : null;
-        TransferBankPayment p = pr != null && pr.isJsonObject()
-                ? c.apiClient.gson().fromJson(pr, TransferBankPayment.class) : new TransferBankPayment();
+        Object pr = data != null && data.responseCheckout != null ? data.responseCheckout.paymentResponse : null;
+        TransferBankPayment parsed = pr instanceof java.util.Map ? c.apiClient.fromTree(pr, TransferBankPayment.class) : null;
+        TransferBankPayment p = parsed != null ? parsed : new TransferBankPayment();
         final String nomorRekening = p.nomorRekening == null ? "" : p.nomorRekening;
 
         Images.asset(binding.image, "bca.png");

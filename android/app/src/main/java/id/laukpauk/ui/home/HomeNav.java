@@ -37,7 +37,8 @@ public final class HomeNav {
         Bundle args = new Bundle();
         args.putString("title", title);
         args.putString("subTitle", subTitle);
-        args.putString("dataProduk", AppContainer.from(f.requireContext()).apiClient.gson().toJson(produk));
+        args.putString("dataProduk", AppContainer.from(f.requireContext()).apiClient.toJson(produk,
+                com.squareup.moshi.Types.newParameterizedType(List.class, HomeProduk.class)));
         args.putBoolean("isReadyToShow", true);
         NavHostFragment.findNavController(f).navigate(R.id.listProdukFragment, args);
     }

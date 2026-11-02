@@ -1,8 +1,9 @@
 package id.laukpauk.ui.checkout;
 
+import java.util.Map;
+
 import androidx.annotation.Nullable;
 
-import com.google.gson.JsonObject;
 
 import id.laukpauk.data.model.checkout.CheckoutResponses;
 import id.laukpauk.data.model.checkout.Voucher;
@@ -30,7 +31,7 @@ public final class CheckoutSummary {
     @Nullable public String statusVoucher;
     @Nullable public WalletConfiguration walletConfiguration;
     @Nullable public CheckoutResponses.JenisOngkir jenisOngkir;
-    @Nullable public JsonObject diskonKategori;
+    @Nullable public Map<String, Object> diskonKategori;
     @Nullable public Boolean kodePromoStatus;
     @Nullable public String kodePromoMessage;
 }

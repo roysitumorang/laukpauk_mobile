@@ -1,10 +1,11 @@
 package id.laukpauk.ui.delivery;
 
+import java.util.Map;
+
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,7 +132,7 @@ public class DeliveryFlowViewModel extends ViewModel {
     public void pinResult(@Nullable String json) {
         if (json != null) {
             try {
-                JsonObject o = Json.parseObject(json);
+                Map<String, Object> o = Json.parseObject(json);
                 latitude = Json.strOrNull(o, "lat");
                 longitude = Json.strOrNull(o, "lng");
                 alamat = Json.strOrNull(o, "formattedAddress");

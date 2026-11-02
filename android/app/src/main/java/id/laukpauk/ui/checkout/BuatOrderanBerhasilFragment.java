@@ -34,7 +34,7 @@ public class BuatOrderanBerhasilFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         AppContainer c = AppContainer.from(requireContext());
-        ReturnedDataFromCheckout data = c.apiClient.gson().fromJson(
+        ReturnedDataFromCheckout data = c.apiClient.fromJson(
                 requireArguments().getString("returnedDataFromCheckout"), ReturnedDataFromCheckout.class);
         if (savedInstanceState == null && requireArguments().getBoolean("removeTransactionSession", false)) {
             c.cartRepository.clearTransactionSession(res -> { });

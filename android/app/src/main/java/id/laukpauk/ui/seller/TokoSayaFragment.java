@@ -1,5 +1,9 @@
 package id.laukpauk.ui.seller;
 
+import id.laukpauk.util.Json;
+
+import java.util.Map;
+
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -17,9 +21,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
@@ -267,11 +268,9 @@ public class TokoSayaFragment extends Fragment {
                     return; // legacy: no data keeps the spinner
                 }
                 binding.rmpProgress.setVisibility(View.GONE);
-                JsonElement config = result.data;
-                if (config != null && config.isJsonObject()) {
-                    JsonObject o = config.getAsJsonObject();
-                    String nomor = o.has("contactUsWhatsapp") && !o.get("contactUsWhatsapp").isJsonNull()
-                            ? o.get("contactUsWhatsapp").getAsString() : "";
+                Object config = result.data;
+                if (Json.isObject(config)) {
+                    String nomor = Json.str(Json.obj(config), "contactUsWhatsapp");
                     binding.rmpWhatsapp.setVisibility(View.VISIBLE);
                     binding.rmpWhatsapp.setOnClickListener(v -> {
                         try {
@@ -325,9 +324,9 @@ public class TokoSayaFragment extends Fragment {
     /** Result of the pin map: reverse-geocode it, then reopen the sheet with the own location selected. */
     private void onPinned(String json) {
         try {
-            JsonObject o = JsonParser.parseString(json).getAsJsonObject();
-            String lat = o.get("lat").getAsString();
-            String lng = o.get("lng").getAsString();
+            Map<String, Object> o = Json.parseObject(json);
+            String lat = Json.str(o, "lat");
+            String lng = Json.str(o, "lng");
             viewModel.reverseGeocoding(lat, lng, result -> {
                 if (!isAdded()) {
                     return;

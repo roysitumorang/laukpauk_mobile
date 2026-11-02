@@ -94,7 +94,7 @@ public class KeranjangFragment extends Fragment {
                 viewModel.pendingEditMessage = failMessage;
                 viewModel.pendingEditButton = failButton;
                 Bundle args = new Bundle();
-                args.putString("dataKeranjangItem", c.apiClient.gson().toJson(product));
+                args.putString("dataKeranjangItem", c.apiClient.toJson(product, CartProduct.class));
                 nav.navigate(R.id.editKeranjangItemFragment, args);
             }
 

@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.JsonObject;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -346,7 +345,7 @@ public class CheckoutViewModel extends ViewModel {
         m.put("longDelivery", checkout.longDelivery());
         m.put("jadwalDeliveryCode", nz(j.kode));
         m.put("isPointUsed", pointUsed ? "true" : "false");
-        JsonObject dk = init.diskonKategori;
+        Map<String, Object> dk = init.diskonKategori;
         m.put("diskonKategori", dk != null ? Json.toJson(dk) : "");
         m.put("kodePromo", kodePromo);
         return m;

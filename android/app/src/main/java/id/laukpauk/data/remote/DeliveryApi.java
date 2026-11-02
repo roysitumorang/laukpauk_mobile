@@ -1,6 +1,7 @@
 package id.laukpauk.data.remote;
 
-import com.google.gson.JsonObject;
+import java.util.Map;
+
 
 import id.laukpauk.data.model.delivery.DeliveryResponses;
 import retrofit2.Call;
@@ -18,7 +19,7 @@ public interface DeliveryApi {
 
     /** Legacy CheckoutModel.bersihkanKeranjang (the response is ignored). */
     @GET("Keranjang/bersihkanKeranjang")
-    Call<JsonObject> bersihkanKeranjang(@Query("cartCode") String cartCode);
+    Call<Map<String, Object>> bersihkanKeranjang(@Query("cartCode") String cartCode);
 
     @GET("https://maps.googleapis.com/maps/api/geocode/json")
     Call<DeliveryResponses.Geocode> reverseGeocode(@Query("latlng") String latlng, @Query("key") String key);

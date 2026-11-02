@@ -1,6 +1,6 @@
 package id.laukpauk.data.model.account;
 
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
 
 import java.util.List;
 
@@ -10,96 +10,96 @@ public final class AccountResponses {
 
     public static class DetailUser {
         /** null when the server answers false ("no active user"). */
-        @SerializedName("detailUser")
+        @Json(name = "detailUser")
         public UserDetail detailUser;
     }
 
     public static class TotalDompet {
-        @SerializedName("totalDompet")
+        @Json(name = "totalDompet")
         public long totalDompet;
     }
 
     public static class JumlahVoucher {
-        @SerializedName("jumlahVoucher")
+        @Json(name = "jumlahVoucher")
         public int jumlahVoucher;
     }
 
     public static class Point {
         /** null when the server answers false. */
-        @SerializedName("response")
+        @Json(name = "response")
         public PointData response;
     }
 
     public static class PointData {
-        @SerializedName("point")
+        @Json(name = "point")
         public long point;
     }
 
     public static class RiwayatDompetList {
-        @SerializedName("riwayatDompet")
+        @Json(name = "riwayatDompet")
         public List<RiwayatDompet> riwayatDompet;
     }
 
     public static class RiwayatPointList {
-        @SerializedName("riwayatPoint")
+        @Json(name = "riwayatPoint")
         public List<RiwayatPoint> riwayatPoint;
     }
 
     public static class UpdateProfil {
-        @SerializedName("statusUpdateProfil")
+        @Json(name = "statusUpdateProfil")
         public boolean statusUpdateProfil;
     }
 
     public static class UpdateFoto {
-        @SerializedName("saveFotoProfil")
+        @Json(name = "saveFotoProfil")
         public boolean saveFotoProfil;
     }
 
     public static class GantiNomor {
-        @SerializedName("statusSimpanNomorBaru")
+        @Json(name = "statusSimpanNomorBaru")
         public boolean statusSimpanNomorBaru;
-        @SerializedName("idPenggantianNomor")
+        @Json(name = "idPenggantianNomor")
         public long idPenggantianNomor;
     }
 
     public static class VerifikasiNomor {
-        @SerializedName("statusVerifikasiNomor")
+        @Json(name = "statusVerifikasiNomor")
         public boolean statusVerifikasiNomor;
     }
 
     public static class JumlahGantiNomor {
-        @SerializedName("jumlahGantiNomorHPForToday")
+        @Json(name = "jumlahGantiNomorHPForToday")
         public int jumlahGantiNomorHPForToday;
     }
 
     public static class GantiPassword {
-        @SerializedName("statusGantiPassword")
+        @Json(name = "statusGantiPassword")
         public boolean statusGantiPassword;
     }
 
     public static class RemoveToken {
-        @SerializedName("removeToken")
+        @Json(name = "removeToken")
         public boolean removeToken;
     }
 
     public static class ReferralConfiguration {
         /** null when the server answers false (referral not configured). */
-        @SerializedName("referralConfiguration")
+        @Json(name = "referralConfiguration")
         public ReferralConfig referralConfiguration;
     }
 
     public static class ReferralConfig {
-        @SerializedName("referralWallet")
+        @Json(name = "referralWallet")
         public long referralWallet;
     }
 
     public static class PasarList {
-        @SerializedName("dataPasar")
+        @Json(name = "dataPasar")
         public List<Pasar> dataPasar;
     }
 
     public static class RequestPenjual {
-        @SerializedName("statusRequest")
+        @Json(name = "statusRequest")
         public boolean statusRequest;
     }
 }

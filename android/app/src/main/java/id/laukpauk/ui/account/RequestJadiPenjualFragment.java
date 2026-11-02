@@ -1,5 +1,7 @@
 package id.laukpauk.ui.account;
 
+import java.util.Map;
+
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +18,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,7 +132,7 @@ public class RequestJadiPenjualFragment extends Fragment {
         });
         binding.pilihLain.setOnClickListener(v -> pilihLokasi());
         NavResults.<String>observe(this, PinGMAPSFragment.RESULT_KEY, json -> {
-            JsonObject result = Json.parseObject(json);
+            Map<String, Object> result = Json.parseObject(json);
             if (result != null) {
                 viewModel.setLokasiTersendiri(Json.str(result, "lat"), Json.str(result, "lng"));
             }

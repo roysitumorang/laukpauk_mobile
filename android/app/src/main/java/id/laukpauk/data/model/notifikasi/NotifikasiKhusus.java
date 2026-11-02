@@ -1,26 +1,26 @@
 package id.laukpauk.data.model.notifikasi;
 
-import com.google.gson.annotations.SerializedName;
+import com.squareup.moshi.Json;
 
 /** A personal ("Khusus untuk kamu") notification (GET User/getNotifikasiKhusus). */
 public class NotifikasiKhusus {
-    @SerializedName("id")
+    @Json(name = "id")
     public String id;
-    @SerializedName("judul")
+    @Json(name = "judul")
     public String judul;
-    @SerializedName("isi")
+    @Json(name = "isi")
     public String isi;
     /** Route opened when tapped (see ui/startup/MainRouter), e.g. "/orderan". */
-    @SerializedName("routeName")
+    @Json(name = "routeName")
     public String routeName;
     /** Route arguments as JSON text, e.g. {"idTransaksi":"12"}. */
-    @SerializedName("routeParams")
+    @Json(name = "routeParams")
     public String routeParams;
-    @SerializedName("isRead")
+    @Json(name = "isRead")
     public boolean isRead;
     /** Icon name in assets/img/notifikasi/ (orderan, dompet, penjualan, rmp, rpd). */
-    @SerializedName("jenisNotifikasi")
+    @Json(name = "jenisNotifikasi")
     public String jenisNotifikasi;
-    @SerializedName("waktu")
+    @Json(name = "waktu")
     public String waktu;
 }

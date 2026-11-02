@@ -235,7 +235,7 @@ final class PaymentSheet {
                     if (token == null || !dialog.isShowing()) {
                         return; // token creation failed: nothing else happens (legacy)
                     }
-                    String json = AppContainer.from(fragment.requireContext()).apiClient.gson().toJson(token);
+                    String json = AppContainer.from(fragment.requireContext()).apiClient.toJson(token, CardToken.class);
                     vm.buatOrder(selected, json);
                 });
     }

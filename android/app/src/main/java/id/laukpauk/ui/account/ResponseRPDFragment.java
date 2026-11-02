@@ -1,5 +1,7 @@
 package id.laukpauk.ui.account;
 
+import java.util.Map;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.gson.JsonObject;
 
 import java.util.Locale;
 
@@ -22,7 +23,7 @@ import id.laukpauk.util.Json;
 
 /**
  * ResponseRPD.dart: the admin's answer to a fund disbursement request. Arguments: dataPenjual and dataRPD as JSON
- * text (genuinely dynamic payloads from the notification route, so they are read as JsonObject).
+ * text (genuinely dynamic payloads from the notification route, so they are read as Map<String, Object>).
  */
 public class ResponseRPDFragment extends Fragment {
 
@@ -40,8 +41,8 @@ public class ResponseRPDFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         AppBars.setup(this, binding.appBar, getString(R.string.account_rpd_title));
         Bundle args = requireArguments();
-        JsonObject dataPenjual = orEmpty(Json.parseObject(args.getString("dataPenjual", "{}")));
-        JsonObject dataRPD = orEmpty(Json.parseObject(args.getString("dataRPD", "{}")));
+        Map<String, Object> dataPenjual = orEmpty(Json.parseObject(args.getString("dataPenjual", "{}")));
+        Map<String, Object> dataRPD = orEmpty(Json.parseObject(args.getString("dataRPD", "{}")));
 
         String status = Json.str(dataRPD, "status").toLowerCase(Locale.ROOT);
         boolean approved = status.equals("approved");
@@ -67,8 +68,8 @@ public class ResponseRPDFragment extends Fragment {
         binding.tokoSaya.setOnClickListener(v -> AccountNav.toTokoSaya(this));
     }
 
-    private static JsonObject orEmpty(JsonObject o) {
-        return o == null ? new JsonObject() : o;
+    private static Map<String, Object> orEmpty(Map<String, Object> o) {
+        return o == null ? Json.newObject() : o;
     }
 
     @Override

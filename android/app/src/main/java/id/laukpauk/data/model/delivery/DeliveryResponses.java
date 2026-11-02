@@ -1,7 +1,8 @@
 package id.laukpauk.data.model.delivery;
 
-import com.google.gson.JsonObject;
-import com.google.gson.annotations.SerializedName;
+import java.util.Map;
+
+import com.squareup.moshi.Json;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public final class DeliveryResponses {
 
     /** {@code {"availableJadwalDelivery": [...]}}; the items are dynamic objects, see {@link JadwalDelivery}. */
     public static class Jadwal {
-        public List<JsonObject> availableJadwalDelivery;
+        public List<Map<String, Object>> availableJadwalDelivery;
     }
 
     /** {@code {"gift": [...]}}. */
@@ -25,7 +26,7 @@ public final class DeliveryResponses {
     }
 
     public static class GeocodeResult {
-        @SerializedName("formatted_address")
+        @Json(name = "formatted_address")
         public String formattedAddress;
     }
 
@@ -36,7 +37,7 @@ public final class DeliveryResponses {
 
     public static class PlaceResult {
         public String name;
-        @SerializedName("formatted_address")
+        @Json(name = "formatted_address")
         public String formattedAddress;
         public Geometry geometry;
     }

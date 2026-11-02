@@ -67,8 +67,8 @@ Data layer                                              data/repository/XxxRepos
 | `ui/common` | shared UI: `HeaderView` (buyer header with cart/notification badges), `AppBars`, `Messages`, `SearchBox`, `ImagePicker`, `AuthGate` (sign-in gating), `NavResults` (results to the previous screen), `Images` (Glide) |
 | `ui/delivery`, `ui/product/ProductActions` | cross-feature flows: choosing the delivery address + schedule, the "Beli" unit sheet + add to cart |
 | `data/repository` | one repository per domain (`CartRepository`, `DeliveryRepository`, `ProdukRepository`, …). UI-free; network through Retrofit `enqueue`, results as `Resource<T>` (`LOADING` / `SUCCESS` / `ERROR`) |
-| `data/remote` | Retrofit interfaces, `ApiClient` (OkHttp + Gson; adds `versionCode` to every request), `LenientTypeAdapterFactory` (the backend sends `"1"`/`1`/`true`, `""`/`false` for missing objects) |
-| `data/model/<feature>` | typed JSON DTOs |
+| `data/remote` | Retrofit interfaces, `ApiClient` (OkHttp + Moshi; adds `versionCode` to every request), `LenientJsonAdapterFactory` (the backend sends `"1"`/`1`/`true`, `""`/`false` for missing objects) |
+| `data/model/<feature>` | typed JSON DTOs: public fields named like the JSON keys, `@Json(name = …)` where they differ. Genuinely dynamic payloads are untyped trees (`Map<String, Object>` / `List<Object>`, read with `util/Json`; whole numbers are `Long`, see `util/JsonTreeAdapter`) |
 | `data/local` | `Prefs` (Flutter's `FlutterSharedPreferences` file and `flutter.` keys, so existing users stay signed in) and `SessionStore` |
 | `di` | `AppContainer` (generated) and `ViewModelFactory` |
 | `util` | stateless helpers and constants (`Json`, `Currency`, `ServerPath`, …) |
@@ -76,7 +76,7 @@ Data layer                                              data/repository/XxxRepos
 ### Navigation
 
 Every screen is a destination in `res/navigation/nav_graph.xml`. Arguments are primitives; structured data is
-passed as JSON text and parsed with the app's Gson. Screens that need a signed-in user call
+passed as JSON text and parsed with the app's Moshi (`apiClient.fromJson` / `toJson`). Screens that need a signed-in user call
 `AuthGate.require(this, this::load)`; `LoginFragment` reports back through the previous back-stack entry's
 `SavedStateHandle` (conditional navigation). Screens return results the same way (`NavResults`). Named server
 routes (push notifications, konten banners) go through `MainRouter.route(navController, "/produk", args)`.
@@ -115,7 +115,7 @@ strings in `values/strings_<feature>.xml`; Poppins (`res/font`) is the theme fon
 
 | Flutter | Android |
 | --- | --- |
-| http | Retrofit 3 + OkHttp 5 (`data/remote`) |
+| http | Retrofit 3 + OkHttp 5 + Moshi (`data/remote`) |
 | provider | ViewModel + LiveData, shared state in repositories (`cartCount()`, `selection()`, `unreadCount()`) |
 | shared_preferences | `SharedPreferences`, same file and keys (`data/local/Prefs`) |
 | geolocator, google_maps_flutter | Play services Fused Location, Maps SDK `MapView` |

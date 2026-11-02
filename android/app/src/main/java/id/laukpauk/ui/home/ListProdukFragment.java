@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +48,8 @@ public class ListProdukFragment extends Fragment {
         AppContainer c = AppContainer.from(requireContext());
         Bundle args = requireArguments();
         viewModel = new ViewModelProvider(this, ViewModelFactory.of(() -> {
-            com.google.gson.Gson gson = c.apiClient.gson();
-            List<HomeProduk> produk = parse(gson, args.getString("dataProduk"), new TypeToken<List<HomeProduk>>() { });
-            List<PenjualItem> penjual = parse(gson, args.getString("dataPenjual"),
-                    new TypeToken<List<PenjualItem>>() { });
+            List<HomeProduk> produk = parse(c, args.getString("dataProduk"), HomeProduk.class);
+            List<PenjualItem> penjual = parse(c, args.getString("dataPenjual"), PenjualItem.class);
             return new ListProdukViewModel(produk, penjual);
         })).get(ListProdukViewModel.class);
 
@@ -102,16 +99,9 @@ public class ListProdukFragment extends Fragment {
         binding.list.setVisibility(empty ? View.GONE : View.VISIBLE);
     }
 
-    private static <T> List<T> parse(com.google.gson.Gson gson, @Nullable String json, TypeToken<List<T>> type) {
-        if (json == null || json.isEmpty()) {
-            return new ArrayList<>();
-        }
-        try {
-            List<T> list = gson.fromJson(json, type.getType());
-            return list == null ? new ArrayList<T>() : list;
-        } catch (RuntimeException e) {
-            return new ArrayList<>();
-        }
+    private static <T> List<T> parse(AppContainer c, @Nullable String json, Class<T> element) {
+        List<T> list = c.apiClient.fromJson(json, com.squareup.moshi.Types.newParameterizedType(List.class, element));
+        return list == null ? new ArrayList<T>() : list;
     }
 
     @Override

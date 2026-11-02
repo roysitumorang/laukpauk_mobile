@@ -1,5 +1,7 @@
 package id.laukpauk.ui.startup;
 
+import java.util.Map;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
@@ -20,7 +22,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.install.model.UpdateAvailability;
-import com.google.gson.JsonObject;
 import com.onesignal.OneSignal;
 import com.onesignal.debug.LogLevel;
 import com.onesignal.notifications.INotification;
@@ -260,7 +261,7 @@ public final class AppStartup {
         // ---- delivery schedule expiry
 
         private void checkExpiry() {
-            JsonObject saved = c.session.savedJadwalDeliveryMap();
+            Map<String, Object> saved = c.session.savedJadwalDeliveryMap();
             if (saved == null || expiryRunning) {
                 return;
             }
@@ -281,7 +282,7 @@ public final class AppStartup {
         }
 
         /** The rules of MyIntentService.java. */
-        private boolean isExpired(JsonObject saved) {
+        private boolean isExpired(Map<String, Object> saved) {
             try {
                 String id = Json.str(saved, "id");
                 String dayDeliveryLC = Json.str(saved, "day").toLowerCase(Locale.ROOT);

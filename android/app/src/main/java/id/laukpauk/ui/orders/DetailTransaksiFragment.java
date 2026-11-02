@@ -1,5 +1,7 @@
 package id.laukpauk.ui.orders;
 
+import java.util.Map;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.gson.JsonObject;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
@@ -165,17 +166,17 @@ public class DetailTransaksiFragment extends Fragment {
 
     private void openTransferBank(Transaksi t) {
         String[] rek = viewModel.getRekening().getValue();
-        JsonObject payment = Json.of(
+        Map<String, Object> payment = Json.of(
                 "totalBayar", t.totalKeseluruhan(),
                 "kodeUnik", t.moreDataMetodePembayaran,
                 "nomorRekening", rek != null ? rek[0] : getString(R.string.orders_rekening_placeholder),
                 "pemilikNomorRekening", rek != null ? rek[1] : getString(R.string.orders_pemilik_placeholder),
                 "idTransaksi", idTransaksi,
                 "nomorTransaksi", OrderUi.nz(t.nomorTransaksi));
-        JsonObject responseCheckout = Json.of("idTransaksi", idTransaksi, "paymentResponse", payment);
-        JsonObject data = Json.of("responseCheckout", responseCheckout);
+        Map<String, Object> responseCheckout = Json.of("idTransaksi", idTransaksi, "paymentResponse", payment);
+        Map<String, Object> data = Json.of("responseCheckout", responseCheckout);
         Bundle args = new Bundle();
-        args.putString("returnedDataFromCheckout", data.toString());
+        args.putString("returnedDataFromCheckout", Json.toJson(data));
         NavHostFragment.findNavController(this).navigate(R.id.transferBankFragment, args);
     }
 

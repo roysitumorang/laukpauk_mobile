@@ -9,8 +9,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.Locale;
 import java.util.Map;
@@ -65,11 +63,11 @@ public final class MainRouter {
             if (path == null || path.isEmpty() || path.equals("/")) {
                 return;
             }
-            JsonObject args = new JsonObject();
+            Map<String, Object> args = Json.newObject();
             for (String name : data.getQueryParameterNames()) {
                 String value = data.getQueryParameter(name);
                 if (value != null) {
-                    args.addProperty(name, value);
+                    args.put(name, value);
                 }
             }
             leaveSplash(nav);
@@ -82,7 +80,7 @@ public final class MainRouter {
         if (nav == null) {
             return;
         }
-        JsonObject a = toObject(arguments);
+        Map<String, Object> a = toObject(arguments);
         boolean hasArguments = arguments != null;
         String name = routeName == null ? "" : routeName;
         Bundle b = new Bundle();
@@ -123,8 +121,8 @@ public final class MainRouter {
                 break;
 
             case "/rpd":
-                b.putString("dataPenjual", Json.object(a, "dataPenjual").toString());
-                b.putString("dataRPD", Json.object(a, "dataRPD").toString());
+                b.putString("dataPenjual", Json.toJson(Json.object(a, "dataPenjual")));
+                b.putString("dataRPD", Json.toJson(Json.object(a, "dataRPD")));
                 nav.navigate(R.id.responseRPDFragment, b);
                 break;
 
@@ -158,9 +156,9 @@ public final class MainRouter {
                 break;
 
             case "/buatOrderBerhasil": {
-                JsonObject responseCheckout = Json.of("idTransaksi", Json.str(a, "idTransaksi"));
-                JsonObject dataFromCheckout = Json.of("responseCheckout", responseCheckout);
-                b.putString("returnedDataFromCheckout", dataFromCheckout.toString());
+                Map<String, Object> responseCheckout = Json.of("idTransaksi", Json.str(a, "idTransaksi"));
+                Map<String, Object> dataFromCheckout = Json.of("responseCheckout", responseCheckout);
+                b.putString("returnedDataFromCheckout", Json.toJson(dataFromCheckout));
                 b.putBoolean("removeTransactionSession", true);
                 nav.navigate(R.id.buatOrderanBerhasilFragment, b);
                 break;
@@ -204,27 +202,22 @@ public final class MainRouter {
         return arguments instanceof String && ((String) arguments).length() < 1;
     }
 
-    /** Normalizes the supported argument kinds to a JsonObject (never null). */
-    private static JsonObject toObject(Object arguments) {
-        if (arguments instanceof JsonObject) {
-            return (JsonObject) arguments;
-        }
-        if (arguments instanceof JsonElement) {
-            return Json.obj((JsonElement) arguments);
-        }
+    /** Normalizes the supported argument kinds to a Map<String, Object> (never null). */
+    private static Map<String, Object> toObject(Object arguments) {
         if (arguments instanceof String) {
             String s = ((String) arguments).trim();
-            return s.isEmpty() ? new JsonObject() : Json.parseObject(s);
+            return s.isEmpty() ? Json.newObject() : Json.parseObject(s);
         }
         if (arguments instanceof Map) {
-            JsonObject o = new JsonObject();
+            // JSON trees and plain Java maps alike: keys as text, values kept (Json accessors coerce them)
+            Map<String, Object> o = Json.newObject();
             for (Map.Entry<?, ?> e : ((Map<?, ?>) arguments).entrySet()) {
                 if (e.getKey() != null && e.getValue() != null) {
-                    o.addProperty(String.valueOf(e.getKey()), String.valueOf(e.getValue()));
+                    o.put(String.valueOf(e.getKey()), e.getValue());
                 }
             }
             return o;
         }
-        return new JsonObject();
+        return Json.newObject();
     }
 }

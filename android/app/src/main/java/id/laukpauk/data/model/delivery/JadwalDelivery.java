@@ -1,8 +1,9 @@
 package id.laukpauk.data.model.delivery;
 
+import java.util.Map;
+
 import androidx.annotation.Nullable;
 
-import com.google.gson.JsonObject;
 
 import id.laukpauk.util.Json;
 
@@ -12,7 +13,7 @@ import id.laukpauk.util.Json;
  * (plus {@code setOn}) and the expiry check reads {@code id}, {@code day}, {@code maxTime}, {@code currentDate}.
  */
 public final class JadwalDelivery {
-    public final JsonObject raw;
+    public final Map<String, Object> raw;
     @Nullable public final String kode;
     public final String day;
     public final String sessi;
@@ -20,7 +21,7 @@ public final class JadwalDelivery {
     public final boolean isFull;
     public final boolean isOpened;
 
-    public JadwalDelivery(JsonObject raw) {
+    public JadwalDelivery(Map<String, Object> raw) {
         this.raw = raw;
         this.kode = Json.strOrNull(raw, "kode");
         this.day = Json.str(raw, "day");
