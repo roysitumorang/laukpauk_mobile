@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="market_title">Produk di Pasar %1$s</string>
+    <string name="market_nama_tidak_dikenal">Pasar Tidak di Kenal</string>
+    <string name="market_cari_produk_di_sini">Cari Produk di Sini</string>
+    <string name="market_tunggu_sebentar_mak">Tunggu sebentar ya mak...</string>
+    <string name="market_produk_tidak_ditemukan">Maaf Mak...Produk yang dicari belum ada di pasar ini</string>
+    <string name="market_belum_ada_produk">Maaf Mak...Belum ada produk di pasar ini</string>
+    <string name="market_sedang_memproses">Sedang Mem-proses</string>
+    <string name="market_tunggu_sebentar">Tunggu sebentar ya...</string>
+    <string name="market_promo">Promo</string>
+    <string name="market_hemat">Hemat %1$s</string>
+    <string name="market_tidak_ada_harga">Tidak ada daftar harga</string>
+    <string name="market_stok_habis">Stok tidak tersedia</string>
+    <string name="market_penjual_tidak_diketahui">Penjual Tidak Diketahui</string>
+    <string name="market_adjd_belum_ditentukan">Anda belum menentukan lokasi dan jadwal pengantaran. Untuk melihat pasar lain yang berada didalam dan diluar area anda silahkan tentukan terlebih dahulu lokasi dan jadwal pengantaran.</string>
+    <string name="market_tentukan_lokasi">Tentukan Lokasi dan Alamat Pengantaran</string>
+    <string name="market_pasar_sekitar">Pasar Lain di Sekitar Anda</string>
+    <string name="market_pasar_sekitar_kosong">Yah, belum ada pasar disekitarmu mak ..</string>
+    <string name="market_pasar_luar">Pasar Lain di Luar Area Anda</string>
+    <string name="market_pasar_luar_kosong">Yaahh.. belum ada pasar diluar area mu mak...</string>
+    <string name="market_cari_pasar">Cari Pasar dengan Nama</string>
+    <string name="market_distance_km">%1$s KM</string>
+</resources>

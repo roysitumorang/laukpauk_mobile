@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voucher_title_default">Voucher Saya</string>
+    <string name="voucher_empty">Anda tidak memiliki voucher aktif apapun</string>
+    <string name="voucher_valid_until">Berlaku hingga %1$s</string>
+    <string name="voucher_min_purchase_short">Min. Belanja %1$s</string>
+    <string name="voucher_detail_title">Detail Voucher</string>
+    <string name="voucher_not_found">Detail Voucher Tidak Ditemukan</string>
+    <string name="voucher_type_ongkir">Voucher untuk mengurangi ongkos kirim</string>
+    <string name="voucher_type_belanja">Voucher untuk mengurangi total belanja</string>
+    <string name="voucher_label_code">Kode Voucher</string>
+    <string name="voucher_label_min">Minimum Belanja</string>
+    <string name="voucher_label_max_usage">Maksimum Penggunaan</string>
+    <string name="voucher_label_usage">Jumlah Penggunaan</string>
+    <string name="voucher_label_valid">Masa Berlaku</string>
+    <string name="voucher_label_description">Deskripsi Voucher</string>
+    <string name="voucher_times_used">%1$s Kali Penggunaan</string>
+    <string name="voucher_no_usage">Belum ada penggunaan</string>
+    <string name="voucher_valid_range">%1$s s/d %2$s</string>
+    <string name="voucher_use">Gunakan Voucher</string>
+    <string name="voucher_cancel_use">Batal Gunakan Voucher</string>
+    <string name="voucher_exhausted">Voucher tidak dapat digunakan karena sudah mencapai batas maksimum penggunaan</string>
+    <string name="voucher_used_message">Voucher %1$s digunakan!</string>
+    <string name="voucher_cancelled_message">Penggunaan voucher %1$s dibatalkan!</string>
+</resources>

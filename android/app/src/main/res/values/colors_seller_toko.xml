@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Flutter ThemeData defaults used by the seller shop screens -->
+    <color name="seller_toko_scaffold">#FFFAFAFA</color>
+    <color name="seller_toko_text">#DD000000</color>
+    <color name="seller_toko_blue">#FF2196F3</color>
+    <color name="seller_toko_pasar_selected">#7766CC99</color>
+</resources>

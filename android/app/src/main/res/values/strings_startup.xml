@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_tagline">Kalau Apakali, Laukpauk Aja</string>
+    <string name="startup_intro_mulai">Ke Pasar Sekarang</string>
+    <string name="startup_update_title">Update Aplikasi Terbaru</string>
+    <string name="startup_update_message">Update Yuk! Banyak fitur-fitur baru menanti kamu nih...</string>
+    <string name="startup_update_tidak">Tidak</string>
+    <string name="startup_update_update">Update</string>
+</resources>

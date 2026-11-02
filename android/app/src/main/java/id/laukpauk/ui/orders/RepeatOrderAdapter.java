@@ -1,0 +1,108 @@
+package id.laukpauk.ui.orders;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Set;
+
+import id.laukpauk.R;
+import id.laukpauk.data.model.orders.ItemTransaksi;
+import id.laukpauk.data.model.orders.RoPenjual;
+import id.laukpauk.databinding.ItemOrdersRoItemBinding;
+import id.laukpauk.databinding.ItemOrdersRoPenjualBinding;
+import id.laukpauk.ui.common.Images;
+import id.laukpauk.util.Currency;
+import id.laukpauk.util.ServerPath;
+
+/** RepeatOrderTransaksiItemPerPenjual.dart + ItemTransaksiRO.dart. */
+public class RepeatOrderAdapter extends ListAdapter<RoPenjual, RepeatOrderAdapter.Holder> {
+
+    public interface Listener {
+        void onToggle(String idPenjual);
+    }
+
+    private static final DiffUtil.ItemCallback<RoPenjual> DIFF = new DiffUtil.ItemCallback<RoPenjual>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull RoPenjual a, @NonNull RoPenjual b) {
+            return OrderUi.nz(a.idPenjual).equals(OrderUi.nz(b.idPenjual));
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull RoPenjual a, @NonNull RoPenjual b) {
+            return false;
+        }
+    };
+
+    private final Set<String> selected;
+    private final Listener listener;
+
+    public RepeatOrderAdapter(Set<String> selected, Listener listener) {
+        super(DIFF);
+        this.selected = selected;
+        this.listener = listener;
+    }
+
+    @NonNull
+    @Override
+    public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new Holder(ItemOrdersRoPenjualBinding.inflate(LayoutInflater.from(parent.getContext()), parent,
+                false));
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull Holder h, int position) {
+        h.bind(getItem(position), selected, listener);
+    }
+
+    static final class Holder extends RecyclerView.ViewHolder {
+        private final ItemOrdersRoPenjualBinding b;
+
+        Holder(ItemOrdersRoPenjualBinding b) {
+            super(b.getRoot());
+            this.b = b;
+        }
+
+        void bind(RoPenjual p, Set<String> selected, Listener listener) {
+            Context ctx = b.getRoot().getContext();
+            String alamat = OrderUi.nz(p.alamatToko);
+            b.nama.setText(OrderUi.nz(p.namaPenjual));
+            b.alamat.setText(alamat.isEmpty() ? ctx.getString(R.string.orders_ro_alamat_kosong) : alamat);
+            b.pasar.setText(ctx.getString(R.string.orders_ro_berjualan_format, OrderUi.nz(p.namaPasar)));
+            Images.circle(b.banner, Images.server(ServerPath.uploadGambarBannerPenjual,
+                    "compress/" + OrderUi.nz(p.bannerPenjual)));
+            b.card.setStrokeColor(ContextCompat.getColor(ctx,
+                    p.isAvailable ? R.color.nearly_white : R.color.text_danger));
+
+            b.check.setOnCheckedChangeListener(null);
+            b.check.setVisibility(p.isAvailable ? View.VISIBLE : View.GONE);
+            b.check.setChecked(selected.contains(p.idPenjual));
+            b.check.setOnCheckedChangeListener((v, checked) -> listener.onToggle(p.idPenjual));
+
+            b.availableGroup.setVisibility(p.isAvailable ? View.VISIBLE : View.GONE);
+            b.unavailableGroup.setVisibility(p.isAvailable ? View.GONE : View.VISIBLE);
+            b.itemsContainer.removeAllViews();
+            if (p.isAvailable && p.itemTransaksi != null) {
+                LayoutInflater inflater = LayoutInflater.from(ctx);
+                for (ItemTransaksi item : p.itemTransaksi) {
+                    ItemOrdersRoItemBinding row = ItemOrdersRoItemBinding.inflate(inflater, b.itemsContainer,
+                            false);
+                    row.nama.setText(ctx.getString(R.string.orders_ro_item_format, OrderUi.nz(item.namaProduk),
+                            item.quantity, item.satuan()));
+                    row.total.setText(Currency.formatRupiah(item.quantity * (item.harga - item.diskon), 0));
+                    String catatan = OrderUi.nz(item.catatan);
+                    row.catatan.setVisibility(catatan.isEmpty() ? View.GONE : View.VISIBLE);
+                    row.catatan.setText(ctx.getString(R.string.orders_catatan_format, catatan));
+                    b.itemsContainer.addView(row.getRoot());
+                }
+            }
+        }
+    }
+}

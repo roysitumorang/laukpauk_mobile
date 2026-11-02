@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- PesananMasuk -->
+    <string name="seller_pesanan_penjualan">Penjualan</string>
+    <string name="seller_pesanan_tab_baru">Orderan Baru</string>
+    <string name="seller_pesanan_tab_otw">Dalam Perjalanan</string>
+    <string name="seller_pesanan_tab_completed">Completed</string>
+    <string name="seller_pesanan_tab_dibatalkan">Dibatalkan</string>
+    <string name="seller_pesanan_status_baru">Orderan Baru</string>
+    <string name="seller_pesanan_status_otw">Sedang Dalam Perjalanan</string>
+    <string name="seller_pesanan_status_received">Sudah Diterima</string>
+    <string name="seller_pesanan_status_rejected">Ditolak</string>
+    <string name="seller_pesanan_tanggal_awal">Tanggal Awal</string>
+    <string name="seller_pesanan_tanggal_akhir">Tanggal Akhir</string>
+    <string name="seller_pesanan_kosong">Transaksi dengan status \"%1$s\" tidak Ditemukan</string>
+    <string name="seller_pesanan_payment">Payment %1$s</string>
+    <string name="seller_pesanan_eta">%1$s, ETA jam %2$s</string>
+    <string name="seller_pesanan_status_pesanan">Status Pesanan : %1$s</string>
+    <string name="seller_pesanan_proses">Proses</string>
+    <string name="seller_pesanan_user_pending">Sudah Diterima Penjual</string>
+    <string name="seller_pesanan_user_processing">Sedang diproses</string>
+    <string name="seller_pesanan_user_otw">Dalam Perjalanan</string>
+    <string name="seller_pesanan_user_received">Diterima</string>
+    <string name="seller_pesanan_user_rejected">Dibatalkan</string>
+    <string name="seller_pesanan_step_diterima">Diterima</string>
+    <string name="seller_pesanan_step_proses">Proses</string>
+    <string name="seller_pesanan_step_kirim">Kirim</string>
+    <string name="seller_pesanan_step_selesai">Selesai</string>
+    <string name="seller_pesanan_hapus_tanggal">Hapus rentang tanggal</string>
+
+    <!-- ProsesPesanan -->
+    <string name="seller_pesanan_tidak_ditemukan">Transaksi Tidak Ditemukan !</string>
+    <string name="seller_pesanan_tidak_ditemukan_desc">Transaksi ini tidak ditemukan dalam sistem Laukpauk</string>
+    <string name="seller_pesanan_masuk">Pesanan Masuk</string>
+    <string name="seller_pesanan_masuk_desc">Berikut ini adalah pesanan yang masuk ke anda</string>
+    <string name="seller_pesanan_default_ada">Secara default produk dianggap ada. Jika produk tidak tersedia, silahkan tekan tombol merah disetiap item pesanan</string>
+    <string name="seller_pesanan_sedang_dijemput">Sedang Dijemput</string>
+    <string name="seller_pesanan_selesai">Transaksi Selesai !</string>
+    <string name="seller_pesanan_dijemput_desc">Pesanan akan dijemput oleh delivery Laukpauk...</string>
+    <string name="seller_pesanan_selesai_desc">Yeay, pesanan sudah diterima oleh pembeli mak ..</string>
+    <string name="seller_pesanan_gagal_proses">Mohon maaf, pesanan tersebut tidak dapat diproses. Silahkan coba lagi!</string>
+    <string name="seller_pesanan_gagal_klaim">Mohon maaf, proses pengklaiman produk tidak tersedia gagal dilakukan. Silahkan coba lagi!</string>
+    <string name="seller_pesanan_item_kosong">Tidak ada barang yang dipesan di dalam transaksi ini</string>
+    <string name="seller_pesanan_kembali">Kembali</string>
+    <string name="seller_pesanan_tersedia">Tersedia</string>
+    <string name="seller_pesanan_tidak_tersedia">Tidak Tersedia</string>
+    <string name="seller_pesanan_belum_diperiksa">Belum diperiksa</string>
+    <string name="seller_pesanan_x_satuan">x %1$s</string>
+    <string name="seller_pesanan_satuan_tidak_diketahui">Satuan Tidak Diketahui</string>
+    <string name="seller_pesanan_harga">Harga %1$s</string>
+    <string name="seller_pesanan_diskon">Diskon %1$s</string>
+    <string name="seller_pesanan_catatan">Catatan Tambahan</string>
+    <string name="seller_pesanan_tandai_tidak_tersedia">Tandai tidak tersedia</string>
+    <string name="seller_pesanan_batalkan_klaim">Batalkan klaim tidak tersedia</string>
+
+    <!-- PesananItemTidakTersedia -->
+    <string name="seller_pesanan_tidak_tersedia_title">Pesanan Tidak Tersedia</string>
+    <string name="seller_pesanan_beri_alasan">Beri Alasan</string>
+    <string name="seller_pesanan_beri_alasan_desc">Silahkan berikan alasan mengapa produk ini tidak tersedia saat ini</string>
+    <string name="seller_pesanan_keterangan">Keterangan</string>
+    <string name="seller_pesanan_klaim">Klaim Pesanan Tidak Tersedia</string>
+</resources>

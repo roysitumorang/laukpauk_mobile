@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Single navigation graph of the app. One destination per screen; arguments are primitives, and complex
+     values travel as JSON strings (see README "Navigation"). Results go back through the previous
+     back-stack entry's SavedStateHandle (ui/common/NavResults). -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashScreenFragment">
+
+    <fragment
+        android:id="@+id/splashScreenFragment"
+        android:name="id.laukpauk.ui.startup.SplashScreenFragment">
+        <argument android:name="removeTransactionSession" app:argType="boolean" android:defaultValue="false" />
+        <argument android:name="routeTo" app:argType="integer" android:defaultValue="0" />
+        <argument android:name="routeArgs" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/introPageFragment"
+        android:name="id.laukpauk.ui.startup.IntroPageFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="id.laukpauk.ui.auth.LoginFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="id.laukpauk.ui.auth.RegisterFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/oTPRegistrasiFragment"
+        android:name="id.laukpauk.ui.auth.OTPRegistrasiFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/oTPVerifikasiUserFragment"
+        android:name="id.laukpauk.ui.auth.OTPVerifikasiUserFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/oTPNotCompletedFragment"
+        android:name="id.laukpauk.ui.auth.OTPNotCompletedFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/kirimUlangOTPFragment"
+        android:name="id.laukpauk.ui.auth.KirimUlangOTPFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/lupaPasswordFragment"
+        android:name="id.laukpauk.ui.auth.LupaPasswordFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/homePageFragment"
+        android:name="id.laukpauk.ui.home.HomePageFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/semuaPasarFragment"
+        android:name="id.laukpauk.ui.home.SemuaPasarFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/semuaKategoriProdukFragment"
+        android:name="id.laukpauk.ui.home.SemuaKategoriProdukFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/listProdukFragment"
+        android:name="id.laukpauk.ui.home.ListProdukFragment">
+        <argument android:name="title" app:argType="string" android:defaultValue="" />
+        <argument android:name="subTitle" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+        <argument android:name="dataProduk" app:argType="string" android:defaultValue="[]" />
+        <argument android:name="dataPenjual" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+        <argument android:name="isReadyToShow" app:argType="boolean" android:defaultValue="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="id.laukpauk.ui.search.SearchFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/pinGMAPSFragment"
+        android:name="id.laukpauk.ui.location.PinGMAPSFragment">
+        <argument android:name="currentLatitude" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+        <argument android:name="currentLongitude" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+        <argument android:name="appBarText" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/produkDiDalamPasarFragment"
+        android:name="id.laukpauk.ui.market.ProdukDiDalamPasarFragment">
+        <argument android:name="idPasar" app:argType="string" />
+        <argument android:name="namaPasar" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailProdukFragment"
+        android:name="id.laukpauk.ui.product.DetailProdukFragment">
+        <argument android:name="idProduk" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailPaketFragment"
+        android:name="id.laukpauk.ui.product.DetailPaketFragment">
+        <argument android:name="idPaket" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/promoFragment"
+        android:name="id.laukpauk.ui.promo.PromoFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailPromoItemFragment"
+        android:name="id.laukpauk.ui.promo.DetailPromoItemFragment">
+        <argument android:name="idPromoItem" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/voucherFragment"
+        android:name="id.laukpauk.ui.voucher.VoucherFragment">
+        <argument android:name="appBarTitle" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailVoucherFragment"
+        android:name="id.laukpauk.ui.voucher.DetailVoucherFragment">
+        <argument android:name="idVoucher" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/resepFragment"
+        android:name="id.laukpauk.ui.recipe.ResepFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailResepFragment"
+        android:name="id.laukpauk.ui.recipe.DetailResepFragment">
+        <argument android:name="idResep" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/keranjangFragment"
+        android:name="id.laukpauk.ui.cart.KeranjangFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/editKeranjangItemFragment"
+        android:name="id.laukpauk.ui.cart.EditKeranjangItemFragment">
+        <argument android:name="dataKeranjangItem" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/checkoutFragment"
+        android:name="id.laukpauk.ui.checkout.CheckoutFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/buatOrderanBerhasilFragment"
+        android:name="id.laukpauk.ui.checkout.BuatOrderanBerhasilFragment">
+        <argument android:name="returnedDataFromCheckout" app:argType="string" />
+        <argument android:name="removeTransactionSession" app:argType="boolean" android:defaultValue="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/doPaymentFragment"
+        android:name="id.laukpauk.ui.checkout.DoPaymentFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/transferBankFragment"
+        android:name="id.laukpauk.ui.checkout.TransferBankFragment">
+        <argument android:name="returnedDataFromCheckout" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pesananSayaFragment"
+        android:name="id.laukpauk.ui.orders.PesananSayaFragment">
+        <argument android:name="statusTransaksi" app:argType="integer" android:defaultValue="0" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailTransaksiFragment"
+        android:name="id.laukpauk.ui.orders.DetailTransaksiFragment">
+        <argument android:name="idTransaksi" app:argType="string" />
+        <argument android:name="idPenjual" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/repeatOrderFragment"
+        android:name="id.laukpauk.ui.orders.RepeatOrderFragment">
+        <argument android:name="idTransaksi" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/itemTransaksiFragment"
+        android:name="id.laukpauk.ui.orders.ItemTransaksiFragment">
+        <argument android:name="idTransaksi" app:argType="string" />
+        <argument android:name="idPenjual" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+        <argument android:name="cartCode" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/userAndDashboardFragment"
+        android:name="id.laukpauk.ui.account.UserAndDashboardFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/profilSayaFragment"
+        android:name="id.laukpauk.ui.account.ProfilSayaFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/historiDompetFragment"
+        android:name="id.laukpauk.ui.account.HistoriDompetFragment">
+        <argument android:name="jenisDompet" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historiPoinFragment"
+        android:name="id.laukpauk.ui.account.HistoriPoinFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/kodeReferalFragment"
+        android:name="id.laukpauk.ui.account.KodeReferalFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/hubungiKamiFragment"
+        android:name="id.laukpauk.ui.account.HubungiKamiFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/requestJadiPenjualFragment"
+        android:name="id.laukpauk.ui.account.RequestJadiPenjualFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/responseRPDFragment"
+        android:name="id.laukpauk.ui.account.ResponseRPDFragment">
+        <argument android:name="dataPenjual" app:argType="string" />
+        <argument android:name="dataRPD" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/notifikasiFragment"
+        android:name="id.laukpauk.ui.notification.NotifikasiFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailNotifikasiGlobalFragment"
+        android:name="id.laukpauk.ui.notification.DetailNotifikasiGlobalFragment">
+        <argument android:name="idNotifikasi" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/penjualFragment"
+        android:name="id.laukpauk.ui.seller.PenjualFragment">
+        <argument android:name="idPenjual" app:argType="string" />
+        <argument android:name="jenisProdukSelected" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/tokoSayaFragment"
+        android:name="id.laukpauk.ui.seller.TokoSayaFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/requestPencairanDanaFragment"
+        android:name="id.laukpauk.ui.seller.RequestPencairanDanaFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/ubahNamaTokoFormFragment"
+        android:name="id.laukpauk.ui.seller.UbahNamaTokoFormFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailProdukPenjualFragment"
+        android:name="id.laukpauk.ui.seller.DetailProdukPenjualFragment">
+        <argument android:name="idProduk" app:argType="string" />
+        <argument android:name="jenisProduk" app:argType="string" android:defaultValue="satuan" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/listProdukPenjualFragment"
+        android:name="id.laukpauk.ui.seller.ListProdukPenjualFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/tambahProdukFragment"
+        android:name="id.laukpauk.ui.seller.TambahProdukFragment">
+        <argument android:name="idProduk" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+        <argument android:name="jenisProduk" app:argType="string" android:defaultValue="satuan" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/updateHargaFragment"
+        android:name="id.laukpauk.ui.seller.UpdateHargaFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/editSatuanProdukFragment"
+        android:name="id.laukpauk.ui.seller.EditSatuanProdukFragment">
+        <argument android:name="idProduk" app:argType="string" />
+        <argument android:name="dataSatuan" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+        <argument android:name="appBarTitle" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+        <argument android:name="isUpdate" app:argType="boolean" android:defaultValue="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historiPenjualanFragment"
+        android:name="id.laukpauk.ui.seller.HistoriPenjualanFragment">
+        <argument android:name="idPenjual" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pesananMasukFragment"
+        android:name="id.laukpauk.ui.seller.PesananMasukFragment">
+        <argument android:name="statusTransaksi" app:argType="integer" android:defaultValue="0" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/prosesPesananFragment"
+        android:name="id.laukpauk.ui.seller.ProsesPesananFragment">
+        <argument android:name="idTransaksi" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pesananItemTidakTersediaFragment"
+        android:name="id.laukpauk.ui.seller.PesananItemTidakTersediaFragment">
+        <argument android:name="pesananItem" app:argType="string" />
+    </fragment>
+</navigation>

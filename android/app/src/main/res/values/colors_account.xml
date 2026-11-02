@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 0xDD000000: the default dark text of the Dart app -->
+    <color name="account_text">#DD000000</color>
+    <color name="account_text_secondary">#8A000000</color>
+    <color name="account_reason_bg">#44DC3545</color>
+    <color name="account_pasar_selected">#7766CC99</color>
+    <color name="account_info_button">#FF138496</color>
+</resources>

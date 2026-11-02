@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/statusRoot"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/circle1"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_seller_pesanan_circle">
+
+                <ImageView
+                    android:id="@+id/icon1"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_fa_check_circle_regular"
+                    app:tint="@color/nearly_white" />
+            </FrameLayout>
+            <View
+                android:id="@+id/line1"
+                android:layout_width="12dp"
+                android:layout_height="3dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/seller_pesanan_step_diterima"
+            android:textColor="@color/seller_produk_text"
+            android:textSize="10sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/circle2"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_seller_pesanan_circle">
+
+                <ImageView
+                    android:id="@+id/icon2"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_fa_box_open"
+                    app:tint="@color/nearly_white" />
+            </FrameLayout>
+            <View
+                android:id="@+id/line2"
+                android:layout_width="12dp"
+                android:layout_height="3dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/seller_pesanan_step_proses"
+            android:textColor="@color/seller_produk_text"
+            android:textSize="10sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/circle3"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_seller_pesanan_circle">
+
+                <ImageView
+                    android:id="@+id/icon3"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_fa_shipping_fast"
+                    app:tint="@color/nearly_white" />
+            </FrameLayout>
+            <View
+                android:id="@+id/line3"
+                android:layout_width="12dp"
+                android:layout_height="3dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/seller_pesanan_step_kirim"
+            android:textColor="@color/seller_produk_text"
+            android:textSize="10sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/circle4"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_seller_pesanan_circle">
+
+                <ImageView
+                    android:id="@+id/icon4"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_fa_people_carry"
+                    app:tint="@color/nearly_white" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/seller_pesanan_step_selesai"
+            android:textColor="@color/seller_produk_text"
+            android:textSize="10sp" />
+    </LinearLayout>
+</LinearLayout>

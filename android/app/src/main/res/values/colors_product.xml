@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="product_warning">#FFE0A800</color>
+    <color name="product_amber">#FFFFC107</color>
+    <color name="product_black87">#DD000000</color>
+    <color name="product_black54">#8A000000</color>
+    <color name="product_note_danger">#55DC3545</color>
+    <color name="product_note_warning">#55FFC107</color>
+    <color name="product_yuhu_bg">#5566CC99</color>
+    <color name="product_overlay">#CFFFFFFF</color>
+    <color name="product_ripple">#33000000</color>
+    <color name="product_radio_unchecked">#8A000000</color>
+    <color name="product_radio_checked">#FF2196F3</color>
+</resources>

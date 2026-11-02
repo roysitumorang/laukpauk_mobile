@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Pesanan Saya -->
+    <string name="orders_riwayat_transaksi">Riwayat Transaksi</string>
+    <string name="orders_tab_hari_ini">Hari Ini</string>
+    <string name="orders_tab_belum_diproses">Belum di Proses</string>
+    <string name="orders_tab_dalam_proses">Dalam Proses</string>
+    <string name="orders_tab_dalam_perjalanan">Dalam Perjalanan</string>
+    <string name="orders_tab_completed">Completed</string>
+    <string name="orders_tab_dibatalkan">Dibatalkan</string>
+    <string name="orders_dd_semua">Semua Status Transaksi</string>
+    <string name="orders_dd_pending">Belum di Proses</string>
+    <string name="orders_dd_processing">Sedang di proses</string>
+    <string name="orders_dd_otw">Sedang dalam perjalanan</string>
+    <string name="orders_dd_received">Sudah diterima</string>
+    <string name="orders_dd_rejected">Dibatalkan</string>
+    <string name="orders_tanggal_awal">Tanggal Awal</string>
+    <string name="orders_tanggal_akhir">Tanggal Akhir</string>
+    <string name="orders_riwayat_kosong">Riwayat Transaksi tidak Ditemukan</string>
+    <string name="orders_no_invoice">No. Invoice</string>
+    <string name="orders_eta_format">%1$s, ETA jam %2$s</string>
+    <string name="orders_status_pesanan_format">Status Pesanan : %1$s</string>
+    <string name="orders_pesan_lagi">Pesan Lagi</string>
+    <string name="orders_diterima">Diterima</string>
+    <string name="orders_konfirmasi_bayar">Konfirmasi Bayar</string>
+    <string name="orders_diterima_title">Pesanan Diterima</string>
+    <string name="orders_diterima_message">Lakukan konfirmasi jika pesanan sudah diterima ya mak ...</string>
+    <string name="orders_belum_diterima">Belum Diterima</string>
+    <string name="orders_diterima_gagal">Gagal menandai pesanan sebagai SUDAH DITERIMA. Silahkan coba lagi!</string>
+    <string name="orders_diterima_berhasil">Berhasil menanda pesanan sebagai SUDAH DITERIMA !</string>
+    <string name="orders_wa_konfirmasi_format">Hai LaukPauk, saya ingin konfirmasi bahwa transaksi saya %1$s sudah dibayar melalui %2$s. Mohon untuk segera diproses. Terimakasih :)</string>
+    <string name="orders_url_tidak_valid">URL Tidak Valid !</string>
+
+    <!-- Status steps -->
+    <string name="orders_step_diterima">Diterima</string>
+    <string name="orders_step_proses">Proses</string>
+    <string name="orders_step_kirim">Kirim</string>
+    <string name="orders_step_selesai">Selesai</string>
+    <string name="orders_status_pending">Sudah Diterima Penjual</string>
+    <string name="orders_status_processing">Sedang diproses</string>
+    <string name="orders_status_otw">Dalam Perjalanan</string>
+    <string name="orders_status_received">Diterima</string>
+    <string name="orders_status_rejected">Dibatalkan</string>
+
+    <!-- Detail Transaksi -->
+    <string name="orders_detail_transaksi">Detail Transaksi</string>
+    <string name="orders_detail_tidak_ditemukan">Detail transaksi tidak ditemukan</string>
+    <string name="orders_lihat_invoice">Lihat Invoice</string>
+    <string name="orders_status_format">Status : %1$s</string>
+    <string name="orders_note_title">Note!</string>
+    <string name="orders_note_otw">Mak, jangan lupa tekan tombol DITERIMA untuk bisa pesan ulang produk yang sama ya ...</string>
+    <string name="orders_nomor_order">Nomor Order</string>
+    <string name="orders_metode_pembayaran">Metode Pembayaran</string>
+    <string name="orders_cara_pembayaran">Cara Pembayaran</string>
+    <string name="orders_catatan_tambahan">Catatan Tambahan</string>
+    <string name="orders_alasan_pembatalan">Alasan Pembatalan</string>
+    <string name="orders_tanpa_keterangan">Tanpa Keterangan</string>
+    <string name="orders_pengembalian_dana_format">Pengembalian Dana (%1$s)</string>
+    <string name="orders_refund_ongkir_format">Ongkos Kirim %1$s</string>
+    <string name="orders_refund_belanja_format">Uang Belanja %1$s</string>
+    <string name="orders_belanja_ulang">Belanja Ulang</string>
+    <string name="orders_alamat_pengantaran">Alamat Pengantaran</string>
+    <string name="orders_alamat_detail">Alamat Detail Pengantaran</string>
+    <string name="orders_jadwal_delivery">Jadwal Delivery</string>
+    <string name="orders_jadwal_format">%1$s, ETA Jam %2$s</string>
+    <string name="orders_potongan_dompet">Potongan Dompet</string>
+    <string name="orders_potongan_kode_promo">Potongan Kode Promo</string>
+    <string name="orders_potongan_poin">Potongan Poin</string>
+    <string name="orders_ongkos_kirim">Ongkos Kirim</string>
+    <string name="orders_potongan_voucher_ongkir">Potongan Voucher Ongkir</string>
+    <string name="orders_total_belanja">Total Belanja</string>
+    <string name="orders_potongan_voucher_belanja">Potongan Voucher Belanja</string>
+    <string name="orders_diskon">Diskon</string>
+    <string name="orders_kode_unik">Kode Unik</string>
+    <string name="orders_total_dibayar">Total Yang Harus Dibayar</string>
+    <string name="orders_minus_format">(%1$s)</string>
+    <string name="orders_rekening_placeholder">-- Nomor Rekenig --</string>
+    <string name="orders_pemilik_placeholder"> -- Nama Pemilik --</string>
+
+    <!-- Belanja ulang (rejected transaction) -->
+    <string name="orders_adjd_title">Jadwal dan Alamat Antar</string>
+    <string name="orders_adjd_message">Gunakan alamat dan jadwal pengantaran yang sudah di atur sebelumnya?</string>
+    <string name="orders_ya">Ya</string>
+    <string name="orders_tidak">Tidak</string>
+    <string name="orders_tutup">Tutup</string>
+    <string name="orders_adjd_belum_title">Alamat dan Jadwal</string>
+    <string name="orders_adjd_belum_message">Alamat dan jadwal pengantaran belum ditentukan, tentukan dulu ya mak...</string>
+    <string name="orders_ok">OK</string>
+    <string name="orders_belanja_ulang_berhasil">Berhasil belanja ulang!</string>
+    <string name="orders_belanja_ulang_gagal">Gagal belanja ulang!</string>
+    <string name="orders_coba_lagi">Coba Lagi!</string>
+
+    <!-- Daftar belanjaan / gift -->
+    <string name="orders_daftar_belanjaan">Daftar Belanjaan</string>
+    <string name="orders_invoice">Invoice</string>
+    <string name="orders_item_kosong">Transaksi ini tidak memiliki item belanjaan</string>
+    <string name="orders_produk_ada">Produk Ada</string>
+    <string name="orders_produk_diproses">Sedang di proses</string>
+    <string name="orders_produk_tidak_tersedia">Produk Tidak Tersedia</string>
+    <string name="orders_produk_tidak_dikenal_format">Produk Tidak Dikenal %1$d x %2$s</string>
+    <string name="orders_catatan_format">Catatan : %1$s</string>
+    <string name="orders_cart_code_tidak_ada">Cart code tidak terdefinisi!</string>
+    <string name="orders_gift_format">%1$s 1 pcs</string>
+    <string name="orders_gift_harga">Rp. 0</string>
+
+    <!-- Repeat order -->
+    <string name="orders_repeat_order">Repeat Order</string>
+    <string name="orders_nomor_transaksi_format">Nomor Transaksi %1$s</string>
+    <string name="orders_ro_info">Anda dapat memesan kembali produk - produk yang sudah pernah anda beli sebelumnya. Silahkan pilih produk produk yang ingin anda beli ulang.</string>
+    <string name="orders_ro_note">NOTE : Harga dan diskon yang tertera pada tiap - tiap produk dalam transaksi ini bisa saja berbeda dengan harga dan diskon pada produk yang sekarang. Silahkan cek dahulu sebelum checkout di keranjang setelah anda memasukkan belanjaan ke keranjang.</string>
+    <string name="orders_ro_adjd_prompt">Tentukan Alamat dan Jadwal Delivery dulu ya mak, supaya bisa belanja ulang :)</string>
+    <string name="orders_ro_adjd_button">Tentukan Lokasi dan Jadwal Delivery</string>
+    <string name="orders_ro_kosong">Tidak ada belanjaan di dalam transaksi ini yang dapat dibelanja ulang.\nSilahkan belanja ulang seperti biasa!</string>
+    <string name="orders_ro_item_belanjaan">Item Belanjaan</string>
+    <string name="orders_ro_tidak_dapat_title">Tidak Dapat Dibeli Ulang</string>
+    <string name="orders_ro_tidak_dapat_message">Mohon maaf, belanjaan tidak dapat direpeat order karena penjual tidak ready pada alamat dan jam pengantaran yang telah anda tentukan</string>
+    <string name="orders_ro_alamat_kosong">Alamat toko belum ditentukan</string>
+    <string name="orders_ro_berjualan_format">Berjualan di %1$s</string>
+    <string name="orders_ro_item_format">%1$s %2$d x %3$s</string>
+    <string name="orders_ro_gagal">Gagal menambahkan ke keranjang belanjaan, coba lagi!</string>
+    <string name="orders_ro_berhasil">Berhasil menambahkan ke keranjang!</string>
+</resources>

@@ -4,4 +4,34 @@
     <color name="black">#000000</color>
     <color name="grey">#7A7A7A</color>
     <color name="theme">#66CC99</color>
+    <!-- Footer.dart: selected and unselected labels were both Colors.grey[400] -->
+    <color name="nav_label">#BDBDBD</color>
+    <color name="green">#66CC99</color>
+    <!-- util/CustomColors (the Flutter app's palette) -->
+    <color name="light_green">#5566CC99</color>
+    <color name="dark_green">#FF18732D</color>
+    <color name="alice_blue">#FFF0F8FF</color>
+    <color name="not_white">#FFEDF0F2</color>
+    <color name="nearly_white">#FFFFFFFF</color>
+    <color name="nearly_blue">#FF00B6F0</color>
+    <color name="nearly_black">#FF213333</color>
+    <color name="dark_grey">#FF313A44</color>
+    <color name="light_grey">#FFF9F9F9</color>
+    <color name="dark_text">#FF253840</color>
+    <color name="darker_text">#FF17262A</color>
+    <color name="light_text">#FF4A6572</color>
+    <color name="deactivated_text">#FF767676</color>
+    <color name="dismissible_background">#FF364A54</color>
+    <color name="chip_background">#FFEEF1F3</color>
+    <color name="spacer">#FFF2F2F2</color>
+    <color name="text_danger">#FFDC3545</color>
+    <color name="text_success">#FF28A745</color>
+    <color name="text_info">#FF17A2B8</color>
+    <color name="text_primary">#FF007BFF</color>
+    <color name="text_muted">#FF6C757D</color>
+    <color name="text_warning">#FFFFC107</color>
+    <color name="text_light_muted">#446C757D</color>
+    <color name="red">#FFF44336</color>
+    <color name="grey400">#FFBDBDBD</color>
+    <color name="transparent">#00000000</color>
 </resources>

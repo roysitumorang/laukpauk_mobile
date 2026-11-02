@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="1dp">
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp" android:layout_height="0dp"
+        app:cardCornerRadius="12.5dp" app:cardElevation="0dp" app:cardBackgroundColor="@color/nearly_white"
+        app:layout_constraintDimensionRatio="1:1" app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent">
+        <FrameLayout android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:foreground="?attr/selectableItemBackground">
+            <ImageView android:id="@+id/gambar" android:layout_width="match_parent" android:layout_height="match_parent"
+                android:importantForAccessibility="no" android:scaleType="centerCrop" />
+            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/home_overlay_30" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                android:gravity="center" android:orientation="vertical" android:padding="5dp">
+                <TextView android:id="@+id/nama" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:gravity="center" android:textColor="@color/white" android:textSize="14sp" android:textStyle="bold" />
+                <TextView android:id="@+id/jarak" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp" android:gravity="center" android:textColor="@color/white"
+                    android:textSize="13sp" android:textStyle="bold" android:visibility="gone" />
+            </LinearLayout>
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Flutter's default text colour (black87) -->
+    <color name="orders_black87">#DD000000</color>
+    <!-- translucent #66CC99 (Catatan, filter box) -->
+    <color name="orders_green_tint">#5566CC99</color>
+    <!-- translucent #66CC99 (Note! box) -->
+    <color name="orders_note_tint">#3366CC99</color>
+    <!-- translucent text_danger (rejected card, reason / refund boxes) -->
+    <color name="orders_danger_tint">#25DC3545</color>
+    <color name="orders_ripple">#33000000</color>
+</resources>
