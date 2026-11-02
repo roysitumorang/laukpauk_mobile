@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="promo_text">#DD000000</color>
+    <color name="promo_bg_aktif">#66FFC107</color>
+    <color name="promo_bg_nonaktif">#66DC3545</color>
+    <color name="promo_yuhu_bg">#5566CC99</color>
+</resources>

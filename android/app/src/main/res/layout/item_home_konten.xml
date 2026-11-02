@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingBottom="15dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+        <TextView android:id="@+id/judul" style="@style/Home.SectionTitle" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" />
+        <TextView android:id="@+id/lihat" style="@style/Home.SectionLink" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="@string/home_lihat_semua" android:visibility="gone" />
+    </LinearLayout>
+    <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp">
+        <ProgressBar android:id="@+id/progress" android:layout_width="30dp" android:layout_height="30dp" android:layout_gravity="center" />
+        <androidx.recyclerview.widget.RecyclerView android:id="@+id/produkList" android:layout_width="match_parent"
+            android:layout_height="275dp" android:orientation="horizontal" android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/bannerBox" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:visibility="gone">
+            <androidx.viewpager2.widget.ViewPager2 android:id="@+id/bannerPager" android:layout_width="0dp" android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="16:9" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <include android:id="@+id/empty" layout="@layout/view_home_empty" android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

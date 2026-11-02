@@ -1,6 +1,5 @@
 package id.laukpauk.data.local;
 
-import id.laukpauk.core.AppContainer;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -16,7 +15,7 @@ import android.content.SharedPreferences;
 public final class Prefs {
     private final Context context;
 
-    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
+    /** Created once by {@link id.laukpauk.di.AppContainer}; dependencies are injected, never looked up. */
     public Prefs(Context context) {
         this.context = context;
     }

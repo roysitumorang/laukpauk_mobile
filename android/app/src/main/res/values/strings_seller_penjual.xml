@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="seller_penjual_tidak_ditemukan">Data Penjual tidak Ditemukan</string>
+    <string name="seller_penjual_toko_tidak_dikenal">Toko Tidak Dikenal</string>
+    <string name="seller_penjual_alamat_kosong">Alamat belum ditentukan</string>
+    <string name="seller_penjual_pasar_kosong">Belum Menentukan Pasar</string>
+    <string name="seller_penjual_pasar_tanpa_nama">Pasar Tanpa Nama</string>
+    <string name="seller_penjual_klik_pasar">Klik pasar untuk lihat produk di dalamnya</string>
+    <string name="seller_penjual_tab_produk">Produk</string>
+    <string name="seller_penjual_tab_paket">Paket</string>
+    <string name="seller_penjual_cari_produk">Cari Produk di Sini</string>
+    <string name="seller_penjual_tidak_ada_produk">Tidak Ada Produk</string>
+</resources>

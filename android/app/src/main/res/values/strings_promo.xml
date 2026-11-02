@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="promo_search_hint">Cari Produk Promo Di Sini</string>
+    <string name="promo_butuh_lokasi">Oops, anda harus menentukan lokasi anda untuk melihat promo kami</string>
+    <string name="promo_tentukan_lokasi">Tentukan Lokasi dan Jadwal Delivery</string>
+    <string name="promo_hemat">Hemat %1$s %%</string>
+    <string name="promo_max">Max %1$sx pesan</string>
+    <string name="promo_penjual_tidak_diketahui">Penjual Tidak Diketahui</string>
+    <string name="promo_beli">Beli</string>
+    <string name="promo_edit">Edit</string>
+    <string name="promo_detail_tidak_ditemukan">Detail Produk Tidak Ditemukan</string>
+    <string name="promo_penjual">Penjual</string>
+    <string name="promo_klik_penjual">Klik nama penjual untuk melihat seluruh produk penjual</string>
+    <string name="promo_keterangan_promo">Keterangan Promo</string>
+    <string name="promo_tidak_tersedia">Promo tidak tersedia untuk saat ini!</string>
+    <string name="promo_khusus">Khusus %1$s</string>
+    <string name="promo_deskripsi_produk">Deskripsi Produk</string>
+    <string name="promo_catatan_promo">Catatan Promo Produk</string>
+    <string name="promo_tidak_ada_deskripsi">Tidak ada deskripsi produk</string>
+    <string name="promo_yuhu_title">Yuhuuu…</string>
+    <string name="promo_yuhu_text">Akan kami hubungi jika ada selisih timbangan ya…</string>
+    <string name="promo_edit_berhasil">Berhasil mengubah data produk</string>
+    <string name="promo_edit_gagal">Gagal mengubah data produk !</string>
+</resources>

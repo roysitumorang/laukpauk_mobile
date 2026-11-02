@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="16dp"
+    android:paddingTop="8dp" android:paddingBottom="8dp">
+    <ImageView android:id="@+id/foto" android:layout_width="50dp" android:layout_height="50dp" android:importantForAccessibility="no" />
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp"
+        android:layout_weight="1" android:orientation="vertical">
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView android:id="@+id/jenis" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginEnd="7.5dp" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="3dp"
+                android:paddingBottom="3dp" android:textColor="@color/nearly_white" android:textSize="9sp" />
+            <TextView android:id="@+id/judul" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:singleLine="true" android:ellipsize="end" android:textColor="#DE000000" android:textSize="16sp" />
+        </LinearLayout>
+        <TextView android:id="@+id/subjudul" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="#99000000" android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>

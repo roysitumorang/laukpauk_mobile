@@ -1,7 +1,5 @@
 package id.laukpauk.data.local;
 
-import id.laukpauk.core.AppContainer;
-import id.laukpauk.core.Async;
 import id.laukpauk.util.Json;
 import androidx.core.content.pm.PackageInfoCompat;
 import android.content.Context;

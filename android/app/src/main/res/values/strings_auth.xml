@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_hint_nomor_hp">Nomor HP</string>
+    <string name="auth_hint_password">Password</string>
+    <string name="auth_hint_nama">Nama Lengkap</string>
+    <string name="auth_hint_konfirmasi_password">Konfirmasi Password</string>
+    <string name="auth_hint_kode_referal">Kode Referal (Opsional)</string>
+    <string name="auth_hint_kode_otp">Kode OTP</string>
+    <string name="auth_hint_kode_verifikasi">Kode Verifikasi</string>
+    <string name="auth_hint_nomor_telepon">Nomor Telepon</string>
+    <string name="auth_tampilkan_password">Tampilkan password</string>
+    <string name="auth_login">Login</string>
+    <string name="auth_registrasi">Registrasi</string>
+    <string name="auth_belum_punya_akun">Belum punya akun? Registrasi </string>
+    <string name="auth_sudah_punya_akun">Sudah punya akun? Login </string>
+    <string name="auth_disini">disini</string>
+    <string name="auth_lupa_password">Lupa Password</string>
+    <string name="auth_reset_password">Reset Password</string>
+    <string name="auth_loading">Loading</string>
+    <string name="auth_loading_pesan">Mohon sebentar, aplikasi sedang memuat konten ...</string>
+    <string name="auth_info_referal">Dapatkan uang belanja GRATIS ketika anda menggunakan Kode Referral dari Teman/Keluarga/Sahabat.</string>
+    <string name="auth_gagal_koneksi">Sistem gagal melakukan operasi. Silahkan ulangi lagi!</string>
+
+    <string name="auth_login_judul">Autentikasi User</string>
+    <string name="auth_login_gagal">Kombinasi nomor telepon dan password tidak sesuai !</string>
+    <string name="auth_login_gagal_saran">Silahkan ke halaman lupa password untuk memulihkan password anda !</string>
+    <string name="auth_tutup">Tutup</string>
+
+    <string name="auth_register_judul">Registrasi</string>
+    <string name="auth_register_berhasil">Registrasi berhasil ! Silahkan konfirmasikan kode OTP yang kami kirim ke nomor yang anda gunakan untuk mendaftar!</string>
+    <string name="auth_register_gagal">Gagal Registrasi ! %1$s</string>
+    <string name="auth_ok">OK</string>
+    <string name="auth_konfirmasi_otp_aksi">Konfirmasi OTP</string>
+
+    <string name="auth_otp_catatan">Silahkan masukkan kode OTP yang dikirim ke nomor yang anda daftarkan</string>
+    <string name="auth_konfirmasi_otp">Konfirmasi OTP</string>
+    <string name="auth_lewati">Lewati</string>
+    <string name="auth_otp_berhasil">Konfirmasi OTP Berhasil ! Anda sudah terautentikasi, jadi anda tidak perlu login kembali.</string>
+    <string name="auth_otp_gagal">Konfirmasi OTP gagal, silahkan ulangi kembali !</string>
+    <string name="auth_masuk">Masuk</string>
+
+    <string name="auth_verifikasi">Verifikasi</string>
+    <string name="auth_verifikasi_judul">Verifikasi User</string>
+    <string name="auth_verifikasi_gagal">Verifikasi User gagal, silahkan ulangi kembali !</string>
+    <string name="auth_verifikasi_pesan">Silahkan masukkan kode OTP Verifikasi User yang dikirim ke nomor yang anda daftarkan%1$s</string>
+    <string name="auth_verifikasi_pesan_penjual"> dan tentukan lokasi anda berjualan untuk dapat berjualan.</string>
+    <string name="auth_verifikasi_pesan_pembeli">.</string>
+    <string name="auth_pasar_tempat_berjualan">Pasar Tempat Berjualan</string>
+    <string name="auth_lokasi_tersendiri">Lokasi Tersendiri</string>
+    <string name="auth_pasar_hint">Type Here</string>
+    <string name="auth_pasar_kosong">Tidak ada pasar yang bisa dipilih</string>
+    <string name="auth_catatan_penjual">Anda adalah penjual di aplikasi sebelumnya, oleh karena itu anda diminta untuk menentukan lokasi berjualan agar pembeli mudah menemukan anda</string>
+
+    <string name="auth_otp_belum_terverifikasi">OTP Belum Terverifikasi</string>
+    <string name="auth_otp_masukkan_ulang">Silahkan masukkan ulang kode otp yang dikirimkan ke HP anda</string>
+    <string name="auth_verifikasi_otp">Verifikasi OTP</string>
+    <string name="auth_kirim_ulang">Kirim Ulang </string>
+    <string name="auth_home">Home </string>
+
+    <string name="auth_kirim_otp">Kirim OTP</string>
+    <string name="auth_note">Note</string>
+    <string name="auth_note_isi">Verifikasi kode OTP hanya bisa dilakukan sekali dalam sehari</string>
+
+    <string name="auth_recovery_judul">Recovery Password</string>
+    <string name="auth_recovery_berhasil">Password baru telah dikirimkan melalui SMS. Silahkan login ulang menggunakan password baru Anda</string>
+</resources>

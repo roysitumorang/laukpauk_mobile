@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="checkout_text">#DD000000</color>
+    <color name="checkout_field_fill">#3366CC99</color>
+    <color name="checkout_amber_box">#35FFC107</color>
+    <color name="checkout_info_box">#3517A2B8</color>
+    <color name="checkout_selected">#6666CC99</color>
+    <color name="checkout_overlay">#9FFFFFFF</color>
+    <color name="checkout_divider">#FFE0E0E0</color>
+</resources>

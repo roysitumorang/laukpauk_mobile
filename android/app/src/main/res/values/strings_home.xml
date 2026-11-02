@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Header -->
+    <string name="home_header_diantarin">Diantarin ke mana ?</string>
+    <string name="home_header_cari_hint">Cari Toko atau Sayuran Segar</string>
+    <string name="home_header_keranjang">Keranjang</string>
+    <string name="home_header_notifikasi">Notifikasi</string>
+    <string name="home_badge_9plus">9+</string>
+    <string name="home_alamat_lanjut">%1$s ...</string>
+
+    <!-- Home page -->
+    <string name="home_wallet_dompet">Dompet</string>
+    <string name="home_wallet_voucher">Voucher</string>
+    <string name="home_wallet_poin">Poin</string>
+    <string name="home_wallet_kode">Kode</string>
+    <string name="home_wallet_referal">Referal</string>
+    <string name="home_wallet_mengambil">Mengambil data ...</string>
+    <string name="home_wallet_belum_voucher">Belum Ada Voucher</string>
+    <string name="home_wallet_voucher_jumlah">%1$s Voucher</string>
+    <string name="home_pasar_title">Pasar</string>
+    <string name="home_lihat_semua_kecil">Lihat semua</string>
+    <string name="home_lihat_semua">Lihat Semua</string>
+    <string name="home_pasar_mencari">Sedang Mencari Pasar ..</string>
+    <string name="home_pasar_kosong">Yahh! Belum ada pasar disekitar lokasimu mak. Maaf ya mak...</string>
+    <string name="home_pasar_jarak">%1$s KM</string>
+    <string name="home_pilih_lokasi_lain">Pilih Lokasi Lain</string>
+    <string name="home_pasar_terdekat">Pasar Terdekat</string>
+    <string name="home_produk_pasar">Produk Pasar %1$s</string>
+    <string name="home_konten_kosong">Tidak Ada Item Konten !</string>
+    <string name="home_artikel_title">Artikel</string>
+    <string name="home_artikel_kosong">Tidak ada artikel yang bisa dibaca</string>
+    <string name="home_artikel_judul_panjang">%1$s .. read more</string>
+    <string name="home_konten_ket_panjang">%1$s.. read more</string>
+    <string name="home_url_tidak_bisa">URL tidak bisa diakses !</string>
+    <string name="home_app_name">Lauk Pauk</string>
+
+    <!-- Product tiles -->
+    <string name="home_beli">Beli</string>
+    <string name="home_hemat">Hemat %1$s</string>
+    <string name="home_promo">Promo</string>
+    <string name="home_tanpa_harga">Tidak ada daftar harga</string>
+    <string name="home_stok_habis">Stok tidak tersedia</string>
+    <string name="home_penjual_tidak_diketahui">Penjual Tidak Diketahui</string>
+    <string name="home_produk_tanpa_harga">Produk ini tidak memiliki daftar harga</string>
+    <string name="home_diskon_chip">-%1$s</string>
+
+    <!-- Semua Pasar / Semua Kategori Produk / List Produk -->
+    <string name="home_semua_pasar_title">Semua Pasar</string>
+    <string name="home_cari_pasar_hint">Cari Pasar dengan Nama</string>
+    <string name="home_semua_kategori_title">Semua Kategori Produk</string>
+    <string name="home_cari_kategori_hint">Cari Kategori Produk di sini ..</string>
+    <string name="home_kategori_kosong">Kategori Produk Tidak Ada</string>
+    <string name="home_list_title">Daftar Produk</string>
+    <string name="home_list_subtitle_kategori">Berikut ini adalah produk di dalam kategori \"%1$s\"</string>
+    <string name="home_list_subtitle_konten">Berikut ini adalah produk - produk %1$s</string>
+    <string name="home_cari_produk_hint">Cari Produk dengan Nama</string>
+    <string name="home_list_kosong">Tidak ada produk. Yuk mak, cari - cari lagi produk lainnya dan dapatkan produk yang mamak cari!</string>
+    <string name="home_list_ganti_penjual">Tampilkan toko</string>
+    <string name="home_list_ganti_produk">Tampilkan produk</string>
+</resources>

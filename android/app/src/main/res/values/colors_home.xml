@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Flutter's default text colour (black87) -->
+    <color name="home_text">#DD000000</color>
+    <color name="home_overlay_30">#4D000000</color>
+    <color name="home_overlay_40">#66000000</color>
+    <color name="home_amber">#FFC107</color>
+    <color name="home_badge_red">#F44336</color>
+    <color name="home_histori_bg">#FFF1F1F1</color>
+    <color name="home_ripple">#22000000</color>
+    <color name="home_loading_overlay">#AAFFFFFF</color>
+</resources>

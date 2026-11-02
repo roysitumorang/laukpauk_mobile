@@ -10,10 +10,31 @@ import id.laukpauk.data.local.SessionStore;
 import id.laukpauk.data.local.Prefs;
 import id.laukpauk.data.remote.ApiClient;
 import id.laukpauk.data.repository.RepositoryDeps;
+import id.laukpauk.data.repository.AccountRepository;
+import id.laukpauk.data.repository.AuthRepository;
 import id.laukpauk.data.repository.CartRepository;
+import id.laukpauk.data.repository.CheckoutRepository;
 import id.laukpauk.data.repository.DeliveryRepository;
+import id.laukpauk.data.repository.HistoriPenjualanRepository;
+import id.laukpauk.data.repository.HomeRepository;
 import id.laukpauk.data.repository.NotifikasiRepository;
+import id.laukpauk.data.repository.PaketRepository;
+import id.laukpauk.data.repository.PasarRepository;
+import id.laukpauk.data.repository.PaymentRepository;
+import id.laukpauk.data.repository.PesananMasukRepository;
+import id.laukpauk.data.repository.ProdukPenjualRepository;
+import id.laukpauk.data.repository.ProdukRepository;
+import id.laukpauk.data.repository.PromoRepository;
+import id.laukpauk.data.repository.RepeatOrderRepository;
+import id.laukpauk.data.repository.ResepRepository;
+import id.laukpauk.data.repository.SearchRepository;
 import id.laukpauk.data.repository.SettingRepository;
+import id.laukpauk.data.repository.ShopRepository;
+import id.laukpauk.data.repository.StartupRepository;
+import id.laukpauk.data.repository.TokoSayaRepository;
+import id.laukpauk.data.repository.TransaksiRepository;
+import id.laukpauk.data.repository.UserRepository;
+import id.laukpauk.data.repository.VoucherRepository;
 import id.laukpauk.util.AppExecutors;
 
 /**
@@ -32,10 +53,31 @@ public final class AppContainer {
     public final AppExecutors executors;
     private final RepositoryDeps repositoryDeps;
 
+    public final AccountRepository accountRepository;
+    public final AuthRepository authRepository;
     public final CartRepository cartRepository;
+    public final CheckoutRepository checkoutRepository;
     public final DeliveryRepository deliveryRepository;
+    public final HistoriPenjualanRepository historiPenjualanRepository;
+    public final HomeRepository homeRepository;
     public final NotifikasiRepository notifikasiRepository;
+    public final PaketRepository paketRepository;
+    public final PasarRepository pasarRepository;
+    public final PaymentRepository paymentRepository;
+    public final PesananMasukRepository pesananMasukRepository;
+    public final ProdukPenjualRepository produkPenjualRepository;
+    public final ProdukRepository produkRepository;
+    public final PromoRepository promoRepository;
+    public final RepeatOrderRepository repeatOrderRepository;
+    public final ResepRepository resepRepository;
+    public final SearchRepository searchRepository;
     public final SettingRepository settingRepository;
+    public final ShopRepository shopRepository;
+    public final StartupRepository startupRepository;
+    public final TokoSayaRepository tokoSayaRepository;
+    public final TransaksiRepository transaksiRepository;
+    public final UserRepository userRepository;
+    public final VoucherRepository voucherRepository;
 
     public AppContainer(Application application) {
         this.application = application;
@@ -47,7 +89,28 @@ public final class AppContainer {
         this.deliveryRepository = new DeliveryRepository(repositoryDeps);
         this.cartRepository = new CartRepository(repositoryDeps, this.deliveryRepository);
         this.notifikasiRepository = new NotifikasiRepository(repositoryDeps);
+        this.accountRepository = new AccountRepository(repositoryDeps, this.cartRepository, this.notifikasiRepository);
+        this.authRepository = new AuthRepository(repositoryDeps, this.cartRepository, this.notifikasiRepository);
         this.settingRepository = new SettingRepository(repositoryDeps);
+        this.checkoutRepository = new CheckoutRepository(repositoryDeps, this.settingRepository);
+        this.tokoSayaRepository = new TokoSayaRepository(repositoryDeps);
+        this.historiPenjualanRepository = new HistoriPenjualanRepository(repositoryDeps, this.tokoSayaRepository);
+        this.homeRepository = new HomeRepository(repositoryDeps, this.deliveryRepository);
+        this.paketRepository = new PaketRepository(repositoryDeps, this.deliveryRepository);
+        this.pasarRepository = new PasarRepository(repositoryDeps, this.deliveryRepository);
+        this.paymentRepository = new PaymentRepository(repositoryDeps);
+        this.pesananMasukRepository = new PesananMasukRepository(repositoryDeps);
+        this.produkPenjualRepository = new ProdukPenjualRepository(repositoryDeps);
+        this.produkRepository = new ProdukRepository(repositoryDeps, this.deliveryRepository, this.settingRepository);
+        this.promoRepository = new PromoRepository(repositoryDeps, this.deliveryRepository);
+        this.repeatOrderRepository = new RepeatOrderRepository(repositoryDeps, this.deliveryRepository);
+        this.resepRepository = new ResepRepository(repositoryDeps, this.deliveryRepository);
+        this.searchRepository = new SearchRepository(repositoryDeps);
+        this.shopRepository = new ShopRepository(repositoryDeps);
+        this.startupRepository = new StartupRepository(repositoryDeps);
+        this.transaksiRepository = new TransaksiRepository(repositoryDeps, this.deliveryRepository);
+        this.userRepository = new UserRepository(repositoryDeps);
+        this.voucherRepository = new VoucherRepository(repositoryDeps);
     }
 
     /** The container of the running app, from any Context (Activity, Fragment's context, View, Application). */

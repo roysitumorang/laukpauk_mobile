@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recipe_search_hint">Cari Resep dengan Nama</string>
+    <string name="recipe_kosong">Tidak Ada Resep</string>
+    <string name="recipe_error_title">Exception Occured</string>
+    <string name="recipe_read_more">%1$s .. read more</string>
+    <string name="recipe_url_tidak_valid">URL Tidak Valid!</string>
+    <string name="recipe_url_tidak_valid_detail">URL Tidak Valid !</string>
+    <string name="recipe_detail_tidak_ditemukan">Detail Resep tidak Ditemukan !</string>
+    <string name="recipe_cara_masak">Cara Masak</string>
+    <string name="recipe_share">Share Resep</string>
+    <string name="recipe_share_text">Mak, pengen buat %1$s, terus gak pakek ribet belanja, sekali klik, semua bahan resep langsung masuk keranjang belanja, ya cuma di Laukpauk lah. Lagi ada promo tuh mak. Install-kan terus apps nya di bit.ly/laukpauk</string>
+    <string name="recipe_share_subject">Belanja Resep %1$s</string>
+    <string name="recipe_bahan">Bahan - bahan yang diperlukan : </string>
+    <string name="recipe_bahan_kosong">Bahan bahan yang diperlukan tidak ada</string>
+    <string name="recipe_pilih_satuan">Pilih Satuan</string>
+    <string name="recipe_tidak_ada_satuan">Tidak ada satuan</string>
+    <string name="recipe_diperlukan">Diperlukan %1$s</string>
+    <string name="recipe_item_count">%1$d Item</string>
+    <string name="recipe_diorder">Diorder %1$s</string>
+    <string name="recipe_sub_total">Sub Total %1$s</string>
+    <string name="recipe_total_belanja">Total Belanja</string>
+    <string name="recipe_belanja">Belanja Resep</string>
+    <string name="recipe_berhasil_keranjang">Berhasil menambah resep item ke keranjang belanja !</string>
+    <string name="recipe_adjd_siap">Anda sudah bisa berbelanja resep, silahkan lanjutkan belanjanya ya mak!</string>
+</resources>
