@@ -1,5 +1,8 @@
-package id.laukpauk.core;
+package id.laukpauk.data.local;
 
+import id.laukpauk.core.AppContainer;
+import id.laukpauk.core.Async;
+import id.laukpauk.util.Json;
 import androidx.core.content.pm.PackageInfoCompat;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -12,21 +15,19 @@ import java.util.Calendar;
 import id.laukpauk.BuildConfig;
 
 /**
- * Port of lib/libraries/LocalStorage.dart.
- * Methods are synchronous; the ones that hit the network (marked NETWORK) must be called from a
- * background thread (Async.run / BaseActivity.async).
+ * The signed-in session and the values the app keeps between launches (auth token, user id, cart code,
+ * saved delivery address/schedule, ...), stored in Flutter's SharedPreferences file so users stay logged in
+ * after updating from the Flutter build. Pure storage: no network calls (those live in the repositories).
  */
-public final class LocalStorage {
-    private final Context context;
-    private final Http http;
-    private final Prefs prefs;
+public final class SessionStore {
 
-    /** Created once by {@link AppContainer}; dependencies are injected, never looked up. */
-    public LocalStorage(Context context, Http http, Prefs prefs) {
+    public SessionStore(Context context, Prefs prefs) {
         this.context = context;
-        this.http = http;
         this.prefs = prefs;
     }
+    private final Context context;
+    private final Prefs prefs;
+
 
     public boolean isAlamatDeliveryDanJadwalDeliverySet() {
         return prefs.getBool("isAlamatDeliveryDanJadwalDeliverySet", false);
@@ -107,16 +108,6 @@ public final class LocalStorage {
         prefs.remove("usedVoucher");
     }
 
-    /** NETWORK. Returns 'kadaluarsa' when the request fails. */
-    public String getStatusVoucher(String idVoucher) {
-        String authToken = getAuthToken();
-        Http.Response r = http.getApi("/Voucher/getStatusVoucher/" + idVoucher
-                + "?authToken=" + authToken);
-        if (r.statusCode == 200) {
-            return Json.str(r.jsonObject(), "statusVoucher");
-        }
-        return "kadaluarsa";
-    }
 
     public void setExternalUserID(String externalUserID) {
         prefs.setString("externalUserID", externalUserID);
@@ -131,34 +122,11 @@ public final class LocalStorage {
         prefs.remove("externalUserID");
     }
 
-    /** NETWORK. 0 when not logged in / request failed. */
-    public int getIdPenjualFromActiveUser() {
-        String authToken = getAuthToken();
-        Http.Response r = http.getApi("/User/getDetailUser?getUserEntities=id&authToken="
-                + authToken);
-        if (r.statusCode == 200) {
-            JsonElement detailUser = Json.obj(r.json()).get("detailUser");
-            if (detailUser == null || Json.isFalse(detailUser) || !detailUser.isJsonObject()) {
-                return 0;
-            }
-            return Json.intVal(detailUser.getAsJsonObject(), "id", 0);
-        }
-        return 0;
-    }
 
     public String getApplicationID() {
         return "id.laukpauk";
     }
 
-    /** NETWORK. */
-    public boolean isUserVerified() {
-        String authToken = getAuthToken();
-        Http.Response r = http.getApi("/Auth/cekVerifikasiUser?authToken=" + authToken);
-        if (r.statusCode == 200) {
-            return Json.bool(r.jsonObject(), "isVerified");
-        }
-        return false;
-    }
 
     /** The saved delivery schedule (JSON map) or null. */
     public JsonObject savedJadwalDeliveryMap() {

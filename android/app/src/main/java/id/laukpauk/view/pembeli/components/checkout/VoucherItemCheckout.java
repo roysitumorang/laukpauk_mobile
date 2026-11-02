@@ -9,9 +9,9 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 
 import id.laukpauk.core.Async;
-import id.laukpauk.core.Currency;
-import id.laukpauk.core.Json;
-import id.laukpauk.core.ServerPath;
+import id.laukpauk.util.Currency;
+import id.laukpauk.util.Json;
+import id.laukpauk.util.ServerPath;
 import id.laukpauk.ui.Layouts;
 import id.laukpauk.ui.Ui;
 

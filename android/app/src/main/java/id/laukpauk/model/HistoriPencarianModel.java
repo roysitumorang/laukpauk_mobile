@@ -6,8 +6,8 @@ import com.google.gson.JsonArray;
 
 import java.util.Calendar;
 
-import id.laukpauk.core.Json;
-import id.laukpauk.core.Prefs;
+import id.laukpauk.util.Json;
+import id.laukpauk.data.local.Prefs;
 
 /** Port of lib/models/HistoriPencarianModel.dart (search history kept in SharedPreferences). */
 public final class HistoriPencarianModel {

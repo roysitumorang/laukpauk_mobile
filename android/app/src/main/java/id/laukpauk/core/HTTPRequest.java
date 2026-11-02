@@ -1,5 +1,6 @@
 package id.laukpauk.core;
 
+import id.laukpauk.data.local.LocalStorage;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

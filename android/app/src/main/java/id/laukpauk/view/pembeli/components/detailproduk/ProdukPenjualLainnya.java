@@ -7,11 +7,11 @@ import android.content.Context;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
-import id.laukpauk.core.ServerPath;
+import id.laukpauk.util.Json;
+import id.laukpauk.util.ServerPath;
 import id.laukpauk.view.pembeli.DetailProdukActivity;
 
 /** Port of lib/views/pembeli/components/DetailProduk/ProdukPenjualLainnya.dart. */

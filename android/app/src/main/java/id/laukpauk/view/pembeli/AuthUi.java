@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 
 import id.laukpauk.R;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Txt;
 import id.laukpauk.ui.Ui;

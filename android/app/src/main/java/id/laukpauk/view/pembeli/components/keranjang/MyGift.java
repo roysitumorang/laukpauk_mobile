@@ -13,8 +13,8 @@ import android.widget.ScrollView;
 
 import java.util.List;
 
-import id.laukpauk.core.CustomColors;
-import id.laukpauk.core.ServerPath;
+import id.laukpauk.util.CustomColors;
+import id.laukpauk.util.ServerPath;
 import id.laukpauk.element.Gift;
 import id.laukpauk.element.GiftTransaksi;
 import id.laukpauk.model.GiftModel;

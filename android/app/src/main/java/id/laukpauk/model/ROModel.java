@@ -12,8 +12,8 @@ import java.util.Map;
 
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
-import id.laukpauk.core.LocalStorage;
+import id.laukpauk.util.Json;
+import id.laukpauk.data.local.LocalStorage;
 
 /** Port of lib/models/ROModel.dart (repeat order). Blocking (network): call from a background thread. */
 public final class ROModel {

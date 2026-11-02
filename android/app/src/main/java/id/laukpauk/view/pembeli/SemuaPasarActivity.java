@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Ui;
 import id.laukpauk.view.pembeli.components.homepage.PasarSekitarSaya;

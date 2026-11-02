@@ -9,9 +9,9 @@ import android.widget.ImageView;
 
 import com.google.gson.JsonObject;
 
-import id.laukpauk.core.ClientPath;
-import id.laukpauk.core.Json;
-import id.laukpauk.core.Prefs;
+import id.laukpauk.util.ClientPath;
+import id.laukpauk.util.Json;
+import id.laukpauk.data.local.Prefs;
 import id.laukpauk.ui.CustomButton;
 import id.laukpauk.ui.Nav;
 import id.laukpauk.ui.Ui;

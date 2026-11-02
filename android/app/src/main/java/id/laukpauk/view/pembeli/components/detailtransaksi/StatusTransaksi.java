@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import id.laukpauk.R;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.ui.Ui;
 
 /** Port of lib/views/pembeli/components/DetailTransaksi/StatusTransaksi.dart (4 step delivery indicator). */

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.element.Gift;
 import id.laukpauk.element.GiftTransaksi;
 import id.laukpauk.model.GiftModel;

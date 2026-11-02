@@ -1,4 +1,4 @@
-package id.laukpauk.core;
+package id.laukpauk.util;
 
 import id.laukpauk.BuildConfig;
 

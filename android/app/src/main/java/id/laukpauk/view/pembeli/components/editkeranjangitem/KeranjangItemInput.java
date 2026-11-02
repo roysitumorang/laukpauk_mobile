@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import id.laukpauk.core.Async;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.ui.Txt;
 import id.laukpauk.ui.Ui;
 import id.laukpauk.view.pembeli.components.keranjang.CartUi;

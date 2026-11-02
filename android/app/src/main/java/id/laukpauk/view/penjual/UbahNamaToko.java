@@ -28,7 +28,7 @@ public class UbahNamaToko extends LinearLayout {
         ImageView arrow = Ui.icon(ctx, R.drawable.ic_arrow_circle_right, Ui.hb(ctx) * 5, 0xDD000000);
         Ui.onTap(arrow, () -> Nav.pushForResult((BaseActivity) ctx, UbahNamaTokoFormActivity.class, null, result -> {
             Boolean statusUbahNamaToko = (result != null && result.isJsonPrimitive())
-                    ? Boolean.valueOf(id.laukpauk.core.Json.asBool(result, false)) : null;
+                    ? Boolean.valueOf(id.laukpauk.util.Json.asBool(result, false)) : null;
             ubahNamaTokoCallback.run(statusUbahNamaToko);
         }));
         row.addView(arrow);

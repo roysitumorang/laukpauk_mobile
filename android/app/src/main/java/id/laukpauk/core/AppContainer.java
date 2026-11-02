@@ -1,5 +1,7 @@
 package id.laukpauk.core;
 
+import id.laukpauk.data.local.LocalStorage;
+import id.laukpauk.data.local.Prefs;
 import android.app.Application;
 import android.content.Context;
 

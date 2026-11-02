@@ -3,7 +3,7 @@ package id.laukpauk.element;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 
 /** Port of lib/element-class/Gift.dart. All fields are nullable like the Dart ones. */
 public final class Gift {

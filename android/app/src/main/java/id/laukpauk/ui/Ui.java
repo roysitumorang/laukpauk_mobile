@@ -29,7 +29,7 @@ import com.bumptech.glide.request.RequestOptions;
 import java.io.IOException;
 import java.io.InputStream;
 
-import id.laukpauk.core.ClientPath;
+import id.laukpauk.util.ClientPath;
 
 /**
  * View-building helpers that stand in for Flutter's widget constructors.

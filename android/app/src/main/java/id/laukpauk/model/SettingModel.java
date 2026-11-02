@@ -8,7 +8,7 @@ import com.google.gson.JsonPrimitive;
 
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 
 /**
  * Port of lib/models/SettingModel.dart. BLOCKING (network). Both methods return Dart's `dynamic`:

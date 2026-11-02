@@ -11,8 +11,8 @@ import java.util.List;
 
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
-import id.laukpauk.core.LocalStorage;
+import id.laukpauk.util.Json;
+import id.laukpauk.data.local.LocalStorage;
 import id.laukpauk.element.GiftTransaksi;
 
 /** Port of lib/models/GiftTransaksiModel.dart. BLOCKING (network). */

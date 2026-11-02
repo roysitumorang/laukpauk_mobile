@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
 
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 
 /** Port of lib/models/UserModel.dart. BLOCKING (network). */
 public final class UserModel {

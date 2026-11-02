@@ -5,7 +5,7 @@ import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.model.TransaksiModel;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.CustomButton;

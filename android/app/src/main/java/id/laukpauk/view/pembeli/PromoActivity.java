@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import com.google.gson.JsonObject;
 
 import id.laukpauk.core.AppState;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.model.HeaderModel;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.CustomButton;

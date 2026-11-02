@@ -11,7 +11,7 @@ import java.util.List;
 
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.element.Gift;
 
 /** Port of lib/models/GiftModel.dart. Both methods are BLOCKING (network). */

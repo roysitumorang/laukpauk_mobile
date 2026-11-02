@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 
 import id.laukpauk.R;
 import id.laukpauk.core.Async;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 
 /**
  * lib/global-components/Pencarian.dart: a pill shaped search field with a search and (when the given

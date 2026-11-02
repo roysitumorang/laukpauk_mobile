@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.model.KontenModel;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Layouts;

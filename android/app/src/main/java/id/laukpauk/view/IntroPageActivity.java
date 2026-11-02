@@ -15,8 +15,8 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import id.laukpauk.core.ClientPath;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.ClientPath;
+import id.laukpauk.util.Json;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Ui;
 import id.laukpauk.view.components.intropage.IntroPageIndicator;

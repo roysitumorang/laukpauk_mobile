@@ -8,9 +8,9 @@ import android.widget.LinearLayout;
 
 import com.google.gson.JsonObject;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.core.Async;
-import id.laukpauk.core.LocalStorage;
+import id.laukpauk.data.local.LocalStorage;
 import id.laukpauk.model.MainModel;
 import id.laukpauk.model.SplashScreenModel;
 import id.laukpauk.model.TransaksiModel;
@@ -58,7 +58,7 @@ public class SplashScreenActivity extends BaseActivity {
     private void initialization() {
         final String routeToClass = AuthRoute.routeClass(args());
         final JsonObject routeToArgs = AuthRoute.routeArgs(args());
-        boolean removeTransactionSession = id.laukpauk.core.Json.bool(args(), "removeTransactionSession");
+        boolean removeTransactionSession = id.laukpauk.util.Json.bool(args(), "removeTransactionSession");
 
         if (removeTransactionSession) {
             container().transaksiModel.removeTransactionSession(this, null);

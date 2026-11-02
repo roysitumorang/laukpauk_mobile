@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Laukpauk</string>
+    <string name="nav_beranda">Beranda</string>
+    <string name="nav_pesanan">Pesanan</string>
+    <string name="nav_resep">Resep</string>
+    <string name="nav_promo">Promo</string>
+    <string name="nav_akun">Akun</string>
+    <!-- Notifikasi -->
+    <string name="notifikasi_tab_info">Info</string>
+    <string name="notifikasi_tab_khusus">Notifikasi</string>
+    <string name="notifikasi_info_kosong">Mak, belum ada info terbaru nih...</string>
+    <string name="notifikasi_khusus_kosong">Tidak ada notifikasi apapun untuk anda</string>
+    <string name="notifikasi_sudah_dibaca">Sudah dibaca</string>
+    <string name="notifikasi_belum_dibaca">Belum dibaca</string>
+    <string name="notifikasi_gagal_ubah_status">Gagal mengubah status notifikasi. Silahkan coba lagi !</string>
+    <string name="notifikasi_tidak_terdaftar">Notifikasi Tidak Terdaftar !</string>
+    <string name="notifikasi_pada">Pada %1$s</string>
 </resources>

@@ -13,8 +13,8 @@ import com.google.gson.JsonObject;
 
 import java.util.Locale;
 
-import id.laukpauk.core.Json;
-import id.laukpauk.core.ServerPath;
+import id.laukpauk.util.Json;
+import id.laukpauk.util.ServerPath;
 import id.laukpauk.ui.Layouts;
 import id.laukpauk.ui.Nav;
 import id.laukpauk.ui.Ui;

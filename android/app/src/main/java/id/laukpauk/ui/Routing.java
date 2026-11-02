@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 
 import java.util.Map;
 
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.view.SplashScreenActivity;
 import id.laukpauk.view.penjual.ProsesPesananActivity;
 import id.laukpauk.view.penjual.TokoSayaActivity;

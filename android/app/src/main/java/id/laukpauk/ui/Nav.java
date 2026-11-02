@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import id.laukpauk.core.Async;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 
 /**
  * Flutter's Navigator for Activities.

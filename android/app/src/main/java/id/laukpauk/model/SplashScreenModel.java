@@ -5,8 +5,8 @@ import id.laukpauk.core.AppContainer;
 import com.google.gson.JsonElement;
 
 import id.laukpauk.core.Async;
-import id.laukpauk.core.Json;
-import id.laukpauk.core.Prefs;
+import id.laukpauk.util.Json;
+import id.laukpauk.data.local.Prefs;
 
 /** Port of lib/models/SplashScreenModel.dart. All methods are BLOCKING (call from a background thread). */
 public final class SplashScreenModel {

@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.ui.Nav;
 import id.laukpauk.ui.Ui;
 import id.laukpauk.view.pembeli.UserAndDashboardActivity;

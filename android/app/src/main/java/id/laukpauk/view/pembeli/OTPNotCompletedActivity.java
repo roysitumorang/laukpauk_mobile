@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.CustomButton;
 import id.laukpauk.ui.Nav;

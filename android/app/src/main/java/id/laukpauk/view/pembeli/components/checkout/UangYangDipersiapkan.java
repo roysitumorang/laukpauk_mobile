@@ -14,8 +14,8 @@ import com.google.gson.JsonObject;
 
 import id.laukpauk.R;
 import id.laukpauk.core.Async;
-import id.laukpauk.core.Currency;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.Currency;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.CustomButton;
 import id.laukpauk.ui.Ui;

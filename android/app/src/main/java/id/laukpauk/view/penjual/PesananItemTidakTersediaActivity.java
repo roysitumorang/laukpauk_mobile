@@ -11,10 +11,10 @@ import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.CustomButton;
 import id.laukpauk.ui.Ui;

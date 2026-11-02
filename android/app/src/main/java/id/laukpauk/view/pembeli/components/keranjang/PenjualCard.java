@@ -12,8 +12,8 @@ import com.google.gson.JsonObject;
 
 import id.laukpauk.R;
 import id.laukpauk.core.Async;
-import id.laukpauk.core.CustomColors;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.CustomColors;
+import id.laukpauk.util.Json;
 import id.laukpauk.ui.Layouts;
 import id.laukpauk.ui.Nav;
 import id.laukpauk.ui.Ui;

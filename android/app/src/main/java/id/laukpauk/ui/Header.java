@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 import id.laukpauk.R;
 import id.laukpauk.core.Async;
 import id.laukpauk.core.AppState;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.model.ADJDModel;
 import id.laukpauk.model.HeaderModel;
 import id.laukpauk.view.pembeli.KeranjangActivity;

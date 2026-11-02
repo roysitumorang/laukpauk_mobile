@@ -7,8 +7,8 @@ import com.google.gson.JsonObject;
 
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
-import id.laukpauk.core.ServerPath;
+import id.laukpauk.util.Json;
+import id.laukpauk.util.ServerPath;
 
 /** Port of lib/models/HomepageModel.dart. Every method is BLOCKING (network). */
 public final class HomepageModel {

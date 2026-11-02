@@ -5,7 +5,7 @@ import android.widget.LinearLayout;
 
 import com.google.gson.JsonArray;
 
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.ui.Ui;
 
 /** Port of lib/views/pembeli/components/HomePage/ProdukPasarSekitar.dart (class ProdukPasarSekitar). */

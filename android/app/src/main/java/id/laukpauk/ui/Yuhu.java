@@ -5,7 +5,7 @@ import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 
 /** lib/global-components/Yuhu.dart: the "selisih timbangan" notice card. */
 public class Yuhu extends LinearLayout {

@@ -30,7 +30,7 @@ import java.util.Locale;
 
 import id.laukpauk.R;
 import id.laukpauk.core.Async;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 
 /**
  * Port of lib/global-components/CustomForm.dart (static form-field builders).

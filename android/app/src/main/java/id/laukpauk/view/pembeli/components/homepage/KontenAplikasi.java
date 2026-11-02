@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 
 import com.google.gson.JsonArray;
 
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.model.KontenModel;
 import id.laukpauk.ui.Loading;
 import id.laukpauk.ui.Ui;

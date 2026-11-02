@@ -7,8 +7,8 @@ import com.google.gson.JsonObject;
 
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
-import id.laukpauk.core.LocalStorage;
+import id.laukpauk.util.Json;
+import id.laukpauk.data.local.LocalStorage;
 
 /** Port of lib/models/PasarModel.dart. BLOCKING (network). */
 public final class PasarModel {

@@ -1,4 +1,4 @@
-package id.laukpauk.core;
+package id.laukpauk.util;
 
 /** Port of lib/libraries/DefaultImage.dart. */
 public final class DefaultImage {

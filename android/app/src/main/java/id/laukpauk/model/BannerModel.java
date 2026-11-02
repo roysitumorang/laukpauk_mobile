@@ -6,7 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 
 /** Port of lib/models/BannerModel.dart. */
 public final class BannerModel {

@@ -8,7 +8,7 @@ import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 
 /** Small helpers shared by the Resep widgets (url_launcher + SnackBar equivalents). */
 public final class ResepUi {

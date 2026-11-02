@@ -14,12 +14,12 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 
-import id.laukpauk.core.Currency;
-import id.laukpauk.core.CustomColors;
-import id.laukpauk.core.DefaultImage;
-import id.laukpauk.core.Json;
-import id.laukpauk.core.LocalStorage;
-import id.laukpauk.core.ServerPath;
+import id.laukpauk.util.Currency;
+import id.laukpauk.util.CustomColors;
+import id.laukpauk.util.DefaultImage;
+import id.laukpauk.util.Json;
+import id.laukpauk.data.local.LocalStorage;
+import id.laukpauk.util.ServerPath;
 import id.laukpauk.model.PaketModel;
 import id.laukpauk.core.AppState;
 import id.laukpauk.model.HeaderModel;

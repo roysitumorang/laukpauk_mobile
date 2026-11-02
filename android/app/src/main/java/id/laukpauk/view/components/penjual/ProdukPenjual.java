@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.Locale;
 
 import id.laukpauk.core.AppState;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.model.HeaderModel;
 import id.laukpauk.model.ProdukModel;
 import id.laukpauk.ui.BaseActivity;

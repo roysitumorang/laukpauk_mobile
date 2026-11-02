@@ -16,7 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import id.laukpauk.core.AuthModel;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.CustomAlert;
 import id.laukpauk.ui.Layouts;

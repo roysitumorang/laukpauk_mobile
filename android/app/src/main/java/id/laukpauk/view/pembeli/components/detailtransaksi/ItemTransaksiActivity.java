@@ -4,9 +4,9 @@ import android.os.Bundle;
 
 import com.google.gson.JsonObject;
 
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.ui.BaseActivity;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 
 /**
  * ItemTransaksi pushed as a route (HistoriPenjualanItem).

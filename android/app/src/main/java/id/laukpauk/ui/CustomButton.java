@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 
 /**
  * Port of lib/global-components/CustomButton.dart.

@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import id.laukpauk.R;
 import id.laukpauk.core.Async;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Layouts;
 import id.laukpauk.ui.Ui;

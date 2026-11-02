@@ -14,8 +14,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 import id.laukpauk.core.Async;
-import id.laukpauk.core.CustomColors;
-import id.laukpauk.core.LocalStorage;
+import id.laukpauk.util.CustomColors;
+import id.laukpauk.data.local.LocalStorage;
 import id.laukpauk.ui.CustomButton;
 import id.laukpauk.ui.Nav;
 import id.laukpauk.ui.Ui;
@@ -49,7 +49,7 @@ public class ListKeranjang extends FrameLayout {
         if (dataKeranjangPerPenjual.size() >= 1) {
             final LinearLayout list = Ui.column(ctx);
             for (JsonElement item : dataKeranjangPerPenjual) {
-                list.addView(new PenjualCard(ctx, id.laukpauk.core.Json.obj(item), onRemoveItemSuccessed,
+                list.addView(new PenjualCard(ctx, id.laukpauk.util.Json.obj(item), onRemoveItemSuccessed,
                         onEditItemSuccessed));
             }
             final FrameLayout giftHolder = new FrameLayout(ctx);

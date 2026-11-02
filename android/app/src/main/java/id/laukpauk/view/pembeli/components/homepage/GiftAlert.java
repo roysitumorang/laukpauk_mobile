@@ -17,9 +17,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import java.util.List;
 
 import id.laukpauk.R;
-import id.laukpauk.core.CustomColors;
-import id.laukpauk.core.Prefs;
-import id.laukpauk.core.ServerPath;
+import id.laukpauk.util.CustomColors;
+import id.laukpauk.data.local.Prefs;
+import id.laukpauk.util.ServerPath;
 import id.laukpauk.element.Gift;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Modal;

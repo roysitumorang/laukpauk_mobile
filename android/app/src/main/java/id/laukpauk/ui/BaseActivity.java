@@ -30,8 +30,8 @@ import java.util.Map;
 
 import id.laukpauk.core.AppContainer;
 import id.laukpauk.core.Async;
-import id.laukpauk.core.CustomColors;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.CustomColors;
+import id.laukpauk.util.Json;
 
 /**
  * Base class of every screen (the Dart "views/*.dart" StatefulWidgets that were pushed on the

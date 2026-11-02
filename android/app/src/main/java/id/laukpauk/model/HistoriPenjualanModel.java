@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 
 /** Port of lib/models/HistoriPenjualanModel.dart. Every method is BLOCKING (network). */
 public final class HistoriPenjualanModel {

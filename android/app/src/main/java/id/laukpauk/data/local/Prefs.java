@@ -1,5 +1,6 @@
-package id.laukpauk.core;
+package id.laukpauk.data.local;
 
+import id.laukpauk.core.AppContainer;
 import android.content.Context;
 import android.content.SharedPreferences;
 

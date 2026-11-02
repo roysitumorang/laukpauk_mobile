@@ -15,8 +15,8 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import id.laukpauk.core.CustomColors;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.CustomColors;
+import id.laukpauk.util.Json;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Footer;
 import id.laukpauk.ui.Header;

@@ -1,4 +1,4 @@
-package id.laukpauk.core;
+package id.laukpauk.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

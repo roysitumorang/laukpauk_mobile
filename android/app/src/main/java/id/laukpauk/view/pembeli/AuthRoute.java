@@ -4,7 +4,7 @@ import android.app.Activity;
 
 import com.google.gson.JsonObject;
 
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.ui.Nav;
 
 /**

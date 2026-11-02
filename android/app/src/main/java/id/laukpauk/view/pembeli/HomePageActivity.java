@@ -6,7 +6,7 @@ import android.widget.LinearLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import id.laukpauk.core.AppState;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.model.HeaderModel;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Footer;

@@ -9,7 +9,7 @@ import java.util.Map;
 import id.laukpauk.core.Async;
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.CustomAlert;
 

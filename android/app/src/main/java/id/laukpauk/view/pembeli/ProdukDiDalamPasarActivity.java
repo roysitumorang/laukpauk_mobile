@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.laukpauk.core.AppState;
-import id.laukpauk.core.CustomColors;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.CustomColors;
+import id.laukpauk.util.Json;
 import id.laukpauk.model.ADJDModel;
 import id.laukpauk.model.HeaderModel;
 import id.laukpauk.model.PasarModel;

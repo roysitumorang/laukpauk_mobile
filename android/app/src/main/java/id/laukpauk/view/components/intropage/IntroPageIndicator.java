@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.ui.Ui;
 
 /** lib/views/components/IntroPage/IntroPageIndicator.dart: dots with an animated active one (250 ms). */

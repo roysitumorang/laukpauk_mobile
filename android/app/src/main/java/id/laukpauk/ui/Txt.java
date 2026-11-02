@@ -6,7 +6,7 @@ import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 
 /**
  * Port of lib/libraries/CustomText.dart: named text styles sized in "horizontal blocks"

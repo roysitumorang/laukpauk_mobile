@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import id.laukpauk.BuildConfig;
 import id.laukpauk.core.Async;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 
 /**
  * Port of the native credit-card tokenization that the Flutter app reached through

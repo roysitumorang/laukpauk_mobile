@@ -6,7 +6,7 @@ import com.google.gson.JsonArray;
 
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 
 /** Port of lib/models/PaymentChannelModel.dart. Blocking (network): call from a background thread. */
 public final class PaymentChannelModel {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Item ids are the destination ids of the five top-level screens (NavigationUI matches them). -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/homePageFragment" android:icon="@drawable/nav_beranda" android:title="@string/nav_beranda" />
+    <item android:id="@id/pesananSayaFragment" android:icon="@drawable/nav_pesanan" android:title="@string/nav_pesanan" />
+    <item android:id="@id/resepFragment" android:icon="@drawable/nav_pahlawan_dapur" android:title="@string/nav_resep" />
+    <item android:id="@id/promoFragment" android:icon="@drawable/nav_promo" android:title="@string/nav_promo" />
+    <item android:id="@id/userAndDashboardFragment" android:icon="@drawable/nav_akun" android:title="@string/nav_akun" />
+</menu>

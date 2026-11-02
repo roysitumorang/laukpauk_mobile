@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.view.pembeli.HomePageActivity;
 import id.laukpauk.view.pembeli.PesananSayaActivity;
 import id.laukpauk.view.pembeli.PromoActivity;

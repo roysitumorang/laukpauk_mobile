@@ -11,8 +11,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.JsonArray;
 
-import id.laukpauk.core.CustomColors;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.CustomColors;
+import id.laukpauk.util.Json;
 import id.laukpauk.model.NotifikasiModel;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Loading;

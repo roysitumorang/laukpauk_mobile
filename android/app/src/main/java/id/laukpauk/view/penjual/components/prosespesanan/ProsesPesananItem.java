@@ -17,12 +17,12 @@ import java.util.Map;
 
 import id.laukpauk.R;
 import id.laukpauk.core.Async;
-import id.laukpauk.core.Currency;
-import id.laukpauk.core.CustomColors;
+import id.laukpauk.util.Currency;
+import id.laukpauk.util.CustomColors;
 import id.laukpauk.core.HTTPRequest;
 import id.laukpauk.core.Http;
-import id.laukpauk.core.Json;
-import id.laukpauk.core.ServerPath;
+import id.laukpauk.util.Json;
+import id.laukpauk.util.ServerPath;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Nav;
 import id.laukpauk.ui.Ui;

@@ -1,4 +1,4 @@
-package id.laukpauk.core;
+package id.laukpauk.util;
 
 /** Port of lib/libraries/CustomColors.dart. Values are ARGB ints (same 0xAARRGGBB as Dart's Color). */
 public final class CustomColors {

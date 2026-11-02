@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 import id.laukpauk.core.Async;
-import id.laukpauk.core.Json;
+import id.laukpauk.util.Json;
 import id.laukpauk.ui.BaseActivity;
 import id.laukpauk.ui.Layouts;
 import id.laukpauk.ui.Pencarian;

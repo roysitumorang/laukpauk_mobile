@@ -76,7 +76,7 @@ public final class CheckoutUi {
         ProgressBar bar = new ProgressBar(ctx);
         bar.setIndeterminate(true);
         bar.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(
-                id.laukpauk.core.CustomColors.green));
+                id.laukpauk.util.CustomColors.green));
         FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(Ui.dp(ctx, sizeDp), Ui.dp(ctx, sizeDp),
                 android.view.Gravity.CENTER);
         center.addView(bar, p);
