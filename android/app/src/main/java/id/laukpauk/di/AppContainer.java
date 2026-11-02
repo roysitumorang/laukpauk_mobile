@@ -10,7 +10,10 @@ import id.laukpauk.data.local.SessionStore;
 import id.laukpauk.data.local.Prefs;
 import id.laukpauk.data.remote.ApiClient;
 import id.laukpauk.data.repository.RepositoryDeps;
+import id.laukpauk.data.repository.CartRepository;
+import id.laukpauk.data.repository.DeliveryRepository;
 import id.laukpauk.data.repository.NotifikasiRepository;
+import id.laukpauk.data.repository.SettingRepository;
 import id.laukpauk.util.AppExecutors;
 
 /**
@@ -29,7 +32,10 @@ public final class AppContainer {
     public final AppExecutors executors;
     private final RepositoryDeps repositoryDeps;
 
+    public final CartRepository cartRepository;
+    public final DeliveryRepository deliveryRepository;
     public final NotifikasiRepository notifikasiRepository;
+    public final SettingRepository settingRepository;
 
     public AppContainer(Application application) {
         this.application = application;
@@ -38,7 +44,10 @@ public final class AppContainer {
         this.apiClient = new ApiClient(session);
         this.executors = new AppExecutors();
         this.repositoryDeps = new RepositoryDeps(application, apiClient, session, prefs, executors);
+        this.deliveryRepository = new DeliveryRepository(repositoryDeps);
+        this.cartRepository = new CartRepository(repositoryDeps, this.deliveryRepository);
         this.notifikasiRepository = new NotifikasiRepository(repositoryDeps);
+        this.settingRepository = new SettingRepository(repositoryDeps);
     }
 
     /** The container of the running app, from any Context (Activity, Fragment's context, View, Application). */

@@ -103,4 +103,14 @@ public class MainActivity extends AppCompatActivity {
     public NavController getNavController() {
         return navController;
     }
+
+    /** The fragment of the current destination (for app-wide dialogs such as the expired-schedule alert). */
+    @androidx.annotation.Nullable
+    public androidx.fragment.app.Fragment currentFragment() {
+        androidx.fragment.app.Fragment host = getSupportFragmentManager().findFragmentById(R.id.navHost);
+        if (host == null) {
+            return null;
+        }
+        return host.getChildFragmentManager().getPrimaryNavigationFragment();
+    }
 }

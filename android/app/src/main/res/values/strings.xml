@@ -6,6 +6,10 @@
     <string name="nav_resep">Resep</string>
     <string name="nav_promo">Promo</string>
     <string name="nav_akun">Akun</string>
+    <!-- Shared (ui/common) -->
+    <string name="lihat_keranjang">Lihat Keranjang</string>
+    <string name="batal">Batal</string>
+    <string name="search_hint_default">Type Here</string>
     <!-- Notifikasi -->
     <string name="notifikasi_tab_info">Info</string>
     <string name="notifikasi_tab_khusus">Notifikasi</string>
