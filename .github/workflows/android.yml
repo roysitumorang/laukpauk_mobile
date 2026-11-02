@@ -26,6 +26,16 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # di/AppContainer is generated from data/repository; fail when someone added a repository and forgot to
+      # re-run the generator (or edited the file by hand).
+      - name: Check generated AppContainer is up to date
+        run: |
+          python3 tools/gen_container.py
+          if ! git diff --exit-code -- app/src/main/java/id/laukpauk/di/AppContainer.java; then
+            echo "::error file=android/app/src/main/java/id/laukpauk/di/AppContainer.java::Out of date: run python3 android/tools/gen_container.py and commit the result"
+            exit 1
+          fi
+
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
