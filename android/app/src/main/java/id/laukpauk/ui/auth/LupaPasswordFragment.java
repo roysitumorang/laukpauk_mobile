@@ -15,6 +15,7 @@ import id.laukpauk.R;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Images;
+import id.laukpauk.ui.common.PhoneNumberHint;
 import id.laukpauk.ui.common.Messages;
 
 import id.laukpauk.databinding.FragmentLupaPasswordBinding;
@@ -22,6 +23,7 @@ import id.laukpauk.databinding.FragmentLupaPasswordBinding;
 public class LupaPasswordFragment extends Fragment {
 
     private FragmentLupaPasswordBinding binding;
+    private final PhoneNumberHint phoneHint = new PhoneNumberHint(this);
     private AuthViewModel viewModel;
 
     @Nullable
@@ -34,6 +36,7 @@ public class LupaPasswordFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        phoneHint.attach(binding.nomorHP);
         AppContainer c = AppContainer.from(requireContext());
         viewModel = new ViewModelProvider(this,
                 ViewModelFactory.of(() -> new AuthViewModel(c.authRepository))).get(AuthViewModel.class);

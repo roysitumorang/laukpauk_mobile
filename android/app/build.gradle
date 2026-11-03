@@ -165,6 +165,8 @@ dependencies {
     // Google Play services (replaces google_maps_flutter + geolocator)
     implementation 'com.google.android.gms:play-services-maps:20.1.0'
     implementation 'com.google.android.gms:play-services-location:21.4.0'
+    // Phone Number Hint API (ui/common/PhoneNumberHint)
+    implementation 'com.google.android.gms:play-services-auth:21.4.0'
 
     // In-app updates (replaces the deprecated com.google.android.play:core used before)
     implementation 'com.google.android.play:app-update:2.1.0'
