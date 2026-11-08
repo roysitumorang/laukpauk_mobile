@@ -44,7 +44,7 @@ Prefer Play App Signing with a fresh upload key: the old `laukpauk.keystore` was
 | 16 KB memory pages | AGP 9.5 packages native libraries uncompressed and 16 KB-aligned; CI runs `zipalign -c -P 16` on the APK |
 | Play target-API deadline (Aug 31, 2026: new apps and updates must target API 36) | `targetSdk 37`, `compileSdk 37` |
 
-Toolchain: Android Gradle Plugin 9.5.0, Gradle 9.8.2, JDK 17, minSdk 24.
+Toolchain: Android Gradle Plugin 9.5.1, Gradle 9.9.0, JDK 17, minSdk 24.
 
 ## Architecture
 
