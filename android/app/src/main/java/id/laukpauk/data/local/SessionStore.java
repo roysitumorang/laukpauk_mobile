@@ -3,11 +3,15 @@ package id.laukpauk.data.local;
 import java.util.Map;
 
 import id.laukpauk.util.Json;
+import androidx.annotation.Nullable;
 import androidx.core.content.pm.PackageInfoCompat;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 
 import id.laukpauk.BuildConfig;
@@ -18,6 +22,9 @@ import id.laukpauk.BuildConfig;
  * after updating from the Flutter build. Pure storage: no network calls (those live in the repositories).
  */
 public final class SessionStore {
+
+    private static final String KEY_EXPIRED_AT = "authTokenExpiredAt";
+    private static final String KEY_CURRENT_USER = "currentUser";
 
     public SessionStore(Context context, Prefs prefs) {
         this.context = context;
@@ -49,8 +56,56 @@ public final class SessionStore {
         return BuildConfig.MAPS_API_KEY;
     }
 
+    /** The session JWT; "" when signed out or when the token has passed its expiry. */
     public String getAuthToken() {
+        Instant expiredAt = getAuthTokenExpiredAt();
+        if (expiredAt != null && !Instant.now().isBefore(expiredAt)) {
+            return "";
+        }
         return prefs.getString("authToken", "");
+    }
+
+    /** When the session JWT expires (sign-in's {@code expired_at}); null when unknown. */
+    @Nullable
+    public Instant getAuthTokenExpiredAt() {
+        String text = prefs.getString(KEY_EXPIRED_AT);
+        if (text == null || text.isEmpty()) {
+            return null;
+        }
+        try {
+            return OffsetDateTime.parse(text).toInstant();
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    /** The signed-in user as sign-in answered it ({@code user}); null when signed out or unknown. */
+    @Nullable
+    public Map<String, Object> getCurrentUser() {
+        if (getAuthToken().isEmpty()) {
+            return null;
+        }
+        Object user = Json.parse(prefs.getString(KEY_CURRENT_USER));
+        return Json.isObject(user) ? Json.obj(user) : null;
+    }
+
+    /** Stores a sign-in: the JWT, its expiry (RFC 3339, may be null) and the current user. */
+    public void saveSignIn(String idToken, @Nullable String expiredAt, Map<String, Object> user) {
+        prefs.setString("authToken", idToken);
+        if (expiredAt == null || expiredAt.isEmpty()) {
+            prefs.remove(KEY_EXPIRED_AT);
+        } else {
+            prefs.setString(KEY_EXPIRED_AT, expiredAt);
+        }
+        prefs.setString(KEY_CURRENT_USER, Json.toJson(user));
+        prefs.setString("idUser", Json.str(user, "id", ""));
+    }
+
+    /** Forgets the JWT, its expiry and the current user (sign-out, or a session that starts another way). */
+    public void clearSignIn() {
+        prefs.remove("authToken");
+        prefs.remove(KEY_EXPIRED_AT);
+        prefs.remove(KEY_CURRENT_USER);
     }
 
     public String getCurrentUserID() {

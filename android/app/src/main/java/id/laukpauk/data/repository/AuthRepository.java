@@ -2,6 +2,9 @@ package id.laukpauk.data.repository;
 
 
 
+import java.util.Map;
+import id.laukpauk.data.Resource;
+import id.laukpauk.util.Json;
 import id.laukpauk.data.model.auth.AuthResponses;
 import id.laukpauk.data.remote.AuthApi;
 
@@ -52,17 +55,26 @@ public class AuthRepository extends BaseRepository {
         this.push = push;
     }
 
-    /** Auth/loginAuthentication; on success the session is saved and the badges refreshed. */
-    public void login(String nomorHP, String password, ResultCallback<LoginResult> callback) {
-        enqueue(api.login(nomorHP, password, session.getCartCode()), body -> {
-            if (body == null || !body.loginAuthentication) {
+    /**
+     * POST users/sign_in; on success the session (JWT, its expiry and the current user) is saved and the
+     * badges refreshed. A 4xx answer means the login or password is wrong.
+     */
+    public void login(String login, String password, ResultCallback<LoginResult> callback) {
+        enqueue(api.signIn(body("login", login, "password", password)), body -> {
+            // The backend wraps the payload in "data"; a bare payload is accepted too.
+            Map<String, Object> payload = Json.isObject(Json.get(body, "data")) ? Json.object(body, "data") : body;
+            String idToken = Json.str(payload, "id_token", "");
+            Map<String, Object> user = Json.objectOrNull(payload, "user");
+            if (idToken.isEmpty() || user == null) {
                 return new LoginResult(false, false);
             }
-            prefs.setString("authToken", nz(body.authToken));
-            prefs.setString("idUser", nz(body.idUser));
-            onSignedIn(nz(body.idUser));
-            return new LoginResult(true, body.isVerified);
-        }, callback);
+            session.saveSignIn(idToken, Json.strOrNull(payload, "expired_at"), user);
+            onSignedIn(session.getCurrentUserID());
+            return new LoginResult(true, Json.get(user, "mobile_phone_confirmed_at") != null);
+        }, result -> {
+            boolean rejected = result.isError() && result.code >= 400 && result.code < 500;
+            callback.onResult(rejected ? Resource.success(new LoginResult(false, false)) : result);
+        });
     }
 
     public void register(String nama, String nomorHP, String password, String konfirmasi, String kodeReferal,
@@ -90,6 +102,7 @@ public class AuthRepository extends BaseRepository {
                 return false;
             }
             prefs.setBool("otpHasConfirmed", true);
+            session.clearSignIn();
             prefs.setString("authToken", body.returnData == null ? "" : nz(body.returnData.authToken));
             onSignedIn(session.getCurrentUserID());
             return true;
