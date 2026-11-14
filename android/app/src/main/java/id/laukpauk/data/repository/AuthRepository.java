@@ -7,6 +7,7 @@ import id.laukpauk.data.Resource;
 import id.laukpauk.util.Json;
 import id.laukpauk.data.model.auth.AuthResponses;
 import id.laukpauk.data.remote.AuthApi;
+import okio.ByteString;
 
 /**
  * Login, registration, OTP confirmation, user verification and password recovery. A successful login /
@@ -58,9 +59,10 @@ public class AuthRepository extends BaseRepository {
     /**
      * POST users/sign_in; on success the session (JWT, its expiry and the current user) is saved and the
      * badges refreshed. A 4xx answer means the login or password is wrong.
+     * The password is always sent base64-encoded (standard alphabet, of its UTF-8 bytes), never as typed.
      */
     public void login(String login, String password, ResultCallback<LoginResult> callback) {
-        enqueue(api.signIn(body("login", login, "password", password)), body -> {
+        enqueue(api.signIn(body("login", login, "password", base64(password))), body -> {
             // The backend wraps the payload in "data"; a bare payload is accepted too.
             Map<String, Object> payload = Json.isObject(Json.get(body, "data")) ? Json.object(body, "data") : body;
             String idToken = Json.str(payload, "id_token", "");
@@ -133,6 +135,11 @@ public class AuthRepository extends BaseRepository {
         push.onSignedIn();
         cart.refreshCartCount();
         notifikasi.refreshUnreadCount();
+    }
+
+    /** Standard base64 (with padding, no line breaks) of the text's UTF-8 bytes. */
+    static String base64(String text) {
+        return ByteString.encodeUtf8(text == null ? "" : text).base64();
     }
 
     private static String nz(String s) {

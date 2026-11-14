@@ -13,7 +13,7 @@ import retrofit2.http.Query;
 public interface AuthApi {
 
     /**
-     * Sign-in. Body: {@code login} (string) and {@code password} (string). Answers {@code id_token} (the JWT),
+     * Sign-in. Body: {@code login} (string) and {@code password} (string, base64 of the UTF-8 password). Answers {@code id_token} (the JWT),
      * {@code expired_at} (RFC 3339 date-time) and {@code user} (the signed-in user), either at the top level
      * or inside the backend's {@code data} envelope. Wrong credentials answer a 4xx status.
      */
