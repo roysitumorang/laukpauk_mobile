@@ -40,8 +40,7 @@ public class MainActivity extends AppCompatActivity {
             R.id.userAndDashboardFragment, R.id.listProdukFragment, R.id.produkDiDalamPasarFragment,
             R.id.detailProdukFragment, R.id.detailPaketFragment, R.id.detailPromoItemFragment,
             R.id.detailResepFragment, R.id.repeatOrderFragment, R.id.notifikasiFragment,
-            R.id.detailNotifikasiGlobalFragment, R.id.penjualFragment, R.id.tokoSayaFragment,
-            R.id.detailProdukPenjualFragment, R.id.listProdukPenjualFragment, R.id.prosesPesananFragment));
+            R.id.detailNotifikasiGlobalFragment));
 
     private ActivityMainBinding binding;
     private NavController navController;

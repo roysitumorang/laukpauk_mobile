@@ -11,12 +11,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import java.util.List;
+import java.util.Collections;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
-import id.laukpauk.data.model.orders.RoPenjual;
+import id.laukpauk.data.model.orders.RepeatOrderResponses;
 import id.laukpauk.databinding.FragmentRepeatOrderBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
@@ -49,7 +49,7 @@ public class RepeatOrderFragment extends Fragment {
 
         binding.header.bind(this);
         Images.asset(binding.promptImage, "adjd-belum-ditentukan.png");
-        adapter = new RepeatOrderAdapter(viewModel.getSelected(), viewModel::toggle);
+        adapter = new RepeatOrderAdapter();
         binding.list.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.list.setAdapter(adapter);
         binding.refresh.setOnRefreshListener(() -> viewModel.refresh());
@@ -84,8 +84,6 @@ public class RepeatOrderFragment extends Fragment {
         });
         viewModel.getSelection().observe(getViewLifecycleOwner(), this::onSelection);
         viewModel.getItems().observe(getViewLifecycleOwner(), this::onItems);
-        viewModel.getSelectedCount().observe(getViewLifecycleOwner(), n ->
-                binding.fab.setVisibility(n != null && n >= 1 ? View.VISIBLE : View.GONE));
         viewModel.getProcessing().observe(getViewLifecycleOwner(), busy -> {
             boolean b = Boolean.TRUE.equals(busy);
             binding.fabProgress.setVisibility(b ? View.VISIBLE : View.GONE);
@@ -106,7 +104,7 @@ public class RepeatOrderFragment extends Fragment {
         viewModel.loadItemsIfNeeded(s);
     }
 
-    private void onItems(Resource<List<RoPenjual>> res) {
+    private void onItems(Resource<RepeatOrderResponses.Items> res) {
         DeliverySelection s = viewModel.getSelection().getValue();
         if (res == null || s == null || !s.isSet) {
             return;
@@ -114,13 +112,15 @@ public class RepeatOrderFragment extends Fragment {
         boolean loading = res.isLoading();
         binding.itemsProgress.setVisibility(loading && !binding.refresh.isRefreshing() ? View.VISIBLE : View.GONE);
         if (loading) {
+            binding.fab.setVisibility(View.GONE);
             return;
         }
         binding.refresh.setRefreshing(false);
-        List<RoPenjual> list = res.isSuccess() ? res.data : null;
-        boolean empty = list == null || list.isEmpty();
+        RepeatOrderResponses.Items items = res.isSuccess() ? res.data : null;
+        boolean empty = items == null || items.itemTransaksi == null || items.itemTransaksi.isEmpty();
         binding.emptyGroup.setVisibility(empty ? View.VISIBLE : View.GONE);
-        adapter.submitList(list, () -> adapter.notifyDataSetChanged());
+        binding.fab.setVisibility(!empty && items.isAvailable ? View.VISIBLE : View.GONE);
+        adapter.submitList(empty ? null : Collections.singletonList(items), () -> adapter.notifyDataSetChanged());
     }
 
     @Override

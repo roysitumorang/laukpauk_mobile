@@ -54,13 +54,10 @@ public class ProdukTileAdapter extends ListAdapter<HomeProduk, ProdukTileAdapter
         b.content.setVisibility(View.GONE);
 
         b.nama.setText(p.nama);
-        boolean adaToko = p.namaToko != null && !p.namaToko.isEmpty();
-        b.toko.setText(adaToko ? p.namaToko : b.getRoot().getContext().getString(R.string.home_penjual_tidak_diketahui));
         boolean adaDesk = p.keteranganSingkat != null && !p.keteranganSingkat.isEmpty();
         b.deskripsi.setVisibility(adaDesk ? View.VISIBLE : View.GONE);
         b.deskripsi.setText(p.keteranganSingkat);
         b.root.setOnClickListener(v -> listener.onProduk(p));
-        b.toko.setOnClickListener(v -> listener.onToko(p));
         b.beli.setOnClickListener(v -> listener.onBeli(p));
 
         prices.load(p.id, result -> {

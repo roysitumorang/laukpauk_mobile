@@ -21,7 +21,6 @@ import id.laukpauk.R;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.cart.CartGift;
 import id.laukpauk.data.model.cart.CartProduct;
-import id.laukpauk.data.model.cart.CartSeller;
 import id.laukpauk.data.model.cart.WalletConfiguration;
 import id.laukpauk.databinding.FragmentKeranjangBinding;
 import id.laukpauk.databinding.ItemCartGiftBinding;
@@ -33,7 +32,7 @@ import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.common.NavResults;
 import id.laukpauk.util.Currency;
 
-/** Keranjang.dart: the cart per seller, subtotal, checkout, "Bersihkan Keranjang" and earned gifts. */
+/** Keranjang.dart: the cart lines, subtotal, checkout, "Bersihkan Keranjang" and earned gifts. */
 public class KeranjangFragment extends Fragment {
 
     /** Result of EditKeranjangItemFragment: Boolean, true when the item was saved. */
@@ -41,7 +40,7 @@ public class KeranjangFragment extends Fragment {
 
     private FragmentKeranjangBinding binding;
     private KeranjangViewModel viewModel;
-    private CartSellerAdapter adapter;
+    private CartProductAdapter adapter;
 
     @Nullable
     @Override
@@ -60,22 +59,7 @@ public class KeranjangFragment extends Fragment {
         AppBars.setup(this, binding.appBar, getString(R.string.cart_title));
         final NavController nav = NavHostFragment.findNavController(this);
 
-        adapter = new CartSellerAdapter(new CartSellerAdapter.Listener() {
-            @Override
-            public void onOpenSeller(CartSeller seller) {
-                Bundle args = new Bundle();
-                args.putString("idPenjual", seller.idPenjual);
-                nav.navigate(R.id.penjualFragment, args);
-            }
-
-            @Override
-            public void onOpenMarket(CartSeller seller, String namaPasar) {
-                Bundle args = new Bundle();
-                args.putString("idPasar", seller.pasarPenjual);
-                args.putString("namaPasar", namaPasar);
-                nav.navigate(R.id.produkDiDalamPasarFragment, args);
-            }
-
+        adapter = new CartProductAdapter(new CartProductAdapter.Listener() {
             @Override
             public void onOpenProduct(CartProduct product) {
                 String jenis = product.jenisProduk == null ? "" : product.jenisProduk.toLowerCase();
@@ -103,8 +87,8 @@ public class KeranjangFragment extends Fragment {
                 confirmDelete(product);
             }
         });
-        binding.sellers.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.sellers.setAdapter(adapter);
+        binding.products.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.products.setAdapter(adapter);
         Images.asset(binding.emptyImage, "empty-cart.png");
 
         binding.refresh.setColorSchemeResources(R.color.green);
@@ -136,7 +120,7 @@ public class KeranjangFragment extends Fragment {
     }
 
     private void observe() {
-        viewModel.getSellers().observe(getViewLifecycleOwner(), res -> {
+        viewModel.getProducts().observe(getViewLifecycleOwner(), res -> {
             if (res == null) {
                 return;
             }
@@ -146,14 +130,10 @@ public class KeranjangFragment extends Fragment {
                 return;
             }
             binding.refresh.setRefreshing(false);
-            List<CartSeller> list = res.data;
-            boolean any = false;
-            if (list != null) {
-                for (CartSeller s : list) {
-                    any |= s.produkPenjual != null && !s.produkPenjual.isEmpty();
-                }
-            }
+            List<CartProduct> list = res.data;
+            boolean any = list != null && !list.isEmpty();
             adapter.submitList(list);
+            binding.productsCard.setVisibility(any ? View.VISIBLE : View.GONE);
             binding.summaryGroup.setVisibility(any ? View.VISIBLE : View.GONE);
             binding.emptyGroup.setVisibility(any ? View.GONE : View.VISIBLE);
         });

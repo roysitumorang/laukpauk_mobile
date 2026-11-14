@@ -2,7 +2,7 @@
 <resources>
     <!-- Header -->
     <string name="home_header_diantarin">Diantarin ke mana ?</string>
-    <string name="home_header_cari_hint">Cari Toko atau Sayuran Segar</string>
+    <string name="home_header_cari_hint">Cari Sayuran Segar</string>
     <string name="home_header_keranjang">Keranjang</string>
     <string name="home_header_notifikasi">Notifikasi</string>
     <string name="home_badge_9plus">9+</string>
@@ -40,7 +40,6 @@
     <string name="home_promo">Promo</string>
     <string name="home_tanpa_harga">Tidak ada daftar harga</string>
     <string name="home_stok_habis">Stok tidak tersedia</string>
-    <string name="home_penjual_tidak_diketahui">Penjual Tidak Diketahui</string>
     <string name="home_produk_tanpa_harga">Produk ini tidak memiliki daftar harga</string>
     <string name="home_diskon_chip">-%1$s</string>
 
@@ -55,6 +54,5 @@
     <string name="home_list_subtitle_konten">Berikut ini adalah produk - produk %1$s</string>
     <string name="home_cari_produk_hint">Cari Produk dengan Nama</string>
     <string name="home_list_kosong">Tidak ada produk. Yuk mak, cari - cari lagi produk lainnya dan dapatkan produk yang mamak cari!</string>
-    <string name="home_list_ganti_penjual">Tampilkan toko</string>
     <string name="home_list_ganti_produk">Tampilkan produk</string>
 </resources>

@@ -23,16 +23,11 @@ import id.laukpauk.databinding.FragmentDetailProdukBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Images;
-import id.laukpauk.ui.common.Messages;
-import id.laukpauk.ui.common.NavResults;
 import id.laukpauk.util.DefaultImage;
 import id.laukpauk.util.ServerPath;
 
 /** DetailProduk.dart. Arg: idProduk. */
 public class DetailProdukFragment extends Fragment {
-
-    /** Result key of TambahProdukFragment (Boolean: product edited) - see report. */
-    public static final String EDIT_RESULT_KEY = id.laukpauk.ui.seller.TambahProdukFragment.RESULT_KEY;
 
     private FragmentDetailProdukBinding binding;
     private DetailProdukViewModel viewModel;
@@ -54,7 +49,6 @@ public class DetailProdukFragment extends Fragment {
 
         binding.header.bind(this);
         Images.asset(binding.yuhu.yuhuImage, "icons/timbangan.png");
-        Images.asset(binding.storeIcon, "store.png");
         Images.asset(binding.notFoundImage, "empty.png");
         Images.asset(binding.lainnyaEmptyImage, "empty.png");
         binding.refresh.setColorSchemeResources(R.color.green);
@@ -77,12 +71,6 @@ public class DetailProdukFragment extends Fragment {
                 boolean empty = !res.isSuccess() || res.data == null || res.data.isEmpty();
                 lainnyaAdapter.submitList(empty ? null : res.data);
                 binding.lainnyaEmpty.setVisibility(empty ? View.VISIBLE : View.GONE);
-            }
-        });
-        NavResults.<Boolean>observe(this, EDIT_RESULT_KEY, ok -> {
-            Messages.snack(this, getString(ok ? R.string.product_edit_produk_berhasil : R.string.product_edit_produk_gagal));
-            if (ok) {
-                viewModel.load();
             }
         });
     }
@@ -111,31 +99,14 @@ public class DetailProdukFragment extends Fragment {
         boolean hasKategori = p.namaKategoriProduk != null;
         binding.kategori.setText((hasKategori ? p.namaKategoriProduk : getString(R.string.product_kategori_tidak_diketahui)).toUpperCase());
         binding.kategori.setTypeface(null, hasKategori ? Typeface.NORMAL : Typeface.ITALIC);
-        binding.toko.setText(p.namaToko != null && !p.namaToko.isEmpty() ? p.namaToko
-                : getString(R.string.product_penjual_tidak_diketahui));
-        binding.toko.setOnClickListener(v -> {
-            Bundle args = new Bundle();
-            args.putString("idPenjual", p.idPenjual);
-            NavHostFragment.findNavController(this).navigate(R.id.penjualFragment, args);
-        });
         boolean ada = p.keterangan != null && !p.keterangan.isEmpty();
         binding.deskripsi.setText(ada ? p.keterangan : getString(R.string.product_deskripsi_kosong));
         binding.deskripsi.setTypeface(null, ada ? Typeface.NORMAL : Typeface.ITALIC);
 
-        boolean mine = p.idPenjual != null && p.idPenjual.equals(viewModel.currentUserId());
-        binding.beli.setText(mine ? R.string.product_edit : R.string.product_beli);
+        binding.beli.setText(R.string.product_beli);
         binding.beli.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), mine ? R.color.product_warning : R.color.green)));
-        binding.beli.setOnClickListener(v -> {
-            if (mine) {
-                Bundle args = new Bundle();
-                args.putString("idProduk", p.id);
-                args.putString("jenisProduk", "satuan");
-                NavHostFragment.findNavController(this).navigate(R.id.tambahProdukFragment, args);
-            } else {
-                ProductActions.beli(this, p.id, p.nama);
-            }
-        });
+                ContextCompat.getColor(requireContext(), R.color.green)));
+        binding.beli.setOnClickListener(v -> ProductActions.beli(this, p.id, p.nama));
     }
 
     @Override

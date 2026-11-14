@@ -58,14 +58,4 @@
         <item name="endIconMode">password_toggle</item>
     </style>
 
-    <!-- RequestJadiPenjual pill field: light green filled box with floating label -->
-    <style name="Account.PillField" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="boxBackgroundColor">@color/light_green</item>
-        <item name="boxStrokeWidth">0dp</item>
-        <item name="boxStrokeWidthFocused">0dp</item>
-        <item name="boxCornerRadiusTopStart">28dp</item>
-        <item name="boxCornerRadiusTopEnd">28dp</item>
-        <item name="boxCornerRadiusBottomStart">28dp</item>
-        <item name="boxCornerRadiusBottomEnd">28dp</item>
-    </style>
 </resources>

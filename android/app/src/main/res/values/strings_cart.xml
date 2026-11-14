@@ -7,9 +7,6 @@
     <string name="cart_shop">Belanja Yuk</string>
     <string name="cart_wallet_failed">Gagal mengambil data konfigurasi Dompet/Wallet</string>
     <string name="cart_wallet_discount">Potongan langsung dari dompet sebesar %1$s untuk setiap minimal belanja %2$s</string>
-    <string name="cart_market_unknown">Pasar Tanpa Identitas</string>
-    <string name="cart_seller_unknown">Penjual Tidak Dikenal</string>
-    <string name="cart_at_market"> di </string>
     <string name="cart_add_note">Tambah Catatan</string>
     <string name="cart_note_title">Catatan Tambahan : </string>
     <string name="cart_qty_unit">%1$s x %2$s</string>

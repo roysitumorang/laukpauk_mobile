@@ -19,9 +19,8 @@ public interface RepeatOrderApi {
                                                       @Query("jadwalDeliveryCode") String jadwalDeliveryCode);
 
     @FormUrlEncoded
-    @POST("RO/addToCartThesePenjual")
-    Call<RepeatOrderResponses.AddToCart> addToCartThesePenjual(@Query("authToken") String authToken,
-                                                               @Field("idTransaksi") String idTransaksi,
-                                                               @Field("cartCode") String cartCode,
-                                                               @Field("selectedSellers") String selectedSellers);
+    @POST("RO/addToCart")
+    Call<RepeatOrderResponses.AddToCart> addToCart(@Query("authToken") String authToken,
+                                                   @Field("idTransaksi") String idTransaksi,
+                                                   @Field("cartCode") String cartCode);
 }

@@ -16,7 +16,7 @@ import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.AppBars;
 
-/** ItemTransaksi as a route (Daftar Belanjaan). Args: idTransaksi, idPenjual?, cartCode?. */
+/** ItemTransaksi as a route (Daftar Belanjaan). Args: idTransaksi, cartCode?. */
 public class ItemTransaksiFragment extends Fragment {
 
     private FragmentItemTransaksiBinding binding;
@@ -33,13 +33,12 @@ public class ItemTransaksiFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         AppContainer c = AppContainer.from(requireContext());
         String idTransaksi = requireArguments().getString("idTransaksi", "");
-        String idPenjual = requireArguments().getString("idPenjual");
         String cartCode = requireArguments().getString("cartCode");
         AppBars.setup(this, binding.appBar, getString(R.string.orders_daftar_belanjaan));
         ItemTransaksiViewModel vm = new ViewModelProvider(this, ViewModelFactory.of(
-                () -> new ItemTransaksiViewModel(c.transaksiRepository, idTransaksi, idPenjual)))
+                () -> new ItemTransaksiViewModel(c.transaksiRepository, idTransaksi)))
                 .get(ItemTransaksiViewModel.class);
-        ItemTransaksiBinder.bind(this, binding.items, vm, idTransaksi, idPenjual);
+        ItemTransaksiBinder.bind(this, binding.items, vm);
         if (vm.getItems().getValue() == null) {
             vm.load(cartCode);
         }

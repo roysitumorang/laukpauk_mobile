@@ -24,7 +24,7 @@ public class SearchRepository extends BaseRepository {
         this.api = api(SearchApi.class);
     }
 
-    /** Products and sellers matching {@code term}. */
+    /** Products matching {@code term}. */
     public void search(String term, ResultCallback<List<SearchSuggestion>> callback) {
         enqueue(api.pencarian(term), body -> {
             List<SearchSuggestion> list = body == null ? null : body.hasilPencarian;

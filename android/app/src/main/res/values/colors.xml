@@ -32,6 +32,5 @@
     <color name="text_warning">#FFFFC107</color>
     <color name="text_light_muted">#446C757D</color>
     <color name="red">#FFF44336</color>
-    <color name="grey400">#FFBDBDBD</color>
     <color name="transparent">#00000000</color>
 </resources>

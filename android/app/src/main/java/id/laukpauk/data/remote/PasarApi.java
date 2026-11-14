@@ -9,7 +9,7 @@ import retrofit2.http.Query;
 /** Market endpoints (versionCode is added by ApiClient). */
 public interface PasarApi {
 
-    /** The auth token keeps a seller from seeing (and ordering) their own products. */
+    /** Products of a market for the signed-in user. */
     @GET("Pasar/getProdukInThisPasar/{idPasar}")
     Call<PasarResponses.ProdukList> getProdukInThisPasar(@Path("idPasar") String idPasar,
                                                          @Query("authToken") String authToken,

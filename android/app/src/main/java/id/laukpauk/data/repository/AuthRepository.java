@@ -1,11 +1,7 @@
 package id.laukpauk.data.repository;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.auth.AuthResponses;
 import id.laukpauk.data.remote.AuthApi;
 
@@ -99,10 +95,10 @@ public class AuthRepository extends BaseRepository {
         }, callback);
     }
 
-    /** Auth/verifikasiUser; {@code idPasar} is only sent for sellers. */
-    public void verifikasiUser(String code, boolean seller, String idPasar, ResultCallback<Boolean> callback) {
-        enqueue(api.verifikasiUser(session.getCurrentUserID(), code, seller ? "yes" : "no",
-                seller ? idPasar : null), body -> body != null && body.statusVerifikasiUser, callback);
+    /** Auth/verifikasiUser. */
+    public void verifikasiUser(String code, ResultCallback<Boolean> callback) {
+        enqueue(api.verifikasiUser(session.getCurrentUserID(), code),
+                body -> body != null && body.statusVerifikasiUser, callback);
     }
 
     public void resendOTP(String nomorTelepon, ResultCallback<AuthResponses.ResendOTP> callback) {
@@ -117,22 +113,6 @@ public class AuthRepository extends BaseRepository {
     public void getNomorHP(ResultCallback<String> callback) {
         enqueue(api.getDetailUser(authToken(), null),
                 body -> body == null || body.detailUser == null ? null : body.detailUser.nomorHP, callback);
-    }
-
-    /** Whether the user is a seller of the previous app version (needs to choose a market). */
-    public void isSeller(ResultCallback<Boolean> callback) {
-        enqueue(api.getDetailUser(authToken(), "isSeller"),
-                body -> body != null && body.detailUser != null && "1".equals(body.detailUser.isSeller), callback);
-    }
-
-    /** The markets a seller can pick as the place of business. */
-    public androidx.lifecycle.LiveData<Resource<List<AuthResponses.Pasar>>> getPasarTersedia() {
-        return load(api.getPasar("pasarTersedia"), body -> {
-            if (body == null || body.dataPasar == null) {
-                return Collections.<AuthResponses.Pasar>emptyList();
-            }
-            return new ArrayList<>(body.dataPasar);
-        });
     }
 
     private void onSignedIn(String idUser) {

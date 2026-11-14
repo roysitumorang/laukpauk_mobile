@@ -43,7 +43,6 @@ public class PromoAdapter extends ListAdapter<ProdukPromo, PromoAdapter.Holder> 
                 return a.hargaBersihPromo() == b.hargaBersihPromo() && a.hargaKotor() == b.hargaKotor()
                         && String.valueOf(a.namaProduk).equals(String.valueOf(b.namaProduk))
                         && String.valueOf(a.fotoProduk).equals(String.valueOf(b.fotoProduk))
-                        && String.valueOf(a.namaToko).equals(String.valueOf(b.namaToko))
                         && String.valueOf(a.keteranganSingkat).equals(String.valueOf(b.keteranganSingkat))
                         && String.valueOf(a.maxOrder).equals(String.valueOf(b.maxOrder));
             }
@@ -90,8 +89,6 @@ public class PromoAdapter extends ListAdapter<ProdukPromo, PromoAdapter.Holder> 
                     item.maxOrder == null ? "" : item.maxOrder));
 
             b.nama.setText(item.namaProduk);
-            b.toko.setText(item.namaToko != null && !item.namaToko.isEmpty() ? item.namaToko
-                    : b.getRoot().getContext().getString(R.string.promo_penjual_tidak_diketahui));
             boolean hasDesc = item.keteranganSingkat != null && !item.keteranganSingkat.isEmpty();
             b.deskripsiScroll.setVisibility(hasDesc ? View.VISIBLE : View.GONE);
             b.deskripsi.setText(item.keteranganSingkat);

@@ -8,6 +8,4 @@ public class Paket {
     public int harga;
     public int diskon;
     public String keterangan;
-    public String idPenjual;
-    public String namaToko;
 }

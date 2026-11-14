@@ -5,15 +5,10 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.model.orders.RepeatOrderResponses;
-import id.laukpauk.data.model.orders.RoPenjual;
 import id.laukpauk.data.model.orders.Transaksi;
 import id.laukpauk.data.repository.BaseRepository;
 import id.laukpauk.data.repository.CartRepository;
@@ -21,7 +16,7 @@ import id.laukpauk.data.repository.DeliveryRepository;
 import id.laukpauk.data.repository.RepeatOrderRepository;
 import id.laukpauk.data.repository.TransaksiRepository;
 
-/** State of Repeat Order: the old transaction's number, the re-orderable sellers and the picked ones. */
+/** State of Repeat Order: the old transaction's number and its re-orderable lines. */
 public class RepeatOrderViewModel extends ViewModel {
 
     private final TransaksiRepository transaksi;
@@ -32,10 +27,8 @@ public class RepeatOrderViewModel extends ViewModel {
 
     private final MediatorLiveData<Resource<Transaksi>> detail = new MediatorLiveData<>();
     private LiveData<Resource<Transaksi>> detailSource;
-    private final MediatorLiveData<Resource<List<RoPenjual>>> items = new MediatorLiveData<>();
-    private LiveData<Resource<List<RoPenjual>>> itemsSource;
-    private final Set<String> selected = new LinkedHashSet<>();
-    private final MutableLiveData<Integer> selectedCount = new MutableLiveData<>(0);
+    private final MediatorLiveData<Resource<RepeatOrderResponses.Items>> items = new MediatorLiveData<>();
+    private LiveData<Resource<RepeatOrderResponses.Items>> itemsSource;
     private final MutableLiveData<Boolean> processing = new MutableLiveData<>(false);
     private String itemsKey;
 
@@ -53,20 +46,12 @@ public class RepeatOrderViewModel extends ViewModel {
         return detail;
     }
 
-    public LiveData<Resource<List<RoPenjual>>> getItems() {
+    public LiveData<Resource<RepeatOrderResponses.Items>> getItems() {
         return items;
     }
 
     public LiveData<DeliverySelection> getSelection() {
         return delivery.selection();
-    }
-
-    public Set<String> getSelected() {
-        return selected;
-    }
-
-    public LiveData<Integer> getSelectedCount() {
-        return selectedCount;
     }
 
     public LiveData<Boolean> getProcessing() {
@@ -81,7 +66,7 @@ public class RepeatOrderViewModel extends ViewModel {
         detail.addSource(detailSource, detail::setValue);
     }
 
-    /** Loads the sellers for the current delivery selection; no-op when it is already loaded for it. */
+    /** Loads the lines for the current delivery selection; no-op when it is already loaded for it. */
     public void loadItemsIfNeeded(DeliverySelection s) {
         String key = s.latitude + "|" + s.longitude + "|" + s.jadwalDeliveryCode;
         if (!key.equals(itemsKey)) {
@@ -91,26 +76,17 @@ public class RepeatOrderViewModel extends ViewModel {
     }
 
     private void loadItems() {
-        selected.clear();
-        selectedCount.setValue(0);
         if (itemsSource != null) {
             items.removeSource(itemsSource);
         }
-        itemsSource = repeatOrder.getItemTransaksiPerPenjual(idTransaksi);
+        itemsSource = repeatOrder.getItemTransaksi(idTransaksi);
         items.addSource(itemsSource, items::setValue);
     }
 
-    /** Pull-to-refresh (legacy onRefresh): reload the number and a fresh list without a selection. */
+    /** Pull-to-refresh (legacy onRefresh): reload the number and the lines. */
     public void refresh() {
         loadDetail();
         loadItems();
-    }
-
-    public void toggle(String idPenjual) {
-        if (!selected.remove(idPenjual)) {
-            selected.add(idPenjual);
-        }
-        selectedCount.setValue(selected.size());
     }
 
     public void addToCart(BaseRepository.ResultCallback<RepeatOrderResponses.AddToCart> callback) {
@@ -118,7 +94,7 @@ public class RepeatOrderViewModel extends ViewModel {
             return;
         }
         processing.setValue(true);
-        repeatOrder.addToCartThesePenjual(idTransaksi, new ArrayList<>(selected), result -> {
+        repeatOrder.addToCart(idTransaksi, result -> {
             if (result.isSuccess() && result.data != null && result.data.statusAddCart) {
                 cart.refreshCartCount();
             }

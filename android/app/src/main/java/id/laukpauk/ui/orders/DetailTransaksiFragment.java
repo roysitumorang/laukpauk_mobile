@@ -30,14 +30,13 @@ import id.laukpauk.util.Currency;
 import id.laukpauk.util.Json;
 import id.laukpauk.util.ServerPath;
 
-/** DetailTransaksi.dart. Args: idTransaksi, idPenjual?. */
+/** DetailTransaksi.dart. Arg: idTransaksi. */
 public class DetailTransaksiFragment extends Fragment {
 
     private FragmentDetailTransaksiBinding binding;
     private DetailTransaksiViewModel viewModel;
     private ItemTransaksiViewModel itemsViewModel;
     private String idTransaksi;
-    private String idPenjual;
     private Transaksi current;
     private boolean awaitingDiantar;
 
@@ -53,15 +52,14 @@ public class DetailTransaksiFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         AppContainer c = AppContainer.from(requireContext());
         idTransaksi = requireArguments().getString("idTransaksi", "");
-        idPenjual = requireArguments().getString("idPenjual");
         AppBars.setup(this, binding.appBar, getString(R.string.orders_detail_transaksi));
         viewModel = new ViewModelProvider(this, ViewModelFactory.of(() -> new DetailTransaksiViewModel(
                 c.transaksiRepository, c.deliveryRepository, c.settingRepository, c.cartRepository, idTransaksi)))
                 .get(DetailTransaksiViewModel.class);
         itemsViewModel = new ViewModelProvider(this, ViewModelFactory.of(
-                () -> new ItemTransaksiViewModel(c.transaksiRepository, idTransaksi, idPenjual)))
+                () -> new ItemTransaksiViewModel(c.transaksiRepository, idTransaksi)))
                 .get(ItemTransaksiViewModel.class);
-        ItemTransaksiBinder.bind(this, binding.items, itemsViewModel, idTransaksi, idPenjual);
+        ItemTransaksiBinder.bind(this, binding.items, itemsViewModel);
 
         binding.empty.emptyText.setText(R.string.orders_detail_tidak_ditemukan);
         binding.refresh.setOnRefreshListener(() -> viewModel.load());

@@ -9,26 +9,19 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
 import java.util.Objects;
 
 import id.laukpauk.R;
 import id.laukpauk.data.model.cart.CartProduct;
-import id.laukpauk.data.model.cart.CartSeller;
 import id.laukpauk.databinding.ItemCartProductBinding;
-import id.laukpauk.databinding.ItemCartSellerBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.ServerPath;
 
-/** PenjualCard + ProductPenjual: one card per seller with that seller's cart lines. */
-public class CartSellerAdapter extends ListAdapter<CartSeller, CartSellerAdapter.Holder> {
+/** The cart lines. */
+public class CartProductAdapter extends ListAdapter<CartProduct, CartProductAdapter.Holder> {
 
     public interface Listener {
-        void onOpenSeller(CartSeller seller);
-
-        void onOpenMarket(CartSeller seller, String namaPasar);
-
         void onOpenProduct(CartProduct product);
 
         void onEdit(CartProduct product, int failMessage, int failButton);
@@ -38,7 +31,7 @@ public class CartSellerAdapter extends ListAdapter<CartSeller, CartSellerAdapter
 
     private final Listener listener;
 
-    public CartSellerAdapter(Listener listener) {
+    public CartProductAdapter(Listener listener) {
         super(DIFF);
         this.listener = listener;
     }
@@ -46,33 +39,12 @@ public class CartSellerAdapter extends ListAdapter<CartSeller, CartSellerAdapter
     @NonNull
     @Override
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new Holder(ItemCartSellerBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        return new Holder(ItemCartProductBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
-        CartSeller seller = getItem(position);
-        ItemCartSellerBinding b = holder.binding;
-        Context ctx = b.getRoot().getContext();
-
-        String lokasiPasar = seller.lokasiPasar != null ? seller.lokasiPasar : ctx.getString(R.string.cart_market_unknown);
-        String namaPenjual = seller.namaPenjual != null ? seller.namaPenjual : ctx.getString(R.string.cart_seller_unknown);
-        b.penjual.setText(namaPenjual);
-        b.penjual.setOnClickListener(v -> listener.onOpenSeller(seller));
-        b.pasar.setText(lokasiPasar);
-        b.pasar.setOnClickListener(v -> listener.onOpenMarket(seller, lokasiPasar));
-
-        b.products.removeAllViews();
-        List<CartProduct> products = seller.produkPenjual;
-        if (products == null) {
-            return;
-        }
-        LayoutInflater inflater = LayoutInflater.from(ctx);
-        for (CartProduct p : products) {
-            ItemCartProductBinding pb = ItemCartProductBinding.inflate(inflater, b.products, false);
-            bindProduct(ctx, pb, p);
-            b.products.addView(pb.getRoot());
-        }
+        bindProduct(holder.binding.getRoot().getContext(), holder.binding, getItem(position));
     }
 
     private void bindProduct(Context ctx, ItemCartProductBinding pb, CartProduct p) {
@@ -105,22 +77,22 @@ public class CartSellerAdapter extends ListAdapter<CartSeller, CartSellerAdapter
     }
 
     static final class Holder extends RecyclerView.ViewHolder {
-        final ItemCartSellerBinding binding;
+        final ItemCartProductBinding binding;
 
-        Holder(ItemCartSellerBinding binding) {
+        Holder(ItemCartProductBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
     }
 
-    private static final DiffUtil.ItemCallback<CartSeller> DIFF = new DiffUtil.ItemCallback<CartSeller>() {
+    private static final DiffUtil.ItemCallback<CartProduct> DIFF = new DiffUtil.ItemCallback<CartProduct>() {
         @Override
-        public boolean areItemsTheSame(@NonNull CartSeller a, @NonNull CartSeller b) {
-            return Objects.equals(a.idPenjual, b.idPenjual);
+        public boolean areItemsTheSame(@NonNull CartProduct a, @NonNull CartProduct b) {
+            return Objects.equals(a.idCart, b.idCart);
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull CartSeller a, @NonNull CartSeller b) {
+        public boolean areContentsTheSame(@NonNull CartProduct a, @NonNull CartProduct b) {
             return false; // lines change in place (quantity / note); always rebind
         }
     };

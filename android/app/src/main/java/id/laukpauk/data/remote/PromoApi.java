@@ -19,9 +19,4 @@ public interface PromoApi {
     @GET("Promo/getPromoItem/{idPromoItem}")
     Call<PromoResponses.Detail> getPromoItem(@Path("idPromoItem") String idPromoItem,
                                              @Query("select") String select);
-
-    /** Used for the signed-in user's id (legacy LocalStorage.getIdPenjualFromActiveUser). */
-    @GET("User/getDetailUser")
-    Call<PromoResponses.DetailUser> getDetailUser(@Query("getUserEntities") String getUserEntities,
-                                                  @Query("authToken") String authToken);
 }

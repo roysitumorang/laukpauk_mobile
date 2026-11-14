@@ -75,13 +75,6 @@ public class ProdukDiDalamPasarFragment extends Fragment {
             }
 
             @Override
-            public void onToko(Produk p) {
-                Bundle args = new Bundle();
-                args.putString("idPenjual", p.idPenjual);
-                NavHostFragment.findNavController(ProdukDiDalamPasarFragment.this).navigate(R.id.penjualFragment, args);
-            }
-
-            @Override
             public void onBeli(Produk p) {
                 ProductActions.beli(ProdukDiDalamPasarFragment.this, p.id, p.nama);
             }

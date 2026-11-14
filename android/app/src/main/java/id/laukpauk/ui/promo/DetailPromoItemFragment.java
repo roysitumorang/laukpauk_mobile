@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 
 import java.util.Locale;
 
@@ -21,8 +20,6 @@ import id.laukpauk.databinding.FragmentDetailPromoItemBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Images;
-import id.laukpauk.ui.common.Messages;
-import id.laukpauk.ui.common.NavResults;
 import id.laukpauk.ui.product.ProductActions;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.Json;
@@ -30,11 +27,6 @@ import id.laukpauk.util.ServerPath;
 
 /** DetailPromoItem.dart. Argument: idPromoItem. */
 public class DetailPromoItemFragment extends Fragment {
-
-    /** Result key (Boolean) the product edit screen (TambahProdukFragment) sends back after an edit. */
-    public static final String RESULT_TAMBAH_PRODUK = id.laukpauk.ui.seller.TambahProdukFragment.RESULT_KEY;
-
-    private static final int WARNING_COLOR = 0xFFE0A800;
 
     private FragmentDetailPromoItemBinding binding;
     private DetailPromoItemViewModel viewModel;
@@ -57,16 +49,8 @@ public class DetailPromoItemFragment extends Fragment {
 
         binding.header.bind(this);
         Images.asset(binding.notFoundImage, "empty.png");
-        Images.asset(binding.storeImage, "store.png");
         Images.asset(binding.yuhu.yuhuImage, "icons/timbangan.png");
         binding.refresh.setOnRefreshListener(viewModel::load);
-
-        NavResults.<Boolean>observe(this, RESULT_TAMBAH_PRODUK, ok -> {
-            Messages.snack(this, getString(ok ? R.string.promo_edit_berhasil : R.string.promo_edit_gagal));
-            if (ok) {
-                viewModel.load();
-            }
-        });
 
         viewModel.getDetail().observe(getViewLifecycleOwner(), this::render);
         if (viewModel.getDetail().getValue() == null) {
@@ -103,14 +87,6 @@ public class DetailPromoItemFragment extends Fragment {
         binding.kategori.setText(nn(produk.namaKategoriProduk).toUpperCase(Locale.ROOT));
         bindAksi(item, produk);
 
-        String namaToko = nn(produk.namaToko);
-        binding.namaToko.setText(namaToko.isEmpty() ? getString(R.string.promo_penjual_tidak_diketahui) : namaToko);
-        binding.namaToko.setOnClickListener(v -> {
-            Bundle args = new Bundle();
-            args.putString("idPenjual", nn(produk.idPenjual));
-            NavHostFragment.findNavController(this).navigate(R.id.penjualFragment, args);
-        });
-
         boolean promoAktif = nn(promo.status).toLowerCase(Locale.ROOT).equals("aktif");
         binding.promoBox.setBackgroundResource(promoAktif ? R.drawable.bg_promo_aktif : R.drawable.bg_promo_nonaktif);
         binding.namaPromo.setText(nn(promo.nama));
@@ -131,20 +107,10 @@ public class DetailPromoItemFragment extends Fragment {
         if (!aktif) {
             return;
         }
-        boolean mine = nn(produk.idPenjual).equals(viewModel.getCurrentUserId());
-        binding.aksi.setText(mine ? R.string.promo_edit : R.string.promo_beli);
+        binding.aksi.setText(R.string.promo_beli);
         binding.aksi.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
-                mine ? WARNING_COLOR : ContextCompat.getColor(requireContext(), R.color.green)));
-        binding.aksi.setOnClickListener(v -> {
-            if (mine) {
-                Bundle args = new Bundle();
-                args.putString("idProduk", nn(produk.id));
-                args.putString("jenisProduk", "satuan");
-                NavHostFragment.findNavController(this).navigate(R.id.tambahProdukFragment, args);
-            } else {
-                ProductActions.beli(this, nn(produk.id), nn(produk.nama), nn(item.idPromo));
-            }
-        });
+                ContextCompat.getColor(requireContext(), R.color.green)));
+        binding.aksi.setOnClickListener(v -> ProductActions.beli(this, nn(produk.id), nn(produk.nama), nn(item.idPromo)));
     }
 
     /** Muted text, or an italic "Tidak ada deskripsi produk" placeholder. */

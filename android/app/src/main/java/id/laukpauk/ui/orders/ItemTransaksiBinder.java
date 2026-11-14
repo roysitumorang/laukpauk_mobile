@@ -3,7 +3,6 @@ package id.laukpauk.ui.orders;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -12,25 +11,13 @@ import id.laukpauk.data.model.orders.ItemTransaksi;
 import id.laukpauk.databinding.ItemOrdersGiftRowBinding;
 import id.laukpauk.databinding.ItemOrdersItemRowBinding;
 import id.laukpauk.databinding.ViewOrdersItemTransaksiBinding;
-import id.laukpauk.ui.common.Messages;
 import id.laukpauk.util.Currency;
-import id.laukpauk.util.ServerPath;
 
 /** Fills the "Daftar Belanjaan" card from an {@link ItemTransaksiViewModel} (shared by two screens). */
 final class ItemTransaksiBinder {
     private ItemTransaksiBinder() {}
 
-    static void bind(Fragment f, ViewOrdersItemTransaksiBinding b, ItemTransaksiViewModel vm, String idTransaksi,
-                     @Nullable String idPenjual) {
-        if (idPenjual != null) {
-            b.invoice.setVisibility(View.VISIBLE);
-            b.invoice.setOnClickListener(v -> {
-                String url = ServerPath.apiBaseURL + "/Transaksi/invoice/" + idTransaksi + "?idPenjual=" + idPenjual;
-                if (!OrderUi.openUrl(f, url)) {
-                    Messages.snack(f, f.getString(R.string.orders_url_tidak_valid));
-                }
-            });
-        }
+    static void bind(Fragment f, ViewOrdersItemTransaksiBinding b, ItemTransaksiViewModel vm) {
         vm.getItems().observe(f.getViewLifecycleOwner(), res -> {
             if (res == null) {
                 return;

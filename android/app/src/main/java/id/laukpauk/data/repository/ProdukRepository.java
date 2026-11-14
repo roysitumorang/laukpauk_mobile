@@ -11,7 +11,6 @@ import id.laukpauk.data.model.product.HargaProduk;
 import id.laukpauk.data.model.product.Lainnya;
 import id.laukpauk.data.model.product.LowestPrice;
 import id.laukpauk.data.model.product.Produk;
-import id.laukpauk.data.model.product.ProdukResponses;
 import id.laukpauk.data.model.product.SatuanSheetData;
 import id.laukpauk.data.remote.ProdukApi;
 import id.laukpauk.util.Currency;
@@ -29,11 +28,6 @@ public class ProdukRepository extends BaseRepository {
         this.api = api(ProdukApi.class);
         this.delivery = delivery;
         this.settings = settings;
-    }
-
-    /** The signed-in user's id ("" when signed out); a seller's own products show "Edit" instead of "Beli". */
-    public String currentUserId() {
-        return session.getCurrentUserID();
     }
 
     /** Legacy ProdukModel.getDetailProduk; SUCCESS with null data = product not found. */
@@ -62,14 +56,14 @@ public class ProdukRepository extends BaseRepository {
 
     /**
      * Legacy ProdukModel.showSatuanProduk (background part): product info, whether it is inside the delivery
-     * coverage area, whether its seller works at the chosen schedule, and the extra "ongkir per KM". A failed
+     * coverage area, and the extra "ongkir per KM". A failed
      * request counts as false (like the legacy `!`-unwrapped null). Always SUCCESS.
      */
     public void loadSatuanSheetData(String idProduk, ResultCallback<SatuanSheetData> callback) {
         final SatuanSheetData data = new SatuanSheetData();
         final DeliverySelection sel = delivery.current();
         final boolean hasSelection = sel.latitude != null && sel.longitude != null && sel.jadwalDeliveryCode != null;
-        final int[] pending = {hasSelection ? 4 : 1};
+        final int[] pending = {hasSelection ? 3 : 1};
         final Runnable done = () -> {
             if (--pending[0] == 0) {
                 callback.onResult(Resource.success(data));
@@ -85,11 +79,6 @@ public class ProdukRepository extends BaseRepository {
         enqueue(api.isThisProductInCA(idProduk, sel.latitude, sel.longitude), body -> body != null && body.isThisProductInCA,
                 r -> {
                     data.inCoverageArea = r.isSuccess() && Boolean.TRUE.equals(r.data);
-                    done.run();
-                });
-        enqueue(api.isProductSellerAvailable(idProduk, sel.jadwalDeliveryCode), body -> body != null && body.isSellerAvailable,
-                r -> {
-                    data.sellerAvailable = r.isSuccess() && Boolean.TRUE.equals(r.data);
                     done.run();
                 });
         settings.getSettingValue("costPerKm", r -> {

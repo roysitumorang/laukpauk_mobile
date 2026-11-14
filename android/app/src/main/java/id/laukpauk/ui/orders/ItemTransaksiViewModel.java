@@ -14,7 +14,7 @@ import id.laukpauk.data.model.orders.GiftTransaksi;
 import id.laukpauk.data.model.orders.ItemTransaksi;
 import id.laukpauk.data.repository.TransaksiRepository;
 
-/** Lines and gifts of one transaction (optionally of one seller). */
+/** Lines and gifts of one transaction. */
 public class ItemTransaksiViewModel extends ViewModel {
 
     /** A gift of the cart; {@code info} stays null until its details arrived. */
@@ -29,7 +29,6 @@ public class ItemTransaksiViewModel extends ViewModel {
 
     private final TransaksiRepository repository;
     private final String idTransaksi;
-    private final String idPenjual;
 
     private final MediatorLiveData<Resource<List<ItemTransaksi>>> items = new MediatorLiveData<>();
     private LiveData<Resource<List<ItemTransaksi>>> itemsSource;
@@ -39,10 +38,9 @@ public class ItemTransaksiViewModel extends ViewModel {
     private final MutableLiveData<Boolean> cartCodeMissing = new MutableLiveData<>(false);
     private int giftSeq;
 
-    public ItemTransaksiViewModel(TransaksiRepository repository, String idTransaksi, String idPenjual) {
+    public ItemTransaksiViewModel(TransaksiRepository repository, String idTransaksi) {
         this.repository = repository;
         this.idTransaksi = idTransaksi;
-        this.idPenjual = idPenjual;
     }
 
     public LiveData<Resource<List<ItemTransaksi>>> getItems() {
@@ -62,7 +60,7 @@ public class ItemTransaksiViewModel extends ViewModel {
         if (itemsSource != null) {
             items.removeSource(itemsSource);
         }
-        itemsSource = repository.getItemTransaksi(idTransaksi, idPenjual);
+        itemsSource = repository.getItemTransaksi(idTransaksi);
         items.addSource(itemsSource, items::setValue);
 
         final int seq = ++giftSeq;

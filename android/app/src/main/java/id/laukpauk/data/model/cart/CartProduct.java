@@ -2,7 +2,7 @@ package id.laukpauk.data.model.cart;
 
 import androidx.annotation.Nullable;
 
-/** One product line of a seller in {@code User/getCartDividedBySeller} (also the argument of the edit screen). */
+/** One product line of {@code User/getCart} (also the argument of the edit screen). */
 public final class CartProduct {
     public String idCart;
     public String idProduk;

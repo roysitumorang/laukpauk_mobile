@@ -27,8 +27,6 @@ public class PromoItemDetail {
         public String nama;
         public String foto;
         public String namaKategoriProduk;
-        public String namaToko;
-        public String idPenjual;
         public String keterangan;
     }
 

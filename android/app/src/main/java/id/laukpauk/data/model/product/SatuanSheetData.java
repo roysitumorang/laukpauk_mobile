@@ -7,7 +7,6 @@ public class SatuanSheetData {
     /** The product (name, photo, category, stock); null when it could not be loaded. */
     @Nullable public Produk produk;
     public boolean inCoverageArea;
-    public boolean sellerAvailable;
     /** "Rp 1.000" or "" (costPerKm setting). */
     public String ongkirPerKm = "";
 }

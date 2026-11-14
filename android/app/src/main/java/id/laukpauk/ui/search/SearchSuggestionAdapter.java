@@ -17,7 +17,7 @@ import id.laukpauk.databinding.ItemSearchSuggestionBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.ServerPath;
 
-/** Rows of the suggestion list: photo, PRODUK / PENJUAL tag, title and subtitle (legacy SearchResult). */
+/** Rows of the suggestion list: photo, PRODUK tag and title (legacy SearchResult). */
 public class SearchSuggestionAdapter extends ListAdapter<SearchSuggestion, SearchSuggestionAdapter.Holder> {
 
     public interface OnClick {
@@ -30,13 +30,12 @@ public class SearchSuggestionAdapter extends ListAdapter<SearchSuggestion, Searc
         super(new DiffUtil.ItemCallback<SearchSuggestion>() {
             @Override
             public boolean areItemsTheSame(@NonNull SearchSuggestion a, @NonNull SearchSuggestion b) {
-                return Objects.equals(a.id, b.id) && a.isPenjual() == b.isPenjual();
+                return Objects.equals(a.id, b.id);
             }
 
             @Override
             public boolean areContentsTheSame(@NonNull SearchSuggestion a, @NonNull SearchSuggestion b) {
-                return Objects.equals(a.namaProduk, b.namaProduk) && Objects.equals(a.namaToko, b.namaToko)
-                        && Objects.equals(a.namaPenjual, b.namaPenjual) && Objects.equals(a.alamatToko, b.alamatToko);
+                return Objects.equals(a.namaProduk, b.namaProduk) && Objects.equals(a.fotoProduk, b.fotoProduk);
             }
         });
         this.onClick = onClick;
@@ -52,28 +51,19 @@ public class SearchSuggestionAdapter extends ListAdapter<SearchSuggestion, Searc
     public void onBindViewHolder(@NonNull Holder h, int position) {
         SearchSuggestion s = getItem(position);
         ItemSearchSuggestionBinding b = h.binding;
-        boolean penjual = s.isPenjual();
-        String leading = penjual ? s.bannerToko : s.fotoProduk;
-        String title = penjual ? s.namaToko : s.namaProduk;
-        String subtitle = penjual ? s.alamatToko : s.namaPenjual;
-        if (subtitle == null || subtitle.isEmpty()) {
-            subtitle = b.getRoot().getContext().getString(
-                    penjual ? R.string.search_alamat_kosong : R.string.search_penjual_kosong);
-        }
+        String leading = s.fotoProduk;
+        String title = s.namaProduk;
         if (title == null || title.isEmpty()) {
-            title = b.getRoot().getContext().getString(
-                    penjual ? R.string.search_judul_toko_kosong : R.string.search_judul_produk_kosong);
+            title = b.getRoot().getContext().getString(R.string.search_judul_produk_kosong);
         }
         if (leading == null || leading.isEmpty()) {
             Images.asset(b.foto, "laukpauk.png");
         } else {
-            Images.circle(b.foto, Images.server(penjual ? ServerPath.uploadGambarBannerPenjual
-                    : ServerPath.uploadGambarProduk, "compress/" + leading));
+            Images.circle(b.foto, Images.server(ServerPath.uploadGambarProduk, "compress/" + leading));
         }
         b.jenis.setText(s.jenisItem == null ? "" : s.jenisItem.toUpperCase(Locale.ROOT));
-        b.jenis.setBackgroundResource(penjual ? R.drawable.bg_home_tag_penjual : R.drawable.bg_home_tag_produk);
+        b.jenis.setBackgroundResource(R.drawable.bg_home_tag_produk);
         b.judul.setText(title);
-        b.subjudul.setText(subtitle);
         b.getRoot().setOnClickListener(v -> onClick.onClick(s));
     }
 

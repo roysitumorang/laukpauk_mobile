@@ -11,80 +11,57 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.Set;
-
 import id.laukpauk.R;
 import id.laukpauk.data.model.orders.ItemTransaksi;
-import id.laukpauk.data.model.orders.RoPenjual;
+import id.laukpauk.data.model.orders.RepeatOrderResponses;
 import id.laukpauk.databinding.ItemOrdersRoItemBinding;
-import id.laukpauk.databinding.ItemOrdersRoPenjualBinding;
-import id.laukpauk.ui.common.Images;
+import id.laukpauk.databinding.ItemOrdersRoBinding;
 import id.laukpauk.util.Currency;
-import id.laukpauk.util.ServerPath;
 
-/** RepeatOrderTransaksiItemPerPenjual.dart + ItemTransaksiRO.dart. */
-public class RepeatOrderAdapter extends ListAdapter<RoPenjual, RepeatOrderAdapter.Holder> {
+/** The single card of Repeat Order: the old transaction's lines (ItemTransaksiRO.dart) or the "cannot re-order" note. */
+public class RepeatOrderAdapter extends ListAdapter<RepeatOrderResponses.Items, RepeatOrderAdapter.Holder> {
 
-    public interface Listener {
-        void onToggle(String idPenjual);
-    }
-
-    private static final DiffUtil.ItemCallback<RoPenjual> DIFF = new DiffUtil.ItemCallback<RoPenjual>() {
+    private static final DiffUtil.ItemCallback<RepeatOrderResponses.Items> DIFF =
+            new DiffUtil.ItemCallback<RepeatOrderResponses.Items>() {
         @Override
-        public boolean areItemsTheSame(@NonNull RoPenjual a, @NonNull RoPenjual b) {
-            return OrderUi.nz(a.idPenjual).equals(OrderUi.nz(b.idPenjual));
+        public boolean areItemsTheSame(@NonNull RepeatOrderResponses.Items a, @NonNull RepeatOrderResponses.Items b) {
+            return true;
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull RoPenjual a, @NonNull RoPenjual b) {
+        public boolean areContentsTheSame(@NonNull RepeatOrderResponses.Items a,
+                                          @NonNull RepeatOrderResponses.Items b) {
             return false;
         }
     };
 
-    private final Set<String> selected;
-    private final Listener listener;
-
-    public RepeatOrderAdapter(Set<String> selected, Listener listener) {
+    public RepeatOrderAdapter() {
         super(DIFF);
-        this.selected = selected;
-        this.listener = listener;
     }
 
     @NonNull
     @Override
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new Holder(ItemOrdersRoPenjualBinding.inflate(LayoutInflater.from(parent.getContext()), parent,
-                false));
+        return new Holder(ItemOrdersRoBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull Holder h, int position) {
-        h.bind(getItem(position), selected, listener);
+        h.bind(getItem(position));
     }
 
     static final class Holder extends RecyclerView.ViewHolder {
-        private final ItemOrdersRoPenjualBinding b;
+        private final ItemOrdersRoBinding b;
 
-        Holder(ItemOrdersRoPenjualBinding b) {
+        Holder(ItemOrdersRoBinding b) {
             super(b.getRoot());
             this.b = b;
         }
 
-        void bind(RoPenjual p, Set<String> selected, Listener listener) {
+        void bind(RepeatOrderResponses.Items p) {
             Context ctx = b.getRoot().getContext();
-            String alamat = OrderUi.nz(p.alamatToko);
-            b.nama.setText(OrderUi.nz(p.namaPenjual));
-            b.alamat.setText(alamat.isEmpty() ? ctx.getString(R.string.orders_ro_alamat_kosong) : alamat);
-            b.pasar.setText(ctx.getString(R.string.orders_ro_berjualan_format, OrderUi.nz(p.namaPasar)));
-            Images.circle(b.banner, Images.server(ServerPath.uploadGambarBannerPenjual,
-                    "compress/" + OrderUi.nz(p.bannerPenjual)));
             b.card.setStrokeColor(ContextCompat.getColor(ctx,
                     p.isAvailable ? R.color.nearly_white : R.color.text_danger));
-
-            b.check.setOnCheckedChangeListener(null);
-            b.check.setVisibility(p.isAvailable ? View.VISIBLE : View.GONE);
-            b.check.setChecked(selected.contains(p.idPenjual));
-            b.check.setOnCheckedChangeListener((v, checked) -> listener.onToggle(p.idPenjual));
 
             b.availableGroup.setVisibility(p.isAvailable ? View.VISIBLE : View.GONE);
             b.unavailableGroup.setVisibility(p.isAvailable ? View.GONE : View.VISIBLE);

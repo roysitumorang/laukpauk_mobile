@@ -19,39 +19,6 @@
         android:paddingBottom="14dp" />
 </LinearLayout>
 <Space android:layout_width="match_parent" android:layout_height="15dp" />
-<LinearLayout android:id="@+id/sellerBox" android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:layout_marginStart="10dp" android:layout_marginEnd="10dp" android:background="@drawable/bg_auth_seller_box"
-    android:orientation="vertical" android:padding="12dp" android:visibility="gone">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical"
-        android:orientation="horizontal">
-        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-            android:text="@string/auth_pasar_tempat_berjualan" android:textColor="@android:color/black" android:textSize="14sp" />
-        <TextView android:id="@+id/lokasiSendiri" android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="@string/auth_lokasi_tersendiri" android:textColor="@color/text_primary" android:textSize="13sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-    <FrameLayout android:layout_width="match_parent" android:layout_height="150dp" android:layout_marginTop="5dp">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
-            <include android:id="@+id/search" layout="@layout/view_search_box" />
-            <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
-                <androidx.recyclerview.widget.RecyclerView android:id="@+id/pasarList" android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-                <LinearLayout android:id="@+id/pasarEmpty" android:layout_width="match_parent" android:layout_height="match_parent"
-                    android:gravity="center" android:orientation="vertical" android:visibility="gone">
-                    <ImageView android:id="@+id/pasarEmptyImage" android:layout_width="94dp" android:layout_height="wrap_content"
-                        android:adjustViewBounds="true" android:importantForAccessibility="no" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="@string/auth_pasar_kosong" android:textColor="@android:color/black" android:textSize="11sp" />
-                </LinearLayout>
-                <ProgressBar android:id="@+id/pasarProgress" android:layout_width="15dp" android:layout_height="15dp"
-                    android:layout_gravity="center" />
-            </FrameLayout>
-        </LinearLayout>
-    </FrameLayout>
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp"
-        android:gravity="center" android:text="@string/auth_catatan_penjual" android:textColor="@android:color/black"
-        android:textSize="9sp" />
-</LinearLayout>
 <TextView android:id="@+id/dan" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="25dp"
     android:layout_marginTop="10dp" android:layout_marginBottom="10dp" android:gravity="center"
     android:textColor="@android:color/black" android:textSize="16sp" />

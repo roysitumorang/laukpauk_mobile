@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="product_beli">Beli</string>
-    <string name="product_edit">Edit</string>
     <string name="product_yuhu_title">Yuhuuu…</string>
     <string name="product_yuhu_text">Akan kami hubungi jika ada selisih timbangan ya…</string>
     <string name="product_pilihan_satuan">Pilihan Satuan</string>
@@ -9,8 +8,6 @@
     <string name="product_kategori_tidak_diketahui">Kategori Produk Tidak Diketahui</string>
     <string name="product_note">Note!</string>
     <string name="product_note_luar_ca">Produk ini berada diluar Coverage Area Anda. Anda akan dikenakan ongkir %1$s/KM. Disarankan belanja dari 1 pasar di terdekat lokasi Anda</string>
-    <string name="product_pemberitahuan">Pemberitahuan</string>
-    <string name="product_penjual_tidak_tersedia">Penjual dari produk ini tidak tersedia dalam jam pengantaran yang anda pilih!</string>
     <string name="product_stok_habis">Stok tidak tersedia</string>
     <string name="product_tanpa_harga">Mohon maaf, produk ini tidak memiliki daftar harga</string>
     <string name="product_harga_pas">1 Item (Harga Pas)</string>
@@ -21,9 +18,6 @@
     <string name="product_paket_berhasil">Produk berhasil ditambahkan ke keranjang !</string>
     <string name="product_paket_gagal">Produk gagal ditambahkan ke keranjang, silahkan coba lagi.</string>
     <string name="product_detail_tidak_ditemukan">Detail Produk Tidak Ditemukan</string>
-    <string name="product_penjual">Penjual</string>
-    <string name="product_penjual_tidak_diketahui">Penjual Tidak Diketahui</string>
-    <string name="product_klik_penjual">Klik nama penjual untuk melihat seluruh produk penjual</string>
     <string name="product_deskripsi_produk">Deskripsi Produk</string>
     <string name="product_deskripsi_kosong">Deskripsi tidak ada</string>
     <string name="product_deskripsi_paket">Deskripsi Paket</string>
@@ -33,8 +27,4 @@
     <string name="product_paket_lainnya">Paket Lainnya</string>
     <string name="product_paket_lainnya_kosong">Maaf mak, tidak ada paket lainnya…</string>
     <string name="product_diskon">Diskon %1$s %%</string>
-    <string name="product_edit_produk_berhasil">Berhasil mengubah data produk</string>
-    <string name="product_edit_produk_gagal">Gagal mengubah data produk !</string>
-    <string name="product_edit_paket_berhasil">Berhasil mengubah data paket</string>
-    <string name="product_edit_paket_gagal">Gagal mengubah data paket !</string>
 </resources>

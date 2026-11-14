@@ -2,8 +2,5 @@
 <resources>
     <!-- AuthUi.PAGE_BG: page background of the OTP / register / reset screens -->
     <color name="auth_page_bg">#FFF9F9F9</color>
-    <!-- ListPasar: selected market and the seller box -->
-    <color name="auth_pasar_selected">#7766CC99</color>
-    <color name="auth_seller_box">#2266CC99</color>
     <color name="auth_loading_overlay">#BBFFFFFF</color>
 </resources>

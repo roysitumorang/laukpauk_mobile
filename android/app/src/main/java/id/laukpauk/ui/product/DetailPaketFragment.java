@@ -55,7 +55,6 @@ public class DetailPaketFragment extends Fragment {
 
         binding.header.bind(this);
         Images.asset(binding.yuhu.yuhuImage, "icons/timbangan.png");
-        Images.asset(binding.storeIcon, "store.png");
         Images.asset(binding.notFoundImage, "empty.png");
         Images.asset(binding.lainnyaEmptyImage, "empty.png");
 
@@ -76,12 +75,6 @@ public class DetailPaketFragment extends Fragment {
                 boolean empty = !res.isSuccess() || res.data == null || res.data.isEmpty();
                 lainnyaAdapter.submitList(empty ? null : res.data);
                 binding.lainnyaEmpty.setVisibility(empty ? View.VISIBLE : View.GONE);
-            }
-        });
-        NavResults.<Boolean>observe(this, DetailProdukFragment.EDIT_RESULT_KEY, ok -> {
-            Messages.snack(this, getString(ok ? R.string.product_edit_paket_berhasil : R.string.product_edit_paket_gagal));
-            if (ok) {
-                viewModel.load();
             }
         });
     }
@@ -113,31 +106,14 @@ public class DetailPaketFragment extends Fragment {
         binding.diskon.setText(getString(R.string.product_diskon, String.format(Locale.US, "%.1f", persen)));
         binding.harga.setText(Currency.formatRupiah(p.harga - p.diskon, 0));
 
-        binding.toko.setText(p.namaToko != null && !p.namaToko.isEmpty() ? p.namaToko
-                : getString(R.string.product_penjual_tidak_diketahui));
-        binding.toko.setOnClickListener(v -> {
-            Bundle args = new Bundle();
-            args.putString("idPenjual", p.idPenjual);
-            NavHostFragment.findNavController(this).navigate(R.id.penjualFragment, args);
-        });
         boolean ada = p.keterangan != null && !p.keterangan.isEmpty();
         binding.deskripsi.setText(ada ? p.keterangan : getString(R.string.product_deskripsi_paket_kosong));
         binding.deskripsi.setTypeface(null, ada ? Typeface.NORMAL : Typeface.ITALIC);
 
-        boolean mine = p.idPenjual != null && p.idPenjual.equals(viewModel.currentUserId());
-        binding.beli.setText(mine ? R.string.product_edit : R.string.product_beli);
+        binding.beli.setText(R.string.product_beli);
         binding.beli.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), mine ? R.color.product_warning : R.color.green)));
-        binding.beli.setOnClickListener(v -> {
-            if (mine) {
-                Bundle args = new Bundle();
-                args.putString("idProduk", p.id);
-                args.putString("jenisProduk", "paket");
-                NavHostFragment.findNavController(this).navigate(R.id.tambahProdukFragment, args);
-            } else {
-                ProductActions.beliPaket(this, p.id, p.nama);
-            }
-        });
+                ContextCompat.getColor(requireContext(), R.color.green)));
+        binding.beli.setOnClickListener(v -> ProductActions.beliPaket(this, p.id, p.nama));
     }
 
     @Override

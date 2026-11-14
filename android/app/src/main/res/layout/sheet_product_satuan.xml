@@ -119,36 +119,6 @@
                 android:textStyle="italic" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/noteSeller"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_product_note_warning"
-            android:orientation="vertical"
-            android:paddingStart="15dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="15dp"
-            android:paddingBottom="10dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/product_pemberitahuan"
-                android:textColor="@color/nearly_black"
-                android:textSize="13sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/product_penjual_tidak_tersedia"
-                android:textColor="@color/nearly_black"
-                android:textSize="11sp"
-                android:textStyle="italic" />
-        </LinearLayout>
-
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="15dp"

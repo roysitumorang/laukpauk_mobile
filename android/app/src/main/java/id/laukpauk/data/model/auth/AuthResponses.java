@@ -1,8 +1,7 @@
 package id.laukpauk.data.model.auth;
 
-import java.util.List;
 
-/** Response wrappers of the /Auth, /User/getDetailUser and /Pasar/getPasar endpoints used by the auth screens. */
+/** Response wrappers of the /Auth and /User/getDetailUser endpoints used by the auth screens. */
 public final class AuthResponses {
     private AuthResponses() {}
 
@@ -56,18 +55,6 @@ public final class AuthResponses {
     }
 
     public static class DetailUser {
-        public String isSeller;
         public String nomorHP;
-    }
-
-    /** Pasar/getPasar?jenisPasar=pasarTersedia. */
-    public static class PasarList {
-        public List<Pasar> dataPasar;
-    }
-
-    public static class Pasar {
-        public String id;
-        public String nama;
-        public String gambar;
     }
 }

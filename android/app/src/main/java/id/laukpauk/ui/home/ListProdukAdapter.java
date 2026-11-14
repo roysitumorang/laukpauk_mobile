@@ -45,10 +45,7 @@ public class ListProdukAdapter extends ListAdapter<HomeProduk, ListProdukAdapter
                 ? ImageView.ScaleType.FIT_CENTER : ImageView.ScaleType.CENTER_CROP);
         Images.url(b.foto, Images.server(ServerPath.uploadGambarProduk, "compress/" + p.foto));
         b.nama.setText(p.nama);
-        boolean adaToko = p.namaToko != null && !p.namaToko.isEmpty();
-        b.toko.setText(adaToko ? p.namaToko : b.getRoot().getContext().getString(R.string.home_penjual_tidak_diketahui));
         b.root.setOnClickListener(v -> listener.onProduk(p));
-        b.toko.setOnClickListener(v -> listener.onToko(p));
         b.beli.setOnClickListener(v -> listener.onBeli(p));
         b.progress.setVisibility(View.VISIBLE);
         b.tanpaHarga.setVisibility(View.GONE);

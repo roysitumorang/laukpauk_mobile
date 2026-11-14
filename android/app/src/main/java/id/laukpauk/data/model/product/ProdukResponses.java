@@ -31,7 +31,4 @@ public final class ProdukResponses {
         public boolean isThisProductInCA;
     }
 
-    public static class SellerAvailable {
-        public boolean isSellerAvailable;
-    }
 }

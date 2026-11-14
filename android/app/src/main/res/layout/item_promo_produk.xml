@@ -96,22 +96,6 @@
                         android:textStyle="bold" />
 
                     <HorizontalScrollView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:scrollbars="none">
-
-                        <TextView
-                            android:id="@+id/toko"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:singleLine="true"
-                            android:textColor="@color/promo_text"
-                            android:textSize="10sp" />
-                    </HorizontalScrollView>
-
-                    <HorizontalScrollView
                         android:id="@+id/deskripsiScroll"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

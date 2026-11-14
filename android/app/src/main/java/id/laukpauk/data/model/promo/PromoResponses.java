@@ -14,12 +14,4 @@ public final class PromoResponses {
         /** null when the server answers false. */
         public PromoItemDetail promoItem;
     }
-
-    public static class DetailUser {
-        public Id detailUser;
-    }
-
-    public static class Id {
-        public int id;
-    }
 }

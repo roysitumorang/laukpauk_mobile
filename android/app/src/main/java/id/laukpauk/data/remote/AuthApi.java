@@ -30,9 +30,7 @@ public interface AuthApi {
     @FormUrlEncoded
     @POST("Auth/verifikasiUser")
     Call<AuthResponses.VerifikasiUser> verifikasiUser(@Field("idUser") String idUser,
-                                                      @Field("verificationCode") String verificationCode,
-                                                      @Field("isSeller") String isSeller,
-                                                      @Field("idPasar") String idPasar);
+                                                      @Field("verificationCode") String verificationCode);
 
     @FormUrlEncoded
     @POST("Auth/resendOTP")
@@ -46,7 +44,4 @@ public interface AuthApi {
     @GET("User/getDetailUser")
     Call<AuthResponses.DetailUserResponse> getDetailUser(@Query("authToken") String authToken,
                                                          @Query("getUserEntities") String getUserEntities);
-
-    @GET("Pasar/getPasar")
-    Call<AuthResponses.PasarList> getPasar(@Query("jenisPasar") String jenisPasar);
 }

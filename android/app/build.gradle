@@ -49,7 +49,6 @@ android {
         buildConfigField 'String', 'BASE_URL', q(cfg('BASE_URL', 'https://CHANGE-ME.invalid'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_ARTIKEL', q(cfg('UPLOAD_GAMBAR_ARTIKEL', 'upload/gambar/artikel'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_BANNER', q(cfg('UPLOAD_GAMBAR_BANNER', 'upload/gambar/banner'))
-        buildConfigField 'String', 'UPLOAD_GAMBAR_BANNER_PENJUAL', q(cfg('UPLOAD_GAMBAR_BANNER_PENJUAL', 'upload/gambar/banner-penjual'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_GIFT', q(cfg('UPLOAD_GAMBAR_GIFT', 'upload/gambar/gift'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_KATEGORI_PRODUK', q(cfg('UPLOAD_GAMBAR_KATEGORI_PRODUK', 'upload/gambar/kategori-produk'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_KONTEN_ITEM', q(cfg('UPLOAD_GAMBAR_KONTEN_ITEM', 'upload/gambar/konten-item'))

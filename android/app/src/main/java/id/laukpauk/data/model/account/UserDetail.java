@@ -10,6 +10,4 @@ public class UserDetail {
     public String foto;
     public String kodeReferal;
     public String createdAt;
-    /** Server sends "1"/"0". */
-    public boolean isSeller;
 }

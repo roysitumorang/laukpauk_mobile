@@ -19,7 +19,7 @@ final class HomeProdukDiff extends DiffUtil.ItemCallback<HomeProduk> {
     @Override
     public boolean areContentsTheSame(@NonNull HomeProduk a, @NonNull HomeProduk b) {
         return Objects.equals(a.nama, b.nama) && Objects.equals(a.foto, b.foto)
-                && Objects.equals(a.namaToko, b.namaToko) && a.isStokAvailable() == b.isStokAvailable()
+                && a.isStokAvailable() == b.isStokAvailable()
                 && a.isInActivePromo() == b.isInActivePromo();
     }
 }

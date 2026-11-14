@@ -81,16 +81,13 @@ final class ShowSatuanProduk {
         }
         b.noteLuarCa.setVisibility(data.inCoverageArea ? View.GONE : View.VISIBLE);
         b.noteLuarCaText.setText(ctx.getString(R.string.product_note_luar_ca, data.ongkirPerKm));
-        b.noteSeller.setVisibility(data.sellerAvailable ? View.GONE : View.VISIBLE);
         b.beli.setOnClickListener(v -> onBeli());
 
-        if (data.sellerAvailable) {
-            boolean stock = p == null || p.isStockAvailable();
-            if (stock) {
-                loadRows();
-            } else {
-                b.stokHabis.setVisibility(View.VISIBLE);
-            }
+        boolean stock = p == null || p.isStockAvailable();
+        if (stock) {
+            loadRows();
+        } else {
+            b.stokHabis.setVisibility(View.VISIBLE);
         }
         dialog.show();
     }

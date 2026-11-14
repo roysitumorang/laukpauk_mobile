@@ -6,8 +6,11 @@ import java.util.List;
 public final class RepeatOrderResponses {
     private RepeatOrderResponses() {}
 
+    /** The re-orderable lines of a transaction (RO/getItemTransaksi). */
     public static class Items {
-        public List<RoPenjual> itemTransaksi;
+        /** false when the lines can't be delivered to the chosen address / schedule. */
+        public boolean isAvailable;
+        public List<ItemTransaksi> itemTransaksi;
     }
 
     public static class AddToCart {

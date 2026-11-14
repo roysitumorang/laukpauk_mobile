@@ -206,11 +206,7 @@ public class SearchFragment extends Fragment {
     }
 
     private void openSuggestion(SearchSuggestion s) {
-        if (s.isPenjual()) {
-            replaceWith(R.id.penjualFragment, "idPenjual", s.id);
-        } else {
-            replaceWith(R.id.detailProdukFragment, "idProduk", s.id);
-        }
+        replaceWith(R.id.detailProdukFragment, "idProduk", s.id);
     }
 
     /** Legacy pushReplacement: the search dialog closes, so back from the detail returns to the previous screen. */
