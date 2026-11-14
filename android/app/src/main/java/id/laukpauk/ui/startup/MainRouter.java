@@ -122,16 +122,6 @@ public final class MainRouter {
                 }
                 break;
 
-            case "/rpd":
-                b.putString("dataPenjual", Json.toJson(Json.object(a, "dataPenjual")));
-                b.putString("dataRPD", Json.toJson(Json.object(a, "dataRPD")));
-                nav.navigate(R.id.responseRPDFragment, b);
-                break;
-
-            case "/rmp":
-                nav.navigate(R.id.tokoSayaFragment);
-                break;
-
             case "/poin":
                 nav.navigate(R.id.historiPoinFragment);
                 break;
@@ -150,11 +140,6 @@ public final class MainRouter {
             case "/resep":
                 b.putString("idResep", Json.str(a, "resep"));
                 nav.navigate(R.id.detailResepFragment, b);
-                break;
-
-            case "/penjualan":
-                b.putString("idTransaksi", Json.str(a, "idTransaksi"));
-                nav.navigate(R.id.prosesPesananFragment, b);
                 break;
 
             case "/buatOrderBerhasil": {

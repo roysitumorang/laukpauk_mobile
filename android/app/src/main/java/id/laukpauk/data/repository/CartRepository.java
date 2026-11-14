@@ -14,8 +14,8 @@ import java.util.Map;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.cart.AddToCartResult;
 import id.laukpauk.data.model.cart.CartGift;
+import id.laukpauk.data.model.cart.CartProduct;
 import id.laukpauk.data.model.cart.CartResponses;
-import id.laukpauk.data.model.cart.CartSeller;
 import id.laukpauk.data.model.cart.WalletConfiguration;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.remote.CartApi;
@@ -103,12 +103,12 @@ public class CartRepository extends BaseRepository {
 
     // ---- cart screens --------------------------------------------------------------------------
 
-    /** Cart grouped per seller (legacy getKeranjangPerPenjual; empty list when nothing / on failure). */
-    public LiveData<Resource<List<CartSeller>>> cartPerSeller() {
-        MutableLiveData<Resource<List<CartSeller>>> live = new MutableLiveData<>(Resource.loading());
-        enqueue(api.getCartDividedBySeller(session.getCartCode()),
-                body -> body == null || body.listCart == null ? new ArrayList<CartSeller>() : body.listCart,
-                r -> live.setValue(r.isError() ? Resource.success(new ArrayList<CartSeller>()) : r));
+    /** The cart lines (empty list when nothing / on failure). */
+    public LiveData<Resource<List<CartProduct>>> cart() {
+        MutableLiveData<Resource<List<CartProduct>>> live = new MutableLiveData<>(Resource.loading());
+        enqueue(api.getCart(session.getCartCode()),
+                body -> body == null || body.listCart == null ? new ArrayList<CartProduct>() : body.listCart,
+                r -> live.setValue(r.isError() ? Resource.success(new ArrayList<CartProduct>()) : r));
         return live;
     }
 

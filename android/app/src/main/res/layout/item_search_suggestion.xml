@@ -14,7 +14,5 @@
             <TextView android:id="@+id/judul" android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:singleLine="true" android:ellipsize="end" android:textColor="#DE000000" android:textSize="16sp" />
         </LinearLayout>
-        <TextView android:id="@+id/subjudul" android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:textColor="#99000000" android:textSize="14sp" />
     </LinearLayout>
 </LinearLayout>

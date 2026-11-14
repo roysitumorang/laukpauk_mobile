@@ -12,7 +12,6 @@
     <string name="market_hemat">Hemat %1$s</string>
     <string name="market_tidak_ada_harga">Tidak ada daftar harga</string>
     <string name="market_stok_habis">Stok tidak tersedia</string>
-    <string name="market_penjual_tidak_diketahui">Penjual Tidak Diketahui</string>
     <string name="market_adjd_belum_ditentukan">Anda belum menentukan lokasi dan jadwal pengantaran. Untuk melihat pasar lain yang berada didalam dan diluar area anda silahkan tentukan terlebih dahulu lokasi dan jadwal pengantaran.</string>
     <string name="market_tentukan_lokasi">Tentukan Lokasi dan Alamat Pengantaran</string>
     <string name="market_pasar_sekitar">Pasar Lain di Sekitar Anda</string>

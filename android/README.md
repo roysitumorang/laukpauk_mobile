@@ -63,7 +63,7 @@ Data layer                                              data/repository/XxxRepos
 | Package | Contents |
 | --- | --- |
 | `MainActivity` | the only Activity: NavHostFragment, bottom navigation, insets, deep links (`ui/startup/MainRouter`) |
-| `ui/<feature>` | Fragments, their ViewModels, RecyclerView `ListAdapter`s and small custom views — one package per feature (auth, home, search, product, market, cart, checkout, orders, account, seller, …) |
+| `ui/<feature>` | Fragments, their ViewModels, RecyclerView `ListAdapter`s and small custom views — one package per feature (auth, home, search, product, market, cart, checkout, orders, account, …) |
 | `ui/common` | shared UI: `HeaderView` (buyer header with cart/notification badges), `AppBars`, `Messages`, `SearchBox`, `ImagePicker`, `PhoneNumberHint` (offers the SIM phone number on the login, register and forgot-password screens via the Phone Number Hint API), `AuthGate` (sign-in gating), `NavResults` (results to the previous screen), `Images` (Glide) |
 | `ui/delivery`, `ui/product/ProductActions` | cross-feature flows: choosing the delivery address + schedule, the "Beli" unit sheet + add to cart |
 | `data/repository` | one repository per domain (`CartRepository`, `DeliveryRepository`, `ProdukRepository`, …). UI-free; network through Retrofit `enqueue`, results as `Resource<T>` (`LOADING` / `SUCCESS` / `ERROR`) |
@@ -174,5 +174,5 @@ messages are also shown, using `data.title`, `data.body` and `data.image`. Tappi
 ## Not verified yet
 
 The port has been compiled (CI) but not run against the production backend or on a device. Before release:
-run the buyer and seller flows on staging, every payment method included, and compare the API request
+run the buyer flows on staging, every payment method included, and compare the API request
 sequence of both apps for the same flows.

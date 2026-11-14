@@ -1,17 +1,15 @@
 package id.laukpauk.data.remote;
 
-import java.util.Map;
 
 import id.laukpauk.data.model.account.AccountResponses;
 import retrofit2.Call;
 import retrofit2.http.Field;
-import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
-/** Auth-side account actions, referral and seller request (versionCode is added by ApiClient). */
+/** Auth-side account actions, and referral (versionCode is added by ApiClient). */
 public interface AccountApi {
 
     @GET("Auth/removeToken")
@@ -34,13 +32,4 @@ public interface AccountApi {
 
     @GET("Pengaturan/getReferralConfiguration")
     Call<AccountResponses.ReferralConfiguration> getReferralConfiguration(@Query("authToken") String authToken);
-
-    @GET("Pasar/getPasar")
-    Call<AccountResponses.PasarList> getPasar(@Query("jenisPasar") String jenisPasar);
-
-    /** Fields: namaToko, alamatToko, bio, lokasiBerjualan, pasar, nomorRekening, (lat, long). */
-    @FormUrlEncoded
-    @POST("Penjual/ajukanRequestPenjual")
-    Call<AccountResponses.RequestPenjual> ajukanRequestPenjual(@Query("authToken") String authToken,
-                                                               @FieldMap Map<String, String> fields);
 }

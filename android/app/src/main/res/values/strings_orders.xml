@@ -92,7 +92,6 @@
 
     <!-- Daftar belanjaan / gift -->
     <string name="orders_daftar_belanjaan">Daftar Belanjaan</string>
-    <string name="orders_invoice">Invoice</string>
     <string name="orders_item_kosong">Transaksi ini tidak memiliki item belanjaan</string>
     <string name="orders_produk_ada">Produk Ada</string>
     <string name="orders_produk_diproses">Sedang di proses</string>
@@ -113,9 +112,7 @@
     <string name="orders_ro_kosong">Tidak ada belanjaan di dalam transaksi ini yang dapat dibelanja ulang.\nSilahkan belanja ulang seperti biasa!</string>
     <string name="orders_ro_item_belanjaan">Item Belanjaan</string>
     <string name="orders_ro_tidak_dapat_title">Tidak Dapat Dibeli Ulang</string>
-    <string name="orders_ro_tidak_dapat_message">Mohon maaf, belanjaan tidak dapat direpeat order karena penjual tidak ready pada alamat dan jam pengantaran yang telah anda tentukan</string>
-    <string name="orders_ro_alamat_kosong">Alamat toko belum ditentukan</string>
-    <string name="orders_ro_berjualan_format">Berjualan di %1$s</string>
+    <string name="orders_ro_tidak_dapat_message">Mohon maaf, belanjaan tidak dapat direpeat order karena belanjaan tidak tersedia pada alamat dan jam pengantaran yang telah anda tentukan</string>
     <string name="orders_ro_item_format">%1$s %2$d x %3$s</string>
     <string name="orders_ro_gagal">Gagal menambahkan ke keranjang belanjaan, coba lagi!</string>
     <string name="orders_ro_berhasil">Berhasil menambahkan ke keranjang!</string>

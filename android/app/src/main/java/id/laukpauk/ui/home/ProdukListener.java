@@ -9,15 +9,13 @@ import id.laukpauk.R;
 import id.laukpauk.data.model.home.HomeProduk;
 import id.laukpauk.ui.product.ProductActions;
 
-/** Taps on a product tile: open the product, open its seller, or "Beli". */
+/** Taps on a product tile: open the product or "Beli". */
 public interface ProdukListener {
     void onProduk(HomeProduk produk);
 
-    void onToko(HomeProduk produk);
-
     void onBeli(HomeProduk produk);
 
-    /** The standard behaviour: detailProdukFragment, penjualFragment, ProductActions.beli. */
+    /** The standard behaviour: detailProdukFragment, ProductActions.beli. */
     static ProdukListener navigating(final Fragment fragment) {
         return new ProdukListener() {
             @Override
@@ -25,16 +23,6 @@ public interface ProdukListener {
                 Bundle args = new Bundle();
                 args.putString("idProduk", p.id);
                 NavHostFragment.findNavController(fragment).navigate(R.id.detailProdukFragment, args);
-            }
-
-            @Override
-            public void onToko(HomeProduk p) {
-                if (p.idPenjual == null) {
-                    return;
-                }
-                Bundle args = new Bundle();
-                args.putString("idPenjual", p.idPenjual);
-                NavHostFragment.findNavController(fragment).navigate(R.id.penjualFragment, args);
             }
 
             @Override

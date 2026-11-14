@@ -18,7 +18,7 @@ public class NotifikasiKhusus {
     public String routeParams;
     @Json(name = "isRead")
     public boolean isRead;
-    /** Icon name in assets/img/notifikasi/ (orderan, dompet, penjualan, rmp, rpd). */
+    /** Icon name in assets/img/notifikasi/ (orderan, dompet). */
     @Json(name = "jenisNotifikasi")
     public String jenisNotifikasi;
     @Json(name = "waktu")

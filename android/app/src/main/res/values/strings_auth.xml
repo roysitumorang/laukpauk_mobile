@@ -42,14 +42,7 @@
     <string name="auth_verifikasi">Verifikasi</string>
     <string name="auth_verifikasi_judul">Verifikasi User</string>
     <string name="auth_verifikasi_gagal">Verifikasi User gagal, silahkan ulangi kembali !</string>
-    <string name="auth_verifikasi_pesan">Silahkan masukkan kode OTP Verifikasi User yang dikirim ke nomor yang anda daftarkan%1$s</string>
-    <string name="auth_verifikasi_pesan_penjual"> dan tentukan lokasi anda berjualan untuk dapat berjualan.</string>
-    <string name="auth_verifikasi_pesan_pembeli">.</string>
-    <string name="auth_pasar_tempat_berjualan">Pasar Tempat Berjualan</string>
-    <string name="auth_lokasi_tersendiri">Lokasi Tersendiri</string>
-    <string name="auth_pasar_hint">Type Here</string>
-    <string name="auth_pasar_kosong">Tidak ada pasar yang bisa dipilih</string>
-    <string name="auth_catatan_penjual">Anda adalah penjual di aplikasi sebelumnya, oleh karena itu anda diminta untuk menentukan lokasi berjualan agar pembeli mudah menemukan anda</string>
+    <string name="auth_verifikasi_pesan">Silahkan masukkan kode OTP Verifikasi User yang dikirim ke nomor yang anda daftarkan.</string>
 
     <string name="auth_otp_belum_terverifikasi">OTP Belum Terverifikasi</string>
     <string name="auth_otp_masukkan_ulang">Silahkan masukkan ulang kode otp yang dikirimkan ke HP anda</string>

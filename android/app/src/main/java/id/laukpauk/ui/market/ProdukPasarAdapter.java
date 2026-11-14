@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,8 +32,6 @@ public class ProdukPasarAdapter extends ListAdapter<Produk, ProdukPasarAdapter.H
     public interface Listener {
         void onOpen(Produk produk);
 
-        void onToko(Produk produk);
-
         void onBeli(Produk produk);
 
         void onNeedPrice(Produk produk);
@@ -44,7 +41,7 @@ public class ProdukPasarAdapter extends ListAdapter<Produk, ProdukPasarAdapter.H
     private final Listener listener;
     private Map<String, LowestPrice> prices = Collections.emptyMap();
 
-    /** @param aspect width / height of a grid cell (legacy childAspectRatio: 0.45 market, 0.5 seller shop). */
+    /** @param aspect width / height of a grid cell (legacy childAspectRatio: 0.45 market). */
     public ProdukPasarAdapter(float aspect, Listener listener) {
         super(new DiffUtil.ItemCallback<Produk>() {
             @Override
@@ -55,7 +52,7 @@ public class ProdukPasarAdapter extends ListAdapter<Produk, ProdukPasarAdapter.H
             @Override
             public boolean areContentsTheSame(@NonNull Produk a, @NonNull Produk b) {
                 return TextUtils.equals(a.nama, b.nama) && TextUtils.equals(a.foto, b.foto)
-                        && TextUtils.equals(a.namaToko, b.namaToko) && a.isStockAvailable() == b.isStockAvailable()
+                        && a.isStockAvailable() == b.isStockAvailable()
                         && a.isInActivePromo() == b.isInActivePromo();
             }
         });
@@ -121,9 +118,6 @@ public class ProdukPasarAdapter extends ListAdapter<Produk, ProdukPasarAdapter.H
             }
 
             b.nama.setText(p.nama);
-            String toko = p.namaToko == null || p.namaToko.isEmpty() ? null : p.namaToko;
-            b.toko.setText(toko != null ? toko : b.getRoot().getContext().getString(R.string.market_penjual_tidak_diketahui));
-            b.toko.setOnClickListener(v -> listener.onToko(p));
             boolean adaDeskripsi = p.keteranganSingkat != null && !p.keteranganSingkat.isEmpty();
             b.deskripsi.setVisibility(adaDeskripsi ? View.VISIBLE : View.GONE);
             b.deskripsi.setText(p.keteranganSingkat);

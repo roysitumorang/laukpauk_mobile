@@ -19,8 +19,8 @@ public interface CartApi {
     @GET("User/getJumlahCart")
     Call<CartResponses.Count> getJumlahCart(@Query("cartCode") String cartCode);
 
-    @GET("User/getCartDividedBySeller")
-    Call<CartResponses.SellerList> getCartDividedBySeller(@Query("cartCode") String cartCode);
+    @GET("User/getCart")
+    Call<CartResponses.ProductList> getCart(@Query("cartCode") String cartCode);
 
     @GET("User/getTotalKeranjang")
     Call<CartResponses.Total> getTotalKeranjang(@Query("cartCode") String cartCode,

@@ -25,8 +25,4 @@ public interface ProdukApi {
     Call<ProdukResponses.InCa> isThisProductInCA(@Query("idProduk") String idProduk,
                                                  @Query("latitude") String latitude,
                                                  @Query("longitude") String longitude);
-
-    @GET("Produk/isProductSellerAvailable")
-    Call<ProdukResponses.SellerAvailable> isProductSellerAvailable(@Query("idProduk") String idProduk,
-                                                                   @Query("jadwalDeliveryCode") String jadwalDeliveryCode);
 }

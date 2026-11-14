@@ -92,14 +92,4 @@ public final class AccountResponses {
         @Json(name = "referralWallet")
         public long referralWallet;
     }
-
-    public static class PasarList {
-        @Json(name = "dataPasar")
-        public List<Pasar> dataPasar;
-    }
-
-    public static class RequestPenjual {
-        @Json(name = "statusRequest")
-        public boolean statusRequest;
-    }
 }

@@ -2,23 +2,17 @@ package id.laukpauk.data.repository;
 
 import android.content.SharedPreferences;
 
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.local.Prefs;
 import id.laukpauk.data.model.account.AccountResponses;
-import id.laukpauk.data.model.account.Pasar;
 import id.laukpauk.data.remote.AccountApi;
 
 /**
- * Account actions: logout, phone number change, referral settings, seller request. Profile / wallet data lives
+ * Account actions: logout, phone number change, referral settings. Profile / wallet data lives
  * in {@link UserRepository}.
  */
 public class AccountRepository extends BaseRepository {
@@ -125,32 +119,4 @@ public class AccountRepository extends BaseRepository {
                         body == null || body.referralConfiguration == null ? null : body.referralConfiguration.referralWallet);
     }
 
-    // ------------------------------------------------------------------ seller request
-
-    public LiveData<Resource<List<Pasar>>> getPasarTersedia() {
-        return load(api.getPasar("pasarTersedia"), (AccountResponses.PasarList body) ->
-                body == null || body.dataPasar == null ? new ArrayList<Pasar>() : body.dataPasar);
-    }
-
-    /**
-     * Penjual/ajukanRequestPenjual. {@code lat}/{@code lng} only for "lokasiTersendiri". Callback gets true when
-     * the server accepted the request; an error result means the request did not answer 200.
-     */
-    public void ajukanRequestPenjual(String namaToko, String alamatToko, String bio, String lokasiBerjualan,
-                                     String pasar, String nomorRekening, @Nullable String lat, @Nullable String lng,
-                                     ResultCallback<Boolean> callback) {
-        Map<String, String> fields = new LinkedHashMap<>();
-        fields.put("namaToko", namaToko);
-        fields.put("alamatToko", alamatToko);
-        fields.put("bio", bio);
-        fields.put("lokasiBerjualan", lokasiBerjualan);
-        fields.put("pasar", pasar);
-        fields.put("nomorRekening", nomorRekening);
-        if (lat != null && lng != null) {
-            fields.put("lat", lat);
-            fields.put("long", lng);
-        }
-        enqueue(api.ajukanRequestPenjual(authToken(), fields),
-                (AccountResponses.RequestPenjual body) -> body != null && body.statusRequest, callback);
-    }
 }

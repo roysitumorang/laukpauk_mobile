@@ -17,7 +17,6 @@ BASE_URL=https://CHANGE-ME.invalid
 # ('/upload/gambar/gift/'); confirm them against your ServerPath.dart.
 UPLOAD_GAMBAR_ARTIKEL=upload/gambar/artikel
 UPLOAD_GAMBAR_BANNER=upload/gambar/banner
-UPLOAD_GAMBAR_BANNER_PENJUAL=upload/gambar/banner-penjual
 UPLOAD_GAMBAR_GIFT=upload/gambar/gift
 UPLOAD_GAMBAR_KATEGORI_PRODUK=upload/gambar/kategori-produk
 UPLOAD_GAMBAR_KONTEN_ITEM=upload/gambar/konten-item

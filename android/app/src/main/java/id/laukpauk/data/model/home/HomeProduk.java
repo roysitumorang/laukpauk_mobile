@@ -7,10 +7,8 @@ package id.laukpauk.data.model.home;
  */
 public class HomeProduk {
     public String id;
-    public String idPenjual;
     public String nama;
     public String foto;
-    public String namaToko;
     public String namaKategoriProduk;
     public String keteranganSingkat;
     /** Missing = available. */

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="search_field_hint">Cari Produk dan Toko di sini</string>
+    <string name="search_field_hint">Cari Produk di sini</string>
     <string name="search_kembali">Kembali</string>
     <string name="search_hapus">Hapus pencarian</string>
     <string name="search_prompt">Yuk, cari produk yang ingin kamu beli disini .. </string>
     <string name="search_tidak_ditemukan">Produk \"%1$s\" tidak ditemukan. Coba cari lagi ya ..</string>
-    <string name="search_alamat_kosong">Alamat Toko Belum ditentukan</string>
-    <string name="search_penjual_kosong">Nama Penjual Belum ditentukan</string>
-    <string name="search_judul_toko_kosong">Nama Toko / Penjual belum ditentukan</string>
     <string name="search_judul_produk_kosong">Nama Produk Belum ditentukan</string>
     <string name="search_histori_title">Histori Pencarian</string>
     <string name="search_histori_kosong">Belum ada pencarian ..</string>

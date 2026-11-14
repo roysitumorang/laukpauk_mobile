@@ -24,10 +24,6 @@ public class PaketRepository extends BaseRepository {
         this.delivery = delivery;
     }
 
-    public String currentUserId() {
-        return session.getCurrentUserID();
-    }
-
     /** Legacy PaketModel.detailPaket; SUCCESS with null data = not found. */
     public LiveData<Resource<Paket>> getDetailPaket(String idPaket) {
         return load(api.detailPaket(idPaket == null ? "" : idPaket), body -> body == null ? null : body.detailPaket);

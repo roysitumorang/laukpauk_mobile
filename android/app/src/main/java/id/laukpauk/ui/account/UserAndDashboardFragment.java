@@ -95,7 +95,6 @@ public class UserAndDashboardFragment extends Fragment {
         Images.asset(binding.trxHariIniIcon, "icons/pembeli/belanjaan-hari-ini.png");
         Images.asset(binding.trxHistoriIcon, "icons/pembeli/histori-belanja.png");
         Images.asset(binding.trxAkunIcon, "user-icon.png");
-        Images.asset(binding.trxTokoIcon, "store.png");
 
         NavController nav = NavHostFragment.findNavController(this);
         binding.walletDompet.setOnClickListener(v -> nav.navigate(R.id.historiDompetFragment));
@@ -182,14 +181,6 @@ public class UserAndDashboardFragment extends Fragment {
         boolean hasAlamat = user.alamat != null && user.alamat.length() >= 1;
         binding.alamat.setText(hasAlamat ? user.alamat : getString(R.string.account_alamat_belum));
         binding.alamat.setTypeface(null, hasAlamat ? android.graphics.Typeface.NORMAL : android.graphics.Typeface.ITALIC);
-        binding.trxToko.setOnClickListener(v -> {
-            if (user.isSeller) {
-                AccountNav.toTokoSaya(this);
-            } else {
-                NavHostFragment.findNavController(this).navigate(R.id.requestJadiPenjualFragment);
-            }
-        });
-        binding.trxTokoLabel.setText(user.isSeller ? R.string.account_trx_toko_saya : R.string.account_trx_jualan);
     }
 
     @Override

@@ -402,36 +402,6 @@
                         android:layout_weight="1" />
 
                     <LinearLayout
-                        android:id="@+id/trxToko"
-                        android:layout_width="75dp"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/trxTokoIcon"
-                            android:layout_width="34dp"
-                            android:layout_height="34dp"
-                            android:importantForAccessibility="no" />
-
-                        <TextView
-                            android:id="@+id/trxTokoLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:gravity="center"
-                            android:text="@string/account_trx_jualan"
-                            android:textColor="@color/account_text"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
-
-                    <LinearLayout
                         android:id="@+id/trxAkun"
                         android:layout_width="75dp"
                         android:layout_height="wrap_content"

@@ -10,7 +10,6 @@ public class ProdukPromo {
     /** The price (unit) id, sent as idSatuan when adding to the cart. */
     public String idHargaProduk;
     public String namaProduk;
-    public String namaToko;
     public String keteranganSingkat;
     public String fotoProduk;
     public String maxOrder;

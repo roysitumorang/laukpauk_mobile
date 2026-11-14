@@ -28,8 +28,7 @@ public interface TransaksiApi {
     @GET("Transaksi/getItemTransaksiFromTransaksi/{id}")
     Call<TransaksiResponses.Items> getItemTransaksi(@Path("id") String id,
                                                     @Query("authToken") String authToken,
-                                                    @Query("entitasItemTransaksi") String entitasItemTransaksi,
-                                                    @Query("idPenjual") String idPenjual);
+                                                    @Query("entitasItemTransaksi") String entitasItemTransaksi);
 
     @GET("Transaksi/getJumlahItemDiantar/{id}")
     Call<TransaksiResponses.Diantar> getJumlahItemDiantar(@Path("id") String id,

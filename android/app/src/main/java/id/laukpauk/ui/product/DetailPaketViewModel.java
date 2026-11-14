@@ -35,10 +35,6 @@ public class DetailPaketViewModel extends ViewModel {
         return lainnya;
     }
 
-    public String currentUserId() {
-        return repository.currentUserId();
-    }
-
     public void load() {
         if (detailSource != null) {
             detail.removeSource(detailSource);

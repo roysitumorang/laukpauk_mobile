@@ -2,7 +2,6 @@ package id.laukpauk.ui.promo;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import id.laukpauk.data.Resource;
@@ -16,9 +15,7 @@ public class DetailPromoItemViewModel extends ViewModel {
     private final String idPromoItem;
 
     private final MediatorLiveData<Resource<PromoItemDetail>> detail = new MediatorLiveData<>();
-    private final MutableLiveData<String> currentUserId = new MutableLiveData<>("0");
     private LiveData<Resource<PromoItemDetail>> source;
-    private int generation;
 
     public DetailPromoItemViewModel(PromoRepository repository, String idPromoItem) {
         this.repository = repository;
@@ -29,26 +26,14 @@ public class DetailPromoItemViewModel extends ViewModel {
         return detail;
     }
 
-    public String getCurrentUserId() {
-        String id = currentUserId.getValue();
-        return id == null ? "0" : id;
-    }
-
-    /** Loads the user id, then the promo item (first open and pull-to-refresh). */
+    /** Loads the promo item (first open and pull-to-refresh). */
     public void load() {
-        final int mine = ++generation;
         if (source != null) {
             detail.removeSource(source);
             source = null;
         }
         detail.setValue(Resource.<PromoItemDetail>loading());
-        repository.getIdPenjualFromActiveUser(result -> {
-            if (mine != generation) {
-                return;
-            }
-            currentUserId.setValue(String.valueOf(result.isSuccess() && result.data != null ? result.data : 0));
-            source = repository.getDetailPromoItem(idPromoItem);
-            detail.addSource(source, detail::setValue);
-        });
+        source = repository.getDetailPromoItem(idPromoItem);
+        detail.addSource(source, detail::setValue);
     }
 }

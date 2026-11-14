@@ -8,12 +8,12 @@ import java.util.List;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.cart.CartGift;
-import id.laukpauk.data.model.cart.CartSeller;
+import id.laukpauk.data.model.cart.CartProduct;
 import id.laukpauk.data.model.cart.WalletConfiguration;
 import id.laukpauk.data.repository.BaseRepository;
 import id.laukpauk.data.repository.CartRepository;
 
-/** State of the Keranjang screen: carts per seller, subtotal, wallet announcement and gifts. */
+/** State of the Keranjang screen: cart lines, subtotal, wallet announcement and gifts. */
 public class KeranjangViewModel extends ViewModel {
 
     /** A LiveData that can be re-pointed at a freshly loaded source (refresh). */
@@ -31,7 +31,7 @@ public class KeranjangViewModel extends ViewModel {
     }
 
     private final CartRepository repository;
-    private final Slot<List<CartSeller>> sellers = new Slot<>();
+    private final Slot<List<CartProduct>> products = new Slot<>();
     private final Slot<Integer> total = new Slot<>();
     private final Slot<WalletConfiguration> wallet = new Slot<>();
     private final Slot<List<CartGift>> gifts = new Slot<>();
@@ -46,8 +46,8 @@ public class KeranjangViewModel extends ViewModel {
         this.repository = repository;
     }
 
-    public LiveData<Resource<List<CartSeller>>> getSellers() {
-        return sellers.live;
+    public LiveData<Resource<List<CartProduct>>> getProducts() {
+        return products.live;
     }
 
     public LiveData<Resource<Integer>> getTotal() {
@@ -65,7 +65,7 @@ public class KeranjangViewModel extends ViewModel {
     /** Loads everything (first open, pull-to-refresh, after a change). */
     public void load() {
         repository.refreshCartCount();
-        sellers.set(repository.cartPerSeller());
+        products.set(repository.cart());
         total.set(repository.totalKeranjang());
         wallet.set(repository.walletConfiguration());
         gifts.set(repository.gifts());

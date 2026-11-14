@@ -25,11 +25,4 @@ final class AccountNav {
         nav.navigate(R.id.homePageFragment, null,
                 new NavOptions.Builder().setPopUpTo(R.id.homePageFragment, true).build());
     }
-
-    /** Legacy pushAndRemoveUntil(TokoSaya). */
-    static void toTokoSaya(Fragment fragment) {
-        NavController nav = NavHostFragment.findNavController(fragment);
-        nav.navigate(R.id.tokoSayaFragment, null,
-                new NavOptions.Builder().setPopUpTo(R.id.homePageFragment, false).build());
-    }
 }

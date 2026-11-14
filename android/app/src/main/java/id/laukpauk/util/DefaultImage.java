@@ -7,5 +7,4 @@ public final class DefaultImage {
     public static final String defaultKategoriProduk = "kategori-produk-default.png";
     public static final String defaultProduk = "produk-default.png";
     public static final String defaultPaket = "paket-default.png";
-    public static final String defautBannerPenjual = "banner-penjual-default.png"; // sic (typo kept from Dart)
 }

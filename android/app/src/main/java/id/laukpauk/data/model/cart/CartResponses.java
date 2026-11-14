@@ -10,8 +10,8 @@ public final class CartResponses {
         public int jumlahKeranjang;
     }
 
-    public static final class SellerList {
-        public List<CartSeller> listCart;
+    public static final class ProductList {
+        public List<CartProduct> listCart;
     }
 
     public static final class Total {

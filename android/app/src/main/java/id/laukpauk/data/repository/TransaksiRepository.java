@@ -58,9 +58,9 @@ public class TransaksiRepository extends BaseRepository {
                 body -> body == null ? null : body.transaksi);
     }
 
-    /** The lines of a transaction (optionally of one seller). */
-    public LiveData<Resource<List<ItemTransaksi>>> getItemTransaksi(String idTransaksi, @Nullable String idPenjual) {
-        return load(api.getItemTransaksi(idTransaksi, authToken(), ENTITAS_ITEM, idPenjual),
+    /** The lines of a transaction. */
+    public LiveData<Resource<List<ItemTransaksi>>> getItemTransaksi(String idTransaksi) {
+        return load(api.getItemTransaksi(idTransaksi, authToken(), ENTITAS_ITEM),
                 body -> body == null || body.itemTransaksi == null
                         ? Collections.<ItemTransaksi>emptyList() : body.itemTransaksi);
     }
