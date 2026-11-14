@@ -24,13 +24,13 @@ public class VoucherRepository extends BaseRepository {
 
     /** Active vouchers of the signed-in user (empty list when none). */
     public LiveData<Resource<List<Voucher>>> getVouchers() {
-        return load(api.getVoucher(LIST_FIELDS, authToken()),
+        return load(api.getVoucher(LIST_FIELDS),
                 body -> body == null || body.listVoucher == null ? new ArrayList<Voucher>() : body.listVoucher);
     }
 
     /** One voucher; SUCCESS with null data when it does not exist. */
     public LiveData<Resource<Voucher>> getVoucherDetail(String idVoucher) {
-        return load(api.getVoucherDetail(idVoucher, authToken()), body -> body == null ? null : body.dataVoucher);
+        return load(api.getVoucherDetail(idVoucher), body -> body == null ? null : body.dataVoucher);
     }
 
     /** Id of the voucher the buyer chose to use, or null. */

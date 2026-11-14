@@ -90,7 +90,7 @@ public class PushRepository extends BaseRepository {
             done.run();
             return;
         }
-        enqueue(api.unregisterFcmToken(authToken(), token), body -> body != null && body.statusUnregister,
+        enqueue(api.unregisterFcmToken(body("fcmToken", token)), body -> body != null && body.statusUnregister,
                 (Resource<Boolean> r) -> {
                     if (!r.isSuccess()) {
                         Log.w(TAG, "unregisterFcmToken failed: " + r.message);
@@ -109,7 +109,8 @@ public class PushRepository extends BaseRepository {
         if (token == null || token.isEmpty()) {
             return;
         }
-        enqueue(api.registerFcmToken(authToken(), token, "android"), body -> body != null && body.statusRegister,
+        enqueue(api.registerFcmToken(body("fcmToken", token, "platform", "android")),
+                body -> body != null && body.statusRegister,
                 (Resource<Boolean> r) -> {
                     if (r.isSuccess() && Boolean.TRUE.equals(r.data)) {
                         prefs.setString(KEY_REGISTERED_TOKEN, token);

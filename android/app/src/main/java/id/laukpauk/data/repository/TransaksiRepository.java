@@ -42,7 +42,7 @@ public class TransaksiRepository extends BaseRepository {
         String hariIniQ = (status == null && hariIni != null && !hariIni.isEmpty()) ? hariIni : null;
         String awalQ = (status != null && awal != null && !awal.isEmpty()) ? awal : null;
         String akhirQ = (status != null && akhir != null && !akhir.isEmpty()) ? akhir : null;
-        return load(api.getRiwayatTransaksi(authToken(), status, hariIniQ, awalQ, akhirQ),
+        return load(api.getRiwayatTransaksi(status, hariIniQ, awalQ, akhirQ),
                 body -> body == null || body.riwayatTransaksi == null
                         ? Collections.<Transaksi>emptyList() : body.riwayatTransaksi);
     }
@@ -54,26 +54,26 @@ public class TransaksiRepository extends BaseRepository {
 
     /** {@code entitas} limits the returned columns (e.g. "nomorTransaksi, tanggalDelivery"). */
     public LiveData<Resource<Transaksi>> getDetail(String idTransaksi, @Nullable String entitas) {
-        return load(api.getTransaksi(idTransaksi, authToken(), entitas),
+        return load(api.getTransaksi(idTransaksi, entitas),
                 body -> body == null ? null : body.transaksi);
     }
 
     /** The lines of a transaction. */
     public LiveData<Resource<List<ItemTransaksi>>> getItemTransaksi(String idTransaksi) {
-        return load(api.getItemTransaksi(idTransaksi, authToken(), ENTITAS_ITEM),
+        return load(api.getItemTransaksi(idTransaksi, ENTITAS_ITEM),
                 body -> body == null || body.itemTransaksi == null
                         ? Collections.<ItemTransaksi>emptyList() : body.itemTransaksi);
     }
 
     /** Number of items already delivered (a rejected transaction can be refunded/re-ordered when 0). */
     public LiveData<Resource<Integer>> getJumlahItemDiantar(String idTransaksi) {
-        return load(api.getJumlahItemDiantar(idTransaksi, authToken()),
+        return load(api.getJumlahItemDiantar(idTransaksi),
                 body -> body == null ? 0 : body.jumlahBarangDiantar);
     }
 
     /** Marks an "otw" transaction as received; SUCCESS(true) when the server accepted it. */
     public void pesananDiterima(String idTransaksi, ResultCallback<Boolean> callback) {
-        enqueue(api.pesananDiterima(idTransaksi, authToken()), body -> body != null && body.pesananDiterima,
+        enqueue(api.pesananDiterima(idTransaksi), body -> body != null && body.pesananDiterima,
                 callback);
     }
 
@@ -82,7 +82,8 @@ public class TransaksiRepository extends BaseRepository {
         DeliverySelection selection = delivery.current();
         String day = selection.dayDelivery != null ? selection.dayDelivery : "Hari Pengantaran";
         String code = selection.jadwalDeliveryCode != null ? selection.jadwalDeliveryCode : "";
-        enqueue(api.belanjaUlang(idTransaksi, day, code, session.getCartCode()), body -> body, callback);
+        enqueue(api.belanjaUlang(idTransaksi, body("dayDelivery", day, "jadwalDeliveryCode", code, "cartCode",
+                session.getCartCode())), body -> body, callback);
     }
 
     /** Gifts attached to a cart (empty when none). */

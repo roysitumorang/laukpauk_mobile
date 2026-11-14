@@ -8,7 +8,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-/** Home page / product list / konten / category endpoints (versionCode is added by ApiClient). */
+/** Home page / product list / konten / category endpoints (JSON; ApiClient adds the auth and version headers). */
 public interface HomeApi {
 
     @GET("Banner/getBanner")
@@ -18,20 +18,19 @@ public interface HomeApi {
     Call<HomeResponses.Artikels> getArtikel();
 
     @GET("User/getJumlahVoucher")
-    Call<HomeResponses.JumlahVoucher> getJumlahVoucher(@Query("authToken") String authToken);
+    Call<HomeResponses.JumlahVoucher> getJumlahVoucher();
 
     @GET("User/getTotalDompet")
-    Call<HomeResponses.TotalDompet> getTotalDompet(@Query("authToken") String authToken);
+    Call<HomeResponses.TotalDompet> getTotalDompet();
 
     @GET("Point/getPoint")
-    Call<HomeResponses.Point> getPoint(@Query("authToken") String authToken, @Query("point") String point);
+    Call<HomeResponses.Point> getPoint(@Query("point") String point);
 
     /** The first page of the product list (see ProdukApi.getProduk). */
     @GET("Produk/getProduk")
     Call<HomeResponses.ProdukList> getProduk(@Nullable @Query("jadwalDeliveryCode") String jadwalDeliveryCode,
                                              @Query("startFrom") String startFrom,
-                                             @Query("useLimit") String useLimit,
-                                             @Query("authToken") String authToken);
+                                             @Query("useLimit") String useLimit);
 
     @GET("Konten/getKonten")
     Call<HomeResponses.KontenList> getKonten(@Query("page") String page);

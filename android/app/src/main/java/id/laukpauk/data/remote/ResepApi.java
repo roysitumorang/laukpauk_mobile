@@ -1,15 +1,16 @@
 package id.laukpauk.data.remote;
 
+import java.util.Map;
+
 import id.laukpauk.data.model.recipe.RecipeResponses;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-/** Recipe endpoints (versionCode is added by ApiClient). */
+/** Recipe endpoints (JSON; ApiClient adds the auth and version headers). */
 public interface ResepApi {
 
     @GET("Resep/getResep")
@@ -27,10 +28,6 @@ public interface ResepApi {
     @GET("Produk/getHargaProduk")
     Call<RecipeResponses.SatuanList> getHargaProduk(@Query("idProduk") String idProduk);
 
-    @FormUrlEncoded
     @POST("Keranjang/belanjaResep")
-    Call<RecipeResponses.Belanja> belanjaResep(@Field("cartCode") String cartCode,
-                                               @Field("selectedItems") String selectedItems,
-                                               @Field("dayDelivery") String dayDelivery,
-                                               @Field("jadwalDeliveryCode") String jadwalDeliveryCode);
+    Call<RecipeResponses.Belanja> belanjaResep(@Body Map<String, Object> body);
 }

@@ -39,14 +39,15 @@ public class ProdukRepository extends BaseRepository {
                           ResultCallback<List<Produk>> callback) {
         DeliverySelection sel = delivery.current();
         String jadwal = sel.isSet ? sel.jadwalDeliveryCode : null;
-        enqueue(api.getProduk(authToken(), jadwal, startFrom, "y", cariProduk),
+        enqueue(api.getProduk(jadwal, startFrom, "y", cariProduk),
                 body -> body == null || body.listProduk == null ? Collections.<Produk>emptyList() : body.listProduk,
                 callback);
     }
 
     /** Legacy ProdukModel.getDetailProduk; SUCCESS with null data = product not found. */
     public LiveData<Resource<Produk>> getDetailProduk(String idProduk) {
-        return load(api.detailProduk(idProduk == null ? "" : idProduk), body -> body == null ? null : body.detailProduk);
+        return load(api.detailProduk(idProduk == null ? "" : idProduk),
+                body -> body == null ? null : body.detailProduk);
     }
 
     /** "Produk Lainnya" (empty list on an empty answer). */
@@ -90,7 +91,8 @@ public class ProdukRepository extends BaseRepository {
         if (!hasSelection) {
             return;
         }
-        enqueue(api.isThisProductInCA(idProduk, sel.latitude, sel.longitude), body -> body != null && body.isThisProductInCA,
+        enqueue(api.isThisProductInCA(idProduk, sel.latitude, sel.longitude),
+                body -> body != null && body.isThisProductInCA,
                 r -> {
                     data.inCoverageArea = r.isSuccess() && Boolean.TRUE.equals(r.data);
                     done.run();

@@ -42,7 +42,7 @@ public class AccountRepository extends BaseRepository {
      * signed in and the next app start registers a fresh push token.
      */
     public void logout(ResultCallback<Boolean> callback) {
-        push.onSigningOut(() -> enqueue(api.removeToken(authToken(), session.getCartCode()),
+        push.onSigningOut(() -> enqueue(api.removeToken(session.getCartCode()),
                 (AccountResponses.RemoveToken body) -> body != null && body.removeToken, result -> {
                     if (!(result.isSuccess() && Boolean.TRUE.equals(result.data))) {
                         callback.onResult(result.isSuccess() ? Resource.success(false) : result);
@@ -82,14 +82,14 @@ public class AccountRepository extends BaseRepository {
 
     /** Auth/jumlahGantiNomorHPForToday. */
     public void jumlahGantiNomorHPForToday(ResultCallback<Integer> callback) {
-        enqueue(api.jumlahGantiNomorHPForToday(authToken()),
+        enqueue(api.jumlahGantiNomorHPForToday(),
                 (AccountResponses.JumlahGantiNomor body) -> body == null ? 0 : body.jumlahGantiNomorHPForToday,
                 callback);
     }
 
     /** Auth/gantiNomor; on success the returned id is stored and the callback gets it (0 = failed). */
     public void simpanNomorBaru(String nomorBaru, ResultCallback<Long> callback) {
-        enqueue(api.gantiNomor(authToken(), nomorBaru), (AccountResponses.GantiNomor body) -> {
+        enqueue(api.gantiNomor(body("nomorBaru", nomorBaru)), (AccountResponses.GantiNomor body) -> {
             if (body != null && body.statusSimpanNomorBaru) {
                 sp().edit().putLong(KEY_ID_PENGGANTIAN, body.idPenggantianNomor).apply();
                 return body.idPenggantianNomor;
@@ -101,7 +101,8 @@ public class AccountRepository extends BaseRepository {
     /** Auth/verifikasiNomor; true when verified (the pending id is cleared). */
     public void verifikasiNomor(String kodeVerifikasi, ResultCallback<Boolean> callback) {
         String id = sp().contains(KEY_ID_PENGGANTIAN) ? String.valueOf(getIdPenggantianNomor()) : "null";
-        enqueue(api.verifikasiNomor(authToken(), id, kodeVerifikasi), (AccountResponses.VerifikasiNomor body) -> {
+        enqueue(api.verifikasiNomor(body("idPenggantianNomor", id, "kodeVerifikasi", kodeVerifikasi)),
+                (AccountResponses.VerifikasiNomor body) -> {
             boolean ok = body != null && body.statusVerifikasiNomor;
             if (ok) {
                 clearIdPenggantianNomor();
@@ -114,7 +115,7 @@ public class AccountRepository extends BaseRepository {
 
     /** The referral wallet value; data is null when referral settings are missing ("belum dibuat"). */
     public LiveData<Resource<Long>> getReferralWallet() {
-        return load(api.getReferralConfiguration(authToken()),
+        return load(api.getReferralConfiguration(),
                 (AccountResponses.ReferralConfiguration body) ->
                         body == null || body.referralConfiguration == null ? null : body.referralConfiguration.referralWallet);
     }

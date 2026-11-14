@@ -1,43 +1,36 @@
 package id.laukpauk.data.remote;
 
+import java.util.Map;
+
 import id.laukpauk.data.model.notifikasi.NotifikasiResponses;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-/** Notification endpoints (versionCode is added by ApiClient). */
+/** Notification endpoints (JSON; ApiClient adds the auth and version headers). */
 public interface NotifikasiApi {
 
     @GET("User/getNotifikasi")
-    Call<NotifikasiResponses.InfoList> getNotifikasi(@Query("authToken") String authToken);
+    Call<NotifikasiResponses.InfoList> getNotifikasi();
 
     @GET("User/getNotifikasiKhusus")
-    Call<NotifikasiResponses.KhususList> getNotifikasiKhusus(@Query("authToken") String authToken);
+    Call<NotifikasiResponses.KhususList> getNotifikasiKhusus();
 
     @GET("User/getNotifikasiKhusus/{idUser}")
-    Call<NotifikasiResponses.KhususList> getNotifikasiKhusus(@Path("idUser") String idUser,
-                                                            @Query("authToken") String authToken);
+    Call<NotifikasiResponses.KhususList> getNotifikasiKhusus(@Path("idUser") String idUser);
 
     @GET("User/getJumlahNotifikasi")
-    Call<NotifikasiResponses.Count> getJumlahNotifikasi(@Query("status") String status,
-                                                        @Query("authToken") String authToken);
+    Call<NotifikasiResponses.Count> getJumlahNotifikasi(@Query("status") String status);
 
     @GET("User/getJumlahNotifikasiKhusus")
-    Call<NotifikasiResponses.Count> getJumlahNotifikasiKhusus(@Query("status") String status,
-                                                              @Query("authToken") String authToken);
+    Call<NotifikasiResponses.Count> getJumlahNotifikasiKhusus(@Query("status") String status);
 
     @GET("Notifikasi/getNotifikasi/{idNotifikasi}")
-    Call<NotifikasiResponses.Detail> getDetailNotifikasi(@Path("idNotifikasi") String idNotifikasi,
-                                                         @Query("authToken") String authToken);
+    Call<NotifikasiResponses.Detail> getDetailNotifikasi(@Path("idNotifikasi") String idNotifikasi);
 
-    @FormUrlEncoded
     @POST("Notifikasi/setAs")
-    Call<NotifikasiResponses.SetAs> setAs(@Query("authToken") String authToken,
-                                          @Field("idNotifikasiItem") String idNotifikasiItem,
-                                          @Field("setAs") String setAs,
-                                          @Field("jenisNotifikasi") String jenisNotifikasi);
+    Call<NotifikasiResponses.SetAs> setAs(@Body Map<String, Object> body);
 }

@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.local.SessionStore;
 import id.laukpauk.data.local.Prefs;
@@ -40,9 +43,26 @@ public abstract class BaseRepository {
         return deps.apiClient.retrofit().create(service);
     }
 
-    /** The stored session token ("" when logged out), for endpoints with {@code @Query("authToken")}. */
+    /**
+     * The stored session token (a JWT; "" when logged out). ApiClient sends it as
+     * {@code Authorization: Bearer <token>}; repositories only use it to tell whether someone is signed in.
+     */
     protected String authToken() {
         return session.getAuthToken();
+    }
+
+    /**
+     * A JSON request body from alternating keys and values: {@code body("idUser", id, "otp", otp)}.
+     * Keys with a null value are left out.
+     */
+    protected static Map<String, Object> body(Object... keysAndValues) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        for (int i = 0; i + 1 < keysAndValues.length; i += 2) {
+            if (keysAndValues[i + 1] != null) {
+                map.put(String.valueOf(keysAndValues[i]), keysAndValues[i + 1]);
+            }
+        }
+        return map;
     }
 
     /** Maps a successful response body to the value the UI needs. */

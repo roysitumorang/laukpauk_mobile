@@ -8,7 +8,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-/** Delivery schedule, gifts, cart reset and the Google Maps web services (versionCode is added by ApiClient). */
+/** Delivery schedule, gifts, cart reset and the Google Maps web services (JSON; ApiClient adds the auth and version headers). */
 public interface DeliveryApi {
 
     @GET("JadwalDelivery/getAvailableJadwalDelivery")

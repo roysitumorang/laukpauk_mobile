@@ -6,15 +6,14 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
 import java.lang.reflect.Type;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import id.laukpauk.data.local.SessionStore;
 import id.laukpauk.util.ServerPath;
-import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
@@ -23,13 +22,21 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
  * {@link ServerPath#apiBaseURL}. Feature APIs are Retrofit interfaces in this package, created by the
  * repositories with {@code retrofit.create(XxxApi.class)}.
  *
- * Every request automatically carries {@code versionCode=<build number>} the way the Dart app's
- * HTTPRequest helper added it: as a query parameter on every request, and additionally as the FIRST form
- * field of url-encoded POST bodies (the server may read it from either place).
- * Endpoints that need the session declare {@code @Query("authToken") String authToken} and repositories
- * pass {@code session.getAuthToken()}.
+ * Request and response bodies are JSON. Every request to the backend automatically carries these headers:
+ * <ul>
+ *   <li>{@code X-Version-Code}: the app's build number;</li>
+ *   <li>{@code X-Request-Id}: a random UUID v4, new for each request;</li>
+ *   <li>{@code Authorization: Bearer <JWT>}: the stored session token, when signed in.</li>
+ * </ul>
+ * Requests to other hosts (the Google Maps web services) get none of them.
  */
 public final class ApiClient {
+
+    public static final String HEADER_VERSION_CODE = "X-Version-Code";
+    public static final String HEADER_REQUEST_ID = "X-Request-Id";
+    public static final String HEADER_AUTHORIZATION = "Authorization";
+    private static final String HEADER_ACCEPT = "Accept";
+    private static final String JSON = "application/json";
 
     private final Moshi moshi;
     private final OkHttpClient okHttp;
@@ -38,31 +45,29 @@ public final class ApiClient {
     public ApiClient(SessionStore session) {
         moshi = createMoshi();
         final String versionCode = session.getBuildNumber();
+        final String base = ServerPath.apiBaseURL.endsWith("/") ? ServerPath.apiBaseURL : ServerPath.apiBaseURL + "/";
+        final HttpUrl baseUrl = HttpUrl.parse(base);
+        final String apiHost = baseUrl == null ? null : baseUrl.host();
         okHttp = new OkHttpClient.Builder()
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(chain -> {
                     Request request = chain.request();
-                    HttpUrl url = request.url().newBuilder()
-                            .setQueryParameter("versionCode", versionCode)
-                            .build();
-                    Request.Builder builder = request.newBuilder().url(url);
-                    RequestBody body = request.body();
-                    if (body instanceof FormBody) {
-                        FormBody form = (FormBody) body;
-                        FormBody.Builder withVersion = new FormBody.Builder().add("versionCode", versionCode);
-                        for (int i = 0; i < form.size(); i++) {
-                            if (!form.name(i).equals("versionCode")) {
-                                withVersion.addEncoded(form.encodedName(i), form.encodedValue(i));
-                            }
-                        }
-                        builder.method(request.method(), withVersion.build());
+                    if (apiHost == null || !apiHost.equals(request.url().host())) {
+                        return chain.proceed(request);
+                    }
+                    Request.Builder builder = request.newBuilder()
+                            .header(HEADER_ACCEPT, JSON)
+                            .header(HEADER_VERSION_CODE, versionCode)
+                            .header(HEADER_REQUEST_ID, UUID.randomUUID().toString());
+                    String token = session.getAuthToken();
+                    if (token != null && !token.isEmpty() && request.header(HEADER_AUTHORIZATION) == null) {
+                        builder.header(HEADER_AUTHORIZATION, "Bearer " + token);
                     }
                     return chain.proceed(builder.build());
                 })
                 .build();
-        String base = ServerPath.apiBaseURL.endsWith("/") ? ServerPath.apiBaseURL : ServerPath.apiBaseURL + "/";
         retrofit = new Retrofit.Builder()
                 .baseUrl(base)
                 .client(okHttp)

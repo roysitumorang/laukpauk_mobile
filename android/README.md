@@ -67,7 +67,7 @@ Data layer                                              data/repository/XxxRepos
 | `ui/common` | shared UI: `HeaderView` (buyer header with cart/notification badges), `AppBars`, `Messages`, `SearchBox`, `ImagePicker`, `PhoneNumberHint` (offers the SIM phone number on the login, register and forgot-password screens via the Phone Number Hint API), `AuthGate` (sign-in gating), `NavResults` (results to the previous screen), `Images` (Glide) |
 | `ui/delivery`, `ui/product/ProductActions` | cross-feature flows: choosing the delivery address + schedule, the "Beli" unit sheet + add to cart |
 | `data/repository` | one repository per domain (`CartRepository`, `DeliveryRepository`, `ProdukRepository`, …). UI-free; network through Retrofit `enqueue`, results as `Resource<T>` (`LOADING` / `SUCCESS` / `ERROR`) |
-| `data/remote` | Retrofit interfaces, `ApiClient` (OkHttp + Moshi; adds `versionCode` to every request), `LenientJsonAdapterFactory` (the backend sends `"1"`/`1`/`true`, `""`/`false` for missing objects) |
+| `data/remote` | Retrofit interfaces, `ApiClient` (OkHttp + Moshi; JSON bodies, and the `X-Version-Code`, `X-Request-Id` and `Authorization: Bearer` headers on every backend request), `LenientJsonAdapterFactory` (the backend sends `"1"`/`1`/`true`, `""`/`false` for missing objects) |
 | `data/model/<feature>` | typed JSON DTOs: public fields named like the JSON keys, `@Json(name = …)` where they differ. Genuinely dynamic payloads are untyped trees (`Map<String, Object>` / `List<Object>`, read with `util/Json`; whole numbers are `Long`, see `util/JsonTreeAdapter`) |
 | `data/local` | `Prefs` (Flutter's `FlutterSharedPreferences` file and `flutter.` keys, so existing users stay signed in) and `SessionStore` |
 | `di` | `AppContainer` (generated) and `ViewModelFactory` |
@@ -129,8 +129,8 @@ How the backend reaches a device:
 **Backend endpoints the app calls (new — they replace OneSignal's external user id):**
 
 ```
-POST User/registerFcmToken    form: versionCode, authToken, fcmToken, platform=android   -> {"statusRegister": true}
-POST User/unregisterFcmToken  form: versionCode, authToken, fcmToken                    -> {"statusUnregister": true}
+POST User/registerFcmToken    json: {"fcmToken": "...", "platform": "android"}   -> {"statusRegister": true}
+POST User/unregisterFcmToken  json: {"fcmToken": "..."}                          -> {"statusUnregister": true}
 ```
 
 `registerFcmToken` must be idempotent (the app re-sends the token on every start) and should move a token to the

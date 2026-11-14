@@ -70,10 +70,10 @@ public class HomeRepository extends BaseRepository {
                 live.setValue(Resource.success(new WalletInfo(dompet[0], voucher[0], poin[0])));
             }
         };
-        enqueue(api.getTotalDompet(authToken()), body -> dompet[0] = body == null ? 0L : body.totalDompet, done);
-        enqueue(api.getJumlahVoucher(authToken()),
+        enqueue(api.getTotalDompet(), body -> dompet[0] = body == null ? 0L : body.totalDompet, done);
+        enqueue(api.getJumlahVoucher(),
                 body -> (long) (voucher[0] = body == null ? 0 : body.jumlahVoucher), done);
-        enqueue(api.getPoint(authToken(), "true"),
+        enqueue(api.getPoint("true"),
                 body -> poin[0] = body == null || body.response == null ? 0L : body.response.point, done);
         return live;
     }
@@ -89,7 +89,7 @@ public class HomeRepository extends BaseRepository {
                 return new MutableLiveData<>(Resource.success(Collections.<HomeProduk>emptyList()));
             }
         }
-        return load(api.getProduk(code, "0", "y", authToken()),
+        return load(api.getProduk(code, "0", "y"),
                 body -> nonNull(body == null ? null : body.listProduk));
     }
 

@@ -1,47 +1,37 @@
 package id.laukpauk.data.remote;
 
+import java.util.Map;
+
 import id.laukpauk.data.model.auth.AuthResponses;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
-/** Login, registration, OTP and password-recovery endpoints (versionCode is added by ApiClient). */
+/** Login, registration, OTP and password-recovery endpoints (JSON; ApiClient adds the auth and version headers). */
 public interface AuthApi {
 
     @GET("Auth/loginAuthentication")
-    Call<AuthResponses.Login> login(@Query("nomorHP") String nomorHP, @Query("password") String password,
+    Call<AuthResponses.Login> login(@Query("nomorHP") String nomorHP,
+                                    @Query("password") String password,
                                     @Query("cartCode") String cartCode);
 
-    @FormUrlEncoded
     @POST("Auth/register")
-    Call<AuthResponses.Register> register(@Field("namaLengkap") String namaLengkap,
-                                          @Field("nomorHP") String nomorHP,
-                                          @Field("password") String password,
-                                          @Field("konfirmasiPassword") String konfirmasiPassword,
-                                          @Field("kodeReferal") String kodeReferal);
+    Call<AuthResponses.Register> register(@Body Map<String, Object> body);
 
-    @FormUrlEncoded
     @POST("Auth/konfirmasiOTP")
-    Call<AuthResponses.KonfirmasiOTP> konfirmasiOTP(@Field("idUser") String idUser, @Field("otp") String otp);
+    Call<AuthResponses.KonfirmasiOTP> konfirmasiOTP(@Body Map<String, Object> body);
 
-    @FormUrlEncoded
     @POST("Auth/verifikasiUser")
-    Call<AuthResponses.VerifikasiUser> verifikasiUser(@Field("idUser") String idUser,
-                                                      @Field("verificationCode") String verificationCode);
+    Call<AuthResponses.VerifikasiUser> verifikasiUser(@Body Map<String, Object> body);
 
-    @FormUrlEncoded
     @POST("Auth/resendOTP")
-    Call<AuthResponses.ResendOTP> resendOTP(@Query("authToken") String authToken,
-                                            @Field("nomorTelepon") String nomorTelepon);
+    Call<AuthResponses.ResendOTP> resendOTP(@Body Map<String, Object> body);
 
-    @FormUrlEncoded
     @POST("Auth/lupaPassword")
-    Call<AuthResponses.LupaPassword> lupaPassword(@Field("nomorHP") String nomorHP);
+    Call<AuthResponses.LupaPassword> lupaPassword(@Body Map<String, Object> body);
 
     @GET("User/getDetailUser")
-    Call<AuthResponses.DetailUserResponse> getDetailUser(@Query("authToken") String authToken,
-                                                         @Query("getUserEntities") String getUserEntities);
+    Call<AuthResponses.DetailUserResponse> getDetailUser(@Query("getUserEntities") String getUserEntities);
 }
