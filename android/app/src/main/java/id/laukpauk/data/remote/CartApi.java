@@ -32,7 +32,7 @@ public interface CartApi {
 
     @FormUrlEncoded
     @POST("Keranjang/saveCart")
-    Call<AddToCartResult> saveCart(Map<String, String> fields);
+    Call<AddToCartResult> saveCart(@FieldMap Map<String, String> fields);
 
     @FormUrlEncoded
     @POST("Keranjang/saveCart/{idItem}")
