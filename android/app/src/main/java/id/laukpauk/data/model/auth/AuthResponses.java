@@ -1,17 +1,9 @@
 package id.laukpauk.data.model.auth;
 
 
-/** Response wrappers of the /Auth and /User/getDetailUser endpoints used by the auth screens. */
+/** Response wrappers of the /Auth (other than sign-in) and /User/getDetailUser endpoints used by the auth screens. */
 public final class AuthResponses {
     private AuthResponses() {}
-
-    /** Auth/loginAuthentication. */
-    public static class Login {
-        public boolean loginAuthentication;
-        public String authToken;
-        public String idUser;
-        public boolean isVerified;
-    }
 
     /** returnData of several responses (only the fields the screens read). */
     public static class ReturnData {

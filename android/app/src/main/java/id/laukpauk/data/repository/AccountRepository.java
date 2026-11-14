@@ -48,7 +48,7 @@ public class AccountRepository extends BaseRepository {
                         callback.onResult(result.isSuccess() ? Resource.success(false) : result);
                         return;
                     }
-                    prefs.remove("authToken");
+                    session.clearSignIn();
                     cart.clearTransactionSession(done -> {
                         cart.refreshCartCount();
                         notifikasi.refreshUnreadCount();
