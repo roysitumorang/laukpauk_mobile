@@ -1,9 +1,7 @@
 package id.laukpauk.data.repository;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,16 +30,12 @@ public class PromoRepository extends BaseRepository {
         return delivery.selection();
     }
 
-    public boolean isDeliverySet() {
-        return delivery.current().isSet;
-    }
-
-    /** Promo products for the chosen address + schedule; empty (no request) while none is chosen. */
+    /**
+     * Promo products. The chosen address + schedule narrow the list when there is one; without a selection
+     * the request carries no location and the server answers every promo.
+     */
     public LiveData<Resource<List<ProdukPromo>>> getProdukPromo() {
         DeliverySelection s = delivery.current();
-        if (!s.isSet || s.latitude == null || s.longitude == null || s.jadwalDeliveryCode == null) {
-            return new MutableLiveData<>(Resource.success(new ArrayList<ProdukPromo>()));
-        }
         return load(api.getPromoAroundOfThisLatLong(s.latitude, s.longitude, s.jadwalDeliveryCode),
                 body -> body == null || body.produkPromo == null
                         ? Collections.<ProdukPromo>emptyList() : body.produkPromo);

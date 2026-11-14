@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -25,7 +24,6 @@ import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.AppBars;
 import id.laukpauk.ui.common.Messages;
-import id.laukpauk.ui.delivery.DeliveryFlow;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.Json;
 import id.laukpauk.util.ServerPath;
@@ -245,35 +243,10 @@ public class DetailTransaksiFragment extends Fragment {
         }
     }
 
+    /** Re-adds the rejected transaction to the cart; the delivery address and schedule are asked at checkout. */
     private void onBelanjaUlang() {
-        if (viewModel.isDeliverySet()) {
-            setBusy(true);
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.orders_adjd_title)
-                    .setMessage(R.string.orders_adjd_message)
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.orders_ya, (d, w) -> doBelanjaUlang())
-                    .setNegativeButton(R.string.orders_tidak, (d, w) -> {
-                        viewModel.clearDelivery();
-                        DeliveryFlow.ask(this, saved -> {
-                            if (saved) {
-                                doBelanjaUlang();
-                            } else {
-                                setBusy(false);
-                            }
-                        });
-                    })
-                    .setNeutralButton(R.string.orders_tutup, (d, w) -> setBusy(false))
-                    .show();
-        } else {
-            NavController nav = NavHostFragment.findNavController(this);
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.orders_adjd_belum_title)
-                    .setMessage(R.string.orders_adjd_belum_message)
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.orders_ok, (d, w) -> nav.navigate(R.id.homePageFragment))
-                    .show();
-        }
+        setBusy(true);
+        doBelanjaUlang();
     }
 
     private void doBelanjaUlang() {

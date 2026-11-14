@@ -22,7 +22,6 @@ import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.common.Messages;
-import id.laukpauk.ui.delivery.DeliveryFlow;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.ServerPath;
 
@@ -67,12 +66,7 @@ public class DetailResepFragment extends Fragment {
 
             @Override
             public void onCart(BahanRow row) {
-                if (viewModel.isDeliverySet()) {
-                    viewModel.toggle(row);
-                } else {
-                    DeliveryFlow.ensure(DetailResepFragment.this, null,
-                            () -> Messages.snack(DetailResepFragment.this, getString(R.string.recipe_adjd_siap)));
-                }
+                viewModel.toggle(row);
             }
         });
         binding.bahan.setLayoutManager(new LinearLayoutManager(requireContext()));

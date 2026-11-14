@@ -28,6 +28,7 @@ import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.AppBars;
 import id.laukpauk.ui.common.AuthGate;
+import id.laukpauk.ui.delivery.DeliveryFlow;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.common.NavResults;
 import id.laukpauk.util.Currency;
@@ -111,7 +112,7 @@ public class KeranjangFragment extends Fragment {
         NavResults.<Boolean>observe(this, AuthGate.LOGIN_RESULT, success -> {
             if (Boolean.TRUE.equals(success) && viewModel.checkoutAfterLogin) {
                 viewModel.checkoutAfterLogin = false;
-                nav.navigate(R.id.checkoutFragment);
+                openCheckout(nav);
             }
         });
 
@@ -200,11 +201,20 @@ public class KeranjangFragment extends Fragment {
 
     private void onCheckout(NavController nav) {
         if (AuthGate.isSignedIn(this)) {
-            nav.navigate(R.id.checkoutFragment);
+            openCheckout(nav);
         } else {
             viewModel.checkoutAfterLogin = true;
             nav.navigate(R.id.loginFragment);
         }
+    }
+
+    /** Checkout is where the delivery address and schedule are required: asks for them first when none is set. */
+    private void openCheckout(NavController nav) {
+        DeliveryFlow.ensureForCheckout(this, () -> {
+            if (isAdded()) {
+                nav.navigate(R.id.checkoutFragment);
+            }
+        });
     }
 
     private void confirmDelete(CartProduct product) {

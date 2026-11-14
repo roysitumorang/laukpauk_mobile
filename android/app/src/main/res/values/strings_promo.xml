@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="promo_search_hint">Cari Produk Promo Di Sini</string>
-    <string name="promo_butuh_lokasi">Oops, anda harus menentukan lokasi anda untuk melihat promo kami</string>
-    <string name="promo_tentukan_lokasi">Tentukan Lokasi dan Jadwal Delivery</string>
     <string name="promo_hemat">Hemat %1$s %%</string>
     <string name="promo_max">Max %1$sx pesan</string>
     <string name="promo_beli">Beli</string>

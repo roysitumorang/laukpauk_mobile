@@ -19,7 +19,6 @@ import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.common.SearchBox;
-import id.laukpauk.ui.delivery.DeliveryFlow;
 import id.laukpauk.ui.product.ProductActions;
 
 /** Promo.dart: the promo products around the chosen delivery address (a bottom navigation tab). */
@@ -46,7 +45,6 @@ public class PromoFragment extends Fragment {
 
         binding.header.bind(this);
         Images.asset(binding.emptyImage, "tidak-ada-promo.png");
-        Images.asset(binding.adjdImage, "adjd-belum-ditentukan.png");
 
         adapter = new PromoAdapter(new PromoAdapter.Listener() {
             @Override
@@ -67,14 +65,8 @@ public class PromoFragment extends Fragment {
         SearchBox.bind(binding.search, getString(R.string.promo_search_hint), viewModel.getQuery(),
                 viewModel::search, () -> viewModel.search(""));
         binding.refresh.setOnRefreshListener(viewModel::refresh);
-        binding.tentukanLokasi.setOnClickListener(v -> DeliveryFlow.ask(this, null));
 
-        viewModel.getSelection().observe(getViewLifecycleOwner(), selection -> {
-            boolean isSet = selection != null && selection.isSet;
-            binding.content.setVisibility(isSet ? View.VISIBLE : View.GONE);
-            binding.adjdPrompt.setVisibility(isSet ? View.GONE : View.VISIBLE);
-            viewModel.onSelection(selection);
-        });
+        viewModel.getSelection().observe(getViewLifecycleOwner(), viewModel::onSelection);
         viewModel.getState().observe(getViewLifecycleOwner(), this::renderState);
         viewModel.getVisible().observe(getViewLifecycleOwner(), list -> {
             adapter.submitList(list);

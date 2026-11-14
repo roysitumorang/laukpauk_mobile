@@ -1,5 +1,6 @@
 package id.laukpauk.ui.promo;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -53,12 +54,10 @@ public class PromoViewModel extends ViewModel {
         query.setValue(text == null ? "" : text);
     }
 
-    /** Loads when the delivery selection changed since the last load (or nothing was loaded yet). */
-    public void onSelection(DeliverySelection selection) {
-        if (selection == null || !selection.isSet) {
-            return;
-        }
-        String key = selection.latitude + "|" + selection.longitude + "|" + selection.jadwalDeliveryCode;
+    /** Loads when the delivery selection changed since the last load (or nothing was loaded yet); none is needed. */
+    public void onSelection(@Nullable DeliverySelection selection) {
+        String key = selection == null || !selection.isSet ? "unset"
+                : selection.latitude + "|" + selection.longitude + "|" + selection.jadwalDeliveryCode;
         if (source == null || !key.equals(loadedKey)) {
             loadedKey = key;
             refresh();

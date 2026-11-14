@@ -10,8 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import id.laukpauk.R;
@@ -28,17 +26,10 @@ import id.laukpauk.ui.delivery.DeliveryFlow;
  */
 public class HeaderView extends LinearLayout {
 
-    /** Remembers per screen that the start-up delivery flow already ran (survives the view being recreated). */
-    public static class State extends ViewModel {
-        boolean asked;
-    }
-
     private static final int ALAMAT_MAX = 30;
 
     private final ViewHomeHeaderBinding binding;
     private Fragment owner;
-    @Nullable
-    private Runnable onDeliverySet;
 
     public HeaderView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -48,16 +39,7 @@ public class HeaderView extends LinearLayout {
 
     /** Binds the header to a screen: observes the badges/address with the owner's view lifecycle. */
     public void bind(Fragment owner) {
-        bind(owner, false, null);
-    }
-
-    /**
-     * @param askDeliveryOnStart legacy Header(askADJD: true): runs DeliveryFlow.ask once when first bound.
-     * @param onDeliverySet      runs after that flow (or a change from the address pill) completed.
-     */
-    public void bind(Fragment owner, boolean askDeliveryOnStart, @Nullable Runnable onDeliverySet) {
         this.owner = owner;
-        this.onDeliverySet = onDeliverySet;
         AppContainer c = AppContainer.from(getContext());
         LifecycleOwner lifecycle = owner.getViewLifecycleOwner();
         StatusBar.green(owner);
@@ -68,34 +50,13 @@ public class HeaderView extends LinearLayout {
         c.cartRepository.refreshCartCount();
         c.notifikasiRepository.refreshUnreadCount();
 
-        binding.alamat.setOnClickListener(v -> DeliveryFlow.change(owner, this::afterFlow));
+        binding.alamat.setOnClickListener(v -> DeliveryFlow.change(owner, null));
         binding.searchField.setOnClickListener(v ->
                 NavHostFragment.findNavController(owner).navigate(R.id.searchFragment));
         binding.cartButton.setOnClickListener(v ->
                 NavHostFragment.findNavController(owner).navigate(R.id.keranjangFragment));
         binding.bellButton.setOnClickListener(v ->
                 NavHostFragment.findNavController(owner).navigate(R.id.notifikasiFragment));
-
-        if (askDeliveryOnStart) {
-            State state = new ViewModelProvider(owner).get(State.class);
-            if (!state.asked) {
-                state.asked = true;
-                askDelivery();
-            }
-        }
-    }
-
-    /** Legacy Header.askADJD(): runs the address / schedule flow again (the home page's pull-to-refresh). */
-    public void askDelivery() {
-        if (owner != null) {
-            DeliveryFlow.ask(owner, this::afterFlow);
-        }
-    }
-
-    private void afterFlow(boolean selectionSaved) {
-        if (selectionSaved && onDeliverySet != null) {
-            onDeliverySet.run();
-        }
     }
 
     private void showSelection(@Nullable DeliverySelection selection) {

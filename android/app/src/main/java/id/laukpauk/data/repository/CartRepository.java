@@ -52,24 +52,22 @@ public class CartRepository extends BaseRepository {
 
     /**
      * Adds a unit product to the cart (legacy ProdukModel.addToCart: Keranjang/saveCart with cartCode,
-     * jenisProduk=nonpaket, the delivery schedule, idUser when signed in) and refreshes the count on success.
-     * ERROR when the request failed or no delivery schedule is chosen.
+     * jenisProduk=nonpaket, the delivery schedule when one is chosen, idUser when signed in) and refreshes the
+     * count on success. No delivery address or schedule is needed to add to the cart; checkout asks for it.
      */
     public void addToCart(String idProduk, String idSatuan, String quantity, @Nullable String idPromo,
                           ResultCallback<AddToCartResult> callback) {
         DeliverySelection d = delivery.current();
-        if (d.jadwalDeliveryCode == null) {
-            callback.onResult(Resource.error("Jadwal pengantaran belum dipilih", 0));
-            return;
-        }
         Map<String, String> cartData = new LinkedHashMap<>();
         cartData.put("cartCode", session.getCartCode());
         cartData.put("idProduk", idProduk);
         cartData.put("jenisProduk", "nonpaket");
         cartData.put("idSatuan", idSatuan);
         cartData.put("quantity", quantity);
-        cartData.put("jadwalDeliveryCode", d.jadwalDeliveryCode);
-        cartData.put("dayDelivery", d.dayDelivery != null ? d.dayDelivery : "Hari Pengantaran");
+        if (d.jadwalDeliveryCode != null) {
+            cartData.put("jadwalDeliveryCode", d.jadwalDeliveryCode);
+            cartData.put("dayDelivery", d.dayDelivery != null ? d.dayDelivery : "Hari Pengantaran");
+        }
         if (idPromo != null) {
             cartData.put("idPromo", idPromo);
         }

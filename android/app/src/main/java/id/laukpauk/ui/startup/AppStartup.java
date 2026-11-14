@@ -38,7 +38,6 @@ import id.laukpauk.databinding.DialogStartupUpdateBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.delivery.DeliveryFlow;
-import id.laukpauk.util.Environment;
 import id.laukpauk.util.Json;
 
 /**
@@ -63,8 +62,7 @@ public final class AppStartup {
         }
         started = true;
 
-        // main.dart: _sP.setBool('showMakeSureADJD', true); _sP.setBool('showAlertGift', true);
-        container.prefs.setBool("showMakeSureADJD", true);
+        // main.dart: _sP.setBool('showAlertGift', true);
         container.prefs.setBool("showAlertGift", true);
 
         initPush(app, container);

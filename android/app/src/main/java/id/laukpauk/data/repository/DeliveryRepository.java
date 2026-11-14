@@ -264,14 +264,6 @@ public class DeliveryRepository extends BaseRepository {
         prefs.setBool("showAlertGift", false);
     }
 
-    public boolean showMakeSure() {
-        return prefs.getBool("showMakeSureADJD", true);
-    }
-
-    public void setMakeSureShown() {
-        prefs.setBool("showMakeSureADJD", false);
-    }
-
     private void copy(String from, String to) {
         String v = prefs.getString(from);
         if (v != null) {

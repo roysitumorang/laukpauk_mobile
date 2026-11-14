@@ -77,11 +77,11 @@ public class TransaksiRepository extends BaseRepository {
                 callback);
     }
 
-    /** Legacy TransaksiModel.belanjaUlang: re-adds a rejected transaction using the saved delivery selection. */
+    /** Legacy TransaksiModel.belanjaUlang: re-adds a rejected transaction; the saved schedule is sent when one is chosen. */
     public void belanjaUlang(String idTransaksi, ResultCallback<TransaksiResponses.BelanjaUlang> callback) {
         DeliverySelection selection = delivery.current();
-        String day = selection.dayDelivery != null ? selection.dayDelivery : "Hari Pengantaran";
-        String code = selection.jadwalDeliveryCode != null ? selection.jadwalDeliveryCode : "";
+        String code = selection.jadwalDeliveryCode;
+        String day = code == null ? null : selection.dayDelivery != null ? selection.dayDelivery : "Hari Pengantaran";
         enqueue(api.belanjaUlang(idTransaksi, body("dayDelivery", day, "jadwalDeliveryCode", code, "cartCode",
                 session.getCartCode())), body -> body, callback);
     }

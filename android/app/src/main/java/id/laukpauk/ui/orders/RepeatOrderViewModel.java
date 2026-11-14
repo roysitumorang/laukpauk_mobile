@@ -1,5 +1,6 @@
 package id.laukpauk.ui.orders;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -67,8 +68,8 @@ public class RepeatOrderViewModel extends ViewModel {
     }
 
     /** Loads the lines for the current delivery selection; no-op when it is already loaded for it. */
-    public void loadItemsIfNeeded(DeliverySelection s) {
-        String key = s.latitude + "|" + s.longitude + "|" + s.jadwalDeliveryCode;
+    public void loadItemsIfNeeded(@Nullable DeliverySelection s) {
+        String key = s == null || !s.isSet ? "unset" : s.latitude + "|" + s.longitude + "|" + s.jadwalDeliveryCode;
         if (!key.equals(itemsKey)) {
             itemsKey = key;
             loadItems();
