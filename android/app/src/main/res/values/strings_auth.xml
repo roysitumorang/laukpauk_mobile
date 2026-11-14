@@ -27,6 +27,8 @@
     <string name="auth_tutup">Tutup</string>
 
     <string name="auth_register_judul">Registrasi</string>
+    <string name="auth_hint_username">Username</string>
+    <string name="auth_register_password_beda">Konfirmasi password tidak sama dengan password.</string>
     <string name="auth_register_berhasil">Registrasi berhasil ! Silahkan konfirmasikan kode OTP yang kami kirim ke nomor yang anda gunakan untuk mendaftar!</string>
     <string name="auth_register_gagal">Gagal Registrasi ! %1$s</string>
     <string name="auth_ok">OK</string>

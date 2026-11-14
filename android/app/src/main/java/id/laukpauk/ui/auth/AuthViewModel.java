@@ -54,9 +54,9 @@ public class AuthViewModel extends ViewModel {
         repository.login(nomor, password, done(cb));
     }
 
-    public void register(String nama, String nomor, String pw, String konfirmasi, String referal,
+    public void register(String nama, String username, String nomor, String pw, String referal,
                          ResultCallback<AuthRepository.RegisterResult> cb) {
-        repository.register(nama, nomor, pw, konfirmasi, referal, done(cb));
+        repository.register(nama, username, nomor, pw, referal, done(cb));
     }
 
     public void konfirmasiOTP(String otp, ResultCallback<Boolean> cb) {

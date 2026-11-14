@@ -12,12 +12,6 @@ public final class AuthResponses {
         public String authToken;
     }
 
-    /** Auth/register. {@code statusRegister} stays null when the server omits it (legacy treated it as "not false"). */
-    public static class Register {
-        public Boolean statusRegister;
-        public ReturnData returnData;
-    }
-
     /** Auth/konfirmasiOTP. */
     public static class KonfirmasiOTP {
         public boolean statusKonfirmasiOTP;
