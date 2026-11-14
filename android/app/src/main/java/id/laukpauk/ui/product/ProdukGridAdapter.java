@@ -1,4 +1,4 @@
-package id.laukpauk.ui.market;
+package id.laukpauk.ui.product;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,18 +16,18 @@ import java.util.Map;
 import id.laukpauk.R;
 import id.laukpauk.data.model.product.LowestPrice;
 import id.laukpauk.data.model.product.Produk;
-import id.laukpauk.databinding.ItemMarketProdukBinding;
+import id.laukpauk.databinding.ItemProdukGridBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.DefaultImage;
 import id.laukpauk.util.ServerPath;
 
 /**
- * Product tile of the 3-column grids (legacy ProdukDiDalamPasarItem): photo with "Hemat x%" / "Promo" badges,
- * name, shop, short description, lowest price and a "Beli" button. Prices arrive later through
+ * Product tile of the 3-column grid: photo with "Hemat x%" / "Promo" badges,
+ * name, short description, lowest price and a "Beli" button. Prices arrive later through
  * {@link #setPrices(Map)} and are requested with {@link Listener#onNeedPrice}.
  */
-public class ProdukPasarAdapter extends ListAdapter<Produk, ProdukPasarAdapter.Holder> {
+public class ProdukGridAdapter extends ListAdapter<Produk, ProdukGridAdapter.Holder> {
 
     public interface Listener {
         void onOpen(Produk produk);
@@ -41,8 +41,8 @@ public class ProdukPasarAdapter extends ListAdapter<Produk, ProdukPasarAdapter.H
     private final Listener listener;
     private Map<String, LowestPrice> prices = Collections.emptyMap();
 
-    /** @param aspect width / height of a grid cell (legacy childAspectRatio: 0.45 market). */
-    public ProdukPasarAdapter(float aspect, Listener listener) {
+    /** @param aspect width / height of a grid cell (legacy childAspectRatio: 0.45). */
+    public ProdukGridAdapter(float aspect, Listener listener) {
         super(new DiffUtil.ItemCallback<Produk>() {
             @Override
             public boolean areItemsTheSame(@NonNull Produk a, @NonNull Produk b) {
@@ -68,7 +68,7 @@ public class ProdukPasarAdapter extends ListAdapter<Produk, ProdukPasarAdapter.H
     @NonNull
     @Override
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemMarketProdukBinding b = ItemMarketProdukBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        ItemProdukGridBinding b = ItemProdukGridBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         float density = parent.getResources().getDisplayMetrics().density;
         int cellWidth = (int) ((parent.getResources().getDisplayMetrics().widthPixels - 20 * density) / 3);
         b.getRoot().setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -82,9 +82,9 @@ public class ProdukPasarAdapter extends ListAdapter<Produk, ProdukPasarAdapter.H
     }
 
     class Holder extends RecyclerView.ViewHolder {
-        private final ItemMarketProdukBinding b;
+        private final ItemProdukGridBinding b;
 
-        Holder(ItemMarketProdukBinding b) {
+        Holder(ItemProdukGridBinding b) {
             super(b.getRoot());
             this.b = b;
         }
@@ -110,7 +110,7 @@ public class ProdukPasarAdapter extends ListAdapter<Produk, ProdukPasarAdapter.H
 
             double persen = price == LowestPrice.NONE ? 0 : price.persentaseDiskon();
             if (persen > 0) {
-                b.hemat.setText(b.getRoot().getContext().getString(R.string.market_hemat,
+                b.hemat.setText(b.getRoot().getContext().getString(R.string.product_list_hemat,
                         Currency.formatSatuan((long) Math.ceil(persen), "%")));
                 b.hemat.setVisibility(View.VISIBLE);
             } else {

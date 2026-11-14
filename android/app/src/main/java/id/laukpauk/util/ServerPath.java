@@ -20,7 +20,6 @@ public final class ServerPath {
     public static final String uploadGambarKategoriProduk = BuildConfig.UPLOAD_GAMBAR_KATEGORI_PRODUK;
     public static final String uploadGambarKontenItem = BuildConfig.UPLOAD_GAMBAR_KONTEN_ITEM;
     public static final String uploadGambarPaket = BuildConfig.UPLOAD_GAMBAR_PAKET;
-    public static final String uploadGambarPasar = BuildConfig.UPLOAD_GAMBAR_PASAR;
     public static final String uploadGambarProduk = BuildConfig.UPLOAD_GAMBAR_PRODUK;
     public static final String uploadGambarPushNotifikasi = BuildConfig.UPLOAD_GAMBAR_PUSH_NOTIFIKASI;
     public static final String uploadGambarResep = BuildConfig.UPLOAD_GAMBAR_RESEP;

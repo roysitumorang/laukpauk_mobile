@@ -17,15 +17,12 @@
     <string name="home_wallet_mengambil">Mengambil data ...</string>
     <string name="home_wallet_belum_voucher">Belum Ada Voucher</string>
     <string name="home_wallet_voucher_jumlah">%1$s Voucher</string>
-    <string name="home_pasar_title">Pasar</string>
+    <string name="home_produk_title">Produk</string>
     <string name="home_lihat_semua_kecil">Lihat semua</string>
     <string name="home_lihat_semua">Lihat Semua</string>
-    <string name="home_pasar_mencari">Sedang Mencari Pasar ..</string>
-    <string name="home_pasar_kosong">Yahh! Belum ada pasar disekitar lokasimu mak. Maaf ya mak...</string>
-    <string name="home_pasar_jarak">%1$s KM</string>
+    <string name="home_produk_mencari">Sedang Mencari Produk ..</string>
+    <string name="home_produk_kosong">Yahh! Belum ada produk untuk lokasimu mak. Maaf ya mak...</string>
     <string name="home_pilih_lokasi_lain">Pilih Lokasi Lain</string>
-    <string name="home_pasar_terdekat">Pasar Terdekat</string>
-    <string name="home_produk_pasar">Produk Pasar %1$s</string>
     <string name="home_konten_kosong">Tidak Ada Item Konten !</string>
     <string name="home_artikel_title">Artikel</string>
     <string name="home_artikel_kosong">Tidak ada artikel yang bisa dibaca</string>
@@ -43,9 +40,6 @@
     <string name="home_produk_tanpa_harga">Produk ini tidak memiliki daftar harga</string>
     <string name="home_diskon_chip">-%1$s</string>
 
-    <!-- Semua Pasar / Semua Kategori Produk / List Produk -->
-    <string name="home_semua_pasar_title">Semua Pasar</string>
-    <string name="home_cari_pasar_hint">Cari Pasar dengan Nama</string>
     <string name="home_semua_kategori_title">Semua Kategori Produk</string>
     <string name="home_cari_kategori_hint">Cari Kategori Produk di sini ..</string>
     <string name="home_kategori_kosong">Kategori Produk Tidak Ada</string>

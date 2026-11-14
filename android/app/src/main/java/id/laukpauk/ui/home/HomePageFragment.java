@@ -32,12 +32,12 @@ import id.laukpauk.ui.delivery.DeliveryFlow;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.ServerPath;
 
-/** HomePage.dart: header, hero slider, wallet, markets with their products, konten blocks and articles. */
+/** HomePage.dart: header, hero slider, wallet, the first products, konten blocks and articles. */
 public class HomePageFragment extends Fragment {
 
     private FragmentHomePageBinding binding;
     private HomeViewModel viewModel;
-    private PasarViewModel pasarViewModel;
+    private ProdukSectionViewModel produkViewModel;
     private AppContainer c;
 
     @Nullable
@@ -53,9 +53,9 @@ public class HomePageFragment extends Fragment {
         c = AppContainer.from(requireContext());
         viewModel = new ViewModelProvider(this,
                 ViewModelFactory.of(() -> new HomeViewModel(c.homeRepository))).get(HomeViewModel.class);
-        pasarViewModel = new ViewModelProvider(this, ViewModelFactory.of(
-                () -> new PasarViewModel(c.homeRepository, c.deliveryRepository, 2, true)))
-                .get("pasar", PasarViewModel.class);
+        produkViewModel = new ViewModelProvider(this, ViewModelFactory.of(
+                () -> new ProdukSectionViewModel(c.homeRepository, c.deliveryRepository)))
+                .get("produk", ProdukSectionViewModel.class);
 
         binding.header.bind(this, true, null);
         DeliveryFlow.homeChecks(this);
@@ -63,14 +63,14 @@ public class HomePageFragment extends Fragment {
         binding.refresh.setColorSchemeColors(requireContext().getColor(R.color.green));
         binding.refresh.setOnRefreshListener(() -> {
             viewModel.refresh();
-            pasarViewModel.reload();
+            produkViewModel.reload();
             binding.header.askDelivery();
             binding.refresh.setRefreshing(false);
         });
 
         setupHero();
         setupWallet();
-        new PasarSection(this, binding.pasar, pasarViewModel, true, false, true, true);
+        new ProdukSection(this, binding.produk, produkViewModel, true);
         setupKonten();
         setupArtikel();
         viewModel.start();

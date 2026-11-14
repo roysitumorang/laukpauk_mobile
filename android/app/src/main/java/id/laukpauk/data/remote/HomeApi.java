@@ -8,7 +8,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-/** Home page / market / konten / category endpoints (versionCode is added by ApiClient). */
+/** Home page / product list / konten / category endpoints (versionCode is added by ApiClient). */
 public interface HomeApi {
 
     @GET("Banner/getBanner")
@@ -26,23 +26,12 @@ public interface HomeApi {
     @GET("Point/getPoint")
     Call<HomeResponses.Point> getPoint(@Query("authToken") String authToken, @Query("point") String point);
 
-    @GET("Pasar/getPasar")
-    Call<HomeResponses.Pasars> getPasar(@Nullable @Query("limitPasar") Integer limitPasar,
-                                        @Nullable @Query("namaPasar") String namaPasar);
-
-    @GET("Pasar/getPasarAroundOfThisLatLong")
-    Call<HomeResponses.Pasars> getPasarAround(@Query("latitude") String latitude,
-                                              @Query("longitude") String longitude,
-                                              @Query("jadwalDeliveryCode") String jadwalDeliveryCode,
-                                              @Nullable @Query("limitPasar") Integer limitPasar,
-                                              @Nullable @Query("namaPasar") String namaPasar);
-
-    @GET("Pasar/getProdukInThisPasar/{idPasar}")
-    Call<HomeResponses.ProdukPasar> getProdukInThisPasar(@Path("idPasar") String idPasar,
-                                                         @Nullable @Query("jadwalDeliveryCode") String jadwalDeliveryCode,
-                                                         @Query("startFrom") String startFrom,
-                                                         @Query("useLimit") String useLimit,
-                                                         @Query("authToken") String authToken);
+    /** The first page of the product list (see ProdukApi.getProduk). */
+    @GET("Produk/getProduk")
+    Call<HomeResponses.ProdukList> getProduk(@Nullable @Query("jadwalDeliveryCode") String jadwalDeliveryCode,
+                                             @Query("startFrom") String startFrom,
+                                             @Query("useLimit") String useLimit,
+                                             @Query("authToken") String authToken);
 
     @GET("Konten/getKonten")
     Call<HomeResponses.KontenList> getKonten(@Query("page") String page);

@@ -18,7 +18,6 @@ import id.laukpauk.data.repository.DeliveryRepository;
 import id.laukpauk.data.repository.HomeRepository;
 import id.laukpauk.data.repository.NotifikasiRepository;
 import id.laukpauk.data.repository.PaketRepository;
-import id.laukpauk.data.repository.PasarRepository;
 import id.laukpauk.data.repository.PaymentRepository;
 import id.laukpauk.data.repository.ProdukRepository;
 import id.laukpauk.data.repository.PromoRepository;
@@ -57,7 +56,6 @@ public final class AppContainer {
     public final HomeRepository homeRepository;
     public final NotifikasiRepository notifikasiRepository;
     public final PaketRepository paketRepository;
-    public final PasarRepository pasarRepository;
     public final PaymentRepository paymentRepository;
     public final ProdukRepository produkRepository;
     public final PromoRepository promoRepository;
@@ -88,7 +86,6 @@ public final class AppContainer {
         this.checkoutRepository = new CheckoutRepository(repositoryDeps, this.settingRepository);
         this.homeRepository = new HomeRepository(repositoryDeps, this.deliveryRepository);
         this.paketRepository = new PaketRepository(repositoryDeps, this.deliveryRepository);
-        this.pasarRepository = new PasarRepository(repositoryDeps, this.deliveryRepository);
         this.paymentRepository = new PaymentRepository(repositoryDeps);
         this.produkRepository = new ProdukRepository(repositoryDeps, this.deliveryRepository, this.settingRepository);
         this.promoRepository = new PromoRepository(repositoryDeps, this.deliveryRepository);

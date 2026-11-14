@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ProdukDiDalamPasar.dart: header, title, search, product grid (50% of the screen, endless) and the other markets. -->
+<!-- Every product: header, title, search and the endless product grid. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -113,7 +113,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:text="@string/market_sedang_memproses"
+                            android:text="@string/product_list_sedang_memproses"
                             android:textColor="@color/product_black87"
                             android:textSize="15sp"
                             android:textStyle="bold" />
@@ -122,7 +122,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
-                            android:text="@string/market_tunggu_sebentar"
+                            android:text="@string/product_list_tunggu_sebentar"
                             android:textColor="@color/text_muted"
                             android:textSize="12sp" />
 
@@ -133,13 +133,6 @@
                             android:indeterminateTint="@color/green" />
                     </LinearLayout>
                 </FrameLayout>
-
-                <include
-                    android:id="@+id/pasarLain"
-                    layout="@layout/view_market_pasar_lain"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

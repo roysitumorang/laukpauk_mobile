@@ -15,8 +15,8 @@ import id.laukpauk.R;
 import id.laukpauk.data.model.home.HomeProduk;
 import id.laukpauk.data.model.home.Konten;
 import id.laukpauk.data.model.home.KontenItem;
-import id.laukpauk.data.model.home.Pasar;
 import id.laukpauk.data.repository.HomeRepository;
+import id.laukpauk.databinding.ViewHomeProdukBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.ui.startup.MainRouter;
 
@@ -24,12 +24,14 @@ import id.laukpauk.ui.startup.MainRouter;
 public final class HomeNav {
     private HomeNav() {}
 
-    /** produkDiDalamPasarFragment(idPasar, namaPasar). */
-    public static void openPasar(Fragment f, Pasar pasar) {
-        Bundle args = new Bundle();
-        args.putString("idPasar", pasar.id);
-        args.putString("namaPasar", pasar.nama);
-        NavHostFragment.findNavController(f).navigate(R.id.produkDiDalamPasarFragment, args);
+    /** The "Produk" block without the "pilih lokasi lain" button (search screen). */
+    public static void bindProdukSection(Fragment f, ViewHomeProdukBinding b, ProdukSectionViewModel vm) {
+        new ProdukSection(f, b, vm, false);
+    }
+
+    /** The page with every product. */
+    public static void openSemuaProduk(Fragment f) {
+        NavHostFragment.findNavController(f).navigate(R.id.semuaProdukFragment);
     }
 
     /** listProdukFragment with the products as JSON text. */

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ProdukDiDalamPasarItem.dart: a product tile of the grid (image on top, text/price/Beli below).
+<!-- A product tile of the grid (image on top, text/price/Beli below).
      The adapter sets the root height from the grid cell aspect ratio. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -64,7 +64,7 @@
                     android:paddingTop="2.5dp"
                     android:paddingEnd="10dp"
                     android:paddingBottom="2.5dp"
-                    android:text="@string/market_promo"
+                    android:text="@string/product_list_promo"
                     android:textColor="@color/nearly_white"
                     android:textSize="10sp"
                     android:visibility="gone" />
@@ -160,7 +160,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/market_tidak_ada_harga"
+                        android:text="@string/product_list_tidak_ada_harga"
                         android:textColor="@color/nearly_black"
                         android:textSize="10sp"
                         android:visibility="gone" />
@@ -170,7 +170,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/market_stok_habis"
+                        android:text="@string/product_list_stok_habis"
                         android:textColor="@color/text_danger"
                         android:textSize="10sp"
                         android:visibility="gone" />

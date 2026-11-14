@@ -53,7 +53,6 @@ android {
         buildConfigField 'String', 'UPLOAD_GAMBAR_KATEGORI_PRODUK', q(cfg('UPLOAD_GAMBAR_KATEGORI_PRODUK', 'upload/gambar/kategori-produk'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_KONTEN_ITEM', q(cfg('UPLOAD_GAMBAR_KONTEN_ITEM', 'upload/gambar/konten-item'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_PAKET', q(cfg('UPLOAD_GAMBAR_PAKET', 'upload/gambar/paket'))
-        buildConfigField 'String', 'UPLOAD_GAMBAR_PASAR', q(cfg('UPLOAD_GAMBAR_PASAR', 'upload/gambar/pasar'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_PRODUK', q(cfg('UPLOAD_GAMBAR_PRODUK', 'upload/gambar/produk'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_PUSH_NOTIFIKASI', q(cfg('UPLOAD_GAMBAR_PUSH_NOTIFIKASI', 'upload/gambar/push-notifikasi'))
         buildConfigField 'String', 'UPLOAD_GAMBAR_RESEP', q(cfg('UPLOAD_GAMBAR_RESEP', 'upload/gambar/resep'))

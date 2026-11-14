@@ -9,6 +9,14 @@ import retrofit2.http.Query;
 /** Product endpoints (versionCode is added by ApiClient). */
 public interface ProdukApi {
 
+    /** The product list, a page of 10 at a time ({@code useLimit} "y"), optionally filtered by name. */
+    @GET("Produk/getProduk")
+    Call<ProdukResponses.ProdukList> getProduk(@Query("authToken") String authToken,
+                                               @Query("jadwalDeliveryCode") String jadwalDeliveryCode,
+                                               @Query("startFrom") String startFrom,
+                                               @Query("useLimit") String useLimit,
+                                               @Query("cariProduk") String cariProduk);
+
     @GET("Produk/detailProduk")
     Call<ProdukResponses.Detail> detailProduk(@Query("idProduk") String idProduk);
 

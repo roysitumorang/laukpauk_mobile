@@ -1,5 +1,6 @@
 package id.laukpauk.data.repository;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 import java.util.Collections;
@@ -16,7 +17,7 @@ import id.laukpauk.data.remote.ProdukApi;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.Json;
 
-/** Unit products: detail, prices, "other products" and the data of the unit picker sheet. */
+/** Unit products: the list, detail, prices, "other products" and the data of the unit picker sheet. */
 public class ProdukRepository extends BaseRepository {
 
     private final ProdukApi api;
@@ -28,6 +29,19 @@ public class ProdukRepository extends BaseRepository {
         this.api = api(ProdukApi.class);
         this.delivery = delivery;
         this.settings = settings;
+    }
+
+    /**
+     * A page of the product list (useLimit=y). {@code startFrom} / {@code cariProduk} may be null.
+     * The schedule code is sent only when a delivery selection is set.
+     */
+    public void getProduk(@Nullable String startFrom, @Nullable String cariProduk,
+                          ResultCallback<List<Produk>> callback) {
+        DeliverySelection sel = delivery.current();
+        String jadwal = sel.isSet ? sel.jadwalDeliveryCode : null;
+        enqueue(api.getProduk(authToken(), jadwal, startFrom, "y", cariProduk),
+                body -> body == null || body.listProduk == null ? Collections.<Produk>emptyList() : body.listProduk,
+                callback);
     }
 
     /** Legacy ProdukModel.getDetailProduk; SUCCESS with null data = product not found. */

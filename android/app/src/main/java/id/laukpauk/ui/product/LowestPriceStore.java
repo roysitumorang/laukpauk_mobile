@@ -1,4 +1,4 @@
-package id.laukpauk.ui.market;
+package id.laukpauk.ui.product;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

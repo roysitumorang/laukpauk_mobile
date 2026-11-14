@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_list_title">Semua Produk</string>
+    <string name="product_list_cari_produk_di_sini">Cari Produk di Sini</string>
+    <string name="product_list_tunggu_sebentar_mak">Tunggu sebentar ya mak...</string>
+    <string name="product_list_produk_tidak_ditemukan">Maaf Mak...Produk yang dicari belum ada</string>
+    <string name="product_list_belum_ada_produk">Maaf Mak...Belum ada produk</string>
+    <string name="product_list_sedang_memproses">Sedang Mem-proses</string>
+    <string name="product_list_tunggu_sebentar">Tunggu sebentar ya...</string>
+    <string name="product_list_promo">Promo</string>
+    <string name="product_list_hemat">Hemat %1$s</string>
+    <string name="product_list_tidak_ada_harga">Tidak ada daftar harga</string>
+    <string name="product_list_stok_habis">Stok tidak tersedia</string>
+</resources>

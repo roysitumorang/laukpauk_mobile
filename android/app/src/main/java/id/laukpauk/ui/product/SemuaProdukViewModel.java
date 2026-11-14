@@ -1,4 +1,4 @@
-package id.laukpauk.ui.market;
+package id.laukpauk.ui.product;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -9,30 +9,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.market.Pasar;
 import id.laukpauk.data.model.product.Produk;
-import id.laukpauk.data.repository.PasarRepository;
 import id.laukpauk.data.repository.ProdukRepository;
 
-/**
- * State of ProdukDiDalamPasar: the endless product list (pages of 10), the local search state, and the two
- * "Pasar Lain" lists.
- */
-public class ProdukDiDalamPasarViewModel extends ViewModel {
+/** State of SemuaProduk: the endless product list (pages of 10) and the local search state. */
+public class SemuaProdukViewModel extends ViewModel {
 
     private static final int PAGE = 10;
 
-    private final PasarRepository repository;
-    private final String idPasar;
+    private final ProdukRepository repository;
     private final LowestPriceStore prices;
 
     private final MutableLiveData<List<Produk>> products = new MutableLiveData<>(Collections.<Produk>emptyList());
     private final MutableLiveData<Boolean> initialLoaded = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> fetchingMore = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> searchTyped = new MutableLiveData<>(false);
-    private final MutableLiveData<Resource<List<Pasar>>> around = new MutableLiveData<>();
-    private final MutableLiveData<Resource<List<Pasar>>> over = new MutableLiveData<>();
 
     private List<Produk> immutable = new ArrayList<>();
     private int startFrom = 0;
@@ -41,12 +32,10 @@ public class ProdukDiDalamPasarViewModel extends ViewModel {
     private boolean exhaustedSearch;
     @Nullable private String pencarian;
     private int generation;
-    @Nullable private String pasarLainKey;
 
-    public ProdukDiDalamPasarViewModel(PasarRepository repository, ProdukRepository produkRepository, String idPasar) {
+    public SemuaProdukViewModel(ProdukRepository repository) {
         this.repository = repository;
-        this.idPasar = idPasar;
-        this.prices = new LowestPriceStore(produkRepository);
+        this.prices = new LowestPriceStore(repository);
         loadFirstPage();
     }
 
@@ -66,14 +55,6 @@ public class ProdukDiDalamPasarViewModel extends ViewModel {
         return searchTyped;
     }
 
-    public LiveData<Resource<List<Pasar>>> getAround() {
-        return around;
-    }
-
-    public LiveData<Resource<List<Pasar>>> getOver() {
-        return over;
-    }
-
     public LowestPriceStore getPrices() {
         return prices;
     }
@@ -84,7 +65,7 @@ public class ProdukDiDalamPasarViewModel extends ViewModel {
         startFromSearch = PAGE;
         exhausted = false;
         exhaustedSearch = false;
-        repository.getProdukInThisPasar(idPasar, String.valueOf(startFrom), null, result -> {
+        repository.getProduk(String.valueOf(startFrom), null, result -> {
             if (gen != generation) {
                 return;
             }
@@ -98,19 +79,18 @@ public class ProdukDiDalamPasarViewModel extends ViewModel {
         });
     }
 
-    /** Pull-to-refresh: reloads the first page and the other markets. */
+    /** Pull-to-refresh: reloads the first page. */
     public void refresh() {
         pencarian = null;
         searchTyped.setValue(false);
         loadFirstPage();
-        pasarLainKey = null;
     }
 
     /** Search submitted: server-side search for 1+ characters, otherwise the unfiltered list again. */
     public void search(String text) {
         if (text.length() >= 1) {
             final int gen = generation;
-            repository.getProdukInThisPasar(idPasar, null, text, result -> {
+            repository.getProduk(null, text, result -> {
                 if (gen != generation) {
                     return;
                 }
@@ -145,7 +125,7 @@ public class ProdukDiDalamPasarViewModel extends ViewModel {
         final int gen = generation;
         fetchingMore.setValue(true);
         String from = String.valueOf(searching ? startFromSearch : startFrom);
-        repository.getProdukInThisPasar(idPasar, from, searching ? pencarian : null, result -> {
+        repository.getProduk(from, searching ? pencarian : null, result -> {
             if (gen != generation) {
                 return;
             }
@@ -162,18 +142,6 @@ public class ProdukDiDalamPasarViewModel extends ViewModel {
             products.setValue(concat(current == null ? Collections.<Produk>emptyList() : current, next));
             fetchingMore.setValue(false);
         });
-    }
-
-    /** Loads the "Pasar Lain" lists for a delivery selection ({@code key} identifies it; repeated calls are ignored). */
-    public void loadPasarLain(String key) {
-        if (key.equals(pasarLainKey)) {
-            return;
-        }
-        pasarLainKey = key;
-        around.setValue(Resource.<List<Pasar>>loading());
-        over.setValue(Resource.<List<Pasar>>loading());
-        repository.getPasarAround(idPasar, around::setValue);
-        repository.getPasarOver(over::setValue);
     }
 
     private static List<Produk> concat(List<Produk> a, List<Produk> b) {

@@ -15,7 +15,7 @@ import id.laukpauk.data.model.home.Konten;
 import id.laukpauk.data.model.home.WalletInfo;
 import id.laukpauk.data.repository.HomeRepository;
 
-/** State of the home page besides the markets: hero banners, wallet summary, konten blocks and articles. */
+/** State of the home page besides the products: hero banners, wallet summary, konten blocks and articles. */
 public class HomeViewModel extends ViewModel {
 
     private final HomeRepository home;

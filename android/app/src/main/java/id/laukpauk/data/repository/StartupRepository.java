@@ -26,7 +26,7 @@ public class StartupRepository extends BaseRepository {
         return GO_HOME;
     }
 
-    /** The intro's "Ke Pasar Sekarang". */
+    /** The intro's "Belanja Sekarang". */
     public void markAppStarted() {
         prefs.setBool("isAppStarted", true);
     }

@@ -61,11 +61,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/semuaPasarFragment"
-        android:name="id.laukpauk.ui.home.SemuaPasarFragment">
-    </fragment>
-
-    <fragment
         android:id="@+id/semuaKategoriProdukFragment"
         android:name="id.laukpauk.ui.home.SemuaKategoriProdukFragment">
     </fragment>
@@ -93,10 +88,8 @@
     </fragment>
 
     <fragment
-        android:id="@+id/produkDiDalamPasarFragment"
-        android:name="id.laukpauk.ui.market.ProdukDiDalamPasarFragment">
-        <argument android:name="idPasar" app:argType="string" />
-        <argument android:name="namaPasar" app:argType="string" app:nullable="true" android:defaultValue="@null" />
+        android:id="@+id/semuaProdukFragment"
+        android:name="id.laukpauk.ui.product.SemuaProdukFragment">
     </fragment>
 
     <fragment

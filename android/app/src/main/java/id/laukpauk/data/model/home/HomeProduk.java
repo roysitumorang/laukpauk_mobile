@@ -2,7 +2,7 @@ package id.laukpauk.data.model.home;
 
 
 /**
- * A product tile (market products, konten items, category products, ListProduk). Only the keys the tiles use
+ * A product tile (the product list, konten items, category products, ListProduk). Only the keys the tiles use
  * are declared; the screens pass lists of these around as JSON text ({@code listProdukFragment.dataProduk}).
  */
 public class HomeProduk {
