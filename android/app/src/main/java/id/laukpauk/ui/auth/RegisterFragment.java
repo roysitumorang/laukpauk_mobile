@@ -51,8 +51,16 @@ public class RegisterFragment extends Fragment {
             if (viewModel.isBusy()) {
                 return;
             }
-            viewModel.register(binding.nama.getText().toString(), binding.nomorHP.getText().toString(),
-                    binding.password.getText().toString(), binding.konfirmasiPassword.getText().toString(),
+            String password = binding.password.getText().toString();
+            if (!password.equals(binding.konfirmasiPassword.getText().toString())) {
+                // The backend takes one password, so the confirmation is checked here.
+                AuthFlow.alert(this, R.string.auth_register_judul,
+                        getString(R.string.auth_register_gagal, getString(R.string.auth_register_password_beda)),
+                        R.string.auth_ok, null, 0, null);
+                return;
+            }
+            viewModel.register(binding.nama.getText().toString(), binding.username.getText().toString(),
+                    binding.nomorHP.getText().toString(), password,
                     binding.kodeReferal.getText().toString(), r -> {
                 if (binding == null) {
                     return;

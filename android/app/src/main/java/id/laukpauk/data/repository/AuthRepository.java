@@ -31,7 +31,7 @@ public class AuthRepository extends BaseRepository {
     /** Outcome of {@link #register}. */
     public static final class RegisterResult {
         public final boolean success;
-        /** true when the server explicitly answered statusRegister=false. */
+        /** true when the server refused the registration (a 4xx answer) or sent no user. */
         public final boolean failed;
         public final String message;
 
@@ -79,22 +79,31 @@ public class AuthRepository extends BaseRepository {
         });
     }
 
-    public void register(String nama, String nomorHP, String password, String konfirmasi, String kodeReferal,
+    /**
+     * POST users (buyer registration). On success the new user's id is kept for the OTP confirmation that
+     * follows. The password is sent base64-encoded, like sign-in's; an empty referral code is left out.
+     * A 4xx answer is a refusal whose reason is the server's message.
+     */
+    public void register(String name, String username, String mobilePhone, String password, String referralCode,
                          ResultCallback<RegisterResult> callback) {
-        enqueue(api.register(body("namaLengkap", nama, "nomorHP", nomorHP, "password", password, "konfirmasiPassword",
-                konfirmasi, "kodeReferal", kodeReferal)), body -> {
-            if (body == null) {
+        String referral = referralCode == null || referralCode.trim().isEmpty() ? null : referralCode.trim();
+        enqueue(api.signUp(body("name", name, "username", username, "mobile_phone", mobilePhone,
+                "password", base64(password), "referral_code", referral)), body -> {
+            // The backend wraps the user in "data"; a bare user object is accepted too.
+            Map<String, Object> user = Json.isObject(Json.get(body, "data")) ? Json.object(body, "data") : body;
+            String idUser = Json.str(user, "id", "");
+            if (idUser.isEmpty()) {
                 return new RegisterResult(false, true, "");
             }
-            String message = body.returnData == null ? "" : nz(body.returnData.message);
-            boolean success = Boolean.TRUE.equals(body.statusRegister);
-            if (success) {
-                prefs.setBool("otpHasSent", true);
-                prefs.setBool("otpHasConfirmed", false);
-                prefs.setString("idUser", body.returnData == null ? "" : nz(body.returnData.idUser));
-            }
-            return new RegisterResult(success, Boolean.FALSE.equals(body.statusRegister), message);
-        }, callback);
+            prefs.setBool("otpHasSent", true);
+            prefs.setBool("otpHasConfirmed", false);
+            prefs.setString("idUser", idUser);
+            return new RegisterResult(true, false, "");
+        }, result -> {
+            boolean rejected = result.isError() && result.code >= 400 && result.code < 500;
+            callback.onResult(rejected
+                    ? Resource.success(new RegisterResult(false, true, nz(result.message))) : result);
+        });
     }
 
     /** Auth/konfirmasiOTP; true when confirmed (the returned auth token becomes the session). */

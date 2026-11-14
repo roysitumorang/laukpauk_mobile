@@ -19,6 +19,14 @@
 <LinearLayout style="@style/Widget.Auth.Pill" android:layout_width="match_parent" android:layout_height="wrap_content"
     android:layout_marginStart="25dp"
     android:layout_marginEnd="25dp">
+    <EditText android:id="@+id/username" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        android:hint="@string/auth_hint_username" android:inputType="textNoSuggestions"
+        android:autofillHints="username" android:importantForAutofill="yes" />
+</LinearLayout>
+<Space android:layout_width="match_parent" android:layout_height="10dp" />
+<LinearLayout style="@style/Widget.Auth.Pill" android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginStart="25dp"
+    android:layout_marginEnd="25dp">
     <EditText android:id="@+id/nomorHP" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
         android:hint="@string/auth_hint_nomor_hp" android:inputType="number"
         android:autofillHints="phoneNumber" android:importantForAutofill="yes" />

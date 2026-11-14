@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,6 +13,8 @@ import id.laukpauk.data.Resource;
 import id.laukpauk.data.local.SessionStore;
 import id.laukpauk.data.local.Prefs;
 import id.laukpauk.util.AppExecutors;
+import id.laukpauk.util.Json;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -86,6 +89,23 @@ public abstract class BaseRepository {
         return load(call, body -> body);
     }
 
+    /**
+     * The reason of a failed (non-2xx) response: the {@code message} of the backend's JSON error body when
+     * there is one, otherwise the HTTP status text.
+     */
+    static String errorMessage(Response<?> response) {
+        try (ResponseBody body = response.errorBody()) {
+            Object tree = body == null ? null : Json.parse(body.string());
+            String message = Json.isObject(tree) ? Json.str(Json.obj(tree), "message", "") : "";
+            if (!message.isEmpty()) {
+                return message;
+            }
+        } catch (IOException | RuntimeException ignored) {
+            // fall through to the status text
+        }
+        return response.message();
+    }
+
     /** Enqueues the call and reports the result once, on the main thread. */
     protected <T, R> void enqueue(Call<T> call, Mapper<T, R> mapper, ResultCallback<R> callback) {
         call.enqueue(new Callback<T>() {
@@ -102,7 +122,7 @@ public abstract class BaseRepository {
                     }
                     result = Resource.success(mapped);
                 } else {
-                    result = Resource.error(response.message(), response.code());
+                    result = Resource.error(errorMessage(response), response.code());
                 }
                 callback.onResult(result);
             }

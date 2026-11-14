@@ -20,8 +20,14 @@ public interface AuthApi {
     @POST("users/sign_in")
     Call<Map<String, Object>> signIn(@Body Map<String, Object> body);
 
-    @POST("Auth/register")
-    Call<AuthResponses.Register> register(@Body Map<String, Object> body);
+    /**
+     * Buyer registration. Body: {@code name}, {@code username}, {@code mobile_phone}, {@code password}
+     * (base64 of the UTF-8 password) and {@code referral_code} (all strings). Answers the new user, shaped
+     * like {@code user} of sign-in, either at the top level or inside the backend's {@code data} envelope.
+     * A 4xx status carries the reason in {@code message}.
+     */
+    @POST("users")
+    Call<Map<String, Object>> signUp(@Body Map<String, Object> body);
 
     @POST("Auth/konfirmasiOTP")
     Call<AuthResponses.KonfirmasiOTP> konfirmasiOTP(@Body Map<String, Object> body);
