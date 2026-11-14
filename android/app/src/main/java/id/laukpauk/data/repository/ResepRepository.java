@@ -75,20 +75,12 @@ public class ResepRepository extends BaseRepository {
                 callback);
     }
 
-    public boolean isDeliverySet() {
-        return delivery.current().isSet;
-    }
-
     /**
      * Adds all picked ingredients to the cart. SUCCESS(true) when the server's statusBelanjaResep is true;
-     * ERROR when no delivery schedule is chosen (legacy: nothing happens).
+     * The delivery schedule is sent only when one is chosen.
      */
     public void belanjaResep(List<SelectedItem> items, ResultCallback<Boolean> callback) {
         DeliverySelection s = delivery.current();
-        if (s.jadwalDeliveryCode == null) {
-            callback.onResult(Resource.error("jadwalDeliveryCode", 0));
-            return;
-        }
         Map<String, Object> selected = Json.newObject();
         for (SelectedItem item : items) {
             Map<String, Object> o = Json.newObject();
@@ -98,7 +90,7 @@ public class ResepRepository extends BaseRepository {
             o.put("subTotal", item.subTotal);
             selected.put(item.idItem, o);
         }
-        String day = s.dayDelivery != null ? s.dayDelivery : DEFAULT_DAY;
+        String day = s.jadwalDeliveryCode == null ? null : s.dayDelivery != null ? s.dayDelivery : DEFAULT_DAY;
         enqueue(api.belanjaResep(body("cartCode", session.getCartCode(), "selectedItems", selected, "dayDelivery",
                 day, "jadwalDeliveryCode", s.jadwalDeliveryCode)),
                 (RecipeResponses.Belanja body) -> body != null && body.statusBelanjaResep, callback);

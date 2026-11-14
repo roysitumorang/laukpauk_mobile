@@ -78,10 +78,6 @@ public class DetailResepViewModel extends ViewModel {
         return loaded;
     }
 
-    public boolean isDeliverySet() {
-        return repository.isDeliverySet();
-    }
-
     public void load() {
         loaded = true;
         final int mine = ++generation;

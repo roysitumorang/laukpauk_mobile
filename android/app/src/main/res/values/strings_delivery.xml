@@ -19,16 +19,9 @@
     <string name="delivery_jadwal_jam">Jam %1$s</string>
     <string name="delivery_full">Full</string>
     <string name="delivery_buka">Buka</string>
-    <string name="delivery_not_set_title">Pilih Jadwal Dulu</string>
-    <string name="delivery_not_set_message">Untuk bisa order sayur, ikan, daging segar, tentukan lokasi pengantaran dulu ya...</string>
-    <string name="delivery_not_set_ok">Pilih Jadwal</string>
-    <string name="delivery_not_set_paket_title">Lauk Pauk</string>
-    <string name="delivery_not_set_paket_message">Mohon maaf, untuk dapat mengorder produk %1$s anda harus menentukan alamat dan jadwal delivery terlebih dahulu !</string>
-    <string name="delivery_not_set_paket_ok">Tentukan Alamat &amp; Jadwal</string>
     <string name="delivery_change_subtitle">Alamat pengantaran yang anda tentukan berada di sekitar : </string>
     <string name="delivery_change_reset">Reset</string>
     <string name="delivery_change_ubah">Ubah</string>
-    <string name="delivery_make_sure">Mak, pastikan lokasi pengantaran sebelum belanjaannya diantar ya...</string>
     <string name="delivery_expired_title">Jadwal Pengantaran Kadaluarsa</string>
     <string name="delivery_expired_message">Mak, jadwal pengantaran yang mamak pilih sudah kadaluarsa. Keranjang belanja dikosongkan dan mamak harus tentukan alamat dan jadwal pengantaran lagi ya mak.....</string>
     <string name="delivery_pin_title_default">Pilih Alamat Pengantaran</string>

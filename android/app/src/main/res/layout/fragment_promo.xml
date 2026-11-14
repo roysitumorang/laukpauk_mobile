@@ -71,46 +71,6 @@
             </FrameLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/adjdPrompt"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/adjdImage"
-                android:layout_width="131dp"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:importantForAccessibility="no" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="56dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="56dp"
-                android:gravity="center"
-                android:text="@string/promo_butuh_lokasi"
-                android:textColor="@color/promo_text"
-                android:textSize="14sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/tentukanLokasi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:backgroundTint="@color/green"
-                android:text="@string/promo_tentukan_lokasi"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                app:cornerRadius="50dp"
-                xmlns:app="http://schemas.android.com/apk/res-auto" />
-        </LinearLayout>
-
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="25dp"

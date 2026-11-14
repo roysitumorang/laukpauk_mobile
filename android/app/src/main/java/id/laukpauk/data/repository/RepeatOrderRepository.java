@@ -19,10 +19,13 @@ public class RepeatOrderRepository extends BaseRepository {
         this.delivery = delivery;
     }
 
-    /** The lines (and their availability) for the saved delivery address and schedule; null data = nothing. */
+    /**
+     * The lines (and their availability). The saved delivery address and schedule are sent when there are any;
+     * null data = nothing.
+     */
     public LiveData<Resource<RepeatOrderResponses.Items>> getItemTransaksi(String idTransaksi) {
         DeliverySelection s = delivery.current();
-        return load(api.getItemTransaksi(idTransaksi, nz(s.latitude), nz(s.longitude), nz(s.jadwalDeliveryCode)),
+        return load(api.getItemTransaksi(idTransaksi, s.latitude, s.longitude, s.jadwalDeliveryCode),
                 body -> body);
     }
 

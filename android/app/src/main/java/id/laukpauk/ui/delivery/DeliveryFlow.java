@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.Locale;
 
 import id.laukpauk.R;
 import id.laukpauk.data.repository.DeliveryRepository;
@@ -49,22 +48,10 @@ public final class DeliveryFlow {
     }
 
     /**
-     * Before buying: if a selection is set runs {@code onReady} at once; otherwise shows the legacy
-     * adjdNotSetAlert(namaProduk) and, if the buyer agrees, {@link #ask} and then {@code onReady}.
+     * Checkout is the only place that needs a delivery address and schedule: runs {@code onReady} at once
+     * when a selection is set, otherwise asks for one ({@link #ask}) and runs {@code onReady} when it was saved.
      */
-    public static void ensure(Fragment fragment, @Nullable String namaProduk, Runnable onReady) {
-        showNotSet(fragment, onReady, R.string.delivery_not_set_title, fragment.getString(R.string.delivery_not_set_message),
-                R.string.delivery_not_set_ok);
-    }
-
-    /** Same as {@link #ensure} with the wording of the legacy PaketModel.adjdNotSetAlert (names the paket). */
-    public static void ensurePaket(Fragment fragment, @Nullable String namaPaket, Runnable onReady) {
-        String nama = namaPaket == null ? "" : namaPaket.toUpperCase(Locale.ROOT);
-        showNotSet(fragment, onReady, R.string.delivery_not_set_paket_title,
-                fragment.getString(R.string.delivery_not_set_paket_message, nama), R.string.delivery_not_set_paket_ok);
-    }
-
-    private static void showNotSet(Fragment fragment, Runnable onReady, int title, String message, int okLabel) {
+    public static void ensureForCheckout(Fragment fragment, Runnable onReady) {
         if (!fragment.isAdded()) {
             return;
         }
@@ -72,13 +59,11 @@ public final class DeliveryFlow {
             onReady.run();
             return;
         }
-        new MaterialAlertDialogBuilder(fragment.requireContext()).setTitle(title).setMessage(message)
-                .setNegativeButton(R.string.delivery_tutup, null)
-                .setPositiveButton(okLabel, (d, w) -> ask(fragment, ok -> {
-                    if (ok) {
-                        onReady.run();
-                    }
-                })).show();
+        ask(fragment, ok -> {
+            if (ok) {
+                onReady.run();
+            }
+        });
     }
 
     /** The header's address pill: legacy showAlamatPengantaran; "ubah lokasi" clears and re-asks. */
@@ -103,7 +88,7 @@ public final class DeliveryFlow {
                 }).show();
     }
 
-    /** The home screen's start-up dialogs: legacy giftChecking, then makeSureADJD (each shown once). */
+    /** The home screen's start-up dialog: legacy giftChecking (shown once). */
     public static void homeChecks(Fragment fragment) {
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
@@ -112,7 +97,6 @@ public final class DeliveryFlow {
             }
             DeliveryRepository repo = repo(fragment);
             if (!repo.showAlertGift()) {
-                makeSure(fragment, handler);
                 return;
             }
             repo.getGifts(r -> {
@@ -120,29 +104,9 @@ public final class DeliveryFlow {
                     return;
                 }
                 if (r.isSuccess() && r.data != null && !r.data.isEmpty()) {
-                    GiftAlert.show(fragment, r.data, () -> {
-                        repo.setAlertGiftShown();
-                        makeSure(fragment, handler);
-                    });
-                } else {
-                    makeSure(fragment, handler);
+                    GiftAlert.show(fragment, r.data, repo::setAlertGiftShown);
                 }
             });
-        }, 3000);
-    }
-
-    private static void makeSure(Fragment fragment, Handler handler) {
-        handler.postDelayed(() -> {
-            if (!fragment.isAdded()) {
-                return;
-            }
-            DeliveryRepository repo = repo(fragment);
-            if (!repo.showMakeSure()) {
-                return;
-            }
-            new MaterialAlertDialogBuilder(fragment.requireContext()).setTitle(R.string.delivery_laukpauk)
-                    .setMessage(R.string.delivery_make_sure).setCancelable(false)
-                    .setPositiveButton(R.string.delivery_ok, (d, w) -> repo.setMakeSureShown()).show();
         }, 3000);
     }
 

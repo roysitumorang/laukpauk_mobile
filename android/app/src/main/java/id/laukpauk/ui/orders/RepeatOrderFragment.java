@@ -20,9 +20,7 @@ import id.laukpauk.data.model.orders.RepeatOrderResponses;
 import id.laukpauk.databinding.FragmentRepeatOrderBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
-import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.common.Messages;
-import id.laukpauk.ui.delivery.DeliveryFlow;
 
 /** RepeatOrder.dart. Args: idTransaksi. */
 public class RepeatOrderFragment extends Fragment {
@@ -48,12 +46,10 @@ public class RepeatOrderFragment extends Fragment {
                 idTransaksi))).get(RepeatOrderViewModel.class);
 
         binding.header.bind(this);
-        Images.asset(binding.promptImage, "adjd-belum-ditentukan.png");
         adapter = new RepeatOrderAdapter();
         binding.list.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.list.setAdapter(adapter);
         binding.refresh.setOnRefreshListener(() -> viewModel.refresh());
-        binding.btnAdjd.setOnClickListener(v -> DeliveryFlow.ask(this, null));
         binding.fab.setOnClickListener(v -> viewModel.addToCart(result -> {
             if (!isAdded()) {
                 return;
@@ -91,22 +87,13 @@ public class RepeatOrderFragment extends Fragment {
         });
     }
 
-    private void onSelection(DeliverySelection s) {
-        boolean set = s != null && s.isSet;
-        binding.promptGroup.setVisibility(set ? View.GONE : View.VISIBLE);
-        binding.refresh.setVisibility(set ? View.VISIBLE : View.GONE);
-        if (!set) {
-            binding.itemsProgress.setVisibility(View.GONE);
-            binding.emptyGroup.setVisibility(View.GONE);
-            binding.fab.setVisibility(View.GONE);
-            return;
-        }
+    /** The lines load with or without a delivery selection; a chosen one only refines their availability. */
+    private void onSelection(@Nullable DeliverySelection s) {
         viewModel.loadItemsIfNeeded(s);
     }
 
     private void onItems(Resource<RepeatOrderResponses.Items> res) {
-        DeliverySelection s = viewModel.getSelection().getValue();
-        if (res == null || s == null || !s.isSet) {
+        if (res == null) {
             return;
         }
         boolean loading = res.isLoading();

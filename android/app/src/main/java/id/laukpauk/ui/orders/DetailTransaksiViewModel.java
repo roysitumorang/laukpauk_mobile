@@ -85,14 +85,6 @@ public class DetailTransaksiViewModel extends ViewModel {
         repository.pesananDiterima(idTransaksi, callback);
     }
 
-    public boolean isDeliverySet() {
-        return delivery.current().isSet;
-    }
-
-    public void clearDelivery() {
-        delivery.clear();
-    }
-
     public void belanjaUlang(BaseRepository.ResultCallback<TransaksiResponses.BelanjaUlang> callback) {
         repository.belanjaUlang(idTransaksi, callback);
     }

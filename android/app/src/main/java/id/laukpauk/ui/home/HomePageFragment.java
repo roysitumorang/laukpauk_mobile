@@ -57,14 +57,13 @@ public class HomePageFragment extends Fragment {
                 () -> new ProdukSectionViewModel(c.homeRepository, c.deliveryRepository)))
                 .get("produk", ProdukSectionViewModel.class);
 
-        binding.header.bind(this, true, null);
+        binding.header.bind(this);
         DeliveryFlow.homeChecks(this);
 
         binding.refresh.setColorSchemeColors(requireContext().getColor(R.color.green));
         binding.refresh.setOnRefreshListener(() -> {
             viewModel.refresh();
             produkViewModel.reload();
-            binding.header.askDelivery();
             binding.refresh.setRefreshing(false);
         });
 

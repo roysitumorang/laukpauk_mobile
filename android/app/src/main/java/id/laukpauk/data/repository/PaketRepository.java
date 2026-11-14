@@ -36,16 +36,13 @@ public class PaketRepository extends BaseRepository {
 
     /**
      * Legacy PaketModel.addToCart: Keranjang/saveCart with jenisProduk=paket. SUCCESS(true) when the server
-     * accepted it; SUCCESS(false) / ERROR otherwise (also when no delivery schedule is chosen). Does not
+     * accepted it; SUCCESS(false) / ERROR otherwise. The delivery schedule is sent only when one is chosen. Does not
      * refresh the cart badge - callers use CartRepository.refreshCartCount().
      */
     public void addToCart(String idPaket, ResultCallback<Boolean> callback) {
         DeliverySelection sel = delivery.current();
-        if (sel.jadwalDeliveryCode == null) {
-            callback.onResult(Resource.success(false));
-            return;
-        }
-        String day = sel.dayDelivery != null ? sel.dayDelivery : "Hari Pengantaran";
+        String day = sel.jadwalDeliveryCode == null ? null
+                : sel.dayDelivery != null ? sel.dayDelivery : "Hari Pengantaran";
         enqueue(api.saveCart(body("cartCode", session.getCartCode(), "idProduk", idPaket, "jenisProduk", "paket",
                 "quantity", "1", "jadwalDeliveryCode", sel.jadwalDeliveryCode, "dayDelivery", day)),
                 (AddToCartResult body) -> body != null && body.statusAddCart, callback);
