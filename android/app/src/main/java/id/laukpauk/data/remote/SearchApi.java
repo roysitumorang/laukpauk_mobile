@@ -5,7 +5,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-/** Search endpoint (versionCode is added by ApiClient). */
+/** Search endpoint (JSON; ApiClient adds the auth and version headers). */
 public interface SearchApi {
 
     @GET("Konten/pencarian")

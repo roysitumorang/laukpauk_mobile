@@ -108,13 +108,13 @@ public class CheckoutRepository extends BaseRepository {
      * Result is one of the STEP_ constants.
      */
     public void checkPrerequisites(ResultCallback<Integer> callback) {
-        this.<CheckoutResponses.Verified, Boolean>call(api.cekVerifikasiUser(authToken()),
+        this.<CheckoutResponses.Verified, Boolean>call(api.cekVerifikasiUser(),
                 b -> b.isVerified, Boolean.FALSE, verified -> {
                     if (!verified) {
                         callback.onResult(Resource.success(STEP_NOT_VERIFIED));
                         return;
                     }
-                    this.<CheckoutResponses.DetailUserResponse, Boolean>call(api.getDetailUser(authToken(), "statusOTP"),
+                    this.<CheckoutResponses.DetailUserResponse, Boolean>call(api.getDetailUser("statusOTP"),
                             b -> b.detailUser != null && "1".equals(b.detailUser.statusOTP), Boolean.FALSE, otp -> {
                                 if (!otp) {
                                     callback.onResult(Resource.success(STEP_OTP_NOT_COMPLETED));
@@ -132,7 +132,7 @@ public class CheckoutRepository extends BaseRepository {
             return;
         }
         this.<CheckoutResponses.JadwalOpened, Boolean>call(
-                api.isJadwalDeliveryOpened(nz(j.kode), nz(j.day), nz(j.setOn)),
+                api.isJadwalDeliveryOpened(body("kode", nz(j.kode), "day", nz(j.day), "setOn", nz(j.setOn))),
                 b -> b.isJadwalDeliveryOpened, Boolean.TRUE,
                 open -> callback.onResult(Resource.success(open ? STEP_OK : STEP_SCHEDULE_CLOSED)));
     }
@@ -178,14 +178,14 @@ public class CheckoutRepository extends BaseRepository {
                     d.diskonKategori = v;
                     all.step();
                 });
-        this.<CheckoutResponses.TotalDompet, Long>call(api.getTotalDompet(authToken()),
+        this.<CheckoutResponses.TotalDompet, Long>call(api.getTotalDompet(),
                 b -> b.totalDompet, 0L, v -> {
                     d.totalDompetSaya = v;
                     all.step();
                 });
         // 6th: the buyer's details, then the shipping explanation (which needs the shipping type)
         this.<CheckoutResponses.DetailUserResponse, CheckoutResponses.DetailUser>call(
-                api.getDetailUser(authToken(), "nama, nomorHP, alamat"),
+                api.getDetailUser("nama, nomorHP, alamat"),
                 b -> b.detailUser, null, user -> {
                     if (user != null) {
                         d.nama = nz(user.nama);
@@ -217,7 +217,7 @@ public class CheckoutRepository extends BaseRepository {
                         };
                         settings.getSettingValue("costPerKm", onCost);
                     }
-                    this.<CheckoutResponses.PointResponse, Long>call(api.getPoint(authToken(), "true"),
+                    this.<CheckoutResponses.PointResponse, Long>call(api.getPoint("true"),
                             b -> b.response == null ? 0L : b.response.point, 0L, v -> {
                                 d.point = v;
                                 inner.step();
@@ -241,7 +241,7 @@ public class CheckoutRepository extends BaseRepository {
 
     /** Active vouchers usable for this basket total (empty list when none or on failure). */
     public LiveData<Resource<List<Voucher>>> getVouchers(long totalBelanja) {
-        return load(api.getVoucher(authToken(), "id, nama, foto, minimumBelanja, nilai, jenis, kode, maximumUsage",
+        return load(api.getVoucher("id, nama, foto, minimumBelanja, nilai, jenis, kode, maximumUsage",
                 String.valueOf(totalBelanja)),
                 body -> body == null || body.listVoucher == null ? new ArrayList<Voucher>() : body.listVoucher);
     }
@@ -251,7 +251,7 @@ public class CheckoutRepository extends BaseRepository {
      * voucher and reports the status (legacy getStatusVoucher + setUsedVoucher).
      */
     public void selectVoucher(final String idVoucher, final ResultCallback<String> callback) {
-        this.<CheckoutResponses.StatusVoucher, String>call(api.getStatusVoucher(idVoucher, authToken()),
+        this.<CheckoutResponses.StatusVoucher, String>call(api.getStatusVoucher(idVoucher),
                 b -> b.statusVoucher, "kadaluarsa", status -> {
                     session.setUsedVoucher(idVoucher);
                     callback.onResult(Resource.success(status));
@@ -264,6 +264,6 @@ public class CheckoutRepository extends BaseRepository {
 
     /** Legacy KodePromoModel.cekKodePromo; ERROR when the request failed. */
     public void cekKodePromo(String kodePromo, ResultCallback<CheckoutResponses.KodePromo> callback) {
-        enqueue(api.cekKodePromo(kodePromo, authToken()), body -> body, callback);
+        enqueue(api.cekKodePromo(kodePromo), body -> body, callback);
     }
 }

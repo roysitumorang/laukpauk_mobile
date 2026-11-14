@@ -1,9 +1,10 @@
 package id.laukpauk.data.remote;
 
+import java.util.Map;
+
 import id.laukpauk.data.model.push.PushResponses;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 /**
@@ -13,15 +14,10 @@ import retrofit2.http.POST;
 public interface PushApi {
 
     /** Links this device's FCM token to the signed-in user (idempotent: re-sending the same token is fine). */
-    @FormUrlEncoded
     @POST("User/registerFcmToken")
-    Call<PushResponses.Register> registerFcmToken(@Field("authToken") String authToken,
-                                                  @Field("fcmToken") String fcmToken,
-                                                  @Field("platform") String platform);
+    Call<PushResponses.Register> registerFcmToken(@Body Map<String, Object> body);
 
     /** Unlinks the token from the user (sign-out). */
-    @FormUrlEncoded
     @POST("User/unregisterFcmToken")
-    Call<PushResponses.Unregister> unregisterFcmToken(@Field("authToken") String authToken,
-                                                      @Field("fcmToken") String fcmToken);
+    Call<PushResponses.Unregister> unregisterFcmToken(@Body Map<String, Object> body);
 }

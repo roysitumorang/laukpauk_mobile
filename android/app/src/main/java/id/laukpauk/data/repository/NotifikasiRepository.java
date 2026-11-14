@@ -31,22 +31,22 @@ public class NotifikasiRepository extends BaseRepository {
 
     /** "Info" notifications (empty list when the server returns nothing). */
     public LiveData<Resource<List<Notifikasi>>> getNotifikasiInfo() {
-        return load(api.getNotifikasi(authToken()), body -> nonNull(body == null ? null : body.notifikasi));
+        return load(api.getNotifikasi(), body -> nonNull(body == null ? null : body.notifikasi));
     }
 
     /** Personal notifications of the signed-in user. */
     public LiveData<Resource<List<NotifikasiKhusus>>> getNotifikasiKhusus() {
-        return load(api.getNotifikasiKhusus(authToken()), body -> nonNull(body == null ? null : body.notifikasi));
+        return load(api.getNotifikasiKhusus(), body -> nonNull(body == null ? null : body.notifikasi));
     }
 
     /** One "Info" notification; SUCCESS with null data when the server says it doesn't exist. */
     public LiveData<Resource<Notifikasi>> getDetailNotifikasi(String idNotifikasi) {
-        return load(api.getDetailNotifikasi(idNotifikasi, authToken()), body -> body == null ? null : body.notifikasi);
+        return load(api.getDetailNotifikasi(idNotifikasi), body -> body == null ? null : body.notifikasi);
     }
 
     /** Marks a personal notification as read; the result is the server's {@code statusSetAs}. */
     public void setAsRead(String idNotifikasiItem, ResultCallback<Boolean> callback) {
-        enqueue(api.setAs(authToken(), idNotifikasiItem, "read", JENIS_KHUSUS),
+        enqueue(api.setAs(body("idNotifikasiItem", idNotifikasiItem, "setAs", "read", "jenisNotifikasi", JENIS_KHUSUS)),
                 body -> body != null && body.statusSetAs, callback);
     }
 
@@ -71,9 +71,9 @@ public class NotifikasiRepository extends BaseRepository {
                 unreadCount.setValue(parts[0] + parts[1]);
             }
         };
-        enqueue(api.getJumlahNotifikasi("unread", authToken()),
+        enqueue(api.getJumlahNotifikasi("unread"),
                 body -> parts[0] = body == null ? 0 : body.jumlahNotifikasi, done);
-        enqueue(api.getJumlahNotifikasiKhusus("unread", authToken()),
+        enqueue(api.getJumlahNotifikasiKhusus("unread"),
                 body -> parts[1] = body == null ? 0 : body.jumlahNotifikasi, done);
     }
 

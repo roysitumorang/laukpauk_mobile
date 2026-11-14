@@ -99,7 +99,8 @@ public class ResepRepository extends BaseRepository {
             selected.put(item.idItem, o);
         }
         String day = s.dayDelivery != null ? s.dayDelivery : DEFAULT_DAY;
-        enqueue(api.belanjaResep(session.getCartCode(), Json.toJson(selected), day, s.jadwalDeliveryCode),
+        enqueue(api.belanjaResep(body("cartCode", session.getCartCode(), "selectedItems", selected, "dayDelivery",
+                day, "jadwalDeliveryCode", s.jadwalDeliveryCode)),
                 (RecipeResponses.Belanja body) -> body != null && body.statusBelanjaResep, callback);
     }
 }

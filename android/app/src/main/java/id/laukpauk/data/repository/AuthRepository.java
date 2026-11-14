@@ -67,7 +67,8 @@ public class AuthRepository extends BaseRepository {
 
     public void register(String nama, String nomorHP, String password, String konfirmasi, String kodeReferal,
                          ResultCallback<RegisterResult> callback) {
-        enqueue(api.register(nama, nomorHP, password, konfirmasi, kodeReferal), body -> {
+        enqueue(api.register(body("namaLengkap", nama, "nomorHP", nomorHP, "password", password, "konfirmasiPassword",
+                konfirmasi, "kodeReferal", kodeReferal)), body -> {
             if (body == null) {
                 return new RegisterResult(false, true, "");
             }
@@ -84,7 +85,7 @@ public class AuthRepository extends BaseRepository {
 
     /** Auth/konfirmasiOTP; true when confirmed (the returned auth token becomes the session). */
     public void konfirmasiOTP(String otp, ResultCallback<Boolean> callback) {
-        enqueue(api.konfirmasiOTP(session.getCurrentUserID(), otp), body -> {
+        enqueue(api.konfirmasiOTP(body("idUser", session.getCurrentUserID(), "otp", otp)), body -> {
             if (body == null || !body.statusKonfirmasiOTP) {
                 return false;
             }
@@ -97,21 +98,21 @@ public class AuthRepository extends BaseRepository {
 
     /** Auth/verifikasiUser. */
     public void verifikasiUser(String code, ResultCallback<Boolean> callback) {
-        enqueue(api.verifikasiUser(session.getCurrentUserID(), code),
+        enqueue(api.verifikasiUser(body("idUser", session.getCurrentUserID(), "verificationCode", code)),
                 body -> body != null && body.statusVerifikasiUser, callback);
     }
 
     public void resendOTP(String nomorTelepon, ResultCallback<AuthResponses.ResendOTP> callback) {
-        enqueue(api.resendOTP(authToken(), nomorTelepon), body -> body, callback);
+        enqueue(api.resendOTP(body("nomorTelepon", nomorTelepon)), body -> body, callback);
     }
 
     public void lupaPassword(String nomorHP, ResultCallback<AuthResponses.LupaPassword> callback) {
-        enqueue(api.lupaPassword(nomorHP), body -> body, callback);
+        enqueue(api.lupaPassword(body("nomorHP", nomorHP)), body -> body, callback);
     }
 
     /** The signed-in user's phone number (null when unknown). */
     public void getNomorHP(ResultCallback<String> callback) {
-        enqueue(api.getDetailUser(authToken(), null),
+        enqueue(api.getDetailUser(null),
                 body -> body == null || body.detailUser == null ? null : body.detailUser.nomorHP, callback);
     }
 

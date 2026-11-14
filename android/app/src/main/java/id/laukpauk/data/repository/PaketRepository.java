@@ -46,7 +46,8 @@ public class PaketRepository extends BaseRepository {
             return;
         }
         String day = sel.dayDelivery != null ? sel.dayDelivery : "Hari Pengantaran";
-        enqueue(api.saveCart(session.getCartCode(), idPaket, "paket", "1", sel.jadwalDeliveryCode, day),
+        enqueue(api.saveCart(body("cartCode", session.getCartCode(), "idProduk", idPaket, "jenisProduk", "paket",
+                "quantity", "1", "jadwalDeliveryCode", sel.jadwalDeliveryCode, "dayDelivery", day)),
                 (AddToCartResult body) -> body != null && body.statusAddCart, callback);
     }
 }

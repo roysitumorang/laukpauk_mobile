@@ -22,14 +22,14 @@ public class RepeatOrderRepository extends BaseRepository {
     /** The lines (and their availability) for the saved delivery address and schedule; null data = nothing. */
     public LiveData<Resource<RepeatOrderResponses.Items>> getItemTransaksi(String idTransaksi) {
         DeliverySelection s = delivery.current();
-        return load(api.getItemTransaksi(authToken(), idTransaksi, nz(s.latitude), nz(s.longitude),
-                        nz(s.jadwalDeliveryCode)),
+        return load(api.getItemTransaksi(idTransaksi, nz(s.latitude), nz(s.longitude), nz(s.jadwalDeliveryCode)),
                 body -> body);
     }
 
     /** Adds the transaction's lines to the cart. */
     public void addToCart(String idTransaksi, ResultCallback<RepeatOrderResponses.AddToCart> callback) {
-        enqueue(api.addToCart(authToken(), idTransaksi, session.getCartCode()), body -> body, callback);
+        enqueue(api.addToCart(body("idTransaksi", idTransaksi, "cartCode", session.getCartCode())), body -> body,
+                callback);
     }
 
     private static String nz(String s) {

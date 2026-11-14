@@ -159,7 +159,8 @@ public class CartRepository extends BaseRepository {
 
     /** Saves quantity and note of a cart line (legacy EditKeranjangItem.simpanPerubahan); data = statusAddCart. */
     public void updateItem(String idCart, String quantity, String catatan, ResultCallback<Boolean> callback) {
-        enqueue(api.updateCart(idCart, quantity, catatan), body -> body != null && body.statusAddCart, callback);
+        enqueue(api.updateCart(idCart, body("quantity", quantity, "catatan", catatan)),
+                body -> body != null && body.statusAddCart, callback);
     }
 
     /** Deletes a cart line; on success the count is refreshed. data = statusDeleteCart. */

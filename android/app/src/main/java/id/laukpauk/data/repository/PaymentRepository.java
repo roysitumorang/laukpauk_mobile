@@ -25,7 +25,7 @@ public class PaymentRepository extends BaseRepository {
 
     /** The payment channels (empty list on failure). */
     public LiveData<Resource<List<PaymentChannel>>> getPaymentChannels() {
-        return load(api.getPaymentChannels(authToken()),
+        return load(api.getPaymentChannels(),
                 body -> body == null || body.paymentChannels == null ? new ArrayList<PaymentChannel>()
                         : body.paymentChannels);
     }
@@ -42,7 +42,7 @@ public class PaymentRepository extends BaseRepository {
         body.put("moreDataMetodePembayaran", moreData == null ? "" : moreData);
         String alamat = Json.strOrNull(session.getSavedLatitudeAndLongitude(), "alamat");
         body.put("alamatDelivery", alamat == null ? "" : alamat);
-        enqueue(api.checkout(authToken(), body), response -> response, (Resource<CheckoutResponse> res) ->
+        enqueue(api.checkout(body), response -> response, (Resource<CheckoutResponse> res) ->
                 callback.onResult(Resource.success(res.isSuccess() && res.data != null
                         ? res.data : CheckoutResponse.failed())));
     }

@@ -42,7 +42,7 @@ public class PromoRepository extends BaseRepository {
         if (!s.isSet || s.latitude == null || s.longitude == null || s.jadwalDeliveryCode == null) {
             return new MutableLiveData<>(Resource.success(new ArrayList<ProdukPromo>()));
         }
-        return load(api.getPromoAroundOfThisLatLong(authToken(), s.latitude, s.longitude, s.jadwalDeliveryCode),
+        return load(api.getPromoAroundOfThisLatLong(s.latitude, s.longitude, s.jadwalDeliveryCode),
                 body -> body == null || body.produkPromo == null
                         ? Collections.<ProdukPromo>emptyList() : body.produkPromo);
     }

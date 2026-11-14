@@ -5,15 +5,13 @@ import java.util.Map;
 import id.laukpauk.data.model.cart.AddToCartResult;
 import id.laukpauk.data.model.cart.CartResponses;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-/** Cart endpoints (versionCode is added by ApiClient). */
+/** Cart endpoints (JSON; ApiClient adds the auth and version headers). */
 public interface CartApi {
 
     @GET("User/getJumlahCart")
@@ -30,20 +28,15 @@ public interface CartApi {
     @GET("Keranjang/bersihkanKeranjang")
     Call<CartResponses.Clear> bersihkanKeranjang(@Query("cartCode") String cartCode);
 
-    @FormUrlEncoded
     @POST("Keranjang/saveCart")
-    Call<AddToCartResult> saveCart(@FieldMap Map<String, String> fields);
+    Call<AddToCartResult> saveCart(@Body Map<String, String> fields);
 
-    @FormUrlEncoded
     @POST("Keranjang/saveCart/{idItem}")
-    Call<AddToCartResult> updateCart(@Path("idItem") String idItem,
-                                     @Field("quantity") String quantity,
-                                     @Field("catatan") String catatan);
+    Call<AddToCartResult> updateCart(@Path("idItem") String idItem, @Body Map<String, Object> body);
 
-    /** The body is empty apart from the versionCode field added by ApiClient. */
-    @FormUrlEncoded
+    /** The body is an empty JSON object. */
     @POST("Keranjang/deleteCart/{idCart}")
-    Call<CartResponses.Delete> deleteCart(@Path("idCart") String idCart, @FieldMap Map<String, String> noFields);
+    Call<CartResponses.Delete> deleteCart(@Path("idCart") String idCart, @Body Map<String, String> noFields);
 
     /** Duplicate of the checkout slice's wallet configuration call. */
     @GET("Pengaturan/getWalletConfiguration")
