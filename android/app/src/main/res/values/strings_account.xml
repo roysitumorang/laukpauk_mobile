@@ -48,7 +48,7 @@
     <string name="account_referal_tersalin">Kode Referal Tersalin !</string>
     <string name="account_referal_penjelasan1">Silahkan bagikan kode ini ke keluarga, saudara, teman atau kepada siapa saja untuk mendapatkan uang belanja gratis sebesar %1$s</string>
     <string name="account_referal_penjelasan2">Uang belanja gratis akan otomatis masuk ke dompet anda ketika si penerima referral melakukan belanja, dan sudah selesai (COMPLETED)</string>
-    <string name="account_referal_share">Temanmu *%1$s* mengirimkan Kode Referal *%2$s* senilai *%3$s* untuk pembelian kebutuhan dapur pertamamu di Laukpauk. \n\nLangkah mudah belanja di Laukpauk ke Pedagang Pasar Tradisional : \n*Pilih Pasar - Belanja - Tunggu dirumah*\n\nYukk, teman-teman di Area Medan sekitarnya kalau apakali, belanja di https://laukpauk.id/app aja!</string>
+    <string name="account_referal_share">Temanmu *%1$s* mengirimkan Kode Referal *%2$s* senilai *%3$s* untuk pembelian kebutuhan dapur pertamamu di Laukpauk. \n\nLangkah mudah belanja di Laukpauk : \n*Pilih Produk - Belanja - Tunggu dirumah*\n\nYukk, teman-teman di Area Medan sekitarnya kalau apakali, belanja di https://laukpauk.id/app aja!</string>
     <string name="account_profil_saya_title">Profil Saya</string>
     <string name="account_keluar">Keluar</string>
     <string name="account_foto_title">Foto Profil</string>

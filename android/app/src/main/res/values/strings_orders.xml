@@ -36,7 +36,7 @@
     <string name="orders_step_proses">Proses</string>
     <string name="orders_step_kirim">Kirim</string>
     <string name="orders_step_selesai">Selesai</string>
-    <string name="orders_status_pending">Sudah Diterima Penjual</string>
+    <string name="orders_status_pending">Pesanan Sudah Diterima</string>
     <string name="orders_status_processing">Sedang diproses</string>
     <string name="orders_status_otw">Dalam Perjalanan</string>
     <string name="orders_status_received">Diterima</string>

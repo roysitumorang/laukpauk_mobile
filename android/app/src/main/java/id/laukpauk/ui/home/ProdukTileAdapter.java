@@ -18,7 +18,7 @@ import id.laukpauk.util.Currency;
 import id.laukpauk.util.DefaultImage;
 import id.laukpauk.util.ServerPath;
 
-/** The horizontal product tiles of the home page (legacy ProdukDiDalamPasarItem / ProdukInThisPasarItem). */
+/** The horizontal product tiles of the home page. */
 public class ProdukTileAdapter extends ListAdapter<HomeProduk, ProdukTileAdapter.Holder> {
 
     private final PriceSource prices;

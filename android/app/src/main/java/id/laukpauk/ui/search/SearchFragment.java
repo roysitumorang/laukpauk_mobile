@@ -36,13 +36,11 @@ import id.laukpauk.ui.common.StatusBar;
 import id.laukpauk.ui.home.HomeNav;
 import id.laukpauk.ui.home.HomeViewModel;
 import id.laukpauk.ui.home.KontenSection;
-import id.laukpauk.ui.home.PasarViewModel;
-import id.laukpauk.ui.home.ProdukListener;
-import id.laukpauk.ui.home.ProdukPasarAdapter;
+import id.laukpauk.ui.home.ProdukSectionViewModel;
 
 /**
  * HeaderSearch.dart + SearchResult.dart + HistoriPencarian.dart: the full screen search. Unfocused and empty it
- * browses (nearest market's products, "headersearch" konten, search history); focused or with text it shows the
+ * browses (the first products, "headersearch" konten, search history); focused or with text it shows the
  * live suggestions. Opening a suggestion replaces this screen.
  */
 public class SearchFragment extends Fragment {
@@ -64,15 +62,15 @@ public class SearchFragment extends Fragment {
         StatusBar.tint(this, requireContext().getColor(R.color.nearly_white));
         viewModel = new ViewModelProvider(this, ViewModelFactory.of(() -> new SearchViewModel(c.searchRepository)))
                 .get(SearchViewModel.class);
-        PasarViewModel pasarVm = new ViewModelProvider(this, ViewModelFactory.of(
-                () -> new PasarViewModel(c.homeRepository, c.deliveryRepository, 1, true)))
-                .get(PasarViewModel.class);
+        ProdukSectionViewModel produkVm = new ViewModelProvider(this, ViewModelFactory.of(
+                () -> new ProdukSectionViewModel(c.homeRepository, c.deliveryRepository)))
+                .get(ProdukSectionViewModel.class);
         HomeViewModel kontenVm = new ViewModelProvider(this, ViewModelFactory.of(
                 () -> new HomeViewModel(c.homeRepository, "headersearch", null))).get(HomeViewModel.class);
 
         binding.back.setOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
         setupField();
-        setupBrowse(c, pasarVm, kontenVm);
+        setupBrowse(produkVm, kontenVm);
         setupResults();
     }
 
@@ -129,17 +127,8 @@ public class SearchFragment extends Fragment {
         }
     }
 
-    private void setupBrowse(AppContainer c, PasarViewModel pasarVm, HomeViewModel kontenVm) {
-        ProdukPasarAdapter produk = new ProdukPasarAdapter(c.homeRepository::getLowestPrice,
-                ProdukListener.navigating(this), pasar -> HomeNav.openPasar(this, pasar));
-        binding.produkPasarList.setAdapter(produk);
-        pasarVm.getPasar().observe(getViewLifecycleOwner(), res ->
-                binding.pasarProgress.setVisibility(res != null && res.isLoading() ? View.VISIBLE : View.GONE));
-        pasarVm.getSections().observe(getViewLifecycleOwner(), list -> {
-            produk.submitList(list);
-            binding.pasarTitle.setVisibility(list == null || list.isEmpty() ? View.GONE : View.VISIBLE);
-        });
-        pasarVm.start();
+    private void setupBrowse(ProdukSectionViewModel produkVm, HomeViewModel kontenVm) {
+        HomeNav.bindProdukSection(this, binding.produk, produkVm);
 
         SearchKontenAdapter konten = new SearchKontenAdapter(new SearchKontenAdapter.Listener() {
             @Override

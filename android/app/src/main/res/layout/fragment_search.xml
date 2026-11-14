@@ -30,13 +30,8 @@
                     <LinearLayout android:id="@+id/historiList" android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginTop="10dp" android:orientation="vertical" />
                 </LinearLayout>
-                <ProgressBar android:id="@+id/pasarProgress" android:layout_width="25dp" android:layout_height="25dp"
-                    android:layout_gravity="center_horizontal" />
-                <TextView android:id="@+id/pasarTitle" style="@style/Home.SectionTitle" android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:layout_marginBottom="10dp" android:text="@string/home_pasar_terdekat" android:visibility="gone" />
-                <androidx.recyclerview.widget.RecyclerView android:id="@+id/produkPasarList" android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:nestedScrollingEnabled="false"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                <include android:id="@+id/produk" layout="@layout/view_home_produk" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:layout_marginBottom="15dp" />
                 <androidx.recyclerview.widget.RecyclerView android:id="@+id/kontenList" android:layout_width="match_parent"
                     android:layout_height="wrap_content" android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />

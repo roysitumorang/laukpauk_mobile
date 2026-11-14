@@ -15,19 +15,17 @@ import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.model.home.Artikel;
 import id.laukpauk.data.model.home.Banner;
 import id.laukpauk.data.model.home.HomeProduk;
-import id.laukpauk.data.model.home.HomeResponses;
 import id.laukpauk.data.model.home.KategoriProduk;
 import id.laukpauk.data.model.home.Konten;
 import id.laukpauk.data.model.home.KontenItem;
 import id.laukpauk.data.model.home.LowestPrice;
-import id.laukpauk.data.model.home.Pasar;
 import id.laukpauk.data.model.home.WalletInfo;
 import id.laukpauk.data.remote.HomeApi;
 
 /**
- * Data of the home page and the screens built from the same blocks (market list, category list, konten blocks,
- * product tiles with their lowest price): legacy HomepageModel, BannerModel, KontenModel, KategoriProdukModel and
- * the market part of PasarModel. A failed request is reported as an ERROR resource; screens show it like an
+ * Data of the home page and the screens built from the same blocks (product list, category list, konten blocks,
+ * product tiles with their lowest price): legacy HomepageModel, BannerModel, KontenModel, KategoriProdukModel.
+ * A failed request is reported as an ERROR resource; screens show it like an
  * empty list (the legacy models returned empty arrays on failure).
  */
 public class HomeRepository extends BaseRepository {
@@ -80,24 +78,8 @@ public class HomeRepository extends BaseRepository {
         return live;
     }
 
-    /**
-     * Markets (legacy getDataPasar): around the chosen delivery location when one is set, otherwise all markets.
-     *
-     * @param limit  max markets, null = all
-     * @param search market name filter, null/empty = none
-     */
-    public LiveData<Resource<List<Pasar>>> getDataPasar(@Nullable Integer limit, @Nullable String search) {
-        String nama = search == null || search.isEmpty() ? null : search;
-        DeliverySelection s = delivery.current();
-        if (s.isSet && s.latitude != null && s.longitude != null && s.jadwalDeliveryCode != null) {
-            return load(api.getPasarAround(s.latitude, s.longitude, s.jadwalDeliveryCode, limit, nama),
-                    body -> nonNull(body == null ? null : body.listPasar));
-        }
-        return load(api.getPasar(limit, nama), body -> nonNull(body == null ? null : body.dataPasar));
-    }
-
-    /** The first products of a market (legacy PasarModel.getProdukInThisPasar(idPasar, useLimit "y", startFrom 0)). */
-    public LiveData<Resource<List<HomeProduk>>> getProdukInThisPasar(String idPasar) {
+    /** The first products of the product list (useLimit "y", startFrom 0). */
+    public LiveData<Resource<List<HomeProduk>>> getProduk() {
         DeliverySelection s = delivery.current();
         String code = null;
         if (s.isSet) {
@@ -107,7 +89,7 @@ public class HomeRepository extends BaseRepository {
                 return new MutableLiveData<>(Resource.success(Collections.<HomeProduk>emptyList()));
             }
         }
-        return load(api.getProdukInThisPasar(idPasar, code, "0", "y", authToken()),
+        return load(api.getProduk(code, "0", "y", authToken()),
                 body -> nonNull(body == null ? null : body.listProduk));
     }
 

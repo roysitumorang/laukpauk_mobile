@@ -14,6 +14,10 @@ public final class ProdukResponses {
         @Nullable public Produk detailProduk;
     }
 
+    public static class ProdukList {
+        public List<Produk> listProduk;
+    }
+
     public static class LowestPriceResponse {
         @Nullable public LowestPrice lowestPrice;
     }

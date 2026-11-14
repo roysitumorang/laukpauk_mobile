@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-/** A unit product as listed in a market / the detail screen (fields vary per endpoint). */
+/** A unit product as listed in the product list / the detail screen (fields vary per endpoint). */
 public class Produk {
     public String id;
     public String nama;

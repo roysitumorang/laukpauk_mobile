@@ -25,11 +25,10 @@ public final class CheckoutResponses {
 
     /** GET Transaksi/getJenisOngkir: the fields are at the top level of the answer. */
     public static class JenisOngkir {
-        /** "perpasar" or "perkm". */
+        /** "perkm" when the address is outside the coverage area, otherwise the flat delivery cost applies. */
         public String jenisOngkir;
-        public int banyakPasar;
-        public String namaPasarTerjauh;
-        public double jarakPasarTerjauh;
+        /** Distance the courier travels, in km (only meaningful for "perkm"). */
+        public double jarak;
     }
 
     public static class WalletConfig {

@@ -141,18 +141,4 @@ public final class SessionStore {
             return String.valueOf(BuildConfig.VERSION_CODE);
         }
     }
-
-    public void setPasarPalingDekat(Map<String, Object> pasarPalingDekat) {
-        prefs.setString("pasarPalingDekat", Json.toJson(pasarPalingDekat));
-    }
-
-    /** null when nothing is stored. */
-    public Map<String, Object> getPasarPalingDekat() {
-        String s = prefs.getString("pasarPalingDekat");
-        if (s == null) {
-            return null;
-        }
-        Object e = Json.parse(s);
-        return Json.isObject(e) ? Json.obj(e) : null;
-    }
 }

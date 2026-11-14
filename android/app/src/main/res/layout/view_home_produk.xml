@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The "Produk" block: title with "Lihat semua", the first products as horizontal tiles, and "pilih lokasi lain". -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_horizontal" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:paddingBottom="15dp">
+        <TextView style="@style/Home.SectionTitle" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:text="@string/home_produk_title" />
+        <TextView android:id="@+id/lihatSemua" style="@style/Home.SectionLink" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="@string/home_lihat_semua_kecil" />
+    </LinearLayout>
+    <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <LinearLayout android:id="@+id/loadingBox" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center_horizontal" android:orientation="vertical" android:paddingTop="25dp" android:paddingBottom="25dp">
+            <ProgressBar android:layout_width="30dp" android:layout_height="30dp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp"
+                android:text="@string/home_produk_mencari" android:textColor="@color/home_text" android:textSize="12sp" />
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView android:id="@+id/produkList" android:layout_width="match_parent"
+            android:layout_height="275dp" android:orientation="horizontal" android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        <include android:id="@+id/empty" layout="@layout/view_home_empty" android:visibility="gone" />
+    </FrameLayout>
+    <com.google.android.material.button.MaterialButton android:id="@+id/pilihLokasi" style="@style/Widget.Home.PillButton"
+        android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp"
+        android:text="@string/home_pilih_lokasi_lain" />
+</LinearLayout>

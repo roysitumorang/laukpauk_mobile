@@ -7,7 +7,7 @@
     <string name="product_pilih_satuan_hint">Silahkan pilih satuan dan quantity yang anda mau : </string>
     <string name="product_kategori_tidak_diketahui">Kategori Produk Tidak Diketahui</string>
     <string name="product_note">Note!</string>
-    <string name="product_note_luar_ca">Produk ini berada diluar Coverage Area Anda. Anda akan dikenakan ongkir %1$s/KM. Disarankan belanja dari 1 pasar di terdekat lokasi Anda</string>
+    <string name="product_note_luar_ca">Produk ini berada diluar Coverage Area Anda. Anda akan dikenakan ongkir %1$s/KM.</string>
     <string name="product_stok_habis">Stok tidak tersedia</string>
     <string name="product_tanpa_harga">Mohon maaf, produk ini tidak memiliki daftar harga</string>
     <string name="product_harga_pas">1 Item (Harga Pas)</string>

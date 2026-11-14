@@ -22,13 +22,7 @@ public final class HomeResponses {
         public List<KontenItem> kontenItem;
     }
 
-    /** getPasar answers {@code dataPasar}; getPasarAroundOfThisLatLong answers {@code listPasar}. */
-    public static class Pasars {
-        public List<Pasar> dataPasar;
-        public List<Pasar> listPasar;
-    }
-
-    public static class ProdukPasar {
+    public static class ProdukList {
         public List<HomeProduk> listProduk;
     }
 

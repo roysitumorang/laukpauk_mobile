@@ -2,7 +2,6 @@
 <resources>
     <!-- Flutter's default text colour (black87) -->
     <color name="home_text">#DD000000</color>
-    <color name="home_overlay_30">#4D000000</color>
     <color name="home_overlay_40">#66000000</color>
     <color name="home_amber">#FFC107</color>
     <color name="home_badge_red">#F44336</color>

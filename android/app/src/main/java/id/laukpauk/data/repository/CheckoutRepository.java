@@ -204,20 +204,18 @@ public class CheckoutRepository extends BaseRepository {
                         return;
                     }
                     d.jenisOngkir = jenis;
-                    final boolean perPasar = "perpasar".equals(jenis.jenisOngkir);
-                    final boolean needsCost = !perPasar || jenis.banyakPasar >= 2;
+                    final boolean needsCost = "perkm".equals(jenis.jenisOngkir);
                     final Join inner = new Join(needsCost ? 3 : 2, () -> {
                         d.complete = true;
                         all.step();
                     });
                     if (needsCost) {
-                        final String key = perPasar ? "costDelivery" : "costPerKm";
                         ResultCallback<Object> onCost = res -> {
                             long tarif = res.isSuccess() ? Json.asLong(res.data, 0) : 0;
-                            d.penjelasanOngkir = penjelasan(jenis, perPasar, tarif);
+                            d.penjelasanOngkir = penjelasan(jenis, tarif);
                             inner.step();
                         };
-                        settings.getSettingValue(key, onCost);
+                        settings.getSettingValue("costPerKm", onCost);
                     }
                     this.<CheckoutResponses.PointResponse, Long>call(api.getPoint(authToken(), "true"),
                             b -> b.response == null ? 0L : b.response.point, 0L, v -> {
@@ -234,24 +232,10 @@ public class CheckoutRepository extends BaseRepository {
                 });
     }
 
-    private static String penjelasan(CheckoutResponses.JenisOngkir jenis, boolean perPasar, long tarif) {
-        if (perPasar) {
-            long banyakPasar = jenis.banyakPasar;
-            return "Anda dikenakan  " + Currency.formatSatuan(banyakPasar)
-                    + "x ongkos kirim karena belanja dari "
-                    + Currency.formatSatuan(banyakPasar, "Pasar")
-                    + ". Tarif ongkir perpasar adalah "
-                    + Currency.formatRupiah(tarif, 0)
-                    + ". Disarankan belanja dari 1 pasar.";
-        }
-        String namaPasarTerjauh = jenis.namaPasarTerjauh;
-        if (namaPasarTerjauh == null) {
-            namaPasarTerjauh = "Pasar Tidak Dikenal";
-        }
-        return "Anda dikenakan ongkir PERKM karena anda sudah berbelanja di luar "
+    private static String penjelasan(CheckoutResponses.JenisOngkir jenis, long tarif) {
+        return "Anda dikenakan ongkir PERKM karena alamat pengantaran berada di luar "
                 + "Coverage Area anda. Jarak yang harus ditempuh kurir adalah "
-                + Currency.formatSatuan((long) jenis.jarakPasarTerjauh, "KM")
-                + " (" + namaPasarTerjauh.toUpperCase() + ")"
+                + Currency.formatSatuan((long) jenis.jarak, "KM")
                 + ". Tarif ongkir per km adalah " + Currency.formatRupiah(tarif, 0);
     }
 

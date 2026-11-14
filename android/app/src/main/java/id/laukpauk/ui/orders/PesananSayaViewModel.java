@@ -107,7 +107,7 @@ public class PesananSayaViewModel extends ViewModel {
         repository.pesananDiterima(idTransaksi, callback);
     }
 
-    /** The shop's WhatsApp number setting (legacy getContactUsWhatsappConfiguration). */
+    /** The WhatsApp contact number setting (legacy getContactUsWhatsappConfiguration). */
     public void contactWhatsapp(BaseRepository.ResultCallback<Object> callback) {
         settings.getContactUsWhatsappConfiguration(callback);
     }
