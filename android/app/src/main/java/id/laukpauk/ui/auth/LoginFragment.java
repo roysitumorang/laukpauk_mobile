@@ -19,8 +19,6 @@ import id.laukpauk.ui.common.PhoneNumberHint;
 import id.laukpauk.ui.common.Messages;
 
 import id.laukpauk.databinding.FragmentLoginBinding;
-import id.laukpauk.ui.common.AuthGate;
-import id.laukpauk.ui.common.NavResults;
 
 public class LoginFragment extends Fragment {
 
@@ -43,7 +41,6 @@ public class LoginFragment extends Fragment {
         viewModel = new ViewModelProvider(this,
                 ViewModelFactory.of(() -> new AuthViewModel(c.authRepository))).get(AuthViewModel.class);
         Images.asset(binding.logo, "laukpauk.png");
-        NavResults.setResult(this, AuthGate.LOGIN_RESULT, false);
         AuthFlow.bindPasswordToggle(binding.password, binding.togglePassword);
         binding.registerLink.setOnClickListener(v -> AuthFlow.replaceWith(this, R.id.registerFragment));
         binding.lupaLink.setOnClickListener(v -> AuthFlow.replaceWith(this, R.id.lupaPasswordFragment));
