@@ -69,7 +69,7 @@ public class HomePageFragment extends Fragment {
 
         setupHero();
         setupWallet();
-        new ProdukSection(this, binding.produk, produkViewModel, true);
+        new ProdukSection(this, binding.produk, produkViewModel);
         setupKonten();
         setupArtikel();
         viewModel.start();

@@ -7,25 +7,19 @@ import androidx.fragment.app.Fragment;
 import id.laukpauk.R;
 import id.laukpauk.databinding.ViewHomeProdukBinding;
 import id.laukpauk.di.AppContainer;
-import id.laukpauk.ui.delivery.DeliveryFlow;
 
 /** The "Produk" block of the home page and the search screen: the first products and "Lihat semua". */
 final class ProdukSection {
 
     private boolean loaded;
 
-    ProdukSection(Fragment f, ViewHomeProdukBinding b, ProdukSectionViewModel vm, boolean showPilihLokasi) {
+    ProdukSection(Fragment f, ViewHomeProdukBinding b, ProdukSectionViewModel vm) {
         AppContainer c = AppContainer.from(f.requireContext());
         ProdukTileAdapter adapter = new ProdukTileAdapter(c.homeRepository::getLowestPrice,
                 ProdukListener.navigating(f));
         b.produkList.setAdapter(adapter);
 
         b.lihatSemua.setOnClickListener(v -> HomeNav.openSemuaProduk(f));
-        b.pilihLokasi.setVisibility(showPilihLokasi ? View.VISIBLE : View.GONE);
-        b.pilihLokasi.setOnClickListener(v -> {
-            c.deliveryRepository.clear();
-            DeliveryFlow.ask(f, null);
-        });
         b.empty.emptyText.setText(R.string.home_produk_kosong);
 
         vm.getProduk().observe(f.getViewLifecycleOwner(), res -> {
