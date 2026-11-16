@@ -31,13 +31,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/oTPRegistrasiFragment"
-        android:name="id.laukpauk.ui.auth.OTPRegistrasiFragment">
+        android:id="@+id/registrationOtpFragment"
+        android:name="id.laukpauk.ui.auth.RegistrationOtpFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/oTPVerifikasiUserFragment"
-        android:name="id.laukpauk.ui.auth.OTPVerifikasiUserFragment">
+        android:id="@+id/userVerificationOtpFragment"
+        android:name="id.laukpauk.ui.auth.UserVerificationOtpFragment">
     </fragment>
 
     <fragment
@@ -46,13 +46,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/kirimUlangOTPFragment"
-        android:name="id.laukpauk.ui.auth.KirimUlangOTPFragment">
+        android:id="@+id/resendOtpFragment"
+        android:name="id.laukpauk.ui.auth.ResendOtpFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/lupaPasswordFragment"
-        android:name="id.laukpauk.ui.auth.LupaPasswordFragment">
+        android:id="@+id/forgotPasswordFragment"
+        android:name="id.laukpauk.ui.auth.ForgotPasswordFragment">
     </fragment>
 
     <fragment
@@ -61,13 +61,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/semuaKategoriProdukFragment"
-        android:name="id.laukpauk.ui.home.SemuaKategoriProdukFragment">
+        android:id="@+id/allProductCategoriesFragment"
+        android:name="id.laukpauk.ui.home.AllProductCategoriesFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/listProdukFragment"
-        android:name="id.laukpauk.ui.home.ListProdukFragment">
+        android:id="@+id/productListFragment"
+        android:name="id.laukpauk.ui.home.ProductListFragment">
         <argument android:name="title" app:argType="string" android:defaultValue="" />
         <argument android:name="subTitle" app:argType="string" app:nullable="true" android:defaultValue="@null" />
         <argument android:name="dataProduk" app:argType="string" android:defaultValue="[]" />
@@ -88,19 +88,19 @@
     </fragment>
 
     <fragment
-        android:id="@+id/semuaProdukFragment"
-        android:name="id.laukpauk.ui.product.SemuaProdukFragment">
+        android:id="@+id/allProductsFragment"
+        android:name="id.laukpauk.ui.product.AllProductsFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/detailProdukFragment"
-        android:name="id.laukpauk.ui.product.DetailProdukFragment">
+        android:id="@+id/productDetailFragment"
+        android:name="id.laukpauk.ui.product.ProductDetailFragment">
         <argument android:name="idProduk" app:argType="string" />
     </fragment>
 
     <fragment
-        android:id="@+id/detailPaketFragment"
-        android:name="id.laukpauk.ui.product.DetailPaketFragment">
+        android:id="@+id/packDetailFragment"
+        android:name="id.laukpauk.ui.product.PackDetailFragment">
         <argument android:name="idPaket" app:argType="string" />
     </fragment>
 
@@ -128,24 +128,24 @@
     </fragment>
 
     <fragment
-        android:id="@+id/resepFragment"
-        android:name="id.laukpauk.ui.recipe.ResepFragment">
+        android:id="@+id/recipeFragment"
+        android:name="id.laukpauk.ui.recipe.RecipeFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/detailResepFragment"
-        android:name="id.laukpauk.ui.recipe.DetailResepFragment">
+        android:id="@+id/recipeDetailFragment"
+        android:name="id.laukpauk.ui.recipe.RecipeDetailFragment">
         <argument android:name="idResep" app:argType="string" />
     </fragment>
 
     <fragment
-        android:id="@+id/keranjangFragment"
-        android:name="id.laukpauk.ui.cart.KeranjangFragment">
+        android:id="@+id/cartFragment"
+        android:name="id.laukpauk.ui.cart.CartFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/editKeranjangItemFragment"
-        android:name="id.laukpauk.ui.cart.EditKeranjangItemFragment">
+        android:id="@+id/editCartItemFragment"
+        android:name="id.laukpauk.ui.cart.EditCartItemFragment">
         <argument android:name="dataKeranjangItem" app:argType="string" />
     </fragment>
 
@@ -155,8 +155,8 @@
     </fragment>
 
     <fragment
-        android:id="@+id/buatOrderanBerhasilFragment"
-        android:name="id.laukpauk.ui.checkout.BuatOrderanBerhasilFragment">
+        android:id="@+id/orderSuccessFragment"
+        android:name="id.laukpauk.ui.checkout.OrderSuccessFragment">
         <argument android:name="returnedDataFromCheckout" app:argType="string" />
         <argument android:name="removeTransactionSession" app:argType="boolean" android:defaultValue="false" />
     </fragment>
@@ -173,14 +173,14 @@
     </fragment>
 
     <fragment
-        android:id="@+id/pesananSayaFragment"
-        android:name="id.laukpauk.ui.orders.PesananSayaFragment">
+        android:id="@+id/myOrdersFragment"
+        android:name="id.laukpauk.ui.orders.MyOrdersFragment">
         <argument android:name="statusTransaksi" app:argType="integer" android:defaultValue="0" />
     </fragment>
 
     <fragment
-        android:id="@+id/detailTransaksiFragment"
-        android:name="id.laukpauk.ui.orders.DetailTransaksiFragment">
+        android:id="@+id/transactionDetailFragment"
+        android:name="id.laukpauk.ui.orders.TransactionDetailFragment">
         <argument android:name="idTransaksi" app:argType="string" />
     </fragment>
 
@@ -191,8 +191,8 @@
     </fragment>
 
     <fragment
-        android:id="@+id/itemTransaksiFragment"
-        android:name="id.laukpauk.ui.orders.ItemTransaksiFragment">
+        android:id="@+id/transactionItemFragment"
+        android:name="id.laukpauk.ui.orders.TransactionItemFragment">
         <argument android:name="idTransaksi" app:argType="string" />
         <argument android:name="cartCode" app:argType="string" app:nullable="true" android:defaultValue="@null" />
     </fragment>
@@ -203,39 +203,39 @@
     </fragment>
 
     <fragment
-        android:id="@+id/profilSayaFragment"
-        android:name="id.laukpauk.ui.account.ProfilSayaFragment">
+        android:id="@+id/myProfileFragment"
+        android:name="id.laukpauk.ui.account.MyProfileFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/historiDompetFragment"
-        android:name="id.laukpauk.ui.account.HistoriDompetFragment">
+        android:id="@+id/walletHistoryFragment"
+        android:name="id.laukpauk.ui.account.WalletHistoryFragment">
         <argument android:name="jenisDompet" app:argType="string" app:nullable="true" android:defaultValue="@null" />
     </fragment>
 
     <fragment
-        android:id="@+id/historiPoinFragment"
-        android:name="id.laukpauk.ui.account.HistoriPoinFragment">
+        android:id="@+id/pointsHistoryFragment"
+        android:name="id.laukpauk.ui.account.PointsHistoryFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/kodeReferalFragment"
-        android:name="id.laukpauk.ui.account.KodeReferalFragment">
+        android:id="@+id/referralCodeFragment"
+        android:name="id.laukpauk.ui.account.ReferralCodeFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/hubungiKamiFragment"
-        android:name="id.laukpauk.ui.account.HubungiKamiFragment">
+        android:id="@+id/contactUsFragment"
+        android:name="id.laukpauk.ui.account.ContactUsFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/notifikasiFragment"
-        android:name="id.laukpauk.ui.notification.NotifikasiFragment">
+        android:id="@+id/notificationFragment"
+        android:name="id.laukpauk.ui.notification.NotificationFragment">
     </fragment>
 
     <fragment
-        android:id="@+id/detailNotifikasiGlobalFragment"
-        android:name="id.laukpauk.ui.notification.DetailNotifikasiGlobalFragment">
+        android:id="@+id/globalNotificationDetailFragment"
+        android:name="id.laukpauk.ui.notification.GlobalNotificationDetailFragment">
         <argument android:name="idNotifikasi" app:argType="string" />
     </fragment>
 </navigation>

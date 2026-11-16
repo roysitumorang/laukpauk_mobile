@@ -57,8 +57,8 @@ public class SplashScreenFragment extends Fragment {
                 case StartupRepository.GO_INTRO:
                     nav.navigate(R.id.introPageFragment, null, leaveSplash);
                     break;
-                case StartupRepository.GO_OTP_REGISTRASI:
-                    nav.navigate(R.id.oTPRegistrasiFragment, null, leaveSplash);
+                case StartupRepository.GO_REGISTRATION_OTP:
+                    nav.navigate(R.id.registrationOtpFragment, null, leaveSplash);
                     break;
                 case SplashViewModel.GO_ROUTE:
                     // legacy pushAndRemoveUntil(routeTo, until HomePage): home stays under the target

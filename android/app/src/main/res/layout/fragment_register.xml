@@ -12,8 +12,8 @@
 <LinearLayout style="@style/Widget.Auth.Pill" android:layout_width="match_parent" android:layout_height="wrap_content"
     android:layout_marginStart="25dp"
     android:layout_marginEnd="25dp">
-    <EditText android:id="@+id/nama" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-        android:hint="@string/auth_hint_nama" android:inputType="text" />
+    <EditText android:id="@+id/name" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        android:hint="@string/auth_hint_name" android:inputType="text" />
 </LinearLayout>
 <Space android:layout_width="match_parent" android:layout_height="10dp" />
 <LinearLayout style="@style/Widget.Auth.Pill" android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -27,8 +27,8 @@
 <LinearLayout style="@style/Widget.Auth.Pill" android:layout_width="match_parent" android:layout_height="wrap_content"
     android:layout_marginStart="25dp"
     android:layout_marginEnd="25dp">
-    <EditText android:id="@+id/nomorHP" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-        android:hint="@string/auth_hint_nomor_hp" android:inputType="number"
+    <EditText android:id="@+id/phoneNumber" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        android:hint="@string/auth_hint_phone_number" android:inputType="number"
         android:autofillHints="phoneNumber" android:importantForAutofill="yes" />
 </LinearLayout>
 <Space android:layout_width="match_parent" android:layout_height="10dp" />
@@ -38,45 +38,45 @@
     <EditText android:id="@+id/password" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
         android:hint="@string/auth_hint_password" android:inputType="textPassword" />
     <ImageView android:id="@+id/togglePassword" android:layout_width="24dp" android:layout_height="24dp"
-        android:contentDescription="@string/auth_tampilkan_password" android:padding="2dp"
+        android:contentDescription="@string/auth_show_password" android:padding="2dp"
         android:src="@drawable/ic_visibility" app:tint="@color/dark_text" />
 </LinearLayout>
 <Space android:layout_width="match_parent" android:layout_height="10dp" />
 <LinearLayout style="@style/Widget.Auth.Pill" android:layout_width="match_parent" android:layout_height="wrap_content"
     android:layout_marginStart="25dp"
     android:layout_marginEnd="25dp">
-    <EditText android:id="@+id/konfirmasiPassword" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-        android:hint="@string/auth_hint_konfirmasi_password" android:inputType="textPassword" />
-    <ImageView android:id="@+id/toggleKonfirmasi" android:layout_width="24dp" android:layout_height="24dp"
-        android:contentDescription="@string/auth_tampilkan_password" android:padding="2dp"
+    <EditText android:id="@+id/confirmPassword" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        android:hint="@string/auth_hint_confirm_password" android:inputType="textPassword" />
+    <ImageView android:id="@+id/toggleConfirm" android:layout_width="24dp" android:layout_height="24dp"
+        android:contentDescription="@string/auth_show_password" android:padding="2dp"
         android:src="@drawable/ic_visibility" app:tint="@color/dark_text" />
 </LinearLayout>
 <Space android:layout_width="match_parent" android:layout_height="10dp" />
 <LinearLayout style="@style/Widget.Auth.Pill" android:layout_width="match_parent" android:layout_height="wrap_content"
     android:layout_marginStart="25dp"
     android:layout_marginEnd="25dp">
-    <EditText android:id="@+id/kodeReferal" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-        android:hint="@string/auth_hint_kode_referal" android:inputType="text" />
+    <EditText android:id="@+id/referralCode" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        android:hint="@string/auth_hint_referral_code" android:inputType="text" />
 </LinearLayout>
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="25dp"
-    android:layout_marginEnd="25dp" android:layout_marginTop="10dp" android:text="@string/auth_info_referal"
+    android:layout_marginEnd="25dp" android:layout_marginTop="10dp" android:text="@string/auth_info_referral"
     android:textColor="@android:color/black" android:textSize="11sp" android:textStyle="italic" />
 <Space android:layout_width="match_parent" android:layout_height="20dp" />
 <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal">
     <com.google.android.material.button.MaterialButton android:id="@+id/registerButton" style="@style/Widget.Auth.Button"
-        android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auth_registrasi" />
+        android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auth_registration" />
     <ProgressBar android:id="@+id/registerSpinner" android:layout_width="20dp" android:layout_height="20dp"
         android:layout_gravity="center" android:indeterminateTint="@android:color/white" android:visibility="gone" />
 </FrameLayout>
 <Space android:layout_width="match_parent" android:layout_height="25dp" />
 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal" android:gravity="center" android:orientation="horizontal">
-    <TextView style="@style/Widget.Auth.Prompt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auth_sudah_punya_akun" />
+    <TextView style="@style/Widget.Auth.Prompt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auth_have_account" />
     <TextView android:id="@+id/loginLink" style="@style/Widget.Auth.Link" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="2dp"
-        android:text="@string/auth_disini" />
+        android:text="@string/auth_here" />
 </LinearLayout>
 <Space android:layout_width="match_parent" android:layout_height="10dp" />
-<TextView android:id="@+id/lupaLink" style="@style/Widget.Auth.Link" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
-    android:text="@string/auth_lupa_password" />
+<TextView android:id="@+id/forgotLink" style="@style/Widget.Auth.Link" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
+    android:text="@string/auth_forgot_password" />
 </LinearLayout>
 </ScrollView>

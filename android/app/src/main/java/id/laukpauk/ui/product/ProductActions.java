@@ -9,7 +9,7 @@ import id.laukpauk.ui.common.Messages;
 
 /**
  * "Beli" buttons shared by every product list (legacy ProdukModel.showSatuanProduk / PaketModel.addToCart):
- * the unit-picker bottom sheet (ShowSatuanProduk),
+ * the unit-picker bottom sheet (ShowProductUnit),
  * add to cart via CartRepository and show Messages.cartSnack / the failure dialog.
  */
 public final class ProductActions {
@@ -18,43 +18,43 @@ public final class ProductActions {
     /** Guards against opening two sheets / adding a paket twice while a request is running. */
     private static boolean busy;
 
-    /** A unit product (jenisProduk "satuan"/nonpaket). */
-    public static void beli(Fragment fragment, String idProduk, @Nullable String namaProduk) {
-        beli(fragment, idProduk, namaProduk, null);
+    /** A unit product (productType "satuan"/nonpaket). */
+    public static void buy(Fragment fragment, String productId, @Nullable String productName) {
+        buy(fragment, productId, productName, null);
     }
 
     /** Same, for a product bought through a promo item ({@code idPromo} sent to saveCart). */
-    public static void beli(Fragment fragment, String idProduk, @Nullable String namaProduk, @Nullable String idPromo) {
+    public static void buy(Fragment fragment, String productId, @Nullable String productName, @Nullable String idPromo) {
         if (!fragment.isAdded() || busy) {
             return;
         }
         busy = true;
         AppContainer c = AppContainer.from(fragment.requireContext());
-        c.produkRepository.loadSatuanSheetData(idProduk, result -> {
+        c.productRepository.loadUnitSheetData(productId, result -> {
             busy = false;
             if (fragment.isAdded() && result.isSuccess() && result.data != null) {
-                ShowSatuanProduk.show(fragment, idProduk, result.data, idPromo);
+                ShowProductUnit.show(fragment, productId, result.data, idPromo);
             }
         });
     }
 
     /** A package (paket): legacy PaketModel.adjdNotSetAlert + addToCart + snackbar. */
-    public static void beliPaket(Fragment fragment, String idPaket, @Nullable String namaPaket) {
+    public static void buyPack(Fragment fragment, String packId, @Nullable String packName) {
         if (!fragment.isAdded() || busy) {
             return;
         }
         busy = true;
         AppContainer c = AppContainer.from(fragment.requireContext());
-        c.paketRepository.addToCart(idPaket, (Resource<Boolean> result) -> {
+        c.packRepository.addToCart(packId, (Resource<Boolean> result) -> {
             busy = false;
             if (!fragment.isAdded()) {
                 return;
             }
             boolean ok = result.isSuccess() && Boolean.TRUE.equals(result.data);
             if (ok) {
-                Messages.cartSnack(fragment, fragment.getString(id.laukpauk.R.string.product_paket_berhasil));
+                Messages.cartSnack(fragment, fragment.getString(id.laukpauk.R.string.product_pack_success));
             } else {
-                Messages.snack(fragment, fragment.getString(id.laukpauk.R.string.product_paket_gagal));
+                Messages.snack(fragment, fragment.getString(id.laukpauk.R.string.product_pack_failed));
             }
             c.cartRepository.refreshCartCount();
         });

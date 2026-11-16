@@ -27,8 +27,8 @@ final class AuthFlow {
     private AuthFlow() {}
 
     private static final Set<Integer> AUTH_SCREENS = new HashSet<>(Arrays.asList(
-            R.id.loginFragment, R.id.registerFragment, R.id.oTPRegistrasiFragment, R.id.oTPVerifikasiUserFragment,
-            R.id.oTPNotCompletedFragment, R.id.kirimUlangOTPFragment, R.id.lupaPasswordFragment));
+            R.id.loginFragment, R.id.registerFragment, R.id.registrationOtpFragment, R.id.userVerificationOtpFragment,
+            R.id.oTPNotCompletedFragment, R.id.resendOtpFragment, R.id.forgotPasswordFragment));
 
     /** Legacy pushReplacement / pushAndRemoveUntil between auth screens. */
     static void replaceWith(Fragment f, int destination) {

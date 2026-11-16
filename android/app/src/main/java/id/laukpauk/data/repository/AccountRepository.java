@@ -17,19 +17,19 @@ import id.laukpauk.data.remote.AccountApi;
  */
 public class AccountRepository extends BaseRepository {
 
-    private static final String KEY_ID_PENGGANTIAN = Prefs.KEY_PREFIX + "idPenggantianNomor";
+    private static final String CHANGE_ID_KEY = Prefs.KEY_PREFIX + "idPenggantianNomor";
 
     private final AccountApi api;
     private final CartRepository cart;
-    private final NotifikasiRepository notifikasi;
+    private final NotificationRepository notification;
     private final PushRepository push;
 
-    public AccountRepository(RepositoryDeps deps, CartRepository cart, NotifikasiRepository notifikasi,
+    public AccountRepository(RepositoryDeps deps, CartRepository cart, NotificationRepository notification,
                              PushRepository push) {
         super(deps);
         this.api = api(AccountApi.class);
         this.cart = cart;
-        this.notifikasi = notifikasi;
+        this.notification = notification;
         this.push = push;
     }
 
@@ -51,7 +51,7 @@ public class AccountRepository extends BaseRepository {
                     session.clearSignIn();
                     cart.clearTransactionSession(done -> {
                         cart.refreshCartCount();
-                        notifikasi.refreshUnreadCount();
+                        notification.refreshUnreadCount();
                         callback.onResult(Resource.success(true));
                     });
                 }));
@@ -64,48 +64,48 @@ public class AccountRepository extends BaseRepository {
     }
 
     /** The id of a pending number change (0 = none). */
-    public long getIdPenggantianNomor() {
+    public long getNumberChangeId() {
         try {
-            return sp().getLong(KEY_ID_PENGGANTIAN, 0L);
+            return sp().getLong(CHANGE_ID_KEY, 0L);
         } catch (ClassCastException e) {
             try {
-                return sp().getInt(KEY_ID_PENGGANTIAN, 0);
+                return sp().getInt(CHANGE_ID_KEY, 0);
             } catch (ClassCastException e2) {
                 return 0L;
             }
         }
     }
 
-    public void clearIdPenggantianNomor() {
+    public void clearNumberChangeId() {
         prefs.remove("idPenggantianNomor");
     }
 
     /** Auth/jumlahGantiNomorHPForToday. */
-    public void jumlahGantiNomorHPForToday(ResultCallback<Integer> callback) {
-        enqueue(api.jumlahGantiNomorHPForToday(),
-                (AccountResponses.JumlahGantiNomor body) -> body == null ? 0 : body.jumlahGantiNomorHPForToday,
+    public void phoneNumberChangeCountForToday(ResultCallback<Integer> callback) {
+        enqueue(api.phoneNumberChangeCountForToday(),
+                (AccountResponses.NumberChangeCount body) -> body == null ? 0 : body.phoneNumberChangeCountForToday,
                 callback);
     }
 
     /** Auth/gantiNomor; on success the returned id is stored and the callback gets it (0 = failed). */
-    public void simpanNomorBaru(String nomorBaru, ResultCallback<Long> callback) {
-        enqueue(api.gantiNomor(body("nomorBaru", nomorBaru)), (AccountResponses.GantiNomor body) -> {
-            if (body != null && body.statusSimpanNomorBaru) {
-                sp().edit().putLong(KEY_ID_PENGGANTIAN, body.idPenggantianNomor).apply();
-                return body.idPenggantianNomor;
+    public void newNumberSave(String newNumber, ResultCallback<Long> callback) {
+        enqueue(api.changeNumber(body("nomorBaru", newNumber)), (AccountResponses.ChangeNumber body) -> {
+            if (body != null && body.saveNewNumberStatus) {
+                sp().edit().putLong(CHANGE_ID_KEY, body.numberChangeId).apply();
+                return body.numberChangeId;
             }
             return 0L;
         }, callback);
     }
 
     /** Auth/verifikasiNomor; true when verified (the pending id is cleared). */
-    public void verifikasiNomor(String kodeVerifikasi, ResultCallback<Boolean> callback) {
-        String id = sp().contains(KEY_ID_PENGGANTIAN) ? String.valueOf(getIdPenggantianNomor()) : "null";
-        enqueue(api.verifikasiNomor(body("idPenggantianNomor", id, "kodeVerifikasi", kodeVerifikasi)),
-                (AccountResponses.VerifikasiNomor body) -> {
-            boolean ok = body != null && body.statusVerifikasiNomor;
+    public void numberVerification(String verificationCode, ResultCallback<Boolean> callback) {
+        String id = sp().contains(CHANGE_ID_KEY) ? String.valueOf(getNumberChangeId()) : "null";
+        enqueue(api.numberVerification(body("idPenggantianNomor", id, "kodeVerifikasi", verificationCode)),
+                (AccountResponses.NumberVerification body) -> {
+            boolean ok = body != null && body.numberVerificationStatus;
             if (ok) {
-                clearIdPenggantianNomor();
+                clearNumberChangeId();
             }
             return ok;
         }, callback);

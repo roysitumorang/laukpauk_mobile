@@ -36,11 +36,11 @@
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnBayar"
+            android:id="@+id/btnPay"
             style="@style/Checkout.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/checkout_bayar" />
+            android:text="@string/checkout_pay" />
     </LinearLayout>
 
     <TextView

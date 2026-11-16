@@ -1,5 +1,7 @@
 package id.laukpauk.data.model.cart;
 
+import com.squareup.moshi.Json;
+
 import java.util.List;
 
 /** Response wrappers of the cart endpoints. */
@@ -7,7 +9,8 @@ public final class CartResponses {
     private CartResponses() {}
 
     public static final class Count {
-        public int jumlahKeranjang;
+        @Json(name = "jumlahKeranjang")
+        public int cartCount;
     }
 
     public static final class ProductList {
@@ -15,11 +18,13 @@ public final class CartResponses {
     }
 
     public static final class Total {
-        public int totalKeranjang;
+        @Json(name = "totalKeranjang")
+        public int cartTotal;
     }
 
     public static final class Clear {
-        public boolean statusBersihkanKeranjang;
+        @Json(name = "statusBersihkanKeranjang")
+        public boolean clearCartStatus;
     }
 
     public static final class Delete {
@@ -31,13 +36,14 @@ public final class CartResponses {
         public WalletConfiguration walletConfiguration;
     }
 
-    public static final class GiftTransaksi {
+    public static final class TransactionGift {
         public String id;
         public String idGift;
     }
 
-    public static final class GiftTransaksiList {
-        public List<GiftTransaksi> giftTransaksi;
+    public static final class TransactionGiftList {
+        @Json(name = "giftTransaksi")
+        public List<TransactionGift> transactionGift;
     }
 
     /** {@code gift} is {@code false} when the gift does not exist (null here). */

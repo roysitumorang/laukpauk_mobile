@@ -35,7 +35,7 @@ public class SearchSuggestionAdapter extends ListAdapter<SearchSuggestion, Searc
 
             @Override
             public boolean areContentsTheSame(@NonNull SearchSuggestion a, @NonNull SearchSuggestion b) {
-                return Objects.equals(a.namaProduk, b.namaProduk) && Objects.equals(a.fotoProduk, b.fotoProduk);
+                return Objects.equals(a.productName, b.productName) && Objects.equals(a.productPhoto, b.productPhoto);
             }
         });
         this.onClick = onClick;
@@ -51,19 +51,19 @@ public class SearchSuggestionAdapter extends ListAdapter<SearchSuggestion, Searc
     public void onBindViewHolder(@NonNull Holder h, int position) {
         SearchSuggestion s = getItem(position);
         ItemSearchSuggestionBinding b = h.binding;
-        String leading = s.fotoProduk;
-        String title = s.namaProduk;
+        String leading = s.productPhoto;
+        String title = s.productName;
         if (title == null || title.isEmpty()) {
-            title = b.getRoot().getContext().getString(R.string.search_judul_produk_kosong);
+            title = b.getRoot().getContext().getString(R.string.search_product_heading_empty);
         }
         if (leading == null || leading.isEmpty()) {
-            Images.asset(b.foto, "laukpauk.png");
+            Images.asset(b.photo, "laukpauk.png");
         } else {
-            Images.circle(b.foto, Images.server(ServerPath.uploadGambarProduk, "compress/" + leading));
+            Images.circle(b.photo, Images.server(ServerPath.uploadImageProduct, "compress/" + leading));
         }
-        b.jenis.setText(s.jenisItem == null ? "" : s.jenisItem.toUpperCase(Locale.ROOT));
-        b.jenis.setBackgroundResource(R.drawable.bg_home_tag_produk);
-        b.judul.setText(title);
+        b.type.setText(s.itemType == null ? "" : s.itemType.toUpperCase(Locale.ROOT));
+        b.type.setBackgroundResource(R.drawable.bg_home_product_tag);
+        b.heading.setText(title);
         b.getRoot().setOnClickListener(v -> onClick.onClick(s));
     }
 

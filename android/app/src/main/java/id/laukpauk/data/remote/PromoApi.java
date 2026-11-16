@@ -10,10 +10,10 @@ import retrofit2.http.Query;
 public interface PromoApi {
 
     @GET("Promo/getPromoAroundOfThisLatLong")
-    Call<PromoResponses.ProdukPromoList> getPromoAroundOfThisLatLong(
+    Call<PromoResponses.PromoProductList> getPromoAroundOfThisLatLong(
             @Query("latitude") String latitude,
             @Query("longitude") String longitude,
-            @Query("jadwalDeliveryCode") String jadwalDeliveryCode);
+            @Query("jadwalDeliveryCode") String deliveryScheduleCode);
 
     @GET("Promo/getPromoItem/{idPromoItem}")
     Call<PromoResponses.Detail> getPromoItem(@Path("idPromoItem") String idPromoItem, @Query("select") String select);

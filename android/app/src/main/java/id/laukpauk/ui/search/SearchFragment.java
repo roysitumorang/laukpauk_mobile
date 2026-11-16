@@ -22,24 +22,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import java.util.List;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.home.HomeProduk;
-import id.laukpauk.data.model.home.Konten;
-import id.laukpauk.data.model.home.KontenItem;
-import id.laukpauk.data.model.search.HistoriPencarian;
+import id.laukpauk.data.model.home.HomeProduct;
+import id.laukpauk.data.model.home.Content;
+import id.laukpauk.data.model.home.ContentItem;
+import id.laukpauk.data.model.search.SearchHistory;
 import id.laukpauk.data.model.search.SearchSuggestion;
 import id.laukpauk.databinding.FragmentSearchBinding;
-import id.laukpauk.databinding.ItemSearchHistoriBinding;
+import id.laukpauk.databinding.ItemSearchHistoryBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.common.StatusBar;
 import id.laukpauk.ui.home.HomeNav;
 import id.laukpauk.ui.home.HomeViewModel;
-import id.laukpauk.ui.home.KontenSection;
-import id.laukpauk.ui.home.ProdukSectionViewModel;
+import id.laukpauk.ui.home.ContentSection;
+import id.laukpauk.ui.home.ProductSectionViewModel;
 
 /**
- * HeaderSearch.dart + SearchResult.dart + HistoriPencarian.dart: the full screen search. Unfocused and empty it
+ * HeaderSearch.dart + SearchResult.dart + SearchHistory.dart: the full screen search. Unfocused and empty it
  * browses (the first products, "headersearch" konten, search history); focused or with text it shows the
  * live suggestions. Opening a suggestion replaces this screen.
  */
@@ -62,15 +62,15 @@ public class SearchFragment extends Fragment {
         StatusBar.tint(this, requireContext().getColor(R.color.nearly_white));
         viewModel = new ViewModelProvider(this, ViewModelFactory.of(() -> new SearchViewModel(c.searchRepository)))
                 .get(SearchViewModel.class);
-        ProdukSectionViewModel produkVm = new ViewModelProvider(this, ViewModelFactory.of(
-                () -> new ProdukSectionViewModel(c.homeRepository, c.deliveryRepository)))
-                .get(ProdukSectionViewModel.class);
-        HomeViewModel kontenVm = new ViewModelProvider(this, ViewModelFactory.of(
+        ProductSectionViewModel productVm = new ViewModelProvider(this, ViewModelFactory.of(
+                () -> new ProductSectionViewModel(c.homeRepository, c.deliveryRepository)))
+                .get(ProductSectionViewModel.class);
+        HomeViewModel contentVm = new ViewModelProvider(this, ViewModelFactory.of(
                 () -> new HomeViewModel(c.homeRepository, "headersearch", null))).get(HomeViewModel.class);
 
         binding.back.setOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
         setupField();
-        setupBrowse(produkVm, kontenVm);
+        setupBrowse(productVm, contentVm);
         setupResults();
     }
 
@@ -80,7 +80,7 @@ public class SearchFragment extends Fragment {
             String text = binding.field.getText().toString();
             binding.field.clearFocus();
             hideKeyboard();
-            viewModel.addHistori(text);
+            viewModel.addHistory(text);
             refreshFocus();
             return true;
         });
@@ -127,47 +127,47 @@ public class SearchFragment extends Fragment {
         }
     }
 
-    private void setupBrowse(ProdukSectionViewModel produkVm, HomeViewModel kontenVm) {
-        HomeNav.bindProdukSection(this, binding.produk, produkVm);
+    private void setupBrowse(ProductSectionViewModel productVm, HomeViewModel contentVm) {
+        HomeNav.bindProductSection(this, binding.product, productVm);
 
-        SearchKontenAdapter konten = new SearchKontenAdapter(new SearchKontenAdapter.Listener() {
+        SearchContentAdapter content = new SearchContentAdapter(new SearchContentAdapter.Listener() {
             @Override
-            public void onProduk(HomeProduk p) {
-                replaceWith(R.id.detailProdukFragment, "idProduk", p.id);
+            public void onProduct(HomeProduct p) {
+                replaceWith(R.id.productDetailFragment, "idProduk", p.id);
             }
 
             @Override
-            public void onBanner(Konten k, KontenItem item) {
+            public void onBanner(Content k, ContentItem item) {
                 HomeNav.openBanner(SearchFragment.this, k, item);
             }
         });
-        binding.kontenList.setAdapter(konten);
-        kontenVm.getKonten().observe(getViewLifecycleOwner(), res -> {
+        binding.contentList.setAdapter(content);
+        contentVm.getContent().observe(getViewLifecycleOwner(), res -> {
             if (res != null && !res.isLoading()) {
-                List<KontenSection> list = res.data;
-                konten.submitList(list);
+                List<ContentSection> list = res.data;
+                content.submitList(list);
             }
         });
-        kontenVm.startKonten();
+        contentVm.startContent();
 
-        viewModel.getHistori().observe(getViewLifecycleOwner(), this::showHistori);
+        viewModel.getHistory().observe(getViewLifecycleOwner(), this::showHistory);
     }
 
-    private void showHistori(@Nullable List<HistoriPencarian> list) {
-        binding.historiList.removeAllViews();
-        binding.histori.setVisibility(list == null || list.isEmpty() ? View.GONE : View.VISIBLE);
+    private void showHistory(@Nullable List<SearchHistory> list) {
+        binding.historyList.removeAllViews();
+        binding.history.setVisibility(list == null || list.isEmpty() ? View.GONE : View.VISIBLE);
         if (list == null) {
             return;
         }
-        for (HistoriPencarian h : list) {
-            ItemSearchHistoriBinding row = ItemSearchHistoriBinding.inflate(LayoutInflater.from(requireContext()), binding.historiList, false);
+        for (SearchHistory h : list) {
+            ItemSearchHistoryBinding row = ItemSearchHistoryBinding.inflate(LayoutInflater.from(requireContext()), binding.historyList, false);
             row.title.setText(h.title);
             row.onTime.setText(h.onTime);
             row.getRoot().setOnClickListener(v -> {
                 binding.field.setText(h.title);
                 binding.field.setSelection(binding.field.getText().length());
             });
-            binding.historiList.addView(row.getRoot());
+            binding.historyList.addView(row.getRoot());
         }
     }
 
@@ -189,13 +189,13 @@ public class SearchFragment extends Fragment {
                 ((TextView) binding.messageText).setText(R.string.search_prompt);
             } else if (state.kind == SearchState.Kind.EMPTY) {
                 Images.asset(binding.messageImage, "empty.png");
-                binding.messageText.setText(getString(R.string.search_tidak_ditemukan, state.term));
+                binding.messageText.setText(getString(R.string.search_not_found, state.term));
             }
         });
     }
 
     private void openSuggestion(SearchSuggestion s) {
-        replaceWith(R.id.detailProdukFragment, "idProduk", s.id);
+        replaceWith(R.id.productDetailFragment, "idProduk", s.id);
     }
 
     /** Legacy pushReplacement: the search dialog closes, so back from the detail returns to the previous screen. */

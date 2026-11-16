@@ -7,7 +7,7 @@ import java.util.List;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
-import id.laukpauk.data.model.promo.ProdukPromo;
+import id.laukpauk.data.model.promo.PromoProduct;
 import id.laukpauk.data.model.promo.PromoItemDetail;
 import id.laukpauk.data.remote.PromoApi;
 
@@ -34,11 +34,11 @@ public class PromoRepository extends BaseRepository {
      * Promo products. The chosen address + schedule narrow the list when there is one; without a selection
      * the request carries no location and the server answers every promo.
      */
-    public LiveData<Resource<List<ProdukPromo>>> getProdukPromo() {
+    public LiveData<Resource<List<PromoProduct>>> getPromoProduct() {
         DeliverySelection s = delivery.current();
-        return load(api.getPromoAroundOfThisLatLong(s.latitude, s.longitude, s.jadwalDeliveryCode),
-                body -> body == null || body.produkPromo == null
-                        ? Collections.<ProdukPromo>emptyList() : body.produkPromo);
+        return load(api.getPromoAroundOfThisLatLong(s.latitude, s.longitude, s.deliveryScheduleCode),
+                body -> body == null || body.promoProduct == null
+                        ? Collections.<PromoProduct>emptyList() : body.promoProduct);
     }
 
     /** One promo item; SUCCESS with null data when the server says it doesn't exist. */

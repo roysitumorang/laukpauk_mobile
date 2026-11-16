@@ -25,7 +25,7 @@ import com.google.android.gms.auth.api.identity.Identity;
  * <pre>
  * private final PhoneNumberHint phoneHint = new PhoneNumberHint(this);   // field: registers the launcher
  * ...
- * phoneHint.attach(binding.nomorHP);                                      // in onViewCreated
+ * phoneHint.attach(binding.phoneNumber);                                      // in onViewCreated
  * </pre>
  * The sheet is offered at most once per screen (kept across rotation); tapping the field again doesn't
  * re-open it, so typing a different number is never interrupted.

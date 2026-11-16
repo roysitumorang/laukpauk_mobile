@@ -15,36 +15,36 @@ public interface HomeApi {
     Call<HomeResponses.Banners> getBanner();
 
     @GET("Artikel/getArtikel")
-    Call<HomeResponses.Artikels> getArtikel();
+    Call<HomeResponses.Articles> getArticle();
 
     @GET("User/getJumlahVoucher")
-    Call<HomeResponses.JumlahVoucher> getJumlahVoucher();
+    Call<HomeResponses.VoucherCount> getVoucherCount();
 
     @GET("User/getTotalDompet")
-    Call<HomeResponses.TotalDompet> getTotalDompet();
+    Call<HomeResponses.WalletTotal> getWalletTotal();
 
     @GET("Point/getPoint")
     Call<HomeResponses.Point> getPoint(@Query("point") String point);
 
-    /** The first page of the product list (see ProdukApi.getProduk). */
+    /** The first page of the product list (see ProductApi.getProduct). */
     @GET("Produk/getProduk")
-    Call<HomeResponses.ProdukList> getProduk(@Nullable @Query("jadwalDeliveryCode") String jadwalDeliveryCode,
+    Call<HomeResponses.ProductList> getProduct(@Nullable @Query("jadwalDeliveryCode") String deliveryScheduleCode,
                                              @Query("startFrom") String startFrom,
                                              @Query("useLimit") String useLimit);
 
     @GET("Konten/getKonten")
-    Call<HomeResponses.KontenList> getKonten(@Query("page") String page);
+    Call<HomeResponses.ContentList> getContent(@Query("page") String page);
 
     @GET("Konten/getKontenItemFromThisKonten/{idKonten}")
-    Call<HomeResponses.KontenItems> getKontenItem(@Path("idKonten") String idKonten,
+    Call<HomeResponses.ContentItems> getContentItem(@Path("idKonten") String contentId,
                                                   @Nullable @Query("limit") Integer limit);
 
     @GET("KategoriProduk/getKategoriProduk")
-    Call<HomeResponses.KategoriList> getKategoriProduk();
+    Call<HomeResponses.CategoryList> getProductCategory();
 
     @GET("Produk/getProductsInThisCategory/{idKategoriProduk}")
-    Call<HomeResponses.ProdukInKategori> getProdukInThisCategory(@Path("idKategoriProduk") String idKategoriProduk);
+    Call<HomeResponses.ProductInCategory> getProductInThisCategory(@Path("idKategoriProduk") String productCategoryId);
 
     @GET("Produk/getLowestPriceOfThisProduct/{idProduk}")
-    Call<HomeResponses.LowestPriceResponse> getLowestPrice(@Path("idProduk") String idProduk);
+    Call<HomeResponses.LowestPriceResponse> getLowestPrice(@Path("idProduk") String productId);
 }

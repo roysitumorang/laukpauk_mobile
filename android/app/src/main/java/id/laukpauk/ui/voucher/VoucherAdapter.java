@@ -44,17 +44,17 @@ public class VoucherAdapter extends ListAdapter<Voucher, VoucherAdapter.Holder> 
         ItemVoucherBinding b = holder.binding;
         // Legacy: the picture is 20% of the screen height; the notches sit on its vertical middle.
         int height = Math.round(b.getRoot().getResources().getDisplayMetrics().heightPixels * 0.20f);
-        b.foto.getLayoutParams().height = height;
+        b.photo.getLayoutParams().height = height;
         for (android.view.View notch : new android.view.View[]{b.notchStart, b.notchEnd}) {
             FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) notch.getLayoutParams();
             lp.topMargin = height / 2;
             notch.setLayoutParams(lp);
         }
-        Images.url(b.foto, Images.server(ServerPath.uploadGambarVoucher, v.foto));
-        b.berlaku.setText(b.getRoot().getContext().getString(R.string.voucher_valid_until, v.berlakuSampai));
+        Images.url(b.photo, Images.server(ServerPath.uploadImageVoucher, v.photo));
+        b.valid.setText(b.getRoot().getContext().getString(R.string.voucher_valid_until, v.validUntil));
         b.minimum.setText(b.getRoot().getContext().getString(R.string.voucher_min_purchase_short,
-                Currency.formatRupiah(Voucher.toInt(v.minimumBelanja), 0)));
-        b.foto.setOnClickListener(view -> onClick.onClick(v));
+                Currency.formatRupiah(Voucher.toInt(v.minimumShopping), 0)));
+        b.photo.setOnClickListener(view -> onClick.onClick(v));
     }
 
     static final class Holder extends RecyclerView.ViewHolder {
@@ -74,8 +74,8 @@ public class VoucherAdapter extends ListAdapter<Voucher, VoucherAdapter.Holder> 
 
         @Override
         public boolean areContentsTheSame(@NonNull Voucher a, @NonNull Voucher b) {
-            return Objects.equals(a.foto, b.foto) && Objects.equals(a.berlakuSampai, b.berlakuSampai)
-                    && Objects.equals(a.minimumBelanja, b.minimumBelanja);
+            return Objects.equals(a.photo, b.photo) && Objects.equals(a.validUntil, b.validUntil)
+                    && Objects.equals(a.minimumShopping, b.minimumShopping);
         }
     };
 }

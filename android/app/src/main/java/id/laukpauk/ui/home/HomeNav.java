@@ -12,11 +12,11 @@ import java.util.Locale;
 import java.util.Map;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.home.HomeProduk;
-import id.laukpauk.data.model.home.Konten;
-import id.laukpauk.data.model.home.KontenItem;
+import id.laukpauk.data.model.home.HomeProduct;
+import id.laukpauk.data.model.home.Content;
+import id.laukpauk.data.model.home.ContentItem;
 import id.laukpauk.data.repository.HomeRepository;
-import id.laukpauk.databinding.ViewHomeProdukBinding;
+import id.laukpauk.databinding.ViewHomeProductBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.ui.startup.MainRouter;
 
@@ -25,50 +25,50 @@ public final class HomeNav {
     private HomeNav() {}
 
     /** The "Produk" block (search screen). */
-    public static void bindProdukSection(Fragment f, ViewHomeProdukBinding b, ProdukSectionViewModel vm) {
-        new ProdukSection(f, b, vm);
+    public static void bindProductSection(Fragment f, ViewHomeProductBinding b, ProductSectionViewModel vm) {
+        new ProductSection(f, b, vm);
     }
 
     /** The page with every product. */
-    public static void openSemuaProduk(Fragment f) {
-        NavHostFragment.findNavController(f).navigate(R.id.semuaProdukFragment);
+    public static void openAllProducts(Fragment f) {
+        NavHostFragment.findNavController(f).navigate(R.id.allProductsFragment);
     }
 
-    /** listProdukFragment with the products as JSON text. */
-    public static void openListProduk(Fragment f, String title, String subTitle, List<? extends HomeProduk> produk) {
+    /** productListFragment with the products as JSON text. */
+    public static void openProductList(Fragment f, String title, String subTitle, List<? extends HomeProduct> product) {
         Bundle args = new Bundle();
         args.putString("title", title);
         args.putString("subTitle", subTitle);
-        args.putString("dataProduk", AppContainer.from(f.requireContext()).apiClient.toJson(produk,
-                com.squareup.moshi.Types.newParameterizedType(List.class, HomeProduk.class)));
+        args.putString("dataProduk", AppContainer.from(f.requireContext()).apiClient.toJson(product,
+                com.squareup.moshi.Types.newParameterizedType(List.class, HomeProduct.class)));
         args.putBoolean("isReadyToShow", true);
-        NavHostFragment.findNavController(f).navigate(R.id.listProdukFragment, args);
+        NavHostFragment.findNavController(f).navigate(R.id.productListFragment, args);
     }
 
     /** A konten block's "Lihat Semua": fetch every item, then the list screen. */
-    public static void openKontenSemua(Fragment f, Konten konten) {
+    public static void openContentAll(Fragment f, Content content) {
         HomeRepository home = AppContainer.from(f.requireContext()).homeRepository;
-        home.getKontenItem(konten.id, null, result -> {
+        home.getContentItem(content.id, null, result -> {
             if (!f.isAdded()) {
                 return;
             }
-            String nama = konten.namaDivisi == null ? "" : konten.namaDivisi.toUpperCase(Locale.getDefault());
-            List<KontenItem> items = result.data;
+            String name = content.divisionName == null ? "" : content.divisionName.toUpperCase(Locale.getDefault());
+            List<ContentItem> items = result.data;
             if (items == null) {
-                Toast.makeText(f.requireContext(), R.string.home_konten_kosong, Toast.LENGTH_SHORT).show();
+                Toast.makeText(f.requireContext(), R.string.home_content_empty, Toast.LENGTH_SHORT).show();
                 return;
             }
-            openListProduk(f, nama, f.getString(R.string.home_list_subtitle_konten, nama), items);
+            openProductList(f, name, f.getString(R.string.home_list_subtitle_content, name), items);
         });
     }
 
     /** Legacy KontenItemBanner tap: pushNamed("/" + route, {route: pilihan}). */
-    public static void openBanner(Fragment f, Konten konten, KontenItem item) {
-        if (konten == null || item == null || konten.route == null) {
+    public static void openBanner(Fragment f, Content content, ContentItem item) {
+        if (content == null || item == null || content.route == null) {
             return;
         }
         Map<String, String> args = new HashMap<>();
-        args.put(konten.route, item.pilihan);
-        MainRouter.route(NavHostFragment.findNavController(f), "/" + konten.route, args);
+        args.put(content.route, item.choice);
+        MainRouter.route(NavHostFragment.findNavController(f), "/" + content.route, args);
     }
 }

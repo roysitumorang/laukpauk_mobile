@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import id.laukpauk.data.model.search.HistoriPencarian;
+import id.laukpauk.data.model.search.SearchHistory;
 import id.laukpauk.data.repository.SearchRepository;
 
 /** Search suggestions for the typed term (debounced 500 ms like the legacy SearchResult) and the history. */
@@ -22,22 +22,22 @@ public class SearchViewModel extends ViewModel {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final MutableLiveData<SearchState> state =
             new MutableLiveData<>(new SearchState(SearchState.Kind.PROMPT, "", null));
-    private final MutableLiveData<List<HistoriPencarian>> histori = new MutableLiveData<>();
+    private final MutableLiveData<List<SearchHistory>> history = new MutableLiveData<>();
     private Runnable pending;
     private int generation;
     private String term = "";
 
     public SearchViewModel(SearchRepository repository) {
         this.repository = repository;
-        loadHistori();
+        loadHistory();
     }
 
     public LiveData<SearchState> getState() {
         return state;
     }
 
-    public LiveData<List<HistoriPencarian>> getHistori() {
-        return histori;
+    public LiveData<List<SearchHistory>> getHistory() {
+        return history;
     }
 
     public String getTerm() {
@@ -71,16 +71,16 @@ public class SearchViewModel extends ViewModel {
         handler.postDelayed(pending, DEBOUNCE_MS);
     }
 
-    public void addHistori(String search) {
+    public void addHistory(String search) {
         if (search.trim().isEmpty()) {
             return;
         }
-        repository.addHistoriPencarian(search);
-        loadHistori();
+        repository.addSearchHistory(search);
+        loadHistory();
     }
 
-    private void loadHistori() {
-        histori.setValue(repository.getHistoriPencarian());
+    private void loadHistory() {
+        history.setValue(repository.getSearchHistory());
     }
 
     @Override

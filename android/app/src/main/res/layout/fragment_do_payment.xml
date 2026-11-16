@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="@string/checkout_lakukan_pembayaran"
+        android:text="@string/checkout_make_payment"
         android:textColor="@color/checkout_text"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -31,15 +31,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:gravity="center"
-        android:text="@string/checkout_buka_ovo"
+        android:text="@string/checkout_open_ovo"
         android:textColor="@color/checkout_text"
         android:textSize="12sp" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnBelanjaLagi"
+        android:id="@+id/btnShopAgain"
         style="@style/Checkout.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="@string/checkout_belanja_lagi" />
+        android:text="@string/checkout_shop_again" />
 </LinearLayout>

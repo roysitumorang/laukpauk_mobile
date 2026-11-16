@@ -110,7 +110,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/tetapkan"
+            android:id="@+id/set"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
@@ -122,7 +122,7 @@
             android:paddingTop="10dp"
             android:paddingEnd="25dp"
             android:paddingBottom="10dp"
-            android:text="@string/delivery_pin_tetapkan"
+            android:text="@string/delivery_pin_set"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="13sp"

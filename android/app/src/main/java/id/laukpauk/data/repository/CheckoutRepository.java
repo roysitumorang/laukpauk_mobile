@@ -12,7 +12,7 @@ import java.util.List;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
-import id.laukpauk.data.model.checkout.JadwalPengiriman;
+import id.laukpauk.data.model.checkout.ShippingSchedule;
 import id.laukpauk.data.model.checkout.Voucher;
 import id.laukpauk.data.model.checkout.WalletConfiguration;
 import id.laukpauk.data.remote.CheckoutApi;
@@ -75,11 +75,11 @@ public class CheckoutRepository extends BaseRepository {
         return s == null ? "" : s;
     }
 
-    /** The saved delivery schedule, or null (legacy LocalStorage.savedJadwalDeliveryMap). */
+    /** The saved delivery schedule, or null (legacy LocalStorage.savedDeliveryScheduleMap). */
     @Nullable
-    public JadwalPengiriman savedJadwal() {
-        Map<String, Object> o = session.savedJadwalDeliveryMap();
-        return o == null ? null : deps.apiClient.fromTree(o, JadwalPengiriman.class);
+    public ShippingSchedule savedSchedule() {
+        Map<String, Object> o = session.savedDeliveryScheduleMap();
+        return o == null ? null : deps.apiClient.fromTree(o, ShippingSchedule.class);
     }
 
     private String savedLatitude() {
@@ -108,7 +108,7 @@ public class CheckoutRepository extends BaseRepository {
      * Result is one of the STEP_ constants.
      */
     public void checkPrerequisites(ResultCallback<Integer> callback) {
-        this.<CheckoutResponses.Verified, Boolean>call(api.cekVerifikasiUser(),
+        this.<CheckoutResponses.Verified, Boolean>call(api.checkUserVerification(),
                 b -> b.isVerified, Boolean.FALSE, verified -> {
                     if (!verified) {
                         callback.onResult(Resource.success(STEP_NOT_VERIFIED));
@@ -126,14 +126,14 @@ public class CheckoutRepository extends BaseRepository {
     }
 
     private void checkScheduleOpened(ResultCallback<Integer> callback) {
-        JadwalPengiriman j = savedJadwal();
+        ShippingSchedule j = savedSchedule();
         if (j == null) {
             callback.onResult(Resource.success(STEP_OK));
             return;
         }
-        this.<CheckoutResponses.JadwalOpened, Boolean>call(
-                api.isJadwalDeliveryOpened(body("kode", nz(j.kode), "day", nz(j.day), "setOn", nz(j.setOn))),
-                b -> b.isJadwalDeliveryOpened, Boolean.TRUE,
+        this.<CheckoutResponses.ScheduleOpened, Boolean>call(
+                api.isDeliveryScheduleOpened(body("kode", nz(j.code), "day", nz(j.day), "setOn", nz(j.setOn))),
+                b -> b.isDeliveryScheduleOpened, Boolean.TRUE,
                 open -> callback.onResult(Resource.success(open ? STEP_OK : STEP_SCHEDULE_CLOSED)));
     }
 
@@ -143,9 +143,9 @@ public class CheckoutRepository extends BaseRepository {
         d.cartCode = session.getCartCode();
         final String lat = savedLatitude();
         final String lng = savedLongitude();
-        this.<CheckoutResponses.TotalKeranjang, Long>call(api.getTotalKeranjang(d.cartCode, lat, lng),
-                b -> b.totalKeranjang, 0L, total -> {
-                    d.totalBelanja = total;
+        this.<CheckoutResponses.CartTotal, Long>call(api.getCartTotal(d.cartCode, lat, lng),
+                b -> b.cartTotal, 0L, total -> {
+                    d.shoppingTotal = total;
                     if (total < 1) {
                         callback.onResult(Resource.success(d));
                         return;
@@ -163,24 +163,24 @@ public class CheckoutRepository extends BaseRepository {
                     d.walletConfiguration = w;
                     all.step();
                 });
-        this.<CheckoutResponses.TotalOngkir, Long>call(api.getTotalOngkir(d.cartCode, lat, lng),
-                b -> b.totalOngkir, 0L, v -> {
-                    d.totalOngkir = v;
+        this.<CheckoutResponses.TotalShippingFee, Long>call(api.getTotalShippingFee(d.cartCode, lat, lng),
+                b -> b.totalShippingFee, 0L, v -> {
+                    d.totalShippingFee = v;
                     all.step();
                 });
-        this.<CheckoutResponses.JumlahCart, Long>call(api.getJumlahCart(d.cartCode),
-                b -> b.jumlahKeranjang, 0L, v -> {
-                    d.jumlahBarang = v;
+        this.<CheckoutResponses.CartQuantity, Long>call(api.getCartQuantity(d.cartCode),
+                b -> b.cartCount, 0L, v -> {
+                    d.goodsCount = v;
                     all.step();
                 });
-        this.<CheckoutResponses.DiskonKategori, Map<String, Object>>call(api.getDiskonKategori(d.cartCode),
-                b -> Json.isObject(b.diskonKategori) ? Json.obj(b.diskonKategori) : null, null, v -> {
-                    d.diskonKategori = v;
+        this.<CheckoutResponses.CategoryDiscount, Map<String, Object>>call(api.getCategoryDiscount(d.cartCode),
+                b -> Json.isObject(b.categoryDiscount) ? Json.obj(b.categoryDiscount) : null, null, v -> {
+                    d.categoryDiscount = v;
                     all.step();
                 });
-        this.<CheckoutResponses.TotalDompet, Long>call(api.getTotalDompet(),
-                b -> b.totalDompet, 0L, v -> {
-                    d.totalDompetSaya = v;
+        this.<CheckoutResponses.WalletTotal, Long>call(api.getWalletTotal(),
+                b -> b.walletTotal, 0L, v -> {
+                    d.myWalletTotal = v;
                     all.step();
                 });
         // 6th: the buyer's details, then the shipping explanation (which needs the shipping type)
@@ -188,31 +188,31 @@ public class CheckoutRepository extends BaseRepository {
                 api.getDetailUser("nama, nomorHP, alamat"),
                 b -> b.detailUser, null, user -> {
                     if (user != null) {
-                        d.nama = nz(user.nama);
-                        d.nomorHP = nz(user.nomorHP);
-                        d.alamat = nz(user.alamat);
+                        d.name = nz(user.name);
+                        d.phoneNumber = nz(user.phoneNumber);
+                        d.address = nz(user.address);
                     }
                     loadShipping(d, lat, lng, all);
                 });
     }
 
     private void loadShipping(final CheckoutInit d, String lat, String lng, final Join all) {
-        this.<CheckoutResponses.JenisOngkir, CheckoutResponses.JenisOngkir>call(
-                api.getJenisOngkir(d.cartCode, lat, lng), b -> b, null, jenis -> {
-                    if (jenis == null) {
+        this.<CheckoutResponses.ShippingFeeType, CheckoutResponses.ShippingFeeType>call(
+                api.getShippingFeeType(d.cartCode, lat, lng), b -> b, null, type -> {
+                    if (type == null) {
                         all.step(); // legacy: the page never shows, the loading view stays
                         return;
                     }
-                    d.jenisOngkir = jenis;
-                    final boolean needsCost = "perkm".equals(jenis.jenisOngkir);
+                    d.shippingFeeType = type;
+                    final boolean needsCost = "perkm".equals(type.shippingFeeType);
                     final Join inner = new Join(needsCost ? 3 : 2, () -> {
                         d.complete = true;
                         all.step();
                     });
                     if (needsCost) {
                         ResultCallback<Object> onCost = res -> {
-                            long tarif = res.isSuccess() ? Json.asLong(res.data, 0) : 0;
-                            d.penjelasanOngkir = penjelasan(jenis, tarif);
+                            long rate = res.isSuccess() ? Json.asLong(res.data, 0) : 0;
+                            d.shippingFeeExplanation = explanation(type, rate);
                             inner.step();
                         };
                         settings.getSettingValue("costPerKm", onCost);
@@ -224,7 +224,7 @@ public class CheckoutRepository extends BaseRepository {
                             });
                     ResultCallback<Object> onMinimal = res -> {
                         if (res.isSuccess() && res.data != null) {
-                            d.minimalPointTukarPoint = Json.asLong(res.data, 0);
+                            d.minimumPointRedeem = Json.asLong(res.data, 0);
                         }
                         inner.step();
                     };
@@ -232,17 +232,17 @@ public class CheckoutRepository extends BaseRepository {
                 });
     }
 
-    private static String penjelasan(CheckoutResponses.JenisOngkir jenis, long tarif) {
+    private static String explanation(CheckoutResponses.ShippingFeeType type, long rate) {
         return "Anda dikenakan ongkir PERKM karena alamat pengantaran berada di luar "
                 + "Coverage Area anda. Jarak yang harus ditempuh kurir adalah "
-                + Currency.formatSatuan((long) jenis.jarak, "KM")
-                + ". Tarif ongkir per km adalah " + Currency.formatRupiah(tarif, 0);
+                + Currency.formatUnit((long) type.distance, "KM")
+                + ". Tarif ongkir per km adalah " + Currency.formatRupiah(rate, 0);
     }
 
     /** Active vouchers usable for this basket total (empty list when none or on failure). */
-    public LiveData<Resource<List<Voucher>>> getVouchers(long totalBelanja) {
+    public LiveData<Resource<List<Voucher>>> getVouchers(long shoppingTotal) {
         return load(api.getVoucher("id, nama, foto, minimumBelanja, nilai, jenis, kode, maximumUsage",
-                String.valueOf(totalBelanja)),
+                String.valueOf(shoppingTotal)),
                 body -> body == null || body.listVoucher == null ? new ArrayList<Voucher>() : body.listVoucher);
     }
 
@@ -262,8 +262,8 @@ public class CheckoutRepository extends BaseRepository {
         session.clearUsedVoucher();
     }
 
-    /** Legacy KodePromoModel.cekKodePromo; ERROR when the request failed. */
-    public void cekKodePromo(String kodePromo, ResultCallback<CheckoutResponses.KodePromo> callback) {
-        enqueue(api.cekKodePromo(kodePromo), body -> body, callback);
+    /** Legacy KodePromoModel.checkPromoCode; ERROR when the request failed. */
+    public void checkPromoCode(String promoCode, ResultCallback<CheckoutResponses.PromoCode> callback) {
+        enqueue(api.checkPromoCode(promoCode), body -> body, callback);
     }
 }

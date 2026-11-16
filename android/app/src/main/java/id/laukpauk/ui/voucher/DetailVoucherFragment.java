@@ -79,23 +79,23 @@ public class DetailVoucherFragment extends Fragment {
 
         int usageCount = Voucher.toInt(v.usageCount);
         int maximumUsage = Voucher.toInt(v.maximumUsage);
-        String jenis = v.jenis == null ? "" : v.jenis;
+        String type = v.type == null ? "" : v.type;
         boolean used = viewModel.isThisVoucherUsed();
 
-        Images.url(binding.foto, Images.server(ServerPath.uploadGambarVoucher, v.foto));
-        binding.nama.setText(v.nama);
-        binding.jenis.setText(jenis.toUpperCase(Locale.ROOT));
-        binding.penjelasan.setText(jenis.toLowerCase(Locale.ROOT).equals("ongkir")
-                ? R.string.voucher_type_ongkir : R.string.voucher_type_belanja);
-        binding.nilai.setText(Currency.formatRupiah(Voucher.toInt(v.nilai), 0));
-        binding.kode.setText(v.kode == null ? "" : v.kode.toUpperCase(Locale.ROOT));
-        binding.minimum.setText(Currency.formatRupiah(Voucher.toInt(v.minimumBelanja), 0));
-        binding.maxUsage.setText(getString(R.string.voucher_times_used, Currency.formatSatuan(maximumUsage)));
+        Images.url(binding.photo, Images.server(ServerPath.uploadImageVoucher, v.photo));
+        binding.name.setText(v.name);
+        binding.type.setText(type.toUpperCase(Locale.ROOT));
+        binding.explanation.setText(type.toLowerCase(Locale.ROOT).equals("ongkir")
+                ? R.string.voucher_shipping_type : R.string.voucher_shopping_type);
+        binding.value.setText(Currency.formatRupiah(Voucher.toInt(v.value), 0));
+        binding.code.setText(v.code == null ? "" : v.code.toUpperCase(Locale.ROOT));
+        binding.minimum.setText(Currency.formatRupiah(Voucher.toInt(v.minimumShopping), 0));
+        binding.maxUsage.setText(getString(R.string.voucher_times_used, Currency.formatUnit(maximumUsage)));
         binding.usage.setText(usageCount >= 1
-                ? getString(R.string.voucher_times_used, Currency.formatSatuan(usageCount))
+                ? getString(R.string.voucher_times_used, Currency.formatUnit(usageCount))
                 : getString(R.string.voucher_no_usage));
-        binding.valid.setText(getString(R.string.voucher_valid_range, v.berlakuMulai, v.berlakuSampai));
-        binding.deskripsi.setText(v.deskripsi);
+        binding.valid.setText(getString(R.string.voucher_valid_range, v.validFrom, v.validUntil));
+        binding.description.setText(v.description);
 
         if (maximumUsage - usageCount >= 1) {
             binding.toggle.setVisibility(View.VISIBLE);
@@ -105,9 +105,9 @@ public class DetailVoucherFragment extends Fragment {
                     used ? R.color.text_danger : R.color.green)));
             binding.toggle.setOnClickListener(x -> {
                 boolean nowUsed = viewModel.toggle();
-                String nama = v.nama == null ? "" : v.nama;
+                String name = v.name == null ? "" : v.name;
                 Messages.snack(this, getString(nowUsed ? R.string.voucher_used_message
-                        : R.string.voucher_cancelled_message, nama));
+                        : R.string.voucher_cancelled_message, name));
             });
         } else {
             binding.toggle.setVisibility(View.GONE);

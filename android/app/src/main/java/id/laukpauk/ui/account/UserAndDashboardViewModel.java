@@ -19,14 +19,14 @@ public class UserAndDashboardViewModel extends ViewModel {
     private final SettingRepository settings;
 
     private final MediatorLiveData<Resource<UserDetail>> user = new MediatorLiveData<>();
-    private final MediatorLiveData<Resource<Long>> dompet = new MediatorLiveData<>();
+    private final MediatorLiveData<Resource<Long>> wallet = new MediatorLiveData<>();
     private final MediatorLiveData<Resource<Integer>> voucher = new MediatorLiveData<>();
-    private final MediatorLiveData<Resource<Long>> poin = new MediatorLiveData<>();
+    private final MediatorLiveData<Resource<Long>> points = new MediatorLiveData<>();
     private final MutableLiveData<Integer> referralWallet = new MutableLiveData<>();
     private LiveData<Resource<UserDetail>> userSource;
-    private LiveData<Resource<Long>> dompetSource;
+    private LiveData<Resource<Long>> walletSource;
     private LiveData<Resource<Integer>> voucherSource;
-    private LiveData<Resource<Long>> poinSource;
+    private LiveData<Resource<Long>> pointsSource;
 
     public UserAndDashboardViewModel(UserRepository users, SettingRepository settings) {
         this.users = users;
@@ -37,16 +37,16 @@ public class UserAndDashboardViewModel extends ViewModel {
         return user;
     }
 
-    public LiveData<Resource<Long>> getDompet() {
-        return dompet;
+    public LiveData<Resource<Long>> getWallet() {
+        return wallet;
     }
 
     public LiveData<Resource<Integer>> getVoucher() {
         return voucher;
     }
 
-    public LiveData<Resource<Long>> getPoin() {
-        return poin;
+    public LiveData<Resource<Long>> getPoints() {
+        return points;
     }
 
     /** The "referralWallet" setting (0 when missing); null while loading. */
@@ -58,24 +58,24 @@ public class UserAndDashboardViewModel extends ViewModel {
     public void load() {
         if (userSource != null) {
             user.removeSource(userSource);
-            dompet.removeSource(dompetSource);
+            wallet.removeSource(walletSource);
             voucher.removeSource(voucherSource);
-            poin.removeSource(poinSource);
+            points.removeSource(pointsSource);
         }
         userSource = users.getDetailUser();
         user.addSource(userSource, user::setValue);
-        dompetSource = users.getTotalDompet();
-        dompet.addSource(dompetSource, dompet::setValue);
-        voucherSource = users.getJumlahVoucher();
+        walletSource = users.getWalletTotal();
+        wallet.addSource(walletSource, wallet::setValue);
+        voucherSource = users.getVoucherCount();
         voucher.addSource(voucherSource, voucher::setValue);
-        poinSource = users.getPoint();
-        poin.addSource(poinSource, poin::setValue);
+        pointsSource = users.getPoint();
+        points.addSource(pointsSource, points::setValue);
         settings.getSettingValue("referralWallet", result -> referralWallet.setValue(
                 result.isSuccess() && result.data != null ? Json.parseInt(Json.asStr(result.data, ""), 0) : 0));
     }
 
     /** The privacy policy URL ("" when missing). */
-    public void kebijakanPrivasiUrl(BaseRepository.ResultCallback<String> callback) {
+    public void privacyPolicyUrl(BaseRepository.ResultCallback<String> callback) {
         settings.getSettingValue("kebijakanPrivasiURL", result -> callback.onResult(Resource.success(
                 result.isSuccess() && result.data != null ? Json.asStr(result.data, "") : "")));
     }

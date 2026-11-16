@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="@string/orders_ro_item_belanjaan"
+                android:text="@string/orders_ro_shopping_items"
                 android:textColor="@color/orders_black87"
                 android:textSize="12sp" />
 
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/orders_ro_tidak_dapat_title"
+                android:text="@string/orders_ro_cannot_title"
                 android:textColor="@color/text_danger"
                 android:textSize="12sp" />
 
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:text="@string/orders_ro_tidak_dapat_message"
+                android:text="@string/orders_ro_cannot_message"
                 android:textColor="@color/text_muted"
                 android:textSize="10sp" />
         </LinearLayout>

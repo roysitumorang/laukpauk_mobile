@@ -41,7 +41,7 @@ public abstract class BaseRepository {
         this.executors = deps.executors;
     }
 
-    /** {@code api(NotifikasiApi.class)}: the Retrofit implementation of a feature API. */
+    /** {@code api(NotificationApi.class)}: the Retrofit implementation of a feature API. */
     protected <S> S api(Class<S> service) {
         return deps.apiClient.retrofit().create(service);
     }

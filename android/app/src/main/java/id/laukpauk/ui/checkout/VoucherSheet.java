@@ -21,12 +21,12 @@ import id.laukpauk.util.Currency;
 final class VoucherSheet {
     private VoucherSheet() {}
 
-    static void show(Fragment fragment, LiveData<Resource<List<Voucher>>> data, long totalBelanja,
+    static void show(Fragment fragment, LiveData<Resource<List<Voucher>>> data, long shoppingTotal,
                      @Nullable Voucher used, VoucherAdapter.OnVoucher onSelected) {
         final BottomSheetDialog dialog = new BottomSheetDialog(fragment.requireContext());
         final SheetCheckoutVoucherBinding b = SheetCheckoutVoucherBinding.inflate(dialog.getLayoutInflater());
         dialog.setContentView(b.getRoot());
-        b.subtitle.setText(fragment.getString(R.string.checkout_voucher_aktif, Currency.formatRupiah(totalBelanja, 0)));
+        b.subtitle.setText(fragment.getString(R.string.checkout_voucher_active, Currency.formatRupiah(shoppingTotal, 0)));
         Images.asset(b.emptyImage, "empty.png");
         VoucherAdapter adapter = new VoucherAdapter(used != null ? used.id : null, v -> {
             dialog.dismiss();

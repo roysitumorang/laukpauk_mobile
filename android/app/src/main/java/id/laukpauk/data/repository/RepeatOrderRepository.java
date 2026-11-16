@@ -23,15 +23,15 @@ public class RepeatOrderRepository extends BaseRepository {
      * The lines (and their availability). The saved delivery address and schedule are sent when there are any;
      * null data = nothing.
      */
-    public LiveData<Resource<RepeatOrderResponses.Items>> getItemTransaksi(String idTransaksi) {
+    public LiveData<Resource<RepeatOrderResponses.Items>> getTransactionItem(String transactionId) {
         DeliverySelection s = delivery.current();
-        return load(api.getItemTransaksi(idTransaksi, s.latitude, s.longitude, s.jadwalDeliveryCode),
+        return load(api.getTransactionItem(transactionId, s.latitude, s.longitude, s.deliveryScheduleCode),
                 body -> body);
     }
 
     /** Adds the transaction's lines to the cart. */
-    public void addToCart(String idTransaksi, ResultCallback<RepeatOrderResponses.AddToCart> callback) {
-        enqueue(api.addToCart(body("idTransaksi", idTransaksi, "cartCode", session.getCartCode())), body -> body,
+    public void addToCart(String transactionId, ResultCallback<RepeatOrderResponses.AddToCart> callback) {
+        enqueue(api.addToCart(body("idTransaksi", transactionId, "cartCode", session.getCartCode())), body -> body,
                 callback);
     }
 

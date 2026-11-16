@@ -21,12 +21,12 @@ import id.laukpauk.ui.delivery.DeliveryFlow;
 /**
  * The green buyer header (legacy ui/Header): "Diantarin ke mana ?" + address pill (shown when a delivery
  * selection is set; tap = DeliveryFlow.change), a search field (tap = searchFragment), cart and bell
- * buttons with badges (cartRepository.cartCount(), notifikasiRepository.unreadCount()).
+ * buttons with badges (cartRepository.cartCount(), notificationRepository.unreadCount()).
  * Use it in a layout as {@code <id.laukpauk.ui.common.HeaderView android:id="@+id/header" .../>}.
  */
 public class HeaderView extends LinearLayout {
 
-    private static final int ALAMAT_MAX = 30;
+    private static final int ADDRESS_MAX = 30;
 
     private final ViewHomeHeaderBinding binding;
     private Fragment owner;
@@ -46,25 +46,25 @@ public class HeaderView extends LinearLayout {
 
         c.deliveryRepository.selection().observe(lifecycle, this::showSelection);
         c.cartRepository.cartCount().observe(lifecycle, n -> showBadge(binding.cartBadge, n));
-        c.notifikasiRepository.unreadCount().observe(lifecycle, n -> showBadge(binding.bellBadge, n));
+        c.notificationRepository.unreadCount().observe(lifecycle, n -> showBadge(binding.bellBadge, n));
         c.cartRepository.refreshCartCount();
-        c.notifikasiRepository.refreshUnreadCount();
+        c.notificationRepository.refreshUnreadCount();
 
-        binding.alamat.setOnClickListener(v -> DeliveryFlow.change(owner, null));
+        binding.address.setOnClickListener(v -> DeliveryFlow.change(owner, null));
         binding.searchField.setOnClickListener(v ->
                 NavHostFragment.findNavController(owner).navigate(R.id.searchFragment));
         binding.cartButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(owner).navigate(R.id.keranjangFragment));
+                NavHostFragment.findNavController(owner).navigate(R.id.cartFragment));
         binding.bellButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(owner).navigate(R.id.notifikasiFragment));
+                NavHostFragment.findNavController(owner).navigate(R.id.notificationFragment));
     }
 
     private void showSelection(@Nullable DeliverySelection selection) {
         boolean set = selection != null && selection.isSet;
         binding.deliveryRow.setVisibility(set ? View.VISIBLE : View.GONE);
-        String alamat = selection == null || selection.alamat == null ? "" : selection.alamat;
-        binding.alamat.setText(alamat.length() >= ALAMAT_MAX
-                ? getContext().getString(R.string.home_alamat_lanjut, alamat.substring(0, ALAMAT_MAX)) : alamat);
+        String address = selection == null || selection.address == null ? "" : selection.address;
+        binding.address.setText(address.length() >= ADDRESS_MAX
+                ? getContext().getString(R.string.home_address_continue, address.substring(0, ADDRESS_MAX)) : address);
     }
 
     private void showBadge(TextView badge, @Nullable Integer count) {

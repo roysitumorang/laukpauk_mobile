@@ -55,7 +55,7 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.Holder> {
     @Override
     public void onBindViewHolder(@NonNull Holder h, int position) {
         Slide s = slides.get(position);
-        Images.url(h.binding.gambar, s.imageUrl);
+        Images.url(h.binding.image, s.imageUrl);
         h.binding.caption.setText(s.caption);
         h.binding.root.setOnClickListener(v -> onClick.onClick(s));
     }

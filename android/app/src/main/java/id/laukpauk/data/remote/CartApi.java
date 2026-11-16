@@ -15,18 +15,18 @@ import retrofit2.http.Query;
 public interface CartApi {
 
     @GET("User/getJumlahCart")
-    Call<CartResponses.Count> getJumlahCart(@Query("cartCode") String cartCode);
+    Call<CartResponses.Count> getCartQuantity(@Query("cartCode") String cartCode);
 
     @GET("User/getCart")
     Call<CartResponses.ProductList> getCart(@Query("cartCode") String cartCode);
 
     @GET("User/getTotalKeranjang")
-    Call<CartResponses.Total> getTotalKeranjang(@Query("cartCode") String cartCode,
+    Call<CartResponses.Total> getCartTotal(@Query("cartCode") String cartCode,
                                                 @Query("latDelivery") String latDelivery,
                                                 @Query("longDelivery") String longDelivery);
 
     @GET("Keranjang/bersihkanKeranjang")
-    Call<CartResponses.Clear> bersihkanKeranjang(@Query("cartCode") String cartCode);
+    Call<CartResponses.Clear> clearCart(@Query("cartCode") String cartCode);
 
     @POST("Keranjang/saveCart")
     Call<AddToCartResult> saveCart(@Body Map<String, String> fields);
@@ -43,7 +43,7 @@ public interface CartApi {
     Call<CartResponses.Wallet> getWalletConfiguration();
 
     @GET("gift/gift-transaksi")
-    Call<CartResponses.GiftTransaksiList> getGiftTransaksi(@Query("cartCode") String cartCode);
+    Call<CartResponses.TransactionGiftList> getTransactionGift(@Query("cartCode") String cartCode);
 
     @GET("Gift/getGift/{idGift}")
     Call<CartResponses.GiftDetail> getGift(@Path("idGift") String idGift);

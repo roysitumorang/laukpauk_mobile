@@ -6,34 +6,47 @@ import id.laukpauk.util.Json;
 public class PromoItemDetail {
     public String idPromo;
     public String statusPromo;
-    public String catatan;
-    public String diskon;
+    @com.squareup.moshi.Json(name = "catatan")
+    public String note;
+    @com.squareup.moshi.Json(name = "diskon")
+    public String discount;
     public DetailPromo detailPromo;
-    public DetailProduk detailProduk;
-    public DetailSatuan detailSatuan;
+    @com.squareup.moshi.Json(name = "detailProduk")
+    public ProductDetail productDetail;
+    @com.squareup.moshi.Json(name = "detailSatuan")
+    public UnitDetail unitDetail;
 
-    public int diskonPromo() {
-        return Json.parseInt(diskon, 0);
+    public int promoDiscount() {
+        return Json.parseInt(discount, 0);
     }
 
     public static class DetailPromo {
-        public String nama;
+        @com.squareup.moshi.Json(name = "nama")
+        public String name;
         public String status;
-        public String deskripsi;
+        @com.squareup.moshi.Json(name = "deskripsi")
+        public String description;
     }
 
-    public static class DetailProduk {
+    public static class ProductDetail {
         public String id;
-        public String nama;
-        public String foto;
-        public String namaKategoriProduk;
-        public String keterangan;
+        @com.squareup.moshi.Json(name = "nama")
+        public String name;
+        @com.squareup.moshi.Json(name = "foto")
+        public String photo;
+        @com.squareup.moshi.Json(name = "namaKategoriProduk")
+        public String productCategoryName;
+        @com.squareup.moshi.Json(name = "keterangan")
+        public String remarks;
     }
 
-    public static class DetailSatuan {
+    public static class UnitDetail {
         public String id;
-        public String nama;
-        public String harga;
-        public String diskon;
+        @com.squareup.moshi.Json(name = "nama")
+        public String name;
+        @com.squareup.moshi.Json(name = "harga")
+        public String price;
+        @com.squareup.moshi.Json(name = "diskon")
+        public String discount;
     }
 }

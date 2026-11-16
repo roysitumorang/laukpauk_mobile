@@ -17,28 +17,28 @@ public interface UserApi {
     Call<AccountResponses.DetailUser> getDetailUser(@Query("getUserEntities") String select);
 
     @GET("User/getTotalDompet")
-    Call<AccountResponses.TotalDompet> getTotalDompet();
+    Call<AccountResponses.WalletTotal> getWalletTotal();
 
     @GET("User/getJumlahVoucher")
-    Call<AccountResponses.JumlahVoucher> getJumlahVoucher();
+    Call<AccountResponses.VoucherCount> getVoucherCount();
 
     /** Legacy getPoint("point=true"). */
     @GET("Point/getPoint")
     Call<AccountResponses.Point> getPoint(@Query("point") String point);
 
-    /** {@code jenisDompet}: "referral", "potongantransaksi" or null for all. */
+    /** {@code walletType}: "referral", "potongantransaksi" or null for all. */
     @GET("User/getRiwayatDompet")
-    Call<AccountResponses.RiwayatDompetList> getRiwayatDompet(@Query("jenisDompet") String jenisDompet);
+    Call<AccountResponses.WalletRecordList> getWalletRecords(@Query("jenisDompet") String walletType);
 
     @GET("User/getRiwayatPoint")
-    Call<AccountResponses.RiwayatPointList> getRiwayatPoint();
+    Call<AccountResponses.PointRecordList> getPointRecords();
 
     @POST("User/updateProfil")
-    Call<AccountResponses.UpdateProfil> updateProfil(@Body Map<String, Object> body);
+    Call<AccountResponses.UpdateProfile> updateProfile(@Body Map<String, Object> body);
 
     @POST("User/updateFotoProfil")
-    Call<AccountResponses.UpdateFoto> updateFotoProfil(@Body Map<String, Object> body);
+    Call<AccountResponses.UpdatePhoto> updateProfilePhoto(@Body Map<String, Object> body);
 
     @POST("User/gantiPassword")
-    Call<AccountResponses.GantiPassword> gantiPassword(@Body Map<String, Object> body);
+    Call<AccountResponses.ChangePassword> changePassword(@Body Map<String, Object> body);
 }

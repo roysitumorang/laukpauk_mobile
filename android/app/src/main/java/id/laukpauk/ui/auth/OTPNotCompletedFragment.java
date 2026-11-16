@@ -29,8 +29,8 @@ public class OTPNotCompletedFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Images.asset(binding.emptyImage, "empty.png");
-        binding.verifikasiButton.setOnClickListener(v -> AuthFlow.replaceWith(this, R.id.oTPRegistrasiFragment));
-        binding.kirimUlangButton.setOnClickListener(v -> AuthFlow.replaceWith(this, R.id.kirimUlangOTPFragment));
+        binding.verificationButton.setOnClickListener(v -> AuthFlow.replaceWith(this, R.id.registrationOtpFragment));
+        binding.resendButton.setOnClickListener(v -> AuthFlow.replaceWith(this, R.id.resendOtpFragment));
         binding.homeButton.setOnClickListener(v -> AuthFlow.goHome(this));
     }
 

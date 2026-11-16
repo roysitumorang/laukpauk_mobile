@@ -36,14 +36,14 @@ public class LoginFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        phoneHint.attach(binding.nomorHP);
+        phoneHint.attach(binding.phoneNumber);
         AppContainer c = AppContainer.from(requireContext());
         viewModel = new ViewModelProvider(this,
                 ViewModelFactory.of(() -> new AuthViewModel(c.authRepository))).get(AuthViewModel.class);
         Images.asset(binding.logo, "laukpauk.png");
         AuthFlow.bindPasswordToggle(binding.password, binding.togglePassword);
         binding.registerLink.setOnClickListener(v -> AuthFlow.replaceWith(this, R.id.registerFragment));
-        binding.lupaLink.setOnClickListener(v -> AuthFlow.replaceWith(this, R.id.lupaPasswordFragment));
+        binding.forgotLink.setOnClickListener(v -> AuthFlow.replaceWith(this, R.id.forgotPasswordFragment));
         viewModel.getBusy().observe(getViewLifecycleOwner(), busy -> {
             AuthFlow.setBusy(binding.loginButton, binding.loginSpinner, busy);
             binding.loadingOverlay.setVisibility(busy ? View.VISIBLE : View.GONE);
@@ -52,20 +52,20 @@ public class LoginFragment extends Fragment {
             if (viewModel.isBusy()) {
                 return;
             }
-            viewModel.login(binding.nomorHP.getText().toString(), binding.password.getText().toString(), r -> {
+            viewModel.login(binding.phoneNumber.getText().toString(), binding.password.getText().toString(), r -> {
                 if (binding == null) {
                     return;
                 }
                 if (!r.isSuccess() || r.data == null) {
-                    Messages.snack(this, getString(R.string.auth_gagal_koneksi));
+                    Messages.snack(this, getString(R.string.auth_failed_connection));
                 } else if (!r.data.authenticated) {
-                    AuthFlow.alert(this, R.string.auth_login_judul,
-                            getString(R.string.auth_login_gagal) + "\n\n" + getString(R.string.auth_login_gagal_saran),
-                            R.string.auth_lupa_password,
-                            () -> NavHostFragment.findNavController(this).navigate(R.id.lupaPasswordFragment),
-                            R.string.auth_tutup, null);
+                    AuthFlow.alert(this, R.string.auth_login_heading,
+                            getString(R.string.auth_login_failed) + "\n\n" + getString(R.string.auth_login_failed_suggestion),
+                            R.string.auth_forgot_password,
+                            () -> NavHostFragment.findNavController(this).navigate(R.id.forgotPasswordFragment),
+                            R.string.auth_close, null);
                 } else if (!r.data.verified) {
-                    AuthFlow.replaceWith(this, R.id.oTPVerifikasiUserFragment);
+                    AuthFlow.replaceWith(this, R.id.userVerificationOtpFragment);
                 } else {
                     AuthFlow.finish(this);
                 }

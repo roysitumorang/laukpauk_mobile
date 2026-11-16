@@ -67,8 +67,8 @@ public final class GiftAlert {
             @Override
             public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, int position) {
                 ItemDeliveryGiftBinding ib = ItemDeliveryGiftBinding.bind(h.itemView);
-                String foto = gifts.get(position).foto != null ? gifts.get(position).foto : "gift-default.png";
-                Images.url(ib.image, Images.server(ServerPath.uploadGambarGift, foto));
+                String photo = gifts.get(position).photo != null ? gifts.get(position).photo : "gift-default.png";
+                Images.url(ib.image, Images.server(ServerPath.uploadImageGift, photo));
                 ib.close.setOnClickListener(v -> close.run());
             }
 

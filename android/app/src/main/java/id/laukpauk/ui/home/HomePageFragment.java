@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.home.Artikel;
+import id.laukpauk.data.model.home.Article;
 import id.laukpauk.data.model.home.WalletInfo;
 import id.laukpauk.data.repository.SettingRepository;
 import id.laukpauk.databinding.FragmentHomePageBinding;
@@ -37,7 +37,7 @@ public class HomePageFragment extends Fragment {
 
     private FragmentHomePageBinding binding;
     private HomeViewModel viewModel;
-    private ProdukSectionViewModel produkViewModel;
+    private ProductSectionViewModel productViewModel;
     private AppContainer c;
 
     @Nullable
@@ -53,9 +53,9 @@ public class HomePageFragment extends Fragment {
         c = AppContainer.from(requireContext());
         viewModel = new ViewModelProvider(this,
                 ViewModelFactory.of(() -> new HomeViewModel(c.homeRepository))).get(HomeViewModel.class);
-        produkViewModel = new ViewModelProvider(this, ViewModelFactory.of(
-                () -> new ProdukSectionViewModel(c.homeRepository, c.deliveryRepository)))
-                .get("produk", ProdukSectionViewModel.class);
+        productViewModel = new ViewModelProvider(this, ViewModelFactory.of(
+                () -> new ProductSectionViewModel(c.homeRepository, c.deliveryRepository)))
+                .get("produk", ProductSectionViewModel.class);
 
         binding.header.bind(this);
         DeliveryFlow.homeChecks(this);
@@ -63,15 +63,15 @@ public class HomePageFragment extends Fragment {
         binding.refresh.setColorSchemeColors(requireContext().getColor(R.color.green));
         binding.refresh.setOnRefreshListener(() -> {
             viewModel.refresh();
-            produkViewModel.reload();
+            productViewModel.reload();
             binding.refresh.setRefreshing(false);
         });
 
         setupHero();
         setupWallet();
-        new ProdukSection(this, binding.produk, produkViewModel);
-        setupKonten();
-        setupArtikel();
+        new ProductSection(this, binding.product, productViewModel);
+        setupContent();
+        setupArticle();
         viewModel.start();
     }
 
@@ -99,23 +99,23 @@ public class HomePageFragment extends Fragment {
     }
 
     private void setupWallet() {
-        Images.asset(binding.wallet.dompetIcon, "icons/pembeli/dompet.png");
+        Images.asset(binding.wallet.walletIcon, "icons/pembeli/dompet.png");
         Images.asset(binding.wallet.voucherIcon, "icons/pembeli/voucher.png");
-        Images.asset(binding.wallet.poinIcon, "poin.png");
-        Images.asset(binding.wallet.referalIcon, "referal.png");
-        binding.wallet.dompet.setOnClickListener(v -> go(R.id.historiDompetFragment));
+        Images.asset(binding.wallet.pointsIcon, "poin.png");
+        Images.asset(binding.wallet.referralIcon, "referal.png");
+        binding.wallet.wallet.setOnClickListener(v -> go(R.id.walletHistoryFragment));
         binding.wallet.voucher.setOnClickListener(v -> go(R.id.voucherFragment));
-        binding.wallet.poin.setOnClickListener(v -> go(R.id.historiPoinFragment));
-        binding.wallet.referal.setOnClickListener(v -> go(R.id.kodeReferalFragment));
+        binding.wallet.points.setOnClickListener(v -> go(R.id.pointsHistoryFragment));
+        binding.wallet.referral.setOnClickListener(v -> go(R.id.referralCodeFragment));
         viewModel.getLoggedIn().observe(getViewLifecycleOwner(), login -> {
             int vis = Boolean.TRUE.equals(login) ? View.VISIBLE : View.GONE;
-            binding.wallet.dompetValue.setVisibility(vis);
+            binding.wallet.walletValue.setVisibility(vis);
             binding.wallet.voucherValue.setVisibility(vis);
-            binding.wallet.poinValue.setVisibility(vis);
+            binding.wallet.pointsValue.setVisibility(vis);
             if (vis == View.VISIBLE) {
-                binding.wallet.dompetValue.setText(R.string.home_wallet_mengambil);
-                binding.wallet.voucherValue.setText(R.string.home_wallet_mengambil);
-                binding.wallet.poinValue.setText(R.string.home_wallet_mengambil);
+                binding.wallet.walletValue.setText(R.string.home_wallet_fetching);
+                binding.wallet.voucherValue.setText(R.string.home_wallet_fetching);
+                binding.wallet.pointsValue.setText(R.string.home_wallet_fetching);
             }
         });
         viewModel.getWallet().observe(getViewLifecycleOwner(), res -> {
@@ -123,11 +123,11 @@ public class HomePageFragment extends Fragment {
                 return;
             }
             WalletInfo w = res.data;
-            binding.wallet.dompetValue.setText(Currency.formatRupiah(w.totalDompet, 0));
-            binding.wallet.voucherValue.setText(w.jumlahVoucher >= 1
-                    ? getString(R.string.home_wallet_voucher_jumlah, Currency.formatSatuan(w.jumlahVoucher))
-                    : getString(R.string.home_wallet_belum_voucher));
-            binding.wallet.poinValue.setText(Currency.formatRupiah(w.poin, 0));
+            binding.wallet.walletValue.setText(Currency.formatRupiah(w.walletTotal, 0));
+            binding.wallet.voucherValue.setText(w.voucherCount >= 1
+                    ? getString(R.string.home_wallet_voucher_count, Currency.formatUnit(w.voucherCount))
+                    : getString(R.string.home_wallet_no_voucher));
+            binding.wallet.pointsValue.setText(Currency.formatRupiah(w.points, 0));
         });
     }
 
@@ -135,39 +135,39 @@ public class HomePageFragment extends Fragment {
         NavHostFragment.findNavController(this).navigate(destination);
     }
 
-    private void setupKonten() {
-        KontenAdapter adapter = new KontenAdapter(c.homeRepository::getLowestPrice, ProdukListener.navigating(this),
-                new KontenAdapter.Listener() {
+    private void setupContent() {
+        ContentAdapter adapter = new ContentAdapter(c.homeRepository::getLowestPrice, ProductListener.navigating(this),
+                new ContentAdapter.Listener() {
                     @Override
-                    public void onLihatSemua(id.laukpauk.data.model.home.Konten konten) {
-                        HomeNav.openKontenSemua(HomePageFragment.this, konten);
+                    public void onViewAll(id.laukpauk.data.model.home.Content content) {
+                        HomeNav.openContentAll(HomePageFragment.this, content);
                     }
 
                     @Override
-                    public void onBanner(id.laukpauk.data.model.home.Konten konten,
-                                         id.laukpauk.data.model.home.KontenItem item) {
-                        HomeNav.openBanner(HomePageFragment.this, konten, item);
+                    public void onBanner(id.laukpauk.data.model.home.Content content,
+                                         id.laukpauk.data.model.home.ContentItem item) {
+                        HomeNav.openBanner(HomePageFragment.this, content, item);
                     }
                 });
-        binding.kontenList.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.kontenList.setAdapter(adapter);
-        viewModel.getKonten().observe(getViewLifecycleOwner(), res -> {
+        binding.contentList.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.contentList.setAdapter(adapter);
+        viewModel.getContent().observe(getViewLifecycleOwner(), res -> {
             if (res == null) {
                 return;
             }
-            binding.kontenProgress.setVisibility(res.isLoading() ? View.VISIBLE : View.GONE);
+            binding.contentProgress.setVisibility(res.isLoading() ? View.VISIBLE : View.GONE);
             if (!res.isLoading()) {
                 adapter.submitList(res.data);
             }
         });
     }
 
-    private void setupArtikel() {
+    private void setupArticle() {
         SlideAdapter slides = new SlideAdapter(slide -> openUrl((String) slide.tag));
-        binding.artikelPager.setAdapter(slides);
-        AutoPager.attach(binding.artikelPager);
-        binding.artikelEmpty.emptyText.setText(R.string.home_artikel_kosong);
-        binding.artikelLihat.setOnClickListener(v -> c.settingRepository.getSettingValue("seeAllArticleURL", result -> {
+        binding.articlePager.setAdapter(slides);
+        AutoPager.attach(binding.articlePager);
+        binding.articleEmpty.emptyText.setText(R.string.home_article_empty);
+        binding.articleView.setOnClickListener(v -> c.settingRepository.getSettingValue("seeAllArticleURL", result -> {
             if (!isAdded()) {
                 return;
             }
@@ -176,27 +176,27 @@ public class HomePageFragment extends Fragment {
                 launch(url);
             }
         }));
-        viewModel.getArtikel().observe(getViewLifecycleOwner(), res -> {
+        viewModel.getArticle().observe(getViewLifecycleOwner(), res -> {
             if (res == null) {
                 return;
             }
-            binding.artikelProgress.setVisibility(res.isLoading() ? View.VISIBLE : View.GONE);
+            binding.articleProgress.setVisibility(res.isLoading() ? View.VISIBLE : View.GONE);
             if (res.isLoading()) {
                 return;
             }
             List<SlideAdapter.Slide> list = new ArrayList<>();
             if (res.isSuccess() && res.data != null) {
-                for (Artikel a : res.data) {
-                    String judul = a.judul == null ? "" : a.judul;
-                    if (judul.length() >= 31) {
-                        judul = getString(R.string.home_artikel_judul_panjang, judul.substring(0, 30));
+                for (Article a : res.data) {
+                    String heading = a.heading == null ? "" : a.heading;
+                    if (heading.length() >= 31) {
+                        heading = getString(R.string.home_article_long_heading, heading.substring(0, 30));
                     }
-                    list.add(new SlideAdapter.Slide(Images.server(ServerPath.uploadGambarArtikel, a.foto), judul, a.link));
+                    list.add(new SlideAdapter.Slide(Images.server(ServerPath.uploadImageArticle, a.photo), heading, a.link));
                 }
             }
             slides.submit(list);
-            binding.artikelPager.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
-            binding.artikelEmpty.getRoot().setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
+            binding.articlePager.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
+            binding.articleEmpty.getRoot().setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
         });
     }
 
@@ -205,7 +205,7 @@ public class HomePageFragment extends Fragment {
         if (!launch(url)) {
             new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.home_app_name)
-                    .setMessage(R.string.home_url_tidak_bisa)
+                    .setMessage(R.string.home_url_cannot)
                     .setPositiveButton(android.R.string.ok, null)
                     .show();
         }

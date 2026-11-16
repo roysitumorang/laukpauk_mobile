@@ -48,15 +48,15 @@ public class PromoFragment extends Fragment {
 
         adapter = new PromoAdapter(new PromoAdapter.Listener() {
             @Override
-            public void onOpen(id.laukpauk.data.model.promo.ProdukPromo item) {
+            public void onOpen(id.laukpauk.data.model.promo.PromoProduct item) {
                 Bundle args = new Bundle();
                 args.putString("idPromoItem", item.idPromoItem);
                 NavHostFragment.findNavController(PromoFragment.this).navigate(R.id.detailPromoItemFragment, args);
             }
 
             @Override
-            public void onBeli(id.laukpauk.data.model.promo.ProdukPromo item) {
-                ProductActions.beli(PromoFragment.this, item.idProduk, item.namaProduk, item.idPromo);
+            public void onBuy(id.laukpauk.data.model.promo.PromoProduct item) {
+                ProductActions.buy(PromoFragment.this, item.productId, item.productName, item.idPromo);
             }
         });
         binding.list.setLayoutManager(new GridLayoutManager(requireContext(), 3));

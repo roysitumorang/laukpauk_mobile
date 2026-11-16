@@ -33,7 +33,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/checkout_metode_pembayaran"
+                        android:text="@string/checkout_payment_method"
                         android:textColor="@color/checkout_text"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -41,7 +41,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/checkout_pilih_metode"
+                        android:text="@string/checkout_choose_method"
                         android:textColor="@color/checkout_text"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -51,7 +51,7 @@
                     style="@style/Checkout.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/checkout_buat_orderan"
+                    android:text="@string/checkout_create_order"
                     android:visibility="gone" />
             </LinearLayout>
 

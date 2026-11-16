@@ -34,12 +34,12 @@ public final class SessionStore {
     private final Prefs prefs;
 
 
-    public boolean isAlamatDeliveryDanJadwalDeliverySet() {
+    public boolean isDeliveryAddressAndScheduleSet() {
         return prefs.getBool("isAlamatDeliveryDanJadwalDeliverySet", false);
     }
 
     /**
-     * Keys: latitude, longitude, jadwalDeliveryCode, alamat. Missing values are JSON null
+     * Keys: latitude, longitude, deliveryScheduleCode, alamat. Missing values are JSON null
      * (read them with Json.strOrNull).
      */
     public Map<String, Object> getSavedLatitudeAndLongitude() {
@@ -117,29 +117,29 @@ public final class SessionStore {
         String cartCode = prefs.getString("cartCode");
         if (cartCode == null) {
             Calendar now = Calendar.getInstance();
-            int jam = now.get(Calendar.HOUR_OF_DAY);
-            int menit = now.get(Calendar.MINUTE);
-            int detik = now.get(Calendar.SECOND);
-            int mili = now.get(Calendar.MILLISECOND);
+            int hour = now.get(Calendar.HOUR_OF_DAY);
+            int minute = now.get(Calendar.MINUTE);
+            int second = now.get(Calendar.SECOND);
+            int milli = now.get(Calendar.MILLISECOND);
 
-            String jamString = String.valueOf(jam);
-            if (jam <= 9) {
-                jamString = "0" + jamString;
+            String hourString = String.valueOf(hour);
+            if (hour <= 9) {
+                hourString = "0" + hourString;
             }
-            String menitString = String.valueOf(menit);
-            if (menit <= 9) {
-                menitString = "0" + menitString;
+            String minuteString = String.valueOf(minute);
+            if (minute <= 9) {
+                minuteString = "0" + minuteString;
             }
-            String detikString = String.valueOf(detik);
-            if (detik <= 9) {
-                detikString = "0" + detikString;
+            String secondString = String.valueOf(second);
+            if (second <= 9) {
+                secondString = "0" + secondString;
             }
-            String miliString = String.valueOf(mili);
-            if (mili <= 9) {
-                miliString = "0" + miliString;
+            String milliString = String.valueOf(milli);
+            if (milli <= 9) {
+                milliString = "0" + milliString;
             }
 
-            cartCode = jamString + menitString + detikString + miliString;
+            cartCode = hourString + minuteString + secondString + milliString;
             prefs.setString("cartCode", cartCode);
         }
         return cartCode;
@@ -167,7 +167,7 @@ public final class SessionStore {
 
 
     /** The saved delivery schedule (JSON map) or null. */
-    public Map<String, Object> savedJadwalDeliveryMap() {
+    public Map<String, Object> savedDeliveryScheduleMap() {
         String encoded = prefs.getString("savedJadwalDeliveryMap");
         if (encoded != null) {
             Object e = Json.parse(encoded);
@@ -178,11 +178,11 @@ public final class SessionStore {
         return null;
     }
 
-    public void lewatiOTPRegistrasi() {
+    public void skipRegistrationOtp() {
         prefs.setBool("lewatiOTPRegistrasi", true);
     }
 
-    public boolean isOTPRegistrasiPassed() {
+    public boolean isRegistrationOtpPassed() {
         return prefs.getBool("lewatiOTPRegistrasi", false);
     }
 

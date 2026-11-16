@@ -13,10 +13,10 @@ import retrofit2.http.Query;
 public interface RepeatOrderApi {
 
     @GET("RO/getItemTransaksi")
-    Call<RepeatOrderResponses.Items> getItemTransaksi(@Query("idTransaksi") String idTransaksi,
+    Call<RepeatOrderResponses.Items> getTransactionItem(@Query("idTransaksi") String transactionId,
                                                       @Query("latDelivery") String latDelivery,
                                                       @Query("longDelivery") String longDelivery,
-                                                      @Query("jadwalDeliveryCode") String jadwalDeliveryCode);
+                                                      @Query("jadwalDeliveryCode") String deliveryScheduleCode);
 
     @POST("RO/addToCart")
     Call<RepeatOrderResponses.AddToCart> addToCart(@Body Map<String, Object> body);

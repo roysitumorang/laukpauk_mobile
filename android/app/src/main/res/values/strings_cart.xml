@@ -11,7 +11,7 @@
     <string name="cart_note_title">Catatan Tambahan : </string>
     <string name="cart_qty_unit">%1$s x %2$s</string>
     <string name="cart_unit_price">@%1$s %2$s</string>
-    <string name="cart_unit_paket">Paket</string>
+    <string name="cart_pack_unit">Paket</string>
     <string name="cart_delete_title">Konfirmasi Hapus Keranjang!</string>
     <string name="cart_delete_message">Apakah anda yakin akan menghapus produk %1$s dari keranjang ?</string>
     <string name="cart_no">Tidak</string>

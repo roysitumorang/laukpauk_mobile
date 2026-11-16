@@ -20,14 +20,14 @@ import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliveryResponses;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.model.delivery.Gift;
-import id.laukpauk.data.model.delivery.JadwalDelivery;
+import id.laukpauk.data.model.delivery.DeliverySchedule;
 import id.laukpauk.data.model.delivery.PlaceSuggestion;
 import id.laukpauk.data.remote.DeliveryApi;
 import id.laukpauk.util.Json;
 
 /**
  * The buyer's delivery address + schedule ("ADJD"), stored on the device (legacy ADJDModel / HeaderModel
- * .setNewADJD / AppState.isADJDSet + alamatDelivery). Observed by the header, the product buy flow, the
+ * .setNewADJD / AppState.isADJDSet + deliveryAddress). Observed by the header, the product buy flow, the
  * cart and checkout.
  *
  * OWNER: the delivery slice. The public methods below are a CONTRACT used by other slices: keep their
@@ -36,7 +36,7 @@ import id.laukpauk.util.Json;
 public class DeliveryRepository extends BaseRepository {
 
     /** Shown when the address text is unknown (legacy ADJDModel.defaultAlamat). */
-    public static final String DEFAULT_ALAMAT = "Merdeka Walk Medan";
+    public static final String DEFAULT_ADDRESS = "Merdeka Walk Medan";
 
     private final MutableLiveData<DeliverySelection> selection = new MutableLiveData<>();
 
@@ -95,19 +95,19 @@ public class DeliveryRepository extends BaseRepository {
 
     // ------------------------------------------------------------------ schedule / geocoding / places
 
-    /** True when the stored flag says an address + schedule were chosen (legacy isAlamatDeliveryDanJadwalDeliverySet). */
+    /** True when the stored flag says an address + schedule were chosen (legacy isDeliveryAddressAndScheduleSet). */
     public boolean isSetNow() {
-        return session.isAlamatDeliveryDanJadwalDeliverySet();
+        return session.isDeliveryAddressAndScheduleSet();
     }
 
     /** Legacy JadwalPengantaran.getJadwalDelivery: the schedules the buyer can choose from (empty on failure). */
-    public void loadJadwal(ResultCallback<List<JadwalDelivery>> callback) {
-        enqueue(api.getAvailableJadwalDelivery(), body -> {
-            List<JadwalDelivery> list = new ArrayList<>();
-            if (body != null && body.availableJadwalDelivery != null) {
-                for (Map<String, Object> o : body.availableJadwalDelivery) {
+    public void loadSchedule(ResultCallback<List<DeliverySchedule>> callback) {
+        enqueue(api.getAvailableDeliverySchedule(), body -> {
+            List<DeliverySchedule> list = new ArrayList<>();
+            if (body != null && body.availableDeliverySchedule != null) {
+                for (Map<String, Object> o : body.availableDeliverySchedule) {
                     if (o != null) {
-                        list.add(new JadwalDelivery(o));
+                        list.add(new DeliverySchedule(o));
                     }
                 }
             }
@@ -159,22 +159,22 @@ public class DeliveryRepository extends BaseRepository {
      * (main thread) gets true when a selection is set afterwards.
      */
     public void save(boolean completed, @Nullable String latitude, @Nullable String longitude,
-                     @Nullable String jadwalDeliveryCode, @Nullable String alamat, @Nullable Map<String, Object> jadwalDeliveryMap,
+                     @Nullable String deliveryScheduleCode, @Nullable String address, @Nullable Map<String, Object> deliveryScheduleMap,
                      ResultCallback<Boolean> callback) {
         String cLat = prefs.getString("coppiedLatitude");
         String cLng = prefs.getString("coppiedLongitude");
         String cCode = prefs.getString("coppiedJadwalDeliveryCode");
-        String cAlamat = prefs.getString("coppiedAlamat");
+        String cAddress = prefs.getString("coppiedAlamat");
         String cMap = prefs.getString("coppiedJadwalDeliveryMap");
-        boolean copiedComplete = cLat != null && cLng != null && cCode != null && cAlamat != null && cMap != null;
+        boolean copiedComplete = cLat != null && cLng != null && cCode != null && cAddress != null && cMap != null;
 
         boolean isSet = completed || copiedComplete;
-        String mapText = jadwalDeliveryMap != null ? Json.toJson(jadwalDeliveryMap) : "null";
+        String mapText = deliveryScheduleMap != null ? Json.toJson(deliveryScheduleMap) : "null";
         if (!completed) {
             latitude = cLat;
             longitude = cLng;
-            jadwalDeliveryCode = cCode;
-            alamat = cAlamat;
+            deliveryScheduleCode = cCode;
+            address = cAddress;
             mapText = cMap;
         }
         if (isSet) {
@@ -185,21 +185,21 @@ public class DeliveryRepository extends BaseRepository {
             if (longitude != null) {
                 prefs.setString("savedLongitude", longitude);
             }
-            if (jadwalDeliveryCode != null) {
-                prefs.setString("savedJadwalDeliveryCode", jadwalDeliveryCode);
+            if (deliveryScheduleCode != null) {
+                prefs.setString("savedJadwalDeliveryCode", deliveryScheduleCode);
             }
             if (mapText != null) {
                 Map<String, Object> map = Json.parseObject(mapText);
                 map.put("setOn", nowText());
                 prefs.setString("savedJadwalDeliveryMap", Json.toJson(map));
             }
-            if (alamat != null) {
-                prefs.setString("savedAlamat", alamat);
+            if (address != null) {
+                prefs.setString("savedAlamat", address);
             }
         }
         reload();
         if (isSet && completed) {
-            enqueue(api.bersihkanKeranjang(session.getCartCode()), body -> true,
+            enqueue(api.clearCart(session.getCartCode()), body -> true,
                     r -> callback.onResult(Resource.success(current().isSet)));
             return;
         }
@@ -215,15 +215,15 @@ public class DeliveryRepository extends BaseRepository {
 
     // ------------------------------------------------------------------ expiry (legacy MainModel.checkExpiry rules)
 
-    /** The raw saved schedule text (savedJadwalDeliveryMap) or null; lets a watcher remember what it handled. */
+    /** The raw saved schedule text (savedDeliveryScheduleMap) or null; lets a watcher remember what it handled. */
     @Nullable
-    public String savedJadwalText() {
+    public String savedScheduleText() {
         return prefs.getString("savedJadwalDeliveryMap");
     }
 
     /** True when the saved delivery schedule has expired (rules of MyIntentService / MainModel.isExpired). */
     public boolean isExpired() {
-        String saved = savedJadwalText();
+        String saved = savedScheduleText();
         if (saved == null) {
             return false;
         }
@@ -272,14 +272,14 @@ public class DeliveryRepository extends BaseRepository {
     }
 
     private DeliverySelection read() {
-        boolean isSet = session.isAlamatDeliveryDanJadwalDeliverySet();
-        String alamat = prefs.getString("savedAlamat");
-        Map<String, Object> jadwal = session.savedJadwalDeliveryMap();
-        String day = jadwal != null ? Json.strOrNull(jadwal, "day") : null;
-        if (!isSet && alamat == null) {
+        boolean isSet = session.isDeliveryAddressAndScheduleSet();
+        String address = prefs.getString("savedAlamat");
+        Map<String, Object> schedule = session.savedDeliveryScheduleMap();
+        String day = schedule != null ? Json.strOrNull(schedule, "day") : null;
+        if (!isSet && address == null) {
             return DeliverySelection.NOT_SET;
         }
         return new DeliverySelection(isSet, prefs.getString("savedLatitude"), prefs.getString("savedLongitude"),
-                alamat != null ? alamat : DEFAULT_ALAMAT, prefs.getString("savedJadwalDeliveryCode"), day);
+                address != null ? address : DEFAULT_ADDRESS, prefs.getString("savedJadwalDeliveryCode"), day);
     }
 }

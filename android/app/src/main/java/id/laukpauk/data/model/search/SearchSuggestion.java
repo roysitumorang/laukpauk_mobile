@@ -1,9 +1,14 @@
 package id.laukpauk.data.model.search;
 
-/** One row of Konten/pencarian: a product ({@code jenisItem} "produk"). */
+import com.squareup.moshi.Json;
+
+/** One row of Konten/pencarian: a product ({@code itemType} "produk"). */
 public class SearchSuggestion {
     public String id;
-    public String jenisItem;
-    public String fotoProduk;
-    public String namaProduk;
+    @Json(name = "jenisItem")
+    public String itemType;
+    @Json(name = "fotoProduk")
+    public String productPhoto;
+    @Json(name = "namaProduk")
+    public String productName;
 }

@@ -1,5 +1,7 @@
 package id.laukpauk.data.model.checkout;
 
+import com.squareup.moshi.Json;
+
 
 import java.util.List;
 
@@ -7,28 +9,34 @@ import java.util.List;
 public final class CheckoutResponses {
     private CheckoutResponses() {}
 
-    public static class TotalKeranjang {
-        public long totalKeranjang;
+    public static class CartTotal {
+        @Json(name = "totalKeranjang")
+        public long cartTotal;
     }
 
-    public static class TotalOngkir {
-        public long totalOngkir;
+    public static class TotalShippingFee {
+        @Json(name = "totalOngkir")
+        public long totalShippingFee;
     }
 
-    public static class JumlahCart {
-        public long jumlahKeranjang;
+    public static class CartQuantity {
+        @Json(name = "jumlahKeranjang")
+        public long cartCount;
     }
 
-    public static class TotalDompet {
-        public long totalDompet;
+    public static class WalletTotal {
+        @Json(name = "totalDompet")
+        public long walletTotal;
     }
 
     /** GET Transaksi/getJenisOngkir: the fields are at the top level of the answer. */
-    public static class JenisOngkir {
+    public static class ShippingFeeType {
         /** "perkm" when the address is outside the coverage area, otherwise the flat delivery cost applies. */
-        public String jenisOngkir;
+        @Json(name = "jenisOngkir")
+        public String shippingFeeType;
         /** Distance the courier travels, in km (only meaningful for "perkm"). */
-        public double jarak;
+        @Json(name = "jarak")
+        public double distance;
     }
 
     public static class WalletConfig {
@@ -36,9 +44,10 @@ public final class CheckoutResponses {
         public WalletConfiguration walletConfiguration;
     }
 
-    public static class DiskonKategori {
+    public static class CategoryDiscount {
         /** Dynamic: an object, or false when there is no category discount. */
-        public Object diskonKategori;
+        @Json(name = "diskonKategori")
+        public Object categoryDiscount;
     }
 
     public static class Point {
@@ -51,9 +60,12 @@ public final class CheckoutResponses {
     }
 
     public static class DetailUser {
-        public String nama;
-        public String nomorHP;
-        public String alamat;
+        @Json(name = "nama")
+        public String name;
+        @Json(name = "nomorHP")
+        public String phoneNumber;
+        @Json(name = "alamat")
+        public String address;
         public String statusOTP;
     }
 
@@ -65,8 +77,9 @@ public final class CheckoutResponses {
         public boolean isVerified;
     }
 
-    public static class JadwalOpened {
-        public boolean isJadwalDeliveryOpened;
+    public static class ScheduleOpened {
+        @Json(name = "isJadwalDeliveryOpened")
+        public boolean isDeliveryScheduleOpened;
     }
 
     public static class VoucherList {
@@ -78,7 +91,8 @@ public final class CheckoutResponses {
     }
 
     public static class Promo {
-        public long diskon;
+        @Json(name = "diskon")
+        public long discount;
     }
 
     public static class PromoData {
@@ -86,7 +100,7 @@ public final class CheckoutResponses {
     }
 
     /** GET Promo/cekKodePromo/{kode}. */
-    public static class KodePromo {
+    public static class PromoCode {
         public boolean status;
         public String message;
         public PromoData data;

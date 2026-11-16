@@ -72,17 +72,17 @@ public final class DeliveryFlow {
             return;
         }
         AppContainer c = AppContainer.from(fragment.requireContext());
-        String alamat = c.deliveryRepository.current().alamat;
+        String address = c.deliveryRepository.current().address;
         DialogDeliveryConfirmAddressBinding b = DialogDeliveryConfirmAddressBinding.inflate(
                 LayoutInflater.from(fragment.requireContext()));
         b.message.setText(R.string.delivery_change_subtitle);
-        b.address.setText(alamat != null ? alamat : DeliveryRepository.DEFAULT_ALAMAT);
-        new MaterialAlertDialogBuilder(fragment.requireContext()).setTitle(R.string.delivery_alamat_title)
+        b.address.setText(address != null ? address : DeliveryRepository.DEFAULT_ADDRESS);
+        new MaterialAlertDialogBuilder(fragment.requireContext()).setTitle(R.string.delivery_address_title)
                 .setView(b.getRoot()).setCancelable(false)
-                .setNeutralButton(R.string.delivery_tutup, null)
+                .setNeutralButton(R.string.delivery_close, null)
                 .setNegativeButton(R.string.delivery_change_reset,
                         (d, w) -> c.cartRepository.clearTransactionSession(r -> c.deliveryRepository.reload()))
-                .setPositiveButton(R.string.delivery_change_ubah, (d, w) -> {
+                .setPositiveButton(R.string.delivery_change_edit, (d, w) -> {
                     c.deliveryRepository.clear();
                     ask(fragment, onDone);
                 }).show();

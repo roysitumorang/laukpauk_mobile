@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import id.laukpauk.data.model.product.LowestPrice;
-import id.laukpauk.data.repository.ProdukRepository;
+import id.laukpauk.data.repository.ProductRepository;
 
 /**
  * Lowest price per product id for the product tiles (each legacy tile loaded its own price). Owned by a
@@ -17,12 +17,12 @@ import id.laukpauk.data.repository.ProdukRepository;
  */
 public class LowestPriceStore {
 
-    private final ProdukRepository repository;
+    private final ProductRepository repository;
     private final Set<String> requested = new HashSet<>();
     private final Map<String, LowestPrice> prices = new HashMap<>();
     private final MutableLiveData<Map<String, LowestPrice>> live = new MutableLiveData<>(new HashMap<>());
 
-    public LowestPriceStore(ProdukRepository repository) {
+    public LowestPriceStore(ProductRepository repository) {
         this.repository = repository;
     }
 
@@ -31,12 +31,12 @@ public class LowestPriceStore {
     }
 
     /** Starts loading the price of a product once. */
-    public void request(String idProduk) {
-        if (idProduk == null || !requested.add(idProduk)) {
+    public void request(String productId) {
+        if (productId == null || !requested.add(productId)) {
             return;
         }
-        repository.getLowestPrice(idProduk, result -> {
-            prices.put(idProduk, result.isSuccess() && result.data != null ? result.data : LowestPrice.NONE);
+        repository.getLowestPrice(productId, result -> {
+            prices.put(productId, result.isSuccess() && result.data != null ? result.data : LowestPrice.NONE);
             live.setValue(new HashMap<>(prices));
         });
     }

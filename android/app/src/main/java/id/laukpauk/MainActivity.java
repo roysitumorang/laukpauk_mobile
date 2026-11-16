@@ -36,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
 
     /** Screens that showed the Flutter app's Footer; the bottom navigation is visible only on these. */
     private static final Set<Integer> BOTTOM_NAV_DESTINATIONS = new HashSet<>(Arrays.asList(
-            R.id.homePageFragment, R.id.pesananSayaFragment, R.id.resepFragment, R.id.promoFragment,
-            R.id.userAndDashboardFragment, R.id.listProdukFragment, R.id.semuaProdukFragment,
-            R.id.detailProdukFragment, R.id.detailPaketFragment, R.id.detailPromoItemFragment,
-            R.id.detailResepFragment, R.id.repeatOrderFragment, R.id.notifikasiFragment,
-            R.id.detailNotifikasiGlobalFragment));
+            R.id.homePageFragment, R.id.myOrdersFragment, R.id.recipeFragment, R.id.promoFragment,
+            R.id.userAndDashboardFragment, R.id.productListFragment, R.id.allProductsFragment,
+            R.id.productDetailFragment, R.id.packDetailFragment, R.id.detailPromoItemFragment,
+            R.id.recipeDetailFragment, R.id.repeatOrderFragment, R.id.notificationFragment,
+            R.id.globalNotificationDetailFragment));
 
     private ActivityMainBinding binding;
     private NavController navController;

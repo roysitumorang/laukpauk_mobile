@@ -34,7 +34,7 @@ public final class Images {
                 .into(view);
     }
 
-    /** {@code BASE_URL/<folder>/<file>}, e.g. {@code Images.server(ServerPath.uploadGambarProduk, foto)}. */
+    /** {@code BASE_URL/<folder>/<file>}, e.g. {@code Images.server(ServerPath.uploadImageProduct, foto)}. */
     public static String server(String folder, String file) {
         return ServerPath.baseURL + "/" + folder + "/" + file;
     }

@@ -10,7 +10,7 @@ import retrofit2.http.Query;
 public interface VoucherApi {
 
     @GET("User/getVoucher")
-    Call<VoucherResponses.VoucherList> getVoucher(@Query("entitasVoucher") String entitasVoucher);
+    Call<VoucherResponses.VoucherList> getVoucher(@Query("entitasVoucher") String voucherEntities);
 
     @GET("Voucher/getVoucher/{idVoucher}")
     Call<VoucherResponses.Detail> getVoucherDetail(@Path("idVoucher") String idVoucher);

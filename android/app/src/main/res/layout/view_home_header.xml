@@ -23,13 +23,13 @@
             android:paddingTop="7.5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="7.5dp"
-            android:text="@string/home_header_diantarin"
+            android:text="@string/home_header_deliver_to"
             android:textColor="@color/nearly_white"
             android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/alamat"
+            android:id="@+id/address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/nearly_white"
@@ -71,7 +71,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="@string/home_header_cari_hint"
+                android:text="@string/home_header_search_hint"
                 android:textColor="@color/nearly_white"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -88,7 +88,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/home_header_keranjang">
+                android:contentDescription="@string/home_header_cart">
 
                 <ImageView
                     android:layout_width="17dp"
@@ -109,7 +109,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/home_header_notifikasi">
+                android:contentDescription="@string/home_header_notification">
 
                 <ImageView
                     android:layout_width="17dp"

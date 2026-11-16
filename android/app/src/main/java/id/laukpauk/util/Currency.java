@@ -25,21 +25,21 @@ public final class Currency {
         return new DecimalFormat(pattern.toString(), symbols);
     }
 
-    /** Dart: Currency.formatRupiah(number, angkaDibelakangKoma) -> "Rp. 15.000". */
-    public static String formatRupiah(long number, int angkaDibelakangKoma) {
+    /** Dart: Currency.formatRupiah(number, decimalPlaces) -> "Rp. 15.000". */
+    public static String formatRupiah(long number, int decimalPlaces) {
         String sign = number < 0 ? "-" : "";
-        return sign + "Rp. " + format(angkaDibelakangKoma).format(Math.abs(number));
+        return sign + "Rp. " + format(decimalPlaces).format(Math.abs(number));
     }
 
-    /** Dart: Currency.formatSatuan(number) -> "15.000". */
-    public static String formatSatuan(long number) {
-        return formatSatuan(number, null);
+    /** Dart: Currency.formatUnit(number) -> "15.000". */
+    public static String formatUnit(long number) {
+        return formatUnit(number, null);
     }
 
-    /** Dart: Currency.formatSatuan(number, satuan: 'kg') -> "15.000 kg". */
-    public static String formatSatuan(long number, String satuan) {
+    /** Dart: Currency.formatUnit(number, satuan: 'kg') -> "15.000 kg". */
+    public static String formatUnit(long number, String unit) {
         String sign = number < 0 ? "-" : "";
         String text = sign + format(0).format(Math.abs(number));
-        return satuan != null ? text + " " + satuan : text;
+        return unit != null ? text + " " + unit : text;
     }
 }

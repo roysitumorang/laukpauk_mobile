@@ -47,8 +47,8 @@ public class CheckoutFragment extends Fragment {
     private CheckoutViewModel vm;
     private AppContainer c;
     private SubTotalSection subTotal;
-    private JadwalPengirimanSection jadwal;
-    private RingkasanPembayaranSection ringkasan;
+    private ShippingScheduleSection schedule;
+    private PaymentSummarySection summary;
     private PaymentSheet paymentSheet;
     private boolean begun;
 
@@ -90,16 +90,16 @@ public class CheckoutFragment extends Fragment {
             return;
         }
         begun = true;
-        subTotal = new SubTotalSection(binding.subTotal, this::onBayar);
-        jadwal = new JadwalPengirimanSection(binding.jadwal, this::onUbahJadwal);
-        ringkasan = new RingkasanPembayaranSection(binding.ringkasan, new RingkasanPembayaranSection.Listener() {
+        subTotal = new SubTotalSection(binding.subTotal, this::onPay);
+        schedule = new ShippingScheduleSection(binding.schedule, this::onEditSchedule);
+        summary = new PaymentSummarySection(binding.summary, new PaymentSummarySection.Listener() {
             @Override
-            public void onPilihVoucher() {
-                pilihVoucher();
+            public void onChooseVoucher() {
+                chooseVoucher();
             }
 
             @Override
-            public void onBatalVoucher() {
+            public void onCancelVoucher() {
                 vm.removeVoucher();
             }
 
@@ -109,24 +109,24 @@ public class CheckoutFragment extends Fragment {
             }
 
             @Override
-            public void onKodePromo(String kode) {
-                vm.onKodePromo(kode);
+            public void onPromoCode(String code) {
+                vm.onPromoCode(code);
             }
         });
         fillForm();
-        watch(binding.etNama, vm::setNama);
-        watch(binding.etHp, vm::setHp);
-        watch(binding.etAlamat, vm::setAlamat);
-        watch(binding.etCatatan, vm::setCatatan);
+        watch(binding.etName, vm::setName);
+        watch(binding.etPhone, vm::setPhone);
+        watch(binding.etAddress, vm::setAddress);
+        watch(binding.etNote, vm::setNote);
         binding.refresh.setColorSchemeResources(R.color.green);
         binding.refresh.setOnRefreshListener(() -> {
             vm.refresh();
             binding.refresh.setRefreshing(false);
         });
 
-        c.deliveryRepository.selection().observe(getViewLifecycleOwner(), sel -> vm.reloadJadwal());
-        vm.jadwal().observe(getViewLifecycleOwner(),
-                j -> jadwal.render(j, c.deliveryRepository.current().alamat));
+        c.deliveryRepository.selection().observe(getViewLifecycleOwner(), sel -> vm.reloadSchedule());
+        vm.schedule().observe(getViewLifecycleOwner(),
+                j -> schedule.render(j, c.deliveryRepository.current().address));
         vm.phase().observe(getViewLifecycleOwner(), phase -> {
             boolean ready = phase == CheckoutViewModel.PHASE_READY;
             binding.content.setVisibility(ready ? View.VISIBLE : View.GONE);
@@ -135,7 +135,7 @@ public class CheckoutFragment extends Fragment {
         });
         vm.summary().observe(getViewLifecycleOwner(), s -> {
             subTotal.render(s);
-            ringkasan.render(s);
+            summary.render(s);
         });
         vm.formLoaded().observe(getViewLifecycleOwner(), e -> {
             if (e != null && e.consume() != null) {
@@ -150,7 +150,7 @@ public class CheckoutFragment extends Fragment {
         });
         vm.voucherRejected().observe(getViewLifecycleOwner(), e -> {
             if (e != null && e.consume() != null) {
-                info(R.string.checkout_voucher_tdk_title, R.string.checkout_voucher_tdk, null);
+                info(R.string.checkout_voucher_not_title, R.string.checkout_voucher_not, null);
             }
         });
         vm.orderResult().observe(getViewLifecycleOwner(), e -> {
@@ -165,10 +165,10 @@ public class CheckoutFragment extends Fragment {
     // ------------------------------------------------------------------ form
 
     private void fillForm() {
-        setText(binding.etNama, vm.nama());
-        setText(binding.etHp, vm.hp());
-        setText(binding.etAlamat, vm.alamat());
-        setText(binding.etCatatan, vm.catatan());
+        setText(binding.etName, vm.name());
+        setText(binding.etPhone, vm.phone());
+        setText(binding.etAddress, vm.address());
+        setText(binding.etNote, vm.note());
     }
 
     private static void setText(EditText e, String value) {
@@ -216,32 +216,32 @@ public class CheckoutFragment extends Fragment {
     private void onRedirect(int step) {
         switch (step) {
             case CheckoutRepository.STEP_NOT_VERIFIED:
-                nav().navigate(R.id.oTPVerifikasiUserFragment);
+                nav().navigate(R.id.userVerificationOtpFragment);
                 break;
             case CheckoutRepository.STEP_OTP_NOT_COMPLETED:
                 nav().navigate(R.id.oTPNotCompletedFragment);
                 break;
             case CheckoutRepository.STEP_SCHEDULE_CLOSED:
-                jadwalDitutup();
+                scheduleClosed();
                 break;
             default:
-                info(R.string.checkout_title, R.string.checkout_tidak_cukup, () -> CheckoutNav.goHome(this, false));
+                info(R.string.checkout_title, R.string.checkout_insufficient, () -> CheckoutNav.goHome(this, false));
                 break;
         }
     }
 
-    private void jadwalDitutup() {
+    private void scheduleClosed() {
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.checkout_jadwal_ditutup_title)
-                .setMessage(R.string.checkout_jadwal_ditutup)
+                .setTitle(R.string.checkout_schedule_closed_title)
+                .setMessage(R.string.checkout_schedule_closed)
                 .setCancelable(false)
-                .setPositiveButton(R.string.checkout_pilih_jadwal_lain, (d, w) -> pilihJadwalBaru())
-                .setNegativeButton(R.string.checkout_lain_kali, (d, w) -> CheckoutNav.goHome(this, false))
+                .setPositiveButton(R.string.checkout_choose_other_schedule, (d, w) -> chooseNewSchedule())
+                .setNegativeButton(R.string.checkout_next_time, (d, w) -> CheckoutNav.goHome(this, false))
                 .show();
     }
 
     /** Legacy deleteAlamatDanJadwalDelivery + HeaderModel.adjd: clear, ask again, then restart from the splash. */
-    private void pilihJadwalBaru() {
+    private void chooseNewSchedule() {
         c.deliveryRepository.clear();
         DeliveryFlow.ask(this, saved -> {
             if (saved && isAdded()) {
@@ -250,18 +250,18 @@ public class CheckoutFragment extends Fragment {
         });
     }
 
-    private void onUbahJadwal() {
+    private void onEditSchedule() {
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.checkout_ubah_alamat_jadwal)
-                .setMessage(R.string.checkout_ubah_konfirmasi)
-                .setNegativeButton(R.string.batal, null)
-                .setPositiveButton(R.string.checkout_lanjutkan, (d, w) -> pilihJadwalBaru())
+                .setTitle(R.string.checkout_edit_address_schedule)
+                .setMessage(R.string.checkout_edit_confirmation)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.checkout_continue, (d, w) -> chooseNewSchedule())
                 .show();
     }
 
     // ------------------------------------------------------------------ voucher / pay
 
-    private void pilihVoucher() {
+    private void chooseVoucher() {
         CheckoutSummary s = vm.summary().getValue();
         if (s == null) {
             return;
@@ -269,19 +269,19 @@ public class CheckoutFragment extends Fragment {
         VoucherSheet.show(this, vm.vouchers(), s.subTotal, vm.usedVoucher(), vm::chooseVoucher);
     }
 
-    private void onBayar() {
+    private void onPay() {
         CheckoutSummary s = vm.summary().getValue();
         if (s == null) {
             return;
         }
         if (!s.isFormCompleted) {
-            info(R.string.checkout_title, R.string.checkout_form_belum_lengkap, null);
+            info(R.string.checkout_title, R.string.checkout_form_incomplete, null);
             return;
         }
-        if (vm.jadwal().getValue() == null) {
+        if (vm.schedule().getValue() == null) {
             return; // legacy: no saved schedule, nothing happens
         }
-        paymentSheet = new PaymentSheet(this, vm, s.totalKeseluruhan);
+        paymentSheet = new PaymentSheet(this, vm, s.overallTotal);
         paymentSheet.show();
     }
 
@@ -318,7 +318,7 @@ public class CheckoutFragment extends Fragment {
                 CheckoutNav.toResult(this, R.id.transferBankFragment, args);
             } else {
                 args.putBoolean("removeTransactionSession", true);
-                CheckoutNav.toResult(this, R.id.buatOrderanBerhasilFragment, args);
+                CheckoutNav.toResult(this, R.id.orderSuccessFragment, args);
             }
         }
     }
@@ -331,15 +331,15 @@ public class CheckoutFragment extends Fragment {
     }
 
     private void checkoutFailed(String channelLC, Object payment) {
-        String content = getString(R.string.checkout_gagal);
+        String content = getString(R.string.checkout_failed);
         if (SHOW_PAYMENT_MESSAGE.contains(channelLC)) {
             content = Json.str(Json.obj(payment), "message");
         }
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.checkout_gagal_title)
+                .setTitle(R.string.checkout_failed_title)
                 .setMessage(content)
                 .setCancelable(false)
-                .setPositiveButton(R.string.checkout_coba_lagi, null)
+                .setPositiveButton(R.string.checkout_try_again, null)
                 .show();
     }
 
@@ -352,10 +352,10 @@ public class CheckoutFragment extends Fragment {
         }
         if (intent == null || !canLaunch(intent)) {
             new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.checkout_url_tdk_valid_title)
-                    .setMessage(R.string.checkout_url_tdk_valid)
+                    .setTitle(R.string.checkout_url_invalid_title)
+                    .setMessage(R.string.checkout_url_invalid)
                     .setCancelable(false)
-                    .setPositiveButton(R.string.checkout_coba_lagi_seru, null)
+                    .setPositiveButton(R.string.checkout_try_again_exclaim, null)
                     .show();
             return;
         }

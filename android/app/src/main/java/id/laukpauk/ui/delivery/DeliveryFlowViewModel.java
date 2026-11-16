@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.delivery.JadwalDelivery;
+import id.laukpauk.data.model.delivery.DeliverySchedule;
 import id.laukpauk.data.repository.CartRepository;
 import id.laukpauk.data.repository.DeliveryRepository;
 import id.laukpauk.util.Json;
@@ -22,19 +22,19 @@ import id.laukpauk.util.Json;
  */
 public class DeliveryFlowViewModel extends ViewModel {
 
-    public enum Step { IDLE, DETECT, GEOCODE, GPS_OFF, GEOCODE_FAILED, CONFIRM, PIN, JADWAL, SAVING }
+    public enum Step { IDLE, DETECT, GEOCODE, GPS_OFF, GEOCODE_FAILED, CONFIRM, PIN, SCHEDULE, SAVING }
 
     private final DeliveryRepository delivery;
     private final CartRepository cart;
     private final List<DeliveryFlow.Callback> callbacks = new ArrayList<>();
 
     public final MutableLiveData<Step> step = new MutableLiveData<>(Step.IDLE);
-    public final MutableLiveData<Resource<List<JadwalDelivery>>> jadwal = new MutableLiveData<>();
-    public final MutableLiveData<JadwalDelivery> selected = new MutableLiveData<>();
+    public final MutableLiveData<Resource<List<DeliverySchedule>>> schedule = new MutableLiveData<>();
+    public final MutableLiveData<DeliverySchedule> selected = new MutableLiveData<>();
 
     @Nullable public String latitude;
     @Nullable public String longitude;
-    @Nullable public String alamat;
+    @Nullable public String address;
     /** A location detection (permission prompt / fix) is running. */
     public boolean detecting;
     /** The map screen was seen on top since it was opened. */
@@ -62,7 +62,7 @@ public class DeliveryFlowViewModel extends ViewModel {
         }
         latitude = null;
         longitude = null;
-        alamat = null;
+        address = null;
         selected.setValue(null);
         detecting = false;
         pinSeen = false;
@@ -96,7 +96,7 @@ public class DeliveryFlowViewModel extends ViewModel {
         step.setValue(Step.GEOCODE);
         delivery.reverseGeocode(lat, lng, r -> {
             if (r.isSuccess() && r.data != null) {
-                alamat = r.data;
+                address = r.data;
                 step.setValue(Step.CONFIRM);
             } else {
                 step.setValue(Step.GEOCODE_FAILED);
@@ -114,15 +114,15 @@ public class DeliveryFlowViewModel extends ViewModel {
         save(false);
     }
 
-    public void confirmTutup() {
+    public void confirmClose() {
         save(false);
     }
 
-    public void confirmYa() {
-        startJadwal();
+    public void confirmYes() {
+        startSchedule();
     }
 
-    public void confirmAlamatLain() {
+    public void confirmOtherAddress() {
         pinSeen = false;
         pinOpened = false;
         step.setValue(Step.PIN);
@@ -135,42 +135,42 @@ public class DeliveryFlowViewModel extends ViewModel {
                 Map<String, Object> o = Json.parseObject(json);
                 latitude = Json.strOrNull(o, "lat");
                 longitude = Json.strOrNull(o, "lng");
-                alamat = Json.strOrNull(o, "formattedAddress");
+                address = Json.strOrNull(o, "formattedAddress");
             } catch (RuntimeException ignored) {
                 // keep the detected location
             }
         }
-        startJadwal();
+        startSchedule();
     }
 
-    private void startJadwal() {
+    private void startSchedule() {
         selected.setValue(null);
-        jadwal.setValue(Resource.loading());
-        step.setValue(Step.JADWAL);
-        delivery.loadJadwal(r -> jadwal.setValue(r));
+        schedule.setValue(Resource.loading());
+        step.setValue(Step.SCHEDULE);
+        delivery.loadSchedule(r -> schedule.setValue(r));
     }
 
-    public void selectJadwal(JadwalDelivery j) {
+    public void selectSchedule(DeliverySchedule j) {
         if (j.isSelectable()) {
             selected.setValue(j);
         }
     }
 
     /** "Nanti Saja". */
-    public void jadwalNantiSaja() {
+    public void scheduleLater() {
         save(false);
     }
 
     /** "OK" (only visible once a schedule is selected). */
-    public void jadwalOk() {
+    public void scheduleOk() {
         save(true);
     }
 
     private void save(boolean completed) {
-        JadwalDelivery j = selected.getValue();
-        final boolean ok = completed && j != null && j.kode != null;
+        DeliverySchedule j = selected.getValue();
+        final boolean ok = completed && j != null && j.code != null;
         step.setValue(Step.SAVING);
-        delivery.save(ok, latitude, longitude, j != null ? j.kode : null, alamat, j != null ? j.raw : null, r -> {
+        delivery.save(ok, latitude, longitude, j != null ? j.code : null, address, j != null ? j.raw : null, r -> {
             if (ok) {
                 cart.refreshCartCount();
             }

@@ -32,7 +32,7 @@ public final class MainRouter {
     public static final String EXTRA_NOTIFICATION = "notifikasi";
     public static final String EXTRA_ROUTE_NAME = "routeName";
     public static final String EXTRA_ROUTE_PARAMS = "routeParams";
-    public static final String EXTRA_ID_NOTIFIKASI = "idNotifikasi";
+    public static final String EXTRA_NOTIFICATION_ID = "idNotifikasi";
 
     /** Deep links (VIEW intents) and notification taps that opened MainActivity. Each intent is handled once. */
     public static void handle(MainActivity activity, NavController nav, Intent intent) {
@@ -44,16 +44,16 @@ public final class MainRouter {
             String type = notification.toLowerCase(Locale.ROOT);
             String routeName = intent.getStringExtra(EXTRA_ROUTE_NAME);
             String routeParams = intent.getStringExtra(EXTRA_ROUTE_PARAMS);
-            String idNotifikasi = intent.getStringExtra(EXTRA_ID_NOTIFIKASI);
+            String notificationId = intent.getStringExtra(EXTRA_NOTIFICATION_ID);
             intent.removeExtra(EXTRA_NOTIFICATION);
             if (type.equals("khususuntukkamu")) {
                 leaveSplash(nav);
                 route(nav, routeName, routeParams);
-            } else if (type.equals("update") && idNotifikasi != null) {
+            } else if (type.equals("update") && notificationId != null) {
                 leaveSplash(nav);
                 Bundle args = new Bundle();
-                args.putString("idNotifikasi", idNotifikasi);
-                nav.navigate(R.id.detailNotifikasiGlobalFragment, args);
+                args.putString("idNotifikasi", notificationId);
+                nav.navigate(R.id.globalNotificationDetailFragment, args);
             }
             return;
         }
@@ -90,12 +90,12 @@ public final class MainRouter {
         switch (name) {
             case "/dompet":
                 putIfPresent(b, "jenisDompet", Json.strOrNull(a, "jenisDompet"));
-                nav.navigate(R.id.historiDompetFragment, b);
+                nav.navigate(R.id.walletHistoryFragment, b);
                 break;
 
             case "/orderan":
                 b.putString("idTransaksi", Json.str(a, "idTransaksi"));
-                nav.navigate(R.id.detailTransaksiFragment, b);
+                nav.navigate(R.id.transactionDetailFragment, b);
                 break;
 
             case "/voucher":
@@ -111,19 +111,19 @@ public final class MainRouter {
                 // legacy: no arguments -> an empty page
                 if (hasArguments) {
                     b.putString("idProduk", Json.str(a, "produk"));
-                    nav.navigate(R.id.detailProdukFragment, b);
+                    nav.navigate(R.id.productDetailFragment, b);
                 }
                 break;
 
             case "/paket":
                 if (hasArguments) {
                     b.putString("idPaket", Json.str(a, "paket"));
-                    nav.navigate(R.id.detailPaketFragment, b);
+                    nav.navigate(R.id.packDetailFragment, b);
                 }
                 break;
 
             case "/poin":
-                nav.navigate(R.id.historiPoinFragment);
+                nav.navigate(R.id.pointsHistoryFragment);
                 break;
 
             case "/promo": {
@@ -139,7 +139,7 @@ public final class MainRouter {
 
             case "/resep":
                 b.putString("idResep", Json.str(a, "resep"));
-                nav.navigate(R.id.detailResepFragment, b);
+                nav.navigate(R.id.recipeDetailFragment, b);
                 break;
 
             case "/buatOrderBerhasil": {
@@ -147,7 +147,7 @@ public final class MainRouter {
                 Map<String, Object> dataFromCheckout = Json.of("responseCheckout", responseCheckout);
                 b.putString("returnedDataFromCheckout", Json.toJson(dataFromCheckout));
                 b.putBoolean("removeTransactionSession", true);
-                nav.navigate(R.id.buatOrderanBerhasilFragment, b);
+                nav.navigate(R.id.orderSuccessFragment, b);
                 break;
             }
 

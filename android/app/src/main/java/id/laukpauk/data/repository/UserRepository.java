@@ -8,17 +8,17 @@ import java.util.List;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.account.AccountResponses;
-import id.laukpauk.data.model.account.RiwayatDompet;
-import id.laukpauk.data.model.account.RiwayatPoint;
+import id.laukpauk.data.model.account.WalletRecords;
+import id.laukpauk.data.model.account.PointRecords;
 import id.laukpauk.data.model.account.UserDetail;
 import id.laukpauk.data.remote.UserApi;
 
 /** The signed-in user's profile, wallet, vouchers and points (legacy UserModel / ProfilSayaModel / PointModel). */
 public class UserRepository extends BaseRepository {
 
-    public static final String DOMPET_SEMUA = null;
-    public static final String DOMPET_REFERRAL = "referral";
-    public static final String DOMPET_POTONGAN_TRANSAKSI = "potongantransaksi";
+    public static final String WALLET_ALL = null;
+    public static final String WALLET_REFERRAL = "referral";
+    public static final String WALLET_TRANSACTION_DEDUCTION = "potongantransaksi";
 
     private final UserApi api;
 
@@ -36,12 +36,12 @@ public class UserRepository extends BaseRepository {
         enqueue(api.getDetailUser(null), body -> body == null ? null : body.detailUser, callback);
     }
 
-    public LiveData<Resource<Long>> getTotalDompet() {
-        return load(api.getTotalDompet(), body -> body == null ? 0L : body.totalDompet);
+    public LiveData<Resource<Long>> getWalletTotal() {
+        return load(api.getWalletTotal(), body -> body == null ? 0L : body.walletTotal);
     }
 
-    public LiveData<Resource<Integer>> getJumlahVoucher() {
-        return load(api.getJumlahVoucher(), body -> body == null ? 0 : body.jumlahVoucher);
+    public LiveData<Resource<Integer>> getVoucherCount() {
+        return load(api.getVoucherCount(), body -> body == null ? 0 : body.voucherCount);
     }
 
     public LiveData<Resource<Long>> getPoint() {
@@ -49,39 +49,39 @@ public class UserRepository extends BaseRepository {
                 (AccountResponses.Point body) -> body == null || body.response == null ? 0L : body.response.point);
     }
 
-    /** {@code jenis}: DOMPET_SEMUA (null), DOMPET_REFERRAL or DOMPET_POTONGAN_TRANSAKSI. */
-    public LiveData<Resource<List<RiwayatDompet>>> getRiwayatDompet(@Nullable String jenis) {
-        return load(api.getRiwayatDompet(jenis),
-                (AccountResponses.RiwayatDompetList body) ->
-                        body == null || body.riwayatDompet == null ? new ArrayList<RiwayatDompet>() : body.riwayatDompet);
+    /** {@code jenis}: WALLET_ALL (null), WALLET_REFERRAL or WALLET_TRANSACTION_DEDUCTION. */
+    public LiveData<Resource<List<WalletRecords>>> getWalletRecords(@Nullable String type) {
+        return load(api.getWalletRecords(type),
+                (AccountResponses.WalletRecordList body) ->
+                        body == null || body.walletRecords == null ? new ArrayList<WalletRecords>() : body.walletRecords);
     }
 
-    public LiveData<Resource<List<RiwayatPoint>>> getRiwayatPoint() {
-        return load(api.getRiwayatPoint(),
-                (AccountResponses.RiwayatPointList body) ->
-                        body == null || body.riwayatPoint == null ? new ArrayList<RiwayatPoint>() : body.riwayatPoint);
+    public LiveData<Resource<List<PointRecords>>> getPointRecords() {
+        return load(api.getPointRecords(),
+                (AccountResponses.PointRecordList body) ->
+                        body == null || body.pointRecords == null ? new ArrayList<PointRecords>() : body.pointRecords);
     }
 
     /** POST User/updateProfil; true when the server saved the changes. */
-    public void updateProfil(String namaLengkap, String alamat, String username, ResultCallback<Boolean> callback) {
-        enqueue(api.updateProfil(body("namaLengkap", namaLengkap, "alamat", alamat, "username", username)),
-                (AccountResponses.UpdateProfil body) -> body != null && body.statusUpdateProfil, callback);
+    public void updateProfile(String fullName, String address, String username, ResultCallback<Boolean> callback) {
+        enqueue(api.updateProfile(body("namaLengkap", fullName, "alamat", address, "username", username)),
+                (AccountResponses.UpdateProfile body) -> body != null && body.updateProfileStatus, callback);
     }
 
     /** POST User/updateFotoProfil with the image as base64 (encoded on the disk thread). */
-    public void updateFotoProfil(java.io.File image, ResultCallback<Boolean> callback) {
+    public void updateProfilePhoto(java.io.File image, ResultCallback<Boolean> callback) {
         executors.diskIO().execute(() -> {
             String base64 = encode(image);
-            executors.mainThread().execute(() -> enqueue(api.updateFotoProfil(body("fotoProfil", base64)),
-                    (AccountResponses.UpdateFoto body) -> body != null && body.saveFotoProfil, callback));
+            executors.mainThread().execute(() -> enqueue(api.updateProfilePhoto(body("fotoProfil", base64)),
+                    (AccountResponses.UpdatePhoto body) -> body != null && body.saveProfilePhoto, callback));
         });
     }
 
     /** POST User/gantiPassword; true when changed. */
-    public void gantiPassword(String lama, String baru, String konfirmasi, ResultCallback<Boolean> callback) {
-        enqueue(api.gantiPassword(body("passwordLama", lama, "passwordBaru", baru, "konfirmasiPasswordBaru",
-                konfirmasi)),
-                (AccountResponses.GantiPassword body) -> body != null && body.statusGantiPassword, callback);
+    public void changePassword(String oldPassword, String newPassword, String confirm, ResultCallback<Boolean> callback) {
+        enqueue(api.changePassword(body("passwordLama", oldPassword, "passwordBaru", newPassword, "konfirmasiPasswordBaru",
+                confirm)),
+                (AccountResponses.ChangePassword body) -> body != null && body.changePasswordStatus, callback);
     }
 
     private static String encode(java.io.File file) {
