@@ -21,8 +21,7 @@
     <string name="home_lihat_semua_kecil">Lihat semua</string>
     <string name="home_lihat_semua">Lihat Semua</string>
     <string name="home_produk_mencari">Sedang Mencari Produk ..</string>
-    <string name="home_produk_kosong">Yahh! Belum ada produk untuk lokasimu mak. Maaf ya mak...</string>
-    <string name="home_pilih_lokasi_lain">Pilih Lokasi Lain</string>
+    <string name="home_produk_kosong">Yahh! Belum ada produk untuk mu mak. Maaf ya mak...</string>
     <string name="home_konten_kosong">Tidak Ada Item Konten !</string>
     <string name="home_artikel_title">Artikel</string>
     <string name="home_artikel_kosong">Tidak ada artikel yang bisa dibaca</string>

@@ -24,9 +24,9 @@ import id.laukpauk.ui.startup.MainRouter;
 public final class HomeNav {
     private HomeNav() {}
 
-    /** The "Produk" block without the "pilih lokasi lain" button (search screen). */
+    /** The "Produk" block (search screen). */
     public static void bindProdukSection(Fragment f, ViewHomeProdukBinding b, ProdukSectionViewModel vm) {
-        new ProdukSection(f, b, vm, false);
+        new ProdukSection(f, b, vm);
     }
 
     /** The page with every product. */
