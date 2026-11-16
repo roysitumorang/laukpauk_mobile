@@ -16,12 +16,10 @@ public final class AccountResponses {
 
     public static class WalletTotal {
         @Json(name = "totalDompet")
-        @Json(name = "totalDompet")
         public long walletTotal;
     }
 
     public static class VoucherCount {
-        @Json(name = "jumlahVoucher")
         @Json(name = "jumlahVoucher")
         public int voucherCount;
     }
@@ -39,51 +37,42 @@ public final class AccountResponses {
 
     public static class WalletRecordList {
         @Json(name = "riwayatDompet")
-        @Json(name = "riwayatDompet")
         public List<WalletRecords> walletRecords;
     }
 
     public static class PointRecordList {
-        @Json(name = "riwayatPoint")
         @Json(name = "riwayatPoint")
         public List<PointRecords> pointRecords;
     }
 
     public static class UpdateProfile {
         @Json(name = "statusUpdateProfil")
-        @Json(name = "statusUpdateProfil")
         public boolean updateProfileStatus;
     }
 
     public static class UpdatePhoto {
-        @Json(name = "saveFotoProfil")
         @Json(name = "saveFotoProfil")
         public boolean saveProfilePhoto;
     }
 
     public static class ChangeNumber {
         @Json(name = "statusSimpanNomorBaru")
-        @Json(name = "statusSimpanNomorBaru")
         public boolean saveNewNumberStatus;
-        @Json(name = "idPenggantianNomor")
         @Json(name = "idPenggantianNomor")
         public long numberChangeId;
     }
 
     public static class NumberVerification {
         @Json(name = "statusVerifikasiNomor")
-        @Json(name = "statusVerifikasiNomor")
         public boolean numberVerificationStatus;
     }
 
     public static class NumberChangeCount {
         @Json(name = "jumlahGantiNomorHPForToday")
-        @Json(name = "jumlahGantiNomorHPForToday")
         public int phoneNumberChangeCountForToday;
     }
 
     public static class ChangePassword {
-        @Json(name = "statusGantiPassword")
         @Json(name = "statusGantiPassword")
         public boolean changePasswordStatus;
     }

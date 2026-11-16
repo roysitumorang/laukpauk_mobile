@@ -7,9 +7,7 @@ public class SpecialNotification {
     @Json(name = "id")
     public String id;
     @Json(name = "judul")
-    @Json(name = "judul")
     public String heading;
-    @Json(name = "isi")
     @Json(name = "isi")
     public String body;
     /** Route opened when tapped (see ui/startup/MainRouter), e.g. "/orderan". */
@@ -22,9 +20,7 @@ public class SpecialNotification {
     public boolean isRead;
     /** Icon name in assets/img/notifikasi/ (orderan, dompet). */
     @Json(name = "jenisNotifikasi")
-    @Json(name = "jenisNotifikasi")
     public String notificationType;
-    @Json(name = "waktu")
     @Json(name = "waktu")
     public String time;
 }

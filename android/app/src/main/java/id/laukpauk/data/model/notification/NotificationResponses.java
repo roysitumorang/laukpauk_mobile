@@ -10,12 +10,10 @@ public final class NotificationResponses {
 
     public static class InfoList {
         @Json(name = "notifikasi")
-        @Json(name = "notifikasi")
         public List<Notification> notification;
     }
 
     public static class SpecialList {
-        @Json(name = "notifikasi")
         @Json(name = "notifikasi")
         public List<SpecialNotification> notification;
     }
@@ -23,12 +21,10 @@ public final class NotificationResponses {
     public static class Detail {
         /** null when the server answers false ("not registered"). */
         @Json(name = "notifikasi")
-        @Json(name = "notifikasi")
         public Notification notification;
     }
 
     public static class Count {
-        @Json(name = "jumlahNotifikasi")
         @Json(name = "jumlahNotifikasi")
         public int notificationCount;
     }

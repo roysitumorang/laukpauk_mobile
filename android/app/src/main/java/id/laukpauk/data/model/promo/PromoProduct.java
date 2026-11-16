@@ -1,31 +1,29 @@
 package id.laukpauk.data.model.promo;
 
-import com.squareup.moshi.Json;
-
 import id.laukpauk.util.Json;
 
 /** One promo product of {@code Promo/getPromoAroundOfThisLatLong} (a card of the Promo grid). */
 public class PromoProduct {
     public String idPromo;
     public String idPromoItem;
-    @Json(name = "idProduk")
+    @com.squareup.moshi.Json(name = "idProduk")
     public String productId;
     /** The price (unit) id, sent as unitId when adding to the cart. */
-    @Json(name = "idHargaProduk")
+    @com.squareup.moshi.Json(name = "idHargaProduk")
     public String productPriceId;
-    @Json(name = "namaProduk")
+    @com.squareup.moshi.Json(name = "namaProduk")
     public String productName;
-    @Json(name = "keteranganSingkat")
+    @com.squareup.moshi.Json(name = "keteranganSingkat")
     public String shortDescription;
-    @Json(name = "fotoProduk")
+    @com.squareup.moshi.Json(name = "fotoProduk")
     public String productPhoto;
     public String maxOrder;
     /** Numeric strings from the server; use the int accessors. */
-    @Json(name = "hargaProduk")
+    @com.squareup.moshi.Json(name = "hargaProduk")
     public String productPrice;
-    @Json(name = "diskonProduk")
+    @com.squareup.moshi.Json(name = "diskonProduk")
     public String productDiscount;
-    @Json(name = "diskonPromo")
+    @com.squareup.moshi.Json(name = "diskonPromo")
     public String promoDiscount;
 
     public int grossPrice() {

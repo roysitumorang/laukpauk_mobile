@@ -1,20 +1,18 @@
 package id.laukpauk.data.model.recipe;
 
-import com.squareup.moshi.Json;
-
 import id.laukpauk.util.Json;
 
 /** A unit/price of a product ({@code Produk/getHargaProduk}). */
 public class ProductUnit {
     public String id;
-    @Json(name = "nama")
+    @com.squareup.moshi.Json(name = "nama")
     public String name;
-    @Json(name = "harga")
+    @com.squareup.moshi.Json(name = "harga")
     public String price;
-    @Json(name = "diskon")
+    @com.squareup.moshi.Json(name = "diskon")
     public String discount;
     /** "pas" or "tidak pas". */
-    @Json(name = "jenisHarga")
+    @com.squareup.moshi.Json(name = "jenisHarga")
     public String priceType;
 
     public int netPrice() {

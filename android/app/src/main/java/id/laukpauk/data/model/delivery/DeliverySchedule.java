@@ -1,7 +1,5 @@
 package id.laukpauk.data.model.delivery;
 
-import com.squareup.moshi.Json;
-
 import java.util.Map;
 
 import androidx.annotation.Nullable;
@@ -16,12 +14,12 @@ import id.laukpauk.util.Json;
  */
 public final class DeliverySchedule {
     public final Map<String, Object> raw;
-    @Json(name = "kode")
+    @com.squareup.moshi.Json(name = "kode")
     @Nullable public final String code;
     public final String day;
-    @Json(name = "sessi")
+    @com.squareup.moshi.Json(name = "sessi")
     public final String session;
-    @Json(name = "rentangWaktu")
+    @com.squareup.moshi.Json(name = "rentangWaktu")
     public final String timeRange;
     public final boolean isFull;
     public final boolean isOpened;
