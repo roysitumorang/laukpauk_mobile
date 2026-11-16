@@ -53,8 +53,8 @@ public class UserAndDashboardFragment extends Fragment {
         bindStaticViews();
         binding.refresh.setOnRefreshListener(viewModel::load);
         NavController nav = NavHostFragment.findNavController(this);
-        binding.masuk.setOnClickListener(v -> nav.navigate(R.id.loginFragment));
-        binding.daftar.setOnClickListener(v -> nav.navigate(R.id.registerFragment));
+        binding.login.setOnClickListener(v -> nav.navigate(R.id.loginFragment));
+        binding.register.setOnClickListener(v -> nav.navigate(R.id.registerFragment));
         NavResults.<Boolean>observe(this, AuthGate.LOGIN_RESULT, success -> {
             if (Boolean.TRUE.equals(success)) {
                 enter();
@@ -73,12 +73,12 @@ public class UserAndDashboardFragment extends Fragment {
             binding.progress.setVisibility(View.GONE);
             binding.refresh.setVisibility(View.GONE);
             binding.notFound.setVisibility(View.VISIBLE);
-            binding.notFoundText.setText(R.string.account_belum_masuk);
+            binding.notFoundText.setText(R.string.account_not_logged_in);
             binding.signedOutButtons.setVisibility(View.VISIBLE);
             return;
         }
         binding.signedOutButtons.setVisibility(View.GONE);
-        binding.notFoundText.setText(R.string.account_data_tidak_ditemukan);
+        binding.notFoundText.setText(R.string.account_data_not_found);
         if (!observing) {
             observing = true;
             observe();
@@ -88,31 +88,31 @@ public class UserAndDashboardFragment extends Fragment {
 
     private void bindStaticViews() {
         Images.asset(binding.notFoundImage, "empty.png");
-        Images.asset(binding.walletDompetIcon, "icons/pembeli/dompet.png");
+        Images.asset(binding.walletBalanceIcon, "icons/pembeli/dompet.png");
         Images.asset(binding.walletVoucherIcon, "icons/pembeli/voucher.png");
-        Images.asset(binding.walletPoinIcon, "poin.png");
-        Images.asset(binding.walletReferalIcon, "referal.png");
-        Images.asset(binding.trxHariIniIcon, "icons/pembeli/belanjaan-hari-ini.png");
-        Images.asset(binding.trxHistoriIcon, "icons/pembeli/histori-belanja.png");
-        Images.asset(binding.trxAkunIcon, "user-icon.png");
+        Images.asset(binding.walletPointsIcon, "poin.png");
+        Images.asset(binding.walletReferralIcon, "referal.png");
+        Images.asset(binding.todayTrxIcon, "icons/pembeli/belanjaan-hari-ini.png");
+        Images.asset(binding.trxHistoryIcon, "icons/pembeli/histori-belanja.png");
+        Images.asset(binding.trxAccountIcon, "user-icon.png");
 
         NavController nav = NavHostFragment.findNavController(this);
-        binding.walletDompet.setOnClickListener(v -> nav.navigate(R.id.historiDompetFragment));
+        binding.walletBalance.setOnClickListener(v -> nav.navigate(R.id.walletHistoryFragment));
         binding.walletVoucher.setOnClickListener(v -> nav.navigate(R.id.voucherFragment));
-        binding.walletPoin.setOnClickListener(v -> nav.navigate(R.id.historiPoinFragment));
-        binding.walletReferal.setOnClickListener(v -> nav.navigate(R.id.kodeReferalFragment));
+        binding.walletPoints.setOnClickListener(v -> nav.navigate(R.id.pointsHistoryFragment));
+        binding.walletReferral.setOnClickListener(v -> nav.navigate(R.id.referralCodeFragment));
 
-        binding.trxHariIni.setOnClickListener(v -> nav.navigate(R.id.pesananSayaFragment));
-        binding.trxHistori.setOnClickListener(v -> {
+        binding.todayTrx.setOnClickListener(v -> nav.navigate(R.id.myOrdersFragment));
+        binding.trxHistory.setOnClickListener(v -> {
             Bundle args = new Bundle();
             args.putInt("statusTransaksi", 2);
-            nav.navigate(R.id.pesananSayaFragment, args);
+            nav.navigate(R.id.myOrdersFragment, args);
         });
-        binding.trxAkun.setOnClickListener(v -> nav.navigate(R.id.profilSayaFragment));
+        binding.trxAccount.setOnClickListener(v -> nav.navigate(R.id.myProfileFragment));
 
-        binding.menuReferal.setOnClickListener(v -> nav.navigate(R.id.kodeReferalFragment));
-        binding.menuHubungi.setOnClickListener(v -> nav.navigate(R.id.hubungiKamiFragment));
-        binding.menuPrivasi.setOnClickListener(v -> viewModel.kebijakanPrivasiUrl(result -> {
+        binding.menuReferral.setOnClickListener(v -> nav.navigate(R.id.referralCodeFragment));
+        binding.menuContact.setOnClickListener(v -> nav.navigate(R.id.contactUsFragment));
+        binding.menuPrivacy.setOnClickListener(v -> viewModel.privacyPolicyUrl(result -> {
             if (!isAdded()) {
                 return;
             }
@@ -120,8 +120,8 @@ public class UserAndDashboardFragment extends Fragment {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
             } catch (RuntimeException e) {
-                Messages.info(this, getString(R.string.account_url_gagal_title),
-                        getString(R.string.account_url_gagal_message, url), null);
+                Messages.info(this, getString(R.string.account_url_failed_title),
+                        getString(R.string.account_url_failed_message, url), null);
             }
         }));
     }
@@ -147,40 +147,40 @@ public class UserAndDashboardFragment extends Fragment {
                 showUser(user);
             }
         });
-        viewModel.getDompet().observe(getViewLifecycleOwner(), res -> {
+        viewModel.getWallet().observe(getViewLifecycleOwner(), res -> {
             if (res != null) {
-                binding.dompetValue.setText(res.isLoading() ? getString(R.string.account_mengambil_data)
+                binding.walletValue.setText(res.isLoading() ? getString(R.string.account_fetching_data)
                         : Currency.formatRupiah(res.data == null ? 0 : res.data, 0));
             }
         });
         viewModel.getVoucher().observe(getViewLifecycleOwner(), res -> {
             if (res != null) {
                 int n = res.data == null ? 0 : res.data;
-                binding.voucherValue.setText(res.isLoading() ? getString(R.string.account_mengambil_data)
-                        : n >= 1 ? Currency.formatSatuan(n, "Voucher") : getString(R.string.account_belum_ada_voucher));
+                binding.voucherValue.setText(res.isLoading() ? getString(R.string.account_fetching_data)
+                        : n >= 1 ? Currency.formatUnit(n, "Voucher") : getString(R.string.account_no_voucher_yet));
             }
         });
-        viewModel.getPoin().observe(getViewLifecycleOwner(), res -> {
+        viewModel.getPoints().observe(getViewLifecycleOwner(), res -> {
             if (res != null) {
-                binding.poinValue.setText(res.isLoading() ? getString(R.string.account_mengambil_data)
+                binding.pointsValue.setText(res.isLoading() ? getString(R.string.account_fetching_data)
                         : Currency.formatRupiah(res.data == null ? 0 : res.data, 0));
             }
         });
         viewModel.getReferralWallet().observe(getViewLifecycleOwner(), value -> {
             if (value != null) {
-                binding.kodeReferalSub.setText(getString(R.string.account_menu_referal_sub,
+                binding.referralCodeSub.setText(getString(R.string.account_menu_referral_sub,
                         Currency.formatRupiah(value, 0)));
             }
         });
     }
 
     private void showUser(UserDetail user) {
-        Images.circle(binding.foto, ServerPath.baseURL + "/" + ServerPath.uploadGambarUser + "/" + user.foto);
-        binding.nama.setText(user.nama);
-        binding.kodeReferal.setText(user.kodeReferal);
-        boolean hasAlamat = user.alamat != null && user.alamat.length() >= 1;
-        binding.alamat.setText(hasAlamat ? user.alamat : getString(R.string.account_alamat_belum));
-        binding.alamat.setTypeface(null, hasAlamat ? android.graphics.Typeface.NORMAL : android.graphics.Typeface.ITALIC);
+        Images.circle(binding.photo, ServerPath.baseURL + "/" + ServerPath.uploadImageUser + "/" + user.photo);
+        binding.name.setText(user.name);
+        binding.referralCode.setText(user.referralCode);
+        boolean hasAddress = user.address != null && user.address.length() >= 1;
+        binding.address.setText(hasAddress ? user.address : getString(R.string.account_address_unset));
+        binding.address.setTypeface(null, hasAddress ? android.graphics.Typeface.NORMAL : android.graphics.Typeface.ITALIC);
     }
 
     @Override

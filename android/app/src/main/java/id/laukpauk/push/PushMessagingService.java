@@ -48,7 +48,7 @@ public class PushMessagingService extends FirebaseMessagingService {
         PushNotifications.show(this, notificationId(message), title, body, loadImage(imageUrl), data);
 
         final AppContainer c = AppContainer.from(this);
-        new Handler(Looper.getMainLooper()).post(c.notifikasiRepository::refreshUnreadCount);
+        new Handler(Looper.getMainLooper()).post(c.notificationRepository::refreshUnreadCount);
     }
 
     private static int notificationId(RemoteMessage message) {

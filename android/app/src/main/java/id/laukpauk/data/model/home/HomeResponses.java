@@ -1,5 +1,7 @@
 package id.laukpauk.data.model.home;
 
+import com.squareup.moshi.Json;
+
 import java.util.List;
 
 /** Response envelopes of the home endpoints. */
@@ -10,28 +12,34 @@ public final class HomeResponses {
         public List<Banner> listBanner;
     }
 
-    public static class Artikels {
-        public List<Artikel> listArtikel;
+    public static class Articles {
+        @Json(name = "listArtikel")
+        public List<Article> articleList;
     }
 
-    public static class KontenList {
-        public List<Konten> dataKonten;
+    public static class ContentList {
+        @Json(name = "dataKonten")
+        public List<Content> contentData;
     }
 
-    public static class KontenItems {
-        public List<KontenItem> kontenItem;
+    public static class ContentItems {
+        @Json(name = "kontenItem")
+        public List<ContentItem> contentItem;
     }
 
-    public static class ProdukList {
-        public List<HomeProduk> listProduk;
+    public static class ProductList {
+        @Json(name = "listProduk")
+        public List<HomeProduct> productList;
     }
 
-    public static class JumlahVoucher {
-        public int jumlahVoucher;
+    public static class VoucherCount {
+        @Json(name = "jumlahVoucher")
+        public int voucherCount;
     }
 
-    public static class TotalDompet {
-        public long totalDompet;
+    public static class WalletTotal {
+        @Json(name = "totalDompet")
+        public long walletTotal;
     }
 
     public static class PointData {
@@ -48,11 +56,12 @@ public final class HomeResponses {
         public LowestPrice lowestPrice;
     }
 
-    public static class KategoriList {
-        public List<KategoriProduk> kategoriProduk;
+    public static class CategoryList {
+        @Json(name = "kategoriProduk")
+        public List<ProductCategory> productCategory;
     }
 
-    public static class ProdukInKategori {
-        public List<HomeProduk> productInThisCategory;
+    public static class ProductInCategory {
+        public List<HomeProduct> productInThisCategory;
     }
 }

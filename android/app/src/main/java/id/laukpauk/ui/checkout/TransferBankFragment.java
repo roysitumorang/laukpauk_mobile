@@ -44,29 +44,29 @@ public class TransferBankFragment extends Fragment {
         }
         ReturnedDataFromCheckout data = c.apiClient.fromJson(
                 requireArguments().getString("returnedDataFromCheckout"), ReturnedDataFromCheckout.class);
-        final String idTransaksi = data != null && data.responseCheckout != null
-                && data.responseCheckout.idTransaksi != null ? data.responseCheckout.idTransaksi : "";
+        final String transactionId = data != null && data.responseCheckout != null
+                && data.responseCheckout.transactionId != null ? data.responseCheckout.transactionId : "";
         Object pr = data != null && data.responseCheckout != null ? data.responseCheckout.paymentResponse : null;
         TransferBankPayment parsed = pr instanceof java.util.Map ? c.apiClient.fromTree(pr, TransferBankPayment.class) : null;
         TransferBankPayment p = parsed != null ? parsed : new TransferBankPayment();
-        final String nomorRekening = p.nomorRekening == null ? "" : p.nomorRekening;
+        final String bankAccountNumber = p.bankAccountNumber == null ? "" : p.bankAccountNumber;
 
         Images.asset(binding.image, "bca.png");
-        binding.tvRekening.setText(nomorRekening);
-        binding.tvPemilik.setText(getString(R.string.checkout_an, p.pemilikNomorRekening == null ? "" : p.pemilikNomorRekening));
-        binding.tvBesarDana.setText(Currency.formatRupiah(p.totalBayar + p.kodeUnik, 0));
-        binding.tvRekening.setOnClickListener(v -> {
+        binding.tvBankAccount.setText(bankAccountNumber);
+        binding.tvOwner.setText(getString(R.string.checkout_an, p.bankAccountOwner == null ? "" : p.bankAccountOwner));
+        binding.tvFundAmount.setText(Currency.formatRupiah(p.totalPayment + p.uniqueCode, 0));
+        binding.tvBankAccount.setOnClickListener(v -> {
             ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
             if (clipboard != null) {
-                clipboard.setPrimaryClip(ClipData.newPlainText("nomorRekening", nomorRekening));
+                clipboard.setPrimaryClip(ClipData.newPlainText("nomorRekening", bankAccountNumber));
             }
-            Messages.snack(this, getString(R.string.checkout_tersalin));
+            Messages.snack(this, getString(R.string.checkout_copied));
         });
-        binding.btnBelanjaLagi.setOnClickListener(v -> CheckoutNav.goHome(this, false));
+        binding.btnShopAgain.setOnClickListener(v -> CheckoutNav.goHome(this, false));
         binding.btnDetail.setOnClickListener(v -> {
             Bundle args = new Bundle();
-            args.putString("idTransaksi", idTransaksi);
-            NavHostFragment.findNavController(this).navigate(R.id.detailTransaksiFragment, args);
+            args.putString("idTransaksi", transactionId);
+            NavHostFragment.findNavController(this).navigate(R.id.transactionDetailFragment, args);
         });
     }
 

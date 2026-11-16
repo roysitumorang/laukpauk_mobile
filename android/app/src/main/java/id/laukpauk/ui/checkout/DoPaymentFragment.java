@@ -32,7 +32,7 @@ public class DoPaymentFragment extends Fragment {
             AppContainer.from(requireContext()).cartRepository.clearTransactionSession(res -> { });
         }
         Images.asset(binding.image, "ovo.png");
-        binding.btnBelanjaLagi.setOnClickListener(v -> CheckoutNav.goHome(this, false));
+        binding.btnShopAgain.setOnClickListener(v -> CheckoutNav.goHome(this, false));
     }
 
     @Override

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.orders.ItemTransaksi;
+import id.laukpauk.data.model.orders.TransactionItem;
 import id.laukpauk.data.model.orders.RepeatOrderResponses;
 import id.laukpauk.databinding.ItemOrdersRoItemBinding;
 import id.laukpauk.databinding.ItemOrdersRoBinding;
@@ -66,17 +66,17 @@ public class RepeatOrderAdapter extends ListAdapter<RepeatOrderResponses.Items, 
             b.availableGroup.setVisibility(p.isAvailable ? View.VISIBLE : View.GONE);
             b.unavailableGroup.setVisibility(p.isAvailable ? View.GONE : View.VISIBLE);
             b.itemsContainer.removeAllViews();
-            if (p.isAvailable && p.itemTransaksi != null) {
+            if (p.isAvailable && p.transactionItem != null) {
                 LayoutInflater inflater = LayoutInflater.from(ctx);
-                for (ItemTransaksi item : p.itemTransaksi) {
+                for (TransactionItem item : p.transactionItem) {
                     ItemOrdersRoItemBinding row = ItemOrdersRoItemBinding.inflate(inflater, b.itemsContainer,
                             false);
-                    row.nama.setText(ctx.getString(R.string.orders_ro_item_format, OrderUi.nz(item.namaProduk),
-                            item.quantity, item.satuan()));
-                    row.total.setText(Currency.formatRupiah(item.quantity * (item.harga - item.diskon), 0));
-                    String catatan = OrderUi.nz(item.catatan);
-                    row.catatan.setVisibility(catatan.isEmpty() ? View.GONE : View.VISIBLE);
-                    row.catatan.setText(ctx.getString(R.string.orders_catatan_format, catatan));
+                    row.name.setText(ctx.getString(R.string.orders_ro_item_format, OrderUi.nz(item.productName),
+                            item.quantity, item.unit()));
+                    row.total.setText(Currency.formatRupiah(item.quantity * (item.price - item.discount), 0));
+                    String note = OrderUi.nz(item.note);
+                    row.note.setVisibility(note.isEmpty() ? View.GONE : View.VISIBLE);
+                    row.note.setText(ctx.getString(R.string.orders_note_format, note));
                     b.itemsContainer.addView(row.getRoot());
                 }
             }

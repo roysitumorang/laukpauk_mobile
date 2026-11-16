@@ -1,22 +1,33 @@
 package id.laukpauk.data.model.voucher;
 
+import com.squareup.moshi.Json;
+
 import androidx.annotation.Nullable;
 
 /** A voucher (list rows carry only some fields; the detail has them all). */
 public final class Voucher {
     public String id;
-    public String foto;
-    public String nama;
+    @Json(name = "foto")
+    public String photo;
+    @Json(name = "nama")
+    public String name;
     /** "ongkir" or "belanja". */
-    public String jenis;
-    public String nilai;
-    public String kode;
-    public String minimumBelanja;
+    @Json(name = "jenis")
+    public String type;
+    @Json(name = "nilai")
+    public String value;
+    @Json(name = "kode")
+    public String code;
+    @Json(name = "minimumBelanja")
+    public String minimumShopping;
     public String maximumUsage;
     public String usageCount;
-    public String berlakuMulai;
-    public String berlakuSampai;
-    public String deskripsi;
+    @Json(name = "berlakuMulai")
+    public String validFrom;
+    @Json(name = "berlakuSampai")
+    public String validUntil;
+    @Json(name = "deskripsi")
+    public String description;
 
     public static int toInt(@Nullable String value) {
         if (value == null) {

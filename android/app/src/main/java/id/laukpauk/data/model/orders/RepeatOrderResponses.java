@@ -1,5 +1,7 @@
 package id.laukpauk.data.model.orders;
 
+import com.squareup.moshi.Json;
+
 import java.util.List;
 
 /** Response envelopes of the repeat-order endpoints. */
@@ -10,7 +12,8 @@ public final class RepeatOrderResponses {
     public static class Items {
         /** false when the lines can't be delivered to the chosen address / schedule. */
         public boolean isAvailable;
-        public List<ItemTransaksi> itemTransaksi;
+        @Json(name = "itemTransaksi")
+        public List<TransactionItem> transactionItem;
     }
 
     public static class AddToCart {

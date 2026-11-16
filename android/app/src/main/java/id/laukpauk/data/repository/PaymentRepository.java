@@ -13,7 +13,7 @@ import id.laukpauk.data.model.payment.PaymentChannel;
 import id.laukpauk.data.remote.PaymentApi;
 import id.laukpauk.util.Json;
 
-/** Payment methods and placing the order (legacy PaymentChannelModel, PembayaranModel.buatOrder). */
+/** Payment methods and placing the order (legacy PaymentChannelModel, PembayaranModel.placeOrder). */
 public class PaymentRepository extends BaseRepository {
 
     private final PaymentApi api;
@@ -32,16 +32,16 @@ public class PaymentRepository extends BaseRepository {
 
     /**
      * POST Transaksi/checkout. The callback always gets SUCCESS: on any failure its data is
-     * {statusCheckout: false, message: "Nande"} like the legacy buatOrder.
+     * {statusCheckout: false, message: "Nande"} like the legacy placeOrder.
      */
-    public void buatOrder(PaymentChannel channel, Map<String, String> checkoutData, String moreData,
+    public void placeOrder(PaymentChannel channel, Map<String, String> checkoutData, String moreData,
                           ResultCallback<CheckoutResponse> callback) {
         Map<String, String> body = new LinkedHashMap<>(checkoutData);
         body.put("metodePembayaran", channel.channel_code == null ? "" : channel.channel_code);
         body.put("namaMetodePembayaran", channel.name == null ? "" : channel.name);
         body.put("moreDataMetodePembayaran", moreData == null ? "" : moreData);
-        String alamat = Json.strOrNull(session.getSavedLatitudeAndLongitude(), "alamat");
-        body.put("alamatDelivery", alamat == null ? "" : alamat);
+        String address = Json.strOrNull(session.getSavedLatitudeAndLongitude(), "alamat");
+        body.put("alamatDelivery", address == null ? "" : address);
         enqueue(api.checkout(body), response -> response, (Resource<CheckoutResponse> res) ->
                 callback.onResult(Resource.success(res.isSuccess() && res.data != null
                         ? res.data : CheckoutResponse.failed())));

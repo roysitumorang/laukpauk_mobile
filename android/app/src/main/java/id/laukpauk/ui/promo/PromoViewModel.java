@@ -12,7 +12,7 @@ import java.util.Locale;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
-import id.laukpauk.data.model.promo.ProdukPromo;
+import id.laukpauk.data.model.promo.PromoProduct;
 import id.laukpauk.data.repository.PromoRepository;
 
 /** State of the Promo screen: the promo products around the chosen address and the search filter. */
@@ -20,10 +20,10 @@ public class PromoViewModel extends ViewModel {
 
     private final PromoRepository repository;
 
-    private final MediatorLiveData<Resource<List<ProdukPromo>>> state = new MediatorLiveData<>();
+    private final MediatorLiveData<Resource<List<PromoProduct>>> state = new MediatorLiveData<>();
     private final MutableLiveData<String> query = new MutableLiveData<>("");
-    private final MediatorLiveData<List<ProdukPromo>> visible = new MediatorLiveData<>();
-    private LiveData<Resource<List<ProdukPromo>>> source;
+    private final MediatorLiveData<List<PromoProduct>> visible = new MediatorLiveData<>();
+    private LiveData<Resource<List<PromoProduct>>> source;
     private String loadedKey;
 
     public PromoViewModel(PromoRepository repository) {
@@ -36,12 +36,12 @@ public class PromoViewModel extends ViewModel {
         return repository.selection();
     }
 
-    public LiveData<Resource<List<ProdukPromo>>> getState() {
+    public LiveData<Resource<List<PromoProduct>>> getState() {
         return state;
     }
 
     /** The loaded promo products filtered by the search text (product name contains it). */
-    public LiveData<List<ProdukPromo>> getVisible() {
+    public LiveData<List<PromoProduct>> getVisible() {
         return visible;
     }
 
@@ -57,7 +57,7 @@ public class PromoViewModel extends ViewModel {
     /** Loads when the delivery selection changed since the last load (or nothing was loaded yet); none is needed. */
     public void onSelection(@Nullable DeliverySelection selection) {
         String key = selection == null || !selection.isSet ? "unset"
-                : selection.latitude + "|" + selection.longitude + "|" + selection.jadwalDeliveryCode;
+                : selection.latitude + "|" + selection.longitude + "|" + selection.deliveryScheduleCode;
         if (source == null || !key.equals(loadedKey)) {
             loadedKey = key;
             refresh();
@@ -68,22 +68,22 @@ public class PromoViewModel extends ViewModel {
         if (source != null) {
             state.removeSource(source);
         }
-        source = repository.getProdukPromo();
+        source = repository.getPromoProduct();
         state.addSource(source, state::setValue);
     }
 
     private void filter() {
-        Resource<List<ProdukPromo>> res = state.getValue();
-        List<ProdukPromo> all = res == null || res.data == null ? new ArrayList<ProdukPromo>() : res.data;
+        Resource<List<PromoProduct>> res = state.getValue();
+        List<PromoProduct> all = res == null || res.data == null ? new ArrayList<PromoProduct>() : res.data;
         String q = getQuery().toLowerCase(Locale.ROOT);
         if (q.isEmpty()) {
             visible.setValue(all);
             return;
         }
-        List<ProdukPromo> out = new ArrayList<>();
-        for (ProdukPromo p : all) {
-            String nama = p.namaProduk == null ? "" : p.namaProduk;
-            if (nama.toLowerCase(Locale.ROOT).contains(q)) {
+        List<PromoProduct> out = new ArrayList<>();
+        for (PromoProduct p : all) {
+            String name = p.productName == null ? "" : p.productName;
+            if (name.toLowerCase(Locale.ROOT).contains(q)) {
                 out.add(p);
             }
         }

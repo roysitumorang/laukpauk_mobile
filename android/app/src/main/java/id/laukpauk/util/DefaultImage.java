@@ -4,7 +4,7 @@ package id.laukpauk.util;
 public final class DefaultImage {
     private DefaultImage() {}
 
-    public static final String defaultKategoriProduk = "kategori-produk-default.png";
-    public static final String defaultProduk = "produk-default.png";
-    public static final String defaultPaket = "paket-default.png";
+    public static final String defaultProductCategory = "kategori-produk-default.png";
+    public static final String defaultProduct = "produk-default.png";
+    public static final String defaultPack = "paket-default.png";
 }

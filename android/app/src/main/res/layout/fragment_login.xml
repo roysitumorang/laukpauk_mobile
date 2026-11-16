@@ -14,8 +14,8 @@
     android:importantForAccessibility="no" />
 <Space android:layout_width="match_parent" android:layout_height="50dp" />
 <LinearLayout style="@style/Widget.Auth.Pill" android:layout_width="match_parent" android:layout_height="wrap_content">
-    <EditText android:id="@+id/nomorHP" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-        android:hint="@string/auth_hint_nomor_hp" android:inputType="number"
+    <EditText android:id="@+id/phoneNumber" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        android:hint="@string/auth_hint_phone_number" android:inputType="number"
         android:autofillHints="phoneNumber" android:importantForAutofill="yes" />
 </LinearLayout>
 <Space android:layout_width="match_parent" android:layout_height="10dp" />
@@ -23,7 +23,7 @@
     <EditText android:id="@+id/password" style="@style/Widget.Auth.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
         android:hint="@string/auth_hint_password" android:inputType="textPassword" />
     <ImageView android:id="@+id/togglePassword" android:layout_width="24dp" android:layout_height="24dp"
-        android:contentDescription="@string/auth_tampilkan_password" android:padding="2dp"
+        android:contentDescription="@string/auth_show_password" android:padding="2dp"
         android:src="@drawable/ic_visibility" app:tint="@color/dark_text" />
 </LinearLayout>
 <Space android:layout_width="match_parent" android:layout_height="20dp" />
@@ -36,13 +36,13 @@
 <Space android:layout_width="match_parent" android:layout_height="25dp" />
 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal" android:gravity="center" android:orientation="horizontal">
-    <TextView style="@style/Widget.Auth.Prompt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auth_belum_punya_akun" />
+    <TextView style="@style/Widget.Auth.Prompt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auth_no_account_yet" />
     <TextView android:id="@+id/registerLink" style="@style/Widget.Auth.Link" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="2dp"
-        android:text="@string/auth_disini" />
+        android:text="@string/auth_here" />
 </LinearLayout>
 <Space android:layout_width="match_parent" android:layout_height="10dp" />
-<TextView android:id="@+id/lupaLink" style="@style/Widget.Auth.Link" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
-    android:text="@string/auth_lupa_password" />
+<TextView android:id="@+id/forgotLink" style="@style/Widget.Auth.Link" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
+    android:text="@string/auth_forgot_password" />
 </LinearLayout>
 </ScrollView>
 
@@ -54,6 +54,6 @@
         android:text="@string/auth_loading" android:textColor="@android:color/black" android:textSize="16sp" android:textStyle="bold" />
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp"
         android:gravity="center" android:paddingStart="24dp" android:paddingEnd="24dp"
-        android:text="@string/auth_loading_pesan" android:textColor="@color/text_muted" android:textSize="12sp" />
+        android:text="@string/auth_loading_message" android:textColor="@color/text_muted" android:textSize="12sp" />
 </LinearLayout>
 </FrameLayout>

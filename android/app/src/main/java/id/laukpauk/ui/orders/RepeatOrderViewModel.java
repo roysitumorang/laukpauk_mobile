@@ -10,40 +10,40 @@ import androidx.lifecycle.ViewModel;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.model.orders.RepeatOrderResponses;
-import id.laukpauk.data.model.orders.Transaksi;
+import id.laukpauk.data.model.orders.Transaction;
 import id.laukpauk.data.repository.BaseRepository;
 import id.laukpauk.data.repository.CartRepository;
 import id.laukpauk.data.repository.DeliveryRepository;
 import id.laukpauk.data.repository.RepeatOrderRepository;
-import id.laukpauk.data.repository.TransaksiRepository;
+import id.laukpauk.data.repository.TransactionRepository;
 
 /** State of Repeat Order: the old transaction's number and its re-orderable lines. */
 public class RepeatOrderViewModel extends ViewModel {
 
-    private final TransaksiRepository transaksi;
+    private final TransactionRepository transaction;
     private final RepeatOrderRepository repeatOrder;
     private final DeliveryRepository delivery;
     private final CartRepository cart;
-    private final String idTransaksi;
+    private final String transactionId;
 
-    private final MediatorLiveData<Resource<Transaksi>> detail = new MediatorLiveData<>();
-    private LiveData<Resource<Transaksi>> detailSource;
+    private final MediatorLiveData<Resource<Transaction>> detail = new MediatorLiveData<>();
+    private LiveData<Resource<Transaction>> detailSource;
     private final MediatorLiveData<Resource<RepeatOrderResponses.Items>> items = new MediatorLiveData<>();
     private LiveData<Resource<RepeatOrderResponses.Items>> itemsSource;
     private final MutableLiveData<Boolean> processing = new MutableLiveData<>(false);
     private String itemsKey;
 
-    public RepeatOrderViewModel(TransaksiRepository transaksi, RepeatOrderRepository repeatOrder,
-                                DeliveryRepository delivery, CartRepository cart, String idTransaksi) {
-        this.transaksi = transaksi;
+    public RepeatOrderViewModel(TransactionRepository transaction, RepeatOrderRepository repeatOrder,
+                                DeliveryRepository delivery, CartRepository cart, String transactionId) {
+        this.transaction = transaction;
         this.repeatOrder = repeatOrder;
         this.delivery = delivery;
         this.cart = cart;
-        this.idTransaksi = idTransaksi;
+        this.transactionId = transactionId;
         loadDetail();
     }
 
-    public LiveData<Resource<Transaksi>> getDetail() {
+    public LiveData<Resource<Transaction>> getDetail() {
         return detail;
     }
 
@@ -63,13 +63,13 @@ public class RepeatOrderViewModel extends ViewModel {
         if (detailSource != null) {
             detail.removeSource(detailSource);
         }
-        detailSource = transaksi.getDetail(idTransaksi, "nomorTransaksi, tanggalDelivery");
+        detailSource = transaction.getDetail(transactionId, "nomorTransaksi, tanggalDelivery");
         detail.addSource(detailSource, detail::setValue);
     }
 
     /** Loads the lines for the current delivery selection; no-op when it is already loaded for it. */
     public void loadItemsIfNeeded(@Nullable DeliverySelection s) {
-        String key = s == null || !s.isSet ? "unset" : s.latitude + "|" + s.longitude + "|" + s.jadwalDeliveryCode;
+        String key = s == null || !s.isSet ? "unset" : s.latitude + "|" + s.longitude + "|" + s.deliveryScheduleCode;
         if (!key.equals(itemsKey)) {
             itemsKey = key;
             loadItems();
@@ -80,7 +80,7 @@ public class RepeatOrderViewModel extends ViewModel {
         if (itemsSource != null) {
             items.removeSource(itemsSource);
         }
-        itemsSource = repeatOrder.getItemTransaksi(idTransaksi);
+        itemsSource = repeatOrder.getTransactionItem(transactionId);
         items.addSource(itemsSource, items::setValue);
     }
 
@@ -95,7 +95,7 @@ public class RepeatOrderViewModel extends ViewModel {
             return;
         }
         processing.setValue(true);
-        repeatOrder.addToCart(idTransaksi, result -> {
+        repeatOrder.addToCart(transactionId, result -> {
             if (result.isSuccess() && result.data != null && result.data.statusAddCart) {
                 cart.refreshCartCount();
             }

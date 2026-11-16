@@ -19,6 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="84dp"
-        android:text="@string/startup_intro_mulai"
+        android:text="@string/startup_intro_start"
         android:visibility="gone" />
 </FrameLayout>

@@ -13,37 +13,37 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Locale;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.promo.ProdukPromo;
-import id.laukpauk.databinding.ItemPromoProdukBinding;
+import id.laukpauk.data.model.promo.PromoProduct;
+import id.laukpauk.databinding.ItemPromoProductBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.DefaultImage;
 import id.laukpauk.util.ServerPath;
 
 /** The promo product cards (legacy PromoItem). */
-public class PromoAdapter extends ListAdapter<ProdukPromo, PromoAdapter.Holder> {
+public class PromoAdapter extends ListAdapter<PromoProduct, PromoAdapter.Holder> {
 
     public interface Listener {
-        void onOpen(ProdukPromo item);
+        void onOpen(PromoProduct item);
 
-        void onBeli(ProdukPromo item);
+        void onBuy(PromoProduct item);
     }
 
     private final Listener listener;
 
     public PromoAdapter(Listener listener) {
-        super(new DiffUtil.ItemCallback<ProdukPromo>() {
+        super(new DiffUtil.ItemCallback<PromoProduct>() {
             @Override
-            public boolean areItemsTheSame(@NonNull ProdukPromo a, @NonNull ProdukPromo b) {
+            public boolean areItemsTheSame(@NonNull PromoProduct a, @NonNull PromoProduct b) {
                 return String.valueOf(a.idPromoItem).equals(String.valueOf(b.idPromoItem));
             }
 
             @Override
-            public boolean areContentsTheSame(@NonNull ProdukPromo a, @NonNull ProdukPromo b) {
-                return a.hargaBersihPromo() == b.hargaBersihPromo() && a.hargaKotor() == b.hargaKotor()
-                        && String.valueOf(a.namaProduk).equals(String.valueOf(b.namaProduk))
-                        && String.valueOf(a.fotoProduk).equals(String.valueOf(b.fotoProduk))
-                        && String.valueOf(a.keteranganSingkat).equals(String.valueOf(b.keteranganSingkat))
+            public boolean areContentsTheSame(@NonNull PromoProduct a, @NonNull PromoProduct b) {
+                return a.promoNetPrice() == b.promoNetPrice() && a.grossPrice() == b.grossPrice()
+                        && String.valueOf(a.productName).equals(String.valueOf(b.productName))
+                        && String.valueOf(a.productPhoto).equals(String.valueOf(b.productPhoto))
+                        && String.valueOf(a.shortDescription).equals(String.valueOf(b.shortDescription))
                         && String.valueOf(a.maxOrder).equals(String.valueOf(b.maxOrder));
             }
         });
@@ -53,7 +53,7 @@ public class PromoAdapter extends ListAdapter<ProdukPromo, PromoAdapter.Holder> 
     @NonNull
     @Override
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new Holder(ItemPromoProdukBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        return new Holder(ItemPromoProductBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -62,43 +62,43 @@ public class PromoAdapter extends ListAdapter<ProdukPromo, PromoAdapter.Holder> 
     }
 
     static class Holder extends RecyclerView.ViewHolder {
-        private final ItemPromoProdukBinding b;
+        private final ItemPromoProductBinding b;
 
-        Holder(ItemPromoProdukBinding binding) {
+        Holder(ItemPromoProductBinding binding) {
             super(binding.getRoot());
             this.b = binding;
         }
 
-        void bind(ProdukPromo item, Listener listener) {
-            String foto = item.fotoProduk == null ? "" : item.fotoProduk;
-            boolean isDefaultImage = foto.equals(DefaultImage.defaultProduk);
-            b.foto.setScaleType(isDefaultImage ? ImageView.ScaleType.FIT_CENTER : ImageView.ScaleType.FIT_XY);
-            Images.url(b.foto, ServerPath.baseURL + "/" + ServerPath.uploadGambarProduk + "/compress/" + foto);
+        void bind(PromoProduct item, Listener listener) {
+            String photo = item.productPhoto == null ? "" : item.productPhoto;
+            boolean isDefaultImage = photo.equals(DefaultImage.defaultProduct);
+            b.photo.setScaleType(isDefaultImage ? ImageView.ScaleType.FIT_CENTER : ImageView.ScaleType.FIT_XY);
+            Images.url(b.photo, ServerPath.baseURL + "/" + ServerPath.uploadImageProduct + "/compress/" + photo);
 
-            int hargaKotor = item.hargaKotor();
-            int diskon = item.diskon();
-            double persentase = diskon >= 1 && hargaKotor >= 1 ? (double) diskon / hargaKotor * 100 : 0;
-            if (persentase >= 0.1) {
-                b.hemat.setVisibility(View.VISIBLE);
-                b.hemat.setText(b.getRoot().getContext().getString(R.string.promo_hemat,
-                        String.format(Locale.US, "%.1f", persentase)));
+            int grossPrice = item.grossPrice();
+            int discount = item.discount();
+            double percentage = discount >= 1 && grossPrice >= 1 ? (double) discount / grossPrice * 100 : 0;
+            if (percentage >= 0.1) {
+                b.saving.setVisibility(View.VISIBLE);
+                b.saving.setText(b.getRoot().getContext().getString(R.string.promo_saving,
+                        String.format(Locale.US, "%.1f", percentage)));
             } else {
-                b.hemat.setVisibility(View.GONE);
+                b.saving.setVisibility(View.GONE);
             }
             b.max.setText(b.getRoot().getContext().getString(R.string.promo_max,
                     item.maxOrder == null ? "" : item.maxOrder));
 
-            b.nama.setText(item.namaProduk);
-            boolean hasDesc = item.keteranganSingkat != null && !item.keteranganSingkat.isEmpty();
-            b.deskripsiScroll.setVisibility(hasDesc ? View.VISIBLE : View.GONE);
-            b.deskripsi.setText(item.keteranganSingkat);
+            b.name.setText(item.productName);
+            boolean hasDesc = item.shortDescription != null && !item.shortDescription.isEmpty();
+            b.descriptionScroll.setVisibility(hasDesc ? View.VISIBLE : View.GONE);
+            b.description.setText(item.shortDescription);
 
-            b.hargaBersih.setText(Currency.formatRupiah(item.hargaBersihPromo(), 0));
-            b.hargaKotor.setText(Currency.formatRupiah(hargaKotor, 0));
-            b.hargaKotor.setPaintFlags(b.hargaKotor.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
+            b.netPrice.setText(Currency.formatRupiah(item.promoNetPrice(), 0));
+            b.grossPrice.setText(Currency.formatRupiah(grossPrice, 0));
+            b.grossPrice.setPaintFlags(b.grossPrice.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
 
             b.card.setOnClickListener(v -> listener.onOpen(item));
-            b.beli.setOnClickListener(v -> listener.onBeli(item));
+            b.buy.setOnClickListener(v -> listener.onBuy(item));
         }
     }
 }

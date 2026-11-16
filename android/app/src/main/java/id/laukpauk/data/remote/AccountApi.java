@@ -17,13 +17,13 @@ public interface AccountApi {
     Call<AccountResponses.RemoveToken> removeToken(@Query("cartCode") String cartCode);
 
     @POST("Auth/gantiNomor")
-    Call<AccountResponses.GantiNomor> gantiNomor(@Body Map<String, Object> body);
+    Call<AccountResponses.ChangeNumber> changeNumber(@Body Map<String, Object> body);
 
     @POST("Auth/verifikasiNomor")
-    Call<AccountResponses.VerifikasiNomor> verifikasiNomor(@Body Map<String, Object> body);
+    Call<AccountResponses.NumberVerification> numberVerification(@Body Map<String, Object> body);
 
     @GET("Auth/jumlahGantiNomorHPForToday")
-    Call<AccountResponses.JumlahGantiNomor> jumlahGantiNomorHPForToday();
+    Call<AccountResponses.NumberChangeCount> phoneNumberChangeCountForToday();
 
     @GET("Pengaturan/getReferralConfiguration")
     Call<AccountResponses.ReferralConfiguration> getReferralConfiguration();

@@ -5,7 +5,7 @@ public class StartupRepository extends BaseRepository {
 
     public static final int GO_INTRO = 0;
     public static final int GO_HOME = 1;
-    public static final int GO_OTP_REGISTRASI = 2;
+    public static final int GO_REGISTRATION_OTP = 2;
 
     public StartupRepository(RepositoryDeps deps) {
         super(deps);
@@ -19,9 +19,9 @@ public class StartupRepository extends BaseRepository {
         }
         boolean otpHasSent = prefs.getBool("otpHasSent", false);
         boolean otpHasConfirmed = prefs.getBool("otpHasConfirmed", false);
-        boolean passed = session.isOTPRegistrasiPassed();
+        boolean passed = session.isRegistrationOtpPassed();
         if (otpHasSent && (!otpHasConfirmed || passed)) {
-            return passed ? GO_HOME : GO_OTP_REGISTRASI;
+            return passed ? GO_HOME : GO_REGISTRATION_OTP;
         }
         return GO_HOME;
     }

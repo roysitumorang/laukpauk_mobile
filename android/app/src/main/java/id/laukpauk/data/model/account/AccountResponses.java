@@ -14,14 +14,16 @@ public final class AccountResponses {
         public UserDetail detailUser;
     }
 
-    public static class TotalDompet {
+    public static class WalletTotal {
         @Json(name = "totalDompet")
-        public long totalDompet;
+        @Json(name = "totalDompet")
+        public long walletTotal;
     }
 
-    public static class JumlahVoucher {
+    public static class VoucherCount {
         @Json(name = "jumlahVoucher")
-        public int jumlahVoucher;
+        @Json(name = "jumlahVoucher")
+        public int voucherCount;
     }
 
     public static class Point {
@@ -35,46 +37,55 @@ public final class AccountResponses {
         public long point;
     }
 
-    public static class RiwayatDompetList {
+    public static class WalletRecordList {
         @Json(name = "riwayatDompet")
-        public List<RiwayatDompet> riwayatDompet;
+        @Json(name = "riwayatDompet")
+        public List<WalletRecords> walletRecords;
     }
 
-    public static class RiwayatPointList {
+    public static class PointRecordList {
         @Json(name = "riwayatPoint")
-        public List<RiwayatPoint> riwayatPoint;
+        @Json(name = "riwayatPoint")
+        public List<PointRecords> pointRecords;
     }
 
-    public static class UpdateProfil {
+    public static class UpdateProfile {
         @Json(name = "statusUpdateProfil")
-        public boolean statusUpdateProfil;
+        @Json(name = "statusUpdateProfil")
+        public boolean updateProfileStatus;
     }
 
-    public static class UpdateFoto {
+    public static class UpdatePhoto {
         @Json(name = "saveFotoProfil")
-        public boolean saveFotoProfil;
+        @Json(name = "saveFotoProfil")
+        public boolean saveProfilePhoto;
     }
 
-    public static class GantiNomor {
+    public static class ChangeNumber {
         @Json(name = "statusSimpanNomorBaru")
-        public boolean statusSimpanNomorBaru;
+        @Json(name = "statusSimpanNomorBaru")
+        public boolean saveNewNumberStatus;
         @Json(name = "idPenggantianNomor")
-        public long idPenggantianNomor;
+        @Json(name = "idPenggantianNomor")
+        public long numberChangeId;
     }
 
-    public static class VerifikasiNomor {
+    public static class NumberVerification {
         @Json(name = "statusVerifikasiNomor")
-        public boolean statusVerifikasiNomor;
+        @Json(name = "statusVerifikasiNomor")
+        public boolean numberVerificationStatus;
     }
 
-    public static class JumlahGantiNomor {
+    public static class NumberChangeCount {
         @Json(name = "jumlahGantiNomorHPForToday")
-        public int jumlahGantiNomorHPForToday;
+        @Json(name = "jumlahGantiNomorHPForToday")
+        public int phoneNumberChangeCountForToday;
     }
 
-    public static class GantiPassword {
+    public static class ChangePassword {
         @Json(name = "statusGantiPassword")
-        public boolean statusGantiPassword;
+        @Json(name = "statusGantiPassword")
+        public boolean changePasswordStatus;
     }
 
     public static class RemoveToken {

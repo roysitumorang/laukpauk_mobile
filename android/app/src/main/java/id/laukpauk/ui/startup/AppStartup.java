@@ -213,7 +213,7 @@ public final class AppStartup {
             new MaterialAlertDialogBuilder(activity)
                     .setView(b.getRoot())
                     .setCancelable(false)
-                    .setNegativeButton(R.string.startup_update_tidak, (d, w) -> {
+                    .setNegativeButton(R.string.startup_update_no, (d, w) -> {
                         updatePromptShowing = false;
                         activity.finishAffinity(); // Dart: exit(0)
                     })
@@ -231,7 +231,7 @@ public final class AppStartup {
         // ---- delivery schedule expiry
 
         private void checkExpiry() {
-            Map<String, Object> saved = c.session.savedJadwalDeliveryMap();
+            Map<String, Object> saved = c.session.savedDeliveryScheduleMap();
             if (saved == null || expiryRunning) {
                 return;
             }
@@ -261,20 +261,20 @@ public final class AppStartup {
                 LocalDate nowDate = now.toLocalDate();
                 LocalTime nowTime = now.toLocalTime();
 
-                LocalTime savedADJDMaxTime = LocalTime.parse(Json.str(saved, "maxTime"));
-                LocalDate savedADJDMaxDay = LocalDate.parse(Json.str(saved, "currentDate"));
+                LocalTime savedDeliveryMaxTime = LocalTime.parse(Json.str(saved, "maxTime"));
+                LocalDate savedDeliveryMaxDay = LocalDate.parse(Json.str(saved, "currentDate"));
 
                 if (dayDeliveryLC.equals("besok")) {
-                    savedADJDMaxDay = savedADJDMaxDay.plusDays(1);
+                    savedDeliveryMaxDay = savedDeliveryMaxDay.plusDays(1);
                 }
                 if (dayDeliveryLC.equals("lusa")) {
-                    savedADJDMaxDay = savedADJDMaxDay.plusDays(2);
+                    savedDeliveryMaxDay = savedDeliveryMaxDay.plusDays(2);
                 }
                 if (id.equals("1") && (dayDeliveryLC.equals("besok") || dayDeliveryLC.equals("lusa"))) {
                     // morning session: the transaction session must be cancelled the day before delivery
-                    savedADJDMaxDay = savedADJDMaxDay.minusDays(1);
+                    savedDeliveryMaxDay = savedDeliveryMaxDay.minusDays(1);
                 }
-                return nowDate.isEqual(savedADJDMaxDay) && nowTime.isAfter(savedADJDMaxTime);
+                return nowDate.isEqual(savedDeliveryMaxDay) && nowTime.isAfter(savedDeliveryMaxTime);
             } catch (RuntimeException e) {
                 return false;
             }

@@ -55,7 +55,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/nomorTransaksi"
+                    android:id="@+id/transactionNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/orders_black87"
@@ -127,7 +127,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:text="@string/orders_ro_kosong"
+                    android:text="@string/orders_ro_empty"
                     android:textColor="@color/text_muted"
                     android:textSize="10sp" />
             </LinearLayout>

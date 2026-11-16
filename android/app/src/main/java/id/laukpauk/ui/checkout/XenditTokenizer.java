@@ -29,7 +29,7 @@ final class XenditTokenizer {
         void onResult(@Nullable CardToken token);
     }
 
-    static void createToken(Activity activity, long totalTagihan, String cardNumber, String expiryMonth,
+    static void createToken(Activity activity, long totalBill, String cardNumber, String expiryMonth,
                             String expiryYear, final String cardCVN, final Callback callback) {
         final Handler main = new Handler(Looper.getMainLooper());
         final AtomicBoolean delivered = new AtomicBoolean(false);
@@ -41,7 +41,7 @@ final class XenditTokenizer {
         try {
             Xendit xendit = Xendit.create(activity.getApplicationContext(), BuildConfig.XENDIT_PUBLIC_KEY, activity);
             Card card = new Card(cardNumber, expiryMonth, expiryYear, cardCVN);
-            xendit.createSingleUseToken(card, Long.toString(totalTagihan), true, "IDR", new TokenCallback() {
+            xendit.createSingleUseToken(card, Long.toString(totalBill), true, "IDR", new TokenCallback() {
                 @Override
                 public void onSuccess(Token token) {
                     if (token == null) {

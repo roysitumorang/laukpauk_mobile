@@ -14,24 +14,24 @@ public final class CheckoutSummary {
     public boolean isFormCompleted;
     public boolean isPointUsed;
     public boolean isWalletOn;
-    public boolean walletDibatalkan;
-    public long jumlahBarang;
+    public boolean walletCancelled;
+    public long goodsCount;
     /** Basket total before wallet / voucher / shipping. */
     public long subTotal;
-    public long totalOngkir;
-    public long potonganWallet;
-    public long potonganVoucher;
-    public long potonganDiskon;
-    public long nilaiPointOut;
+    public long totalShippingFee;
+    public long walletDiscount;
+    public long voucherDiscount;
+    public long discountAmount;
+    public long pointOutValue;
     public long point;
-    public long minimalPointTukarPoint;
-    public long totalKeseluruhan;
-    public String penjelasanOngkir = "";
+    public long minimumPointRedeem;
+    public long overallTotal;
+    public String shippingFeeExplanation = "";
     @Nullable public Voucher usedVoucher;
     @Nullable public String statusVoucher;
     @Nullable public WalletConfiguration walletConfiguration;
-    @Nullable public CheckoutResponses.JenisOngkir jenisOngkir;
-    @Nullable public Map<String, Object> diskonKategori;
-    @Nullable public Boolean kodePromoStatus;
-    @Nullable public String kodePromoMessage;
+    @Nullable public CheckoutResponses.ShippingFeeType shippingFeeType;
+    @Nullable public Map<String, Object> categoryDiscount;
+    @Nullable public Boolean promoCodeStatus;
+    @Nullable public String promoCodeMessage;
 }

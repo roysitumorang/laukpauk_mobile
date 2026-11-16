@@ -30,16 +30,16 @@ public interface AuthApi {
     Call<Map<String, Object>> signUp(@Body Map<String, Object> body);
 
     @POST("Auth/konfirmasiOTP")
-    Call<AuthResponses.KonfirmasiOTP> konfirmasiOTP(@Body Map<String, Object> body);
+    Call<AuthResponses.ConfirmOtp> confirmOtp(@Body Map<String, Object> body);
 
     @POST("Auth/verifikasiUser")
-    Call<AuthResponses.VerifikasiUser> verifikasiUser(@Body Map<String, Object> body);
+    Call<AuthResponses.UserVerification> userVerification(@Body Map<String, Object> body);
 
     @POST("Auth/resendOTP")
     Call<AuthResponses.ResendOTP> resendOTP(@Body Map<String, Object> body);
 
     @POST("Auth/lupaPassword")
-    Call<AuthResponses.LupaPassword> lupaPassword(@Body Map<String, Object> body);
+    Call<AuthResponses.ForgotPassword> forgotPassword(@Body Map<String, Object> body);
 
     @GET("User/getDetailUser")
     Call<AuthResponses.DetailUserResponse> getDetailUser(@Query("getUserEntities") String getUserEntities);

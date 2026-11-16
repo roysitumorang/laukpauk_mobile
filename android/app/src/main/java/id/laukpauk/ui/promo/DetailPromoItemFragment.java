@@ -78,45 +78,45 @@ public class DetailPromoItemFragment extends Fragment {
         binding.content.setVisibility(View.VISIBLE);
 
         PromoItemDetail.DetailPromo promo = item.detailPromo != null ? item.detailPromo : new PromoItemDetail.DetailPromo();
-        PromoItemDetail.DetailProduk produk = item.detailProduk != null ? item.detailProduk : new PromoItemDetail.DetailProduk();
-        PromoItemDetail.DetailSatuan satuan = item.detailSatuan != null ? item.detailSatuan : new PromoItemDetail.DetailSatuan();
+        PromoItemDetail.ProductDetail product = item.productDetail != null ? item.productDetail : new PromoItemDetail.ProductDetail();
+        PromoItemDetail.UnitDetail unit = item.unitDetail != null ? item.unitDetail : new PromoItemDetail.UnitDetail();
 
-        Images.url(binding.foto, ServerPath.baseURL + "/" + ServerPath.uploadGambarProduk + "/" + nn(produk.foto));
+        Images.url(binding.photo, ServerPath.baseURL + "/" + ServerPath.uploadImageProduct + "/" + nn(product.photo));
 
-        binding.namaProduk.setText(nn(produk.nama).toUpperCase(Locale.ROOT));
-        binding.kategori.setText(nn(produk.namaKategoriProduk).toUpperCase(Locale.ROOT));
-        bindAksi(item, produk);
+        binding.productName.setText(nn(product.name).toUpperCase(Locale.ROOT));
+        binding.category.setText(nn(product.productCategoryName).toUpperCase(Locale.ROOT));
+        bindAction(item, product);
 
-        boolean promoAktif = nn(promo.status).toLowerCase(Locale.ROOT).equals("aktif");
-        binding.promoBox.setBackgroundResource(promoAktif ? R.drawable.bg_promo_aktif : R.drawable.bg_promo_nonaktif);
-        binding.namaPromo.setText(nn(promo.nama));
-        int hargaBersih = Json.parseInt(satuan.harga, 0)
-                - (Json.parseInt(satuan.diskon, 0) + item.diskonPromo());
-        binding.hargaPromo.setText(Currency.formatRupiah(hargaBersih, 0));
-        binding.khusus.setText(getString(R.string.promo_khusus, nn(satuan.nama)));
-        binding.deskripsiPromo.setText(nn(promo.deskripsi));
-        binding.tidakAktif.setVisibility(promoAktif ? View.GONE : View.VISIBLE);
+        boolean promoActive = nn(promo.status).toLowerCase(Locale.ROOT).equals("aktif");
+        binding.promoBox.setBackgroundResource(promoActive ? R.drawable.bg_promo_active : R.drawable.bg_promo_inactive);
+        binding.promoName.setText(nn(promo.name));
+        int netPrice = Json.parseInt(unit.price, 0)
+                - (Json.parseInt(unit.discount, 0) + item.promoDiscount());
+        binding.promoPrice.setText(Currency.formatRupiah(netPrice, 0));
+        binding.special.setText(getString(R.string.promo_special, nn(unit.name)));
+        binding.promoDescription.setText(nn(promo.description));
+        binding.inactive.setVisibility(promoActive ? View.GONE : View.VISIBLE);
 
-        setNote(binding.deskripsiProduk, nn(produk.keterangan));
-        setNote(binding.catatanPromo, nn(item.catatan));
+        setNote(binding.productDescription, nn(product.remarks));
+        setNote(binding.promoNote, nn(item.note));
     }
 
-    private void bindAksi(PromoItemDetail item, PromoItemDetail.DetailProduk produk) {
-        boolean aktif = nn(item.statusPromo).toLowerCase(Locale.ROOT).equals("aktif");
-        binding.aksi.setVisibility(aktif ? View.VISIBLE : View.GONE);
-        if (!aktif) {
+    private void bindAction(PromoItemDetail item, PromoItemDetail.ProductDetail product) {
+        boolean active = nn(item.statusPromo).toLowerCase(Locale.ROOT).equals("aktif");
+        binding.action.setVisibility(active ? View.VISIBLE : View.GONE);
+        if (!active) {
             return;
         }
-        binding.aksi.setText(R.string.promo_beli);
-        binding.aksi.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+        binding.action.setText(R.string.promo_buy);
+        binding.action.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.green)));
-        binding.aksi.setOnClickListener(v -> ProductActions.beli(this, nn(produk.id), nn(produk.nama), nn(item.idPromo)));
+        binding.action.setOnClickListener(v -> ProductActions.buy(this, nn(product.id), nn(product.name), nn(item.idPromo)));
     }
 
     /** Muted text, or an italic "Tidak ada deskripsi produk" placeholder. */
     private void setNote(android.widget.TextView view, String text) {
         boolean empty = text.isEmpty();
-        view.setText(empty ? getString(R.string.promo_tidak_ada_deskripsi) : text);
+        view.setText(empty ? getString(R.string.promo_no_description) : text);
         view.setTypeface(null, empty ? android.graphics.Typeface.ITALIC : android.graphics.Typeface.NORMAL);
     }
 

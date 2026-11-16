@@ -12,12 +12,12 @@ import java.util.Map;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
-import id.laukpauk.data.model.home.Artikel;
+import id.laukpauk.data.model.home.Article;
 import id.laukpauk.data.model.home.Banner;
-import id.laukpauk.data.model.home.HomeProduk;
-import id.laukpauk.data.model.home.KategoriProduk;
-import id.laukpauk.data.model.home.Konten;
-import id.laukpauk.data.model.home.KontenItem;
+import id.laukpauk.data.model.home.HomeProduct;
+import id.laukpauk.data.model.home.ProductCategory;
+import id.laukpauk.data.model.home.Content;
+import id.laukpauk.data.model.home.ContentItem;
 import id.laukpauk.data.model.home.LowestPrice;
 import id.laukpauk.data.model.home.WalletInfo;
 import id.laukpauk.data.remote.HomeApi;
@@ -35,7 +35,7 @@ public class HomeRepository extends BaseRepository {
 
     private final HomeApi api;
     private final DeliveryRepository delivery;
-    /** idProduk -> lowest price (a NO_PRICE marker when the product has none). Cleared by pull-to-refresh. */
+    /** productId -> lowest price (a NO_PRICE marker when the product has none). Cleared by pull-to-refresh. */
     private final Map<String, LowestPrice> priceCache = new HashMap<>();
     private static final LowestPrice NO_PRICE = new LowestPrice();
 
@@ -54,65 +54,65 @@ public class HomeRepository extends BaseRepository {
         return load(api.getBanner(), body -> nonNull(body == null ? null : body.listBanner));
     }
 
-    public LiveData<Resource<List<Artikel>>> getArtikel() {
-        return load(api.getArtikel(), body -> nonNull(body == null ? null : body.listArtikel));
+    public LiveData<Resource<List<Article>>> getArticle() {
+        return load(api.getArticle(), body -> nonNull(body == null ? null : body.articleList));
     }
 
     /** Dompet, voucher count and poin of the signed-in user (ERROR-free: a failed part counts as 0). */
     public LiveData<Resource<WalletInfo>> getWallet() {
         MutableLiveData<Resource<WalletInfo>> live = new MutableLiveData<>(Resource.loading());
-        final long[] dompet = new long[1];
+        final long[] wallet = new long[1];
         final int[] voucher = new int[1];
-        final long[] poin = new long[1];
+        final long[] points = new long[1];
         final int[] pending = {3};
         ResultCallback<Long> done = r -> {
             if (--pending[0] == 0) {
-                live.setValue(Resource.success(new WalletInfo(dompet[0], voucher[0], poin[0])));
+                live.setValue(Resource.success(new WalletInfo(wallet[0], voucher[0], points[0])));
             }
         };
-        enqueue(api.getTotalDompet(), body -> dompet[0] = body == null ? 0L : body.totalDompet, done);
-        enqueue(api.getJumlahVoucher(),
-                body -> (long) (voucher[0] = body == null ? 0 : body.jumlahVoucher), done);
+        enqueue(api.getWalletTotal(), body -> wallet[0] = body == null ? 0L : body.walletTotal, done);
+        enqueue(api.getVoucherCount(),
+                body -> (long) (voucher[0] = body == null ? 0 : body.voucherCount), done);
         enqueue(api.getPoint("true"),
-                body -> poin[0] = body == null || body.response == null ? 0L : body.response.point, done);
+                body -> points[0] = body == null || body.response == null ? 0L : body.response.point, done);
         return live;
     }
 
     /** The first products of the product list (useLimit "y", startFrom 0). */
-    public LiveData<Resource<List<HomeProduk>>> getProduk() {
+    public LiveData<Resource<List<HomeProduct>>> getProduct() {
         DeliverySelection s = delivery.current();
         String code = null;
         if (s.isSet) {
-            code = s.jadwalDeliveryCode;
+            code = s.deliveryScheduleCode;
             if (code == null) {
                 // legacy: the missing code made the request fail -> an empty list
-                return new MutableLiveData<>(Resource.success(Collections.<HomeProduk>emptyList()));
+                return new MutableLiveData<>(Resource.success(Collections.<HomeProduct>emptyList()));
             }
         }
-        return load(api.getProduk(code, "0", "y"),
-                body -> nonNull(body == null ? null : body.listProduk));
+        return load(api.getProduct(code, "0", "y"),
+                body -> nonNull(body == null ? null : body.productList));
     }
 
-    public LiveData<Resource<List<Konten>>> getKonten(String page) {
-        return load(api.getKonten(page), body -> nonNull(body == null ? null : body.dataKonten));
+    public LiveData<Resource<List<Content>>> getContent(String page) {
+        return load(api.getContent(page), body -> nonNull(body == null ? null : body.contentData));
     }
 
     /** Items of a konten block; {@code limit} null = all. */
-    public LiveData<Resource<List<KontenItem>>> getKontenItem(String idKonten, @Nullable Integer limit) {
-        return load(api.getKontenItem(idKonten, limit), body -> nonNull(body == null ? null : body.kontenItem));
+    public LiveData<Resource<List<ContentItem>>> getContentItem(String contentId, @Nullable Integer limit) {
+        return load(api.getContentItem(contentId, limit), body -> nonNull(body == null ? null : body.contentItem));
     }
 
-    /** One-shot variant of {@link #getKontenItem} ("Lihat Semua"). */
-    public void getKontenItem(String idKonten, @Nullable Integer limit, ResultCallback<List<KontenItem>> callback) {
-        enqueue(api.getKontenItem(idKonten, limit), body -> nonNull(body == null ? null : body.kontenItem), callback);
+    /** One-shot variant of {@link #getContentItem} ("Lihat Semua"). */
+    public void getContentItem(String contentId, @Nullable Integer limit, ResultCallback<List<ContentItem>> callback) {
+        enqueue(api.getContentItem(contentId, limit), body -> nonNull(body == null ? null : body.contentItem), callback);
     }
 
-    public LiveData<Resource<List<KategoriProduk>>> getKategoriProduk() {
-        return load(api.getKategoriProduk(), body -> nonNull(body == null ? null : body.kategoriProduk));
+    public LiveData<Resource<List<ProductCategory>>> getProductCategory() {
+        return load(api.getProductCategory(), body -> nonNull(body == null ? null : body.productCategory));
     }
 
-    public void getProdukInThisCategory(String idKategoriProduk, ResultCallback<List<HomeProduk>> callback) {
-        enqueue(api.getProdukInThisCategory(idKategoriProduk),
+    public void getProductInThisCategory(String productCategoryId, ResultCallback<List<HomeProduct>> callback) {
+        enqueue(api.getProductInThisCategory(productCategoryId),
                 body -> nonNull(body == null ? null : body.productInThisCategory), callback);
     }
 
@@ -120,15 +120,15 @@ public class HomeRepository extends BaseRepository {
      * Lowest unit price of a product for its tile. The result is null when the product has no price list.
      * Answers from a memory cache when possible; errors are reported as null price.
      */
-    public void getLowestPrice(String idProduk, ResultCallback<LowestPrice> callback) {
-        LowestPrice cached = priceCache.get(idProduk);
+    public void getLowestPrice(String productId, ResultCallback<LowestPrice> callback) {
+        LowestPrice cached = priceCache.get(productId);
         if (cached != null) {
             callback.onResult(Resource.success(cached == NO_PRICE ? null : cached));
             return;
         }
-        enqueue(api.getLowestPrice(idProduk), body -> {
+        enqueue(api.getLowestPrice(productId), body -> {
             LowestPrice price = body == null ? null : body.lowestPrice;
-            priceCache.put(idProduk, price == null ? NO_PRICE : price);
+            priceCache.put(productId, price == null ? NO_PRICE : price);
             return price;
         }, callback);
     }

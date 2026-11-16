@@ -7,20 +7,20 @@
     <ImageView android:id="@+id/emptyImage" android:layout_width="112dp" android:layout_height="wrap_content"
         android:adjustViewBounds="true" android:importantForAccessibility="no" />
     <Space android:layout_width="match_parent" android:layout_height="19dp" />
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auth_otp_belum_terverifikasi"
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auth_otp_not_verified"
         android:textColor="@android:color/black" android:textSize="15sp" />
     <Space android:layout_width="match_parent" android:layout_height="10dp" />
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center"
-        android:text="@string/auth_otp_masukkan_ulang" android:textColor="@android:color/black" android:textSize="12sp" />
+        android:text="@string/auth_otp_reenter" android:textColor="@android:color/black" android:textSize="12sp" />
     <Space android:layout_width="match_parent" android:layout_height="37.5dp" />
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center"
         android:orientation="horizontal">
-        <com.google.android.material.button.MaterialButton android:id="@+id/verifikasiButton" style="@style/Widget.Auth.Button"
+        <com.google.android.material.button.MaterialButton android:id="@+id/verificationButton" style="@style/Widget.Auth.Button"
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-            android:text="@string/auth_verifikasi_otp" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/kirimUlangButton" style="@style/Widget.Auth.Button"
+            android:text="@string/auth_otp_verification" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/resendButton" style="@style/Widget.Auth.Button"
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="5.6dp" android:layout_weight="1"
-            android:backgroundTint="@color/text_info" android:text="@string/auth_kirim_ulang" />
+            android:backgroundTint="@color/text_info" android:text="@string/auth_resend" />
     </LinearLayout>
     <Space android:layout_width="match_parent" android:layout_height="9.4dp" />
     <com.google.android.material.button.MaterialButton android:id="@+id/homeButton" style="@style/Widget.Auth.Button.Outline"

@@ -21,7 +21,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/foto"
+                android:id="@+id/photo"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
                 android:importantForAccessibility="no"
@@ -42,7 +42,7 @@
                 android:paddingEnd="15dp">
 
                 <TextView
-                    android:id="@+id/nama"
+                    android:id="@+id/name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/nearly_white"
@@ -50,7 +50,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/keterangan"
+                    android:id="@+id/remarks"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3.5dp"

@@ -1,39 +1,54 @@
 package id.laukpauk.data.model.promo;
 
+import com.squareup.moshi.Json;
+
 import id.laukpauk.util.Json;
 
 /** {@code Promo/getPromoItem/{id}}: a promo item with its promo, product and unit. */
 public class PromoItemDetail {
     public String idPromo;
     public String statusPromo;
-    public String catatan;
-    public String diskon;
+    @Json(name = "catatan")
+    public String note;
+    @Json(name = "diskon")
+    public String discount;
     public DetailPromo detailPromo;
-    public DetailProduk detailProduk;
-    public DetailSatuan detailSatuan;
+    @Json(name = "detailProduk")
+    public ProductDetail productDetail;
+    @Json(name = "detailSatuan")
+    public UnitDetail unitDetail;
 
-    public int diskonPromo() {
-        return Json.parseInt(diskon, 0);
+    public int promoDiscount() {
+        return Json.parseInt(discount, 0);
     }
 
     public static class DetailPromo {
-        public String nama;
+        @Json(name = "nama")
+        public String name;
         public String status;
-        public String deskripsi;
+        @Json(name = "deskripsi")
+        public String description;
     }
 
-    public static class DetailProduk {
+    public static class ProductDetail {
         public String id;
-        public String nama;
-        public String foto;
-        public String namaKategoriProduk;
-        public String keterangan;
+        @Json(name = "nama")
+        public String name;
+        @Json(name = "foto")
+        public String photo;
+        @Json(name = "namaKategoriProduk")
+        public String productCategoryName;
+        @Json(name = "keterangan")
+        public String remarks;
     }
 
-    public static class DetailSatuan {
+    public static class UnitDetail {
         public String id;
-        public String nama;
-        public String harga;
-        public String diskon;
+        @Json(name = "nama")
+        public String name;
+        @Json(name = "harga")
+        public String price;
+        @Json(name = "diskon")
+        public String discount;
     }
 }

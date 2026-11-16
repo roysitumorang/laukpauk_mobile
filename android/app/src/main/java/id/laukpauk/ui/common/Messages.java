@@ -29,9 +29,9 @@ public final class Messages {
             return;
         }
         Snackbar.make(v, text, 2000)
-                .setAction(R.string.lihat_keranjang, a -> {
+                .setAction(R.string.view_cart, a -> {
                     if (fragment.isAdded()) {
-                        NavHostFragment.findNavController(fragment).navigate(R.id.keranjangFragment);
+                        NavHostFragment.findNavController(fragment).navigate(R.id.cartFragment);
                     }
                 })
                 .show();
@@ -64,7 +64,7 @@ public final class Messages {
         new MaterialAlertDialogBuilder(fragment.requireContext())
                 .setTitle(title)
                 .setMessage(message)
-                .setNegativeButton(R.string.batal, null)
+                .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(yesLabel, (d, w) -> onYes.run())
                 .show();
     }

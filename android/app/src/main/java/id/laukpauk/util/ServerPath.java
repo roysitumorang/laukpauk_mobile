@@ -14,15 +14,15 @@ public final class ServerPath {
     public static final String apiBaseURL = BuildConfig.API_BASE_URL;
     public static final String baseURL = BuildConfig.BASE_URL;
 
-    public static final String uploadGambarArtikel = BuildConfig.UPLOAD_GAMBAR_ARTIKEL;
-    public static final String uploadGambarBanner = BuildConfig.UPLOAD_GAMBAR_BANNER;
-    public static final String uploadGambarGift = BuildConfig.UPLOAD_GAMBAR_GIFT;
-    public static final String uploadGambarKategoriProduk = BuildConfig.UPLOAD_GAMBAR_KATEGORI_PRODUK;
-    public static final String uploadGambarKontenItem = BuildConfig.UPLOAD_GAMBAR_KONTEN_ITEM;
-    public static final String uploadGambarPaket = BuildConfig.UPLOAD_GAMBAR_PAKET;
-    public static final String uploadGambarProduk = BuildConfig.UPLOAD_GAMBAR_PRODUK;
-    public static final String uploadGambarPushNotifikasi = BuildConfig.UPLOAD_GAMBAR_PUSH_NOTIFIKASI;
-    public static final String uploadGambarResep = BuildConfig.UPLOAD_GAMBAR_RESEP;
-    public static final String uploadGambarUser = BuildConfig.UPLOAD_GAMBAR_USER;
-    public static final String uploadGambarVoucher = BuildConfig.UPLOAD_GAMBAR_VOUCHER;
+    public static final String uploadImageArticle = BuildConfig.UPLOAD_IMAGE_ARTICLE;
+    public static final String uploadImageBanner = BuildConfig.UPLOAD_IMAGE_BANNER;
+    public static final String uploadImageGift = BuildConfig.UPLOAD_IMAGE_GIFT;
+    public static final String uploadImageProductCategory = BuildConfig.UPLOAD_IMAGE_PRODUCT_CATEGORY;
+    public static final String uploadImageContentItem = BuildConfig.UPLOAD_IMAGE_CONTENT_ITEM;
+    public static final String uploadImagePack = BuildConfig.UPLOAD_IMAGE_PACK;
+    public static final String uploadImageProduct = BuildConfig.UPLOAD_IMAGE_PRODUCT;
+    public static final String uploadImagePushNotification = BuildConfig.UPLOAD_IMAGE_PUSH_NOTIFICATION;
+    public static final String uploadImageRecipe = BuildConfig.UPLOAD_IMAGE_RECIPE;
+    public static final String uploadImageUser = BuildConfig.UPLOAD_IMAGE_USER;
+    public static final String uploadImageVoucher = BuildConfig.UPLOAD_IMAGE_VOUCHER;
 }

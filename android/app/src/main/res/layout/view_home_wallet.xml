@@ -4,11 +4,11 @@
     android:gravity="center_vertical" android:orientation="horizontal" android:padding="8dp"
     android:paddingTop="10dp" android:paddingBottom="10dp">
     <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
-    <LinearLayout android:id="@+id/dompet" style="@style/Home.WalletEntry">
-        <ImageView android:id="@+id/dompetIcon" style="@style/Home.WalletIcon" />
+    <LinearLayout android:id="@+id/wallet" style="@style/Home.WalletEntry">
+        <ImageView android:id="@+id/walletIcon" style="@style/Home.WalletIcon" />
         <LinearLayout style="@style/Home.WalletText">
-            <TextView style="@style/Home.WalletTitle" android:text="@string/home_wallet_dompet" />
-            <TextView android:id="@+id/dompetValue" style="@style/Home.WalletValue" />
+            <TextView style="@style/Home.WalletTitle" android:text="@string/home_wallet_balance" />
+            <TextView android:id="@+id/walletValue" style="@style/Home.WalletValue" />
         </LinearLayout>
     </LinearLayout>
     <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
@@ -20,19 +20,19 @@
         </LinearLayout>
     </LinearLayout>
     <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
-    <LinearLayout android:id="@+id/poin" style="@style/Home.WalletEntry">
-        <ImageView android:id="@+id/poinIcon" style="@style/Home.WalletIcon" />
+    <LinearLayout android:id="@+id/points" style="@style/Home.WalletEntry">
+        <ImageView android:id="@+id/pointsIcon" style="@style/Home.WalletIcon" />
         <LinearLayout style="@style/Home.WalletText">
-            <TextView style="@style/Home.WalletTitle" android:text="@string/home_wallet_poin" />
-            <TextView android:id="@+id/poinValue" style="@style/Home.WalletValue" />
+            <TextView style="@style/Home.WalletTitle" android:text="@string/home_wallet_points" />
+            <TextView android:id="@+id/pointsValue" style="@style/Home.WalletValue" />
         </LinearLayout>
     </LinearLayout>
     <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
-    <LinearLayout android:id="@+id/referal" style="@style/Home.WalletEntry">
-        <ImageView android:id="@+id/referalIcon" style="@style/Home.WalletIcon" />
+    <LinearLayout android:id="@+id/referral" style="@style/Home.WalletEntry">
+        <ImageView android:id="@+id/referralIcon" style="@style/Home.WalletIcon" />
         <LinearLayout style="@style/Home.WalletText">
-            <TextView style="@style/Home.WalletTitle" android:text="@string/home_wallet_kode" />
-            <TextView style="@style/Home.WalletTitle" android:text="@string/home_wallet_referal" />
+            <TextView style="@style/Home.WalletTitle" android:text="@string/home_wallet_code" />
+            <TextView style="@style/Home.WalletTitle" android:text="@string/home_wallet_referral" />
         </LinearLayout>
     </LinearLayout>
     <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />

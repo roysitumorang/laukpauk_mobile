@@ -6,8 +6,8 @@
     <string name="voucher_min_purchase_short">Min. Belanja %1$s</string>
     <string name="voucher_detail_title">Detail Voucher</string>
     <string name="voucher_not_found">Detail Voucher Tidak Ditemukan</string>
-    <string name="voucher_type_ongkir">Voucher untuk mengurangi ongkos kirim</string>
-    <string name="voucher_type_belanja">Voucher untuk mengurangi total belanja</string>
+    <string name="voucher_shipping_type">Voucher untuk mengurangi ongkos kirim</string>
+    <string name="voucher_shopping_type">Voucher untuk mengurangi total belanja</string>
     <string name="voucher_label_code">Kode Voucher</string>
     <string name="voucher_label_min">Minimum Belanja</string>
     <string name="voucher_label_max_usage">Maksimum Penggunaan</string>

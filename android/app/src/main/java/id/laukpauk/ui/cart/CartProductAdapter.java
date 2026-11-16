@@ -48,29 +48,29 @@ public class CartProductAdapter extends ListAdapter<CartProduct, CartProductAdap
     }
 
     private void bindProduct(Context ctx, ItemCartProductBinding pb, CartProduct p) {
-        int harga = CartProduct.toInt(p.harga);
-        int diskon = CartProduct.toInt(p.diskon);
-        String namaSatuan = p.isPaket() ? ctx.getString(R.string.cart_unit_paket) : p.namaSatuan;
-        String folder = p.isPaket() ? ServerPath.uploadGambarPaket : ServerPath.uploadGambarProduk;
-        Images.url(pb.foto, Images.server(folder + "/compress", p.fotoProduk));
-        pb.foto.setOnClickListener(v -> listener.onOpenProduct(p));
-        pb.nama.setText(p.namaProduk);
-        pb.nama.setOnClickListener(v -> listener.onOpenProduct(p));
+        int price = CartProduct.toInt(p.price);
+        int discount = CartProduct.toInt(p.discount);
+        String unitName = p.isPack() ? ctx.getString(R.string.cart_pack_unit) : p.unitName;
+        String folder = p.isPack() ? ServerPath.uploadImagePack : ServerPath.uploadImageProduct;
+        Images.url(pb.photo, Images.server(folder + "/compress", p.productPhoto));
+        pb.photo.setOnClickListener(v -> listener.onOpenProduct(p));
+        pb.name.setText(p.productName);
+        pb.name.setOnClickListener(v -> listener.onOpenProduct(p));
         pb.total.setText(Currency.formatRupiah(p.total(), 0));
-        pb.quantity.setText(ctx.getString(R.string.cart_qty_unit, p.quantity, namaSatuan));
-        pb.unitPrice.setText(ctx.getString(R.string.cart_unit_price, namaSatuan,
-                Currency.formatRupiah(harga - diskon, 0)));
+        pb.quantity.setText(ctx.getString(R.string.cart_qty_unit, p.quantity, unitName));
+        pb.unitPrice.setText(ctx.getString(R.string.cart_unit_price, unitName,
+                Currency.formatRupiah(price - discount, 0)));
         pb.editQuantity.setOnClickListener(v ->
                 listener.onEdit(p, R.string.cart_edit_failed_qty, R.string.cart_retry));
         pb.delete.setOnClickListener(v -> listener.onDelete(p));
 
-        boolean adaCatatan = p.catatan != null && !p.catatan.isEmpty();
-        pb.addNote.setVisibility(adaCatatan ? android.view.View.GONE : android.view.View.VISIBLE);
+        boolean hasNote = p.note != null && !p.note.isEmpty();
+        pb.addNote.setVisibility(hasNote ? android.view.View.GONE : android.view.View.VISIBLE);
         pb.addNote.setOnClickListener(v ->
                 listener.onEdit(p, R.string.cart_edit_failed_add_note, R.string.cart_ok));
-        pb.noteBox.setVisibility(adaCatatan ? android.view.View.VISIBLE : android.view.View.GONE);
-        if (adaCatatan) {
-            pb.note.setText(p.catatan);
+        pb.noteBox.setVisibility(hasNote ? android.view.View.VISIBLE : android.view.View.GONE);
+        if (hasNote) {
+            pb.note.setText(p.note);
             pb.editNote.setOnClickListener(v ->
                     listener.onEdit(p, R.string.cart_edit_failed_edit_note, R.string.cart_ok));
         }

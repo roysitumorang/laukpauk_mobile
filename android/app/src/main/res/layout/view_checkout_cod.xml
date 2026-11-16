@@ -18,7 +18,7 @@
             android:id="@+id/back"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:contentDescription="@string/batal"
+            android:contentDescription="@string/cancel"
             android:src="@drawable/ic_arrow_back"
             app:tint="@color/checkout_text" />
 
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="@string/checkout_bayar_tunai"
+            android:text="@string/checkout_pay_cash"
             android:textColor="@color/checkout_text"
             android:textSize="13sp"
             android:textStyle="bold" />
@@ -50,12 +50,12 @@
             android:textSize="14sp" />
 
         <EditText
-            android:id="@+id/etUang"
+            android:id="@+id/etMoney"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@null"
-            android:hint="@string/checkout_uang_hint"
+            android:hint="@string/checkout_money_hint"
             android:inputType="number"
             android:paddingStart="15dp"
             android:paddingTop="18dp"
@@ -70,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/checkout_uang_info"
+        android:text="@string/checkout_money_info"
         android:textColor="@color/checkout_text"
         android:textSize="12sp" />
 
@@ -89,6 +89,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="10dp"
-        android:text="@string/checkout_buat_orderan"
+        android:text="@string/checkout_create_order"
         android:visibility="gone" />
 </LinearLayout>

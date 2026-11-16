@@ -49,14 +49,14 @@ final class OrderUi {
     }
 
     /** "Pesanan Diterima" confirmation (buttons "Belum Diterima" / "OK"). */
-    static void confirmDiterima(Fragment f, Runnable onOk) {
+    static void confirmReceived(Fragment f, Runnable onOk) {
         if (!f.isAdded()) {
             return;
         }
         new MaterialAlertDialogBuilder(f.requireContext())
-                .setTitle(R.string.orders_diterima_title)
-                .setMessage(R.string.orders_diterima_message)
-                .setNegativeButton(R.string.orders_belum_diterima, null)
+                .setTitle(R.string.orders_received_title)
+                .setMessage(R.string.orders_received_message)
+                .setNegativeButton(R.string.orders_not_received, null)
                 .setPositiveButton(R.string.orders_ok, (d, w) -> onOk.run())
                 .show();
     }

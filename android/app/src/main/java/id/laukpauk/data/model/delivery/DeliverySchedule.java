@@ -1,0 +1,48 @@
+package id.laukpauk.data.model.delivery;
+
+import com.squareup.moshi.Json;
+
+import java.util.Map;
+
+import androidx.annotation.Nullable;
+
+
+import id.laukpauk.util.Json;
+
+/**
+ * One available delivery schedule (JadwalDelivery/getAvailableJadwalDelivery). The server object is kept
+ * whole in {@link #raw} (dynamic payload): the legacy app stored it verbatim as {@code savedDeliveryScheduleMap}
+ * (plus {@code setOn}) and the expiry check reads {@code id}, {@code day}, {@code maxTime}, {@code currentDate}.
+ */
+public final class DeliverySchedule {
+    public final Map<String, Object> raw;
+    @Json(name = "kode")
+    @Nullable public final String code;
+    public final String day;
+    @Json(name = "sessi")
+    public final String session;
+    @Json(name = "rentangWaktu")
+    public final String timeRange;
+    public final boolean isFull;
+    public final boolean isOpened;
+
+    public DeliverySchedule(Map<String, Object> raw) {
+        this.raw = raw;
+        this.code = Json.strOrNull(raw, "kode");
+        this.day = Json.str(raw, "day");
+        this.session = Json.str(raw, "sessi");
+        this.timeRange = Json.str(raw, "rentangWaktu");
+        this.isFull = Json.bool(raw, "isFull");
+        this.isOpened = Json.bool(raw, "isOpened");
+    }
+
+    /** "Besok Pagi" style identity used to mark the selected tile (legacy readAbleJadwalPengantaran). */
+    public String readable() {
+        return day + " " + session;
+    }
+
+    /** Legacy: tappable only when neither full nor closed. */
+    public boolean isSelectable() {
+        return !isFull && isOpened;
+    }
+}

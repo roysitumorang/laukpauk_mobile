@@ -1,5 +1,7 @@
 package id.laukpauk.data.model.auth;
 
+import com.squareup.moshi.Json;
+
 
 /** Response wrappers of the /Auth (other than sign-in) and /User/getDetailUser endpoints used by the auth screens. */
 public final class AuthResponses {
@@ -13,14 +15,16 @@ public final class AuthResponses {
     }
 
     /** Auth/konfirmasiOTP. */
-    public static class KonfirmasiOTP {
-        public boolean statusKonfirmasiOTP;
+    public static class ConfirmOtp {
+        @Json(name = "statusKonfirmasiOTP")
+        public boolean otpConfirmationStatus;
         public ReturnData returnData;
     }
 
     /** Auth/verifikasiUser. */
-    public static class VerifikasiUser {
-        public boolean statusVerifikasiUser;
+    public static class UserVerification {
+        @Json(name = "statusVerifikasiUser")
+        public boolean userVerificationStatus;
     }
 
     /** Auth/resendOTP. */
@@ -30,7 +34,7 @@ public final class AuthResponses {
     }
 
     /** Auth/lupaPassword. */
-    public static class LupaPassword {
+    public static class ForgotPassword {
         public boolean statusRecoveryPassword;
         public ReturnData returnData;
     }
@@ -41,6 +45,7 @@ public final class AuthResponses {
     }
 
     public static class DetailUser {
-        public String nomorHP;
+        @Json(name = "nomorHP")
+        public String phoneNumber;
     }
 }

@@ -5,7 +5,7 @@
     <color name="home_overlay_40">#66000000</color>
     <color name="home_amber">#FFC107</color>
     <color name="home_badge_red">#F44336</color>
-    <color name="home_histori_bg">#FFF1F1F1</color>
+    <color name="home_history_bg">#FFF1F1F1</color>
     <color name="home_ripple">#22000000</color>
     <color name="home_loading_overlay">#AAFFFFFF</color>
 </resources>

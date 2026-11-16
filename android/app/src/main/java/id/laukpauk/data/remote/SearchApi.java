@@ -9,5 +9,5 @@ import retrofit2.http.Query;
 public interface SearchApi {
 
     @GET("Konten/pencarian")
-    Call<SearchResponses.Suggestions> pencarian(@Query("term") String term);
+    Call<SearchResponses.Suggestions> search(@Query("term") String term);
 }

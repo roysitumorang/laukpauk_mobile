@@ -1,27 +1,39 @@
 package id.laukpauk.data.model.cart;
 
+import com.squareup.moshi.Json;
+
 import androidx.annotation.Nullable;
 
 /** One product line of {@code User/getCart} (also the argument of the edit screen). */
 public final class CartProduct {
     public String idCart;
-    public String idProduk;
+    @Json(name = "idProduk")
+    public String productId;
     /** "nonpaket" or "paket". */
-    public String jenisProduk;
-    public String idSatuan;
-    public String namaSatuan;
+    @Json(name = "jenisProduk")
+    public String productType;
+    @Json(name = "idSatuan")
+    public String unitId;
+    @Json(name = "namaSatuan")
+    public String unitName;
     /** "tidak pas" lets the buyer change the quantity. */
-    public String jenisSatuan;
-    public String namaProduk;
-    public String fotoProduk;
-    public String harga;
-    public String diskon;
+    @Json(name = "jenisSatuan")
+    public String unitType;
+    @Json(name = "namaProduk")
+    public String productName;
+    @Json(name = "fotoProduk")
+    public String productPhoto;
+    @Json(name = "harga")
+    public String price;
+    @Json(name = "diskon")
+    public String discount;
     public String quantity;
-    public String catatan;
+    @Json(name = "catatan")
+    public String note;
     @Nullable public String idPromo;
 
-    public boolean isPaket() {
-        return jenisProduk != null && jenisProduk.equalsIgnoreCase("paket");
+    public boolean isPack() {
+        return productType != null && productType.equalsIgnoreCase("paket");
     }
 
     public static int toInt(@Nullable String value) {
@@ -41,6 +53,6 @@ public final class CartProduct {
 
     /** (harga - diskon) * quantity. */
     public long total() {
-        return (long) (toInt(harga) - toInt(diskon)) * toInt(quantity);
+        return (long) (toInt(price) - toInt(discount)) * toInt(quantity);
     }
 }

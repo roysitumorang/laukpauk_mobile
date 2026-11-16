@@ -44,15 +44,15 @@ public class AuthRepository extends BaseRepository {
 
     private final AuthApi api;
     private final CartRepository cart;
-    private final NotifikasiRepository notifikasi;
+    private final NotificationRepository notification;
     private final PushRepository push;
 
-    public AuthRepository(RepositoryDeps deps, CartRepository cart, NotifikasiRepository notifikasi,
+    public AuthRepository(RepositoryDeps deps, CartRepository cart, NotificationRepository notification,
                           PushRepository push) {
         super(deps);
         this.api = api(AuthApi.class);
         this.cart = cart;
-        this.notifikasi = notifikasi;
+        this.notification = notification;
         this.push = push;
     }
 
@@ -107,9 +107,9 @@ public class AuthRepository extends BaseRepository {
     }
 
     /** Auth/konfirmasiOTP; true when confirmed (the returned auth token becomes the session). */
-    public void konfirmasiOTP(String otp, ResultCallback<Boolean> callback) {
-        enqueue(api.konfirmasiOTP(body("idUser", session.getCurrentUserID(), "otp", otp)), body -> {
-            if (body == null || !body.statusKonfirmasiOTP) {
+    public void confirmOtp(String otp, ResultCallback<Boolean> callback) {
+        enqueue(api.confirmOtp(body("idUser", session.getCurrentUserID(), "otp", otp)), body -> {
+            if (body == null || !body.otpConfirmationStatus) {
                 return false;
             }
             prefs.setBool("otpHasConfirmed", true);
@@ -121,29 +121,29 @@ public class AuthRepository extends BaseRepository {
     }
 
     /** Auth/verifikasiUser. */
-    public void verifikasiUser(String code, ResultCallback<Boolean> callback) {
-        enqueue(api.verifikasiUser(body("idUser", session.getCurrentUserID(), "verificationCode", code)),
-                body -> body != null && body.statusVerifikasiUser, callback);
+    public void userVerification(String code, ResultCallback<Boolean> callback) {
+        enqueue(api.userVerification(body("idUser", session.getCurrentUserID(), "verificationCode", code)),
+                body -> body != null && body.userVerificationStatus, callback);
     }
 
-    public void resendOTP(String nomorTelepon, ResultCallback<AuthResponses.ResendOTP> callback) {
-        enqueue(api.resendOTP(body("nomorTelepon", nomorTelepon)), body -> body, callback);
+    public void resendOTP(String telephoneNumber, ResultCallback<AuthResponses.ResendOTP> callback) {
+        enqueue(api.resendOTP(body("nomorTelepon", telephoneNumber)), body -> body, callback);
     }
 
-    public void lupaPassword(String nomorHP, ResultCallback<AuthResponses.LupaPassword> callback) {
-        enqueue(api.lupaPassword(body("nomorHP", nomorHP)), body -> body, callback);
+    public void forgotPassword(String phoneNumber, ResultCallback<AuthResponses.ForgotPassword> callback) {
+        enqueue(api.forgotPassword(body("nomorHP", phoneNumber)), body -> body, callback);
     }
 
     /** The signed-in user's phone number (null when unknown). */
-    public void getNomorHP(ResultCallback<String> callback) {
+    public void getPhoneNumber(ResultCallback<String> callback) {
         enqueue(api.getDetailUser(null),
-                body -> body == null || body.detailUser == null ? null : body.detailUser.nomorHP, callback);
+                body -> body == null || body.detailUser == null ? null : body.detailUser.phoneNumber, callback);
     }
 
     private void onSignedIn(String idUser) {
         push.onSignedIn();
         cart.refreshCartCount();
-        notifikasi.refreshUnreadCount();
+        notification.refreshUnreadCount();
     }
 
     /** Standard base64 (with padding, no line breaks) of the text's UTF-8 bytes. */

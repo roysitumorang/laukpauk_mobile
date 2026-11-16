@@ -66,7 +66,7 @@ Data layer                                              data/repository/XxxRepos
 | `ui/<feature>` | Fragments, their ViewModels, RecyclerView `ListAdapter`s and small custom views — one package per feature (auth, home, search, product, cart, checkout, orders, account, …) |
 | `ui/common` | shared UI: `HeaderView` (buyer header with cart/notification badges), `AppBars`, `Messages`, `SearchBox`, `ImagePicker`, `PhoneNumberHint` (offers the SIM phone number on the login, register and forgot-password screens via the Phone Number Hint API), `AuthGate` (sign-in gating), `NavResults` (results to the previous screen), `Images` (Glide) |
 | `ui/delivery`, `ui/product/ProductActions` | cross-feature flows: choosing the delivery address + schedule, the "Beli" unit sheet + add to cart |
-| `data/repository` | one repository per domain (`CartRepository`, `DeliveryRepository`, `ProdukRepository`, …). UI-free; network through Retrofit `enqueue`, results as `Resource<T>` (`LOADING` / `SUCCESS` / `ERROR`) |
+| `data/repository` | one repository per domain (`CartRepository`, `DeliveryRepository`, `ProductRepository`, …). UI-free; network through Retrofit `enqueue`, results as `Resource<T>` (`LOADING` / `SUCCESS` / `ERROR`) |
 | `data/remote` | Retrofit interfaces, `ApiClient` (OkHttp + Moshi; JSON bodies, and the `X-Version-Code`, `X-Request-Id` and `Authorization: Bearer` headers on every backend request), `LenientJsonAdapterFactory` (the backend sends `"1"`/`1`/`true`, `""`/`false` for missing objects) |
 | `data/model/<feature>` | typed JSON DTOs: public fields named like the JSON keys, `@Json(name = …)` where they differ. Genuinely dynamic payloads are untyped trees (`Map<String, Object>` / `List<Object>`, read with `util/Json`; whole numbers are `Long`, see `util/JsonTreeAdapter`) |
 | `data/local` | `Prefs` (Flutter's `FlutterSharedPreferences` file and `flutter.` keys, so existing users stay signed in) and `SessionStore` |
@@ -98,8 +98,8 @@ repositories to their ViewModel:
 ```java
 AppContainer c = AppContainer.from(requireContext());
 viewModel = new ViewModelProvider(this,
-        ViewModelFactory.of(() -> new NotifikasiViewModel(c.notifikasiRepository)))
-        .get(NotifikasiViewModel.class);
+        ViewModelFactory.of(() -> new NotificationViewModel(c.notificationRepository)))
+        .get(NotificationViewModel.class);
 ```
 
 `ui/notification` is the reference implementation of a feature (repository, API, DTOs, ViewModel, Fragment,

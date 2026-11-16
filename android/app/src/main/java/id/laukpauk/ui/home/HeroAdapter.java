@@ -37,17 +37,17 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.Holder> {
     public void onBindViewHolder(@NonNull Holder h, int position) {
         Banner b = banners.get(position);
         ItemHomeHeroBinding v = h.binding;
-        if (b.gambar == null || b.gambar.length() <= 1) {
-            v.gambar.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            Images.asset(v.gambar, "no-image-img.png");
+        if (b.image == null || b.image.length() <= 1) {
+            v.image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            Images.asset(v.image, "no-image-img.png");
         } else {
-            v.gambar.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            Images.url(v.gambar, Images.server(ServerPath.uploadGambarBanner, b.gambar));
+            v.image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            Images.url(v.image, Images.server(ServerPath.uploadImageBanner, b.image));
         }
-        v.nama.setText(b.nama);
-        boolean ada = b.keterangan != null && b.keterangan.length() >= 1;
-        v.keterangan.setVisibility(ada ? View.VISIBLE : View.GONE);
-        v.keterangan.setText(b.keterangan);
+        v.name.setText(b.name);
+        boolean has = b.remarks != null && b.remarks.length() >= 1;
+        v.remarks.setVisibility(has ? View.VISIBLE : View.GONE);
+        v.remarks.setText(b.remarks);
     }
 
     @Override

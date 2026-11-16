@@ -13,7 +13,7 @@ public class AuthViewModel extends ViewModel {
 
     private final AuthRepository repository;
     private final MutableLiveData<Boolean> busy = new MutableLiveData<>(false);
-    private final MutableLiveData<String> nomorHP = new MutableLiveData<>();
+    private final MutableLiveData<String> phoneNumber = new MutableLiveData<>();
 
     public AuthViewModel(AuthRepository repository) {
         this.repository = repository;
@@ -24,19 +24,19 @@ public class AuthViewModel extends ViewModel {
     }
 
     /** The signed-in user's phone number (KirimUlangOTP prefill). */
-    public LiveData<String> getNomorHP() {
-        return nomorHP;
+    public LiveData<String> getPhoneNumber() {
+        return phoneNumber;
     }
 
     public boolean isBusy() {
         return Boolean.TRUE.equals(busy.getValue());
     }
 
-    public void loadNomorHP() {
-        if (nomorHP.getValue() == null) {
-            repository.getNomorHP(r -> {
+    public void loadPhoneNumber() {
+        if (phoneNumber.getValue() == null) {
+            repository.getPhoneNumber(r -> {
                 if (r.isSuccess() && r.data != null) {
-                    nomorHP.setValue(r.data);
+                    phoneNumber.setValue(r.data);
                 }
             });
         }
@@ -50,24 +50,24 @@ public class AuthViewModel extends ViewModel {
         };
     }
 
-    public void login(String nomor, String password, ResultCallback<AuthRepository.LoginResult> cb) {
-        repository.login(nomor, password, done(cb));
+    public void login(String number, String password, ResultCallback<AuthRepository.LoginResult> cb) {
+        repository.login(number, password, done(cb));
     }
 
-    public void register(String nama, String username, String nomor, String pw, String referal,
+    public void register(String name, String username, String number, String pw, String referral,
                          ResultCallback<AuthRepository.RegisterResult> cb) {
-        repository.register(nama, username, nomor, pw, referal, done(cb));
+        repository.register(name, username, number, pw, referral, done(cb));
     }
 
-    public void konfirmasiOTP(String otp, ResultCallback<Boolean> cb) {
-        repository.konfirmasiOTP(otp, done(cb));
+    public void confirmOtp(String otp, ResultCallback<Boolean> cb) {
+        repository.confirmOtp(otp, done(cb));
     }
 
-    public void resendOTP(String nomor, ResultCallback<AuthResponses.ResendOTP> cb) {
-        repository.resendOTP(nomor, done(cb));
+    public void resendOTP(String number, ResultCallback<AuthResponses.ResendOTP> cb) {
+        repository.resendOTP(number, done(cb));
     }
 
-    public void lupaPassword(String nomor, ResultCallback<AuthResponses.LupaPassword> cb) {
-        repository.lupaPassword(nomor, done(cb));
+    public void forgotPassword(String number, ResultCallback<AuthResponses.ForgotPassword> cb) {
+        repository.forgotPassword(number, done(cb));
     }
 }

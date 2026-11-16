@@ -22,7 +22,7 @@ import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Messages;
 
-/** RepeatOrder.dart. Args: idTransaksi. */
+/** RepeatOrder.dart. Args: transactionId. */
 public class RepeatOrderFragment extends Fragment {
 
     private FragmentRepeatOrderBinding binding;
@@ -40,10 +40,10 @@ public class RepeatOrderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         AppContainer c = AppContainer.from(requireContext());
-        String idTransaksi = requireArguments().getString("idTransaksi", "");
+        String transactionId = requireArguments().getString("idTransaksi", "");
         viewModel = new ViewModelProvider(this, ViewModelFactory.of(() -> new RepeatOrderViewModel(
-                c.transaksiRepository, c.repeatOrderRepository, c.deliveryRepository, c.cartRepository,
-                idTransaksi))).get(RepeatOrderViewModel.class);
+                c.transactionRepository, c.repeatOrderRepository, c.deliveryRepository, c.cartRepository,
+                transactionId))).get(RepeatOrderViewModel.class);
 
         binding.header.bind(this);
         adapter = new RepeatOrderAdapter();
@@ -55,7 +55,7 @@ public class RepeatOrderFragment extends Fragment {
                 return;
             }
             boolean ok = result.isSuccess() && result.data != null && result.data.statusAddCart;
-            String text = getString(ok ? R.string.orders_ro_berhasil : R.string.orders_ro_gagal);
+            String text = getString(ok ? R.string.orders_ro_success : R.string.orders_ro_failed);
             if (result.data != null && result.data.message != null) {
                 text = text + " " + result.data.message;
             }
@@ -72,11 +72,11 @@ public class RepeatOrderFragment extends Fragment {
             }
             binding.progress.setVisibility(View.GONE);
             binding.body.setVisibility(View.VISIBLE);
-            String nomor = "#";
+            String number = "#";
             if (res.isSuccess() && res.data != null) {
-                nomor = "#" + OrderUi.nz(res.data.nomorTransaksi);
+                number = "#" + OrderUi.nz(res.data.transactionNumber);
             }
-            binding.nomorTransaksi.setText(getString(R.string.orders_nomor_transaksi_format, nomor));
+            binding.transactionNumber.setText(getString(R.string.orders_transaction_number_format, number));
         });
         viewModel.getSelection().observe(getViewLifecycleOwner(), this::onSelection);
         viewModel.getItems().observe(getViewLifecycleOwner(), this::onItems);
@@ -104,7 +104,7 @@ public class RepeatOrderFragment extends Fragment {
         }
         binding.refresh.setRefreshing(false);
         RepeatOrderResponses.Items items = res.isSuccess() ? res.data : null;
-        boolean empty = items == null || items.itemTransaksi == null || items.itemTransaksi.isEmpty();
+        boolean empty = items == null || items.transactionItem == null || items.transactionItem.isEmpty();
         binding.emptyGroup.setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.fab.setVisibility(!empty && items.isAvailable ? View.VISIBLE : View.GONE);
         adapter.submitList(empty ? null : Collections.singletonList(items), () -> adapter.notifyDataSetChanged());

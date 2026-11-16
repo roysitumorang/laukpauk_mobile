@@ -21,7 +21,7 @@ import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.remote.CartApi;
 
 /**
- * The shopping cart (legacy CheckoutModel cart parts, ProdukModel.addToCart, HeaderModel.getJumlahCart,
+ * The shopping cart (legacy CheckoutModel cart parts, ProdukModel.addToCart, HeaderModel.getCartQuantity,
  * TransaksiModel.removeTransactionSession, AppState.jumlahCart, GiftModel / GiftTransaksiModel).
  *
  * The first block of public methods is a CONTRACT used by other slices (header badge, product buy sheet,
@@ -44,28 +44,28 @@ public class CartRepository extends BaseRepository {
         return cartCount;
     }
 
-    /** Reloads {@link #cartCount()} from the server (legacy HeaderModel.getJumlahCart; 0 on failure). */
+    /** Reloads {@link #cartCount()} from the server (legacy HeaderModel.getCartQuantity; 0 on failure). */
     public void refreshCartCount() {
-        enqueue(api.getJumlahCart(session.getCartCode()), body -> body == null ? 0 : body.jumlahKeranjang,
+        enqueue(api.getCartQuantity(session.getCartCode()), body -> body == null ? 0 : body.cartCount,
                 r -> cartCount.setValue(r.isSuccess() && r.data != null ? r.data : 0));
     }
 
     /**
      * Adds a unit product to the cart (legacy ProdukModel.addToCart: Keranjang/saveCart with cartCode,
-     * jenisProduk=nonpaket, the delivery schedule when one is chosen, idUser when signed in) and refreshes the
+     * productType=nonpaket, the delivery schedule when one is chosen, idUser when signed in) and refreshes the
      * count on success. No delivery address or schedule is needed to add to the cart; checkout asks for it.
      */
-    public void addToCart(String idProduk, String idSatuan, String quantity, @Nullable String idPromo,
+    public void addToCart(String productId, String unitId, String quantity, @Nullable String idPromo,
                           ResultCallback<AddToCartResult> callback) {
         DeliverySelection d = delivery.current();
         Map<String, String> cartData = new LinkedHashMap<>();
         cartData.put("cartCode", session.getCartCode());
-        cartData.put("idProduk", idProduk);
+        cartData.put("idProduk", productId);
         cartData.put("jenisProduk", "nonpaket");
-        cartData.put("idSatuan", idSatuan);
+        cartData.put("idSatuan", unitId);
         cartData.put("quantity", quantity);
-        if (d.jadwalDeliveryCode != null) {
-            cartData.put("jadwalDeliveryCode", d.jadwalDeliveryCode);
+        if (d.deliveryScheduleCode != null) {
+            cartData.put("jadwalDeliveryCode", d.deliveryScheduleCode);
             cartData.put("dayDelivery", d.dayDelivery != null ? d.dayDelivery : "Hari Pengantaran");
         }
         if (idPromo != null) {
@@ -92,7 +92,7 @@ public class CartRepository extends BaseRepository {
         delivery.clear();
         delivery.clearCopied();
         // Like the legacy order of operations: the server call uses the (freshly generated) cart code.
-        enqueue(api.bersihkanKeranjang(session.getCartCode()), body -> body != null && body.statusBersihkanKeranjang,
+        enqueue(api.clearCart(session.getCartCode()), body -> body != null && body.clearCartStatus,
                 r -> {
                     cartCount.setValue(0);
                     callback.onResult(Resource.success(true));
@@ -110,11 +110,11 @@ public class CartRepository extends BaseRepository {
         return live;
     }
 
-    /** SUBTOTAL (legacy CheckoutModel.getTotalKeranjang). */
-    public LiveData<Resource<Integer>> totalKeranjang() {
+    /** SUBTOTAL (legacy CheckoutModel.getCartTotal). */
+    public LiveData<Resource<Integer>> cartTotal() {
         DeliverySelection d = delivery.current();
-        return load(api.getTotalKeranjang(session.getCartCode(), d.latitude == null ? "" : d.latitude,
-                d.longitude == null ? "" : d.longitude), body -> body == null ? 0 : body.totalKeranjang);
+        return load(api.getCartTotal(session.getCartCode(), d.latitude == null ? "" : d.latitude,
+                d.longitude == null ? "" : d.longitude), body -> body == null ? 0 : body.cartTotal);
     }
 
     /** Wallet discount configuration; SUCCESS with null data when the server has none. */
@@ -125,9 +125,9 @@ public class CartRepository extends BaseRepository {
     /** Gifts earned by the current cart (gift-transaksi + the details of each existing gift). */
     public LiveData<Resource<List<CartGift>>> gifts() {
         MutableLiveData<Resource<List<CartGift>>> live = new MutableLiveData<>(Resource.loading());
-        enqueue(api.getGiftTransaksi(session.getCartCode()),
-                body -> body == null || body.giftTransaksi == null
-                        ? Collections.<CartResponses.GiftTransaksi>emptyList() : body.giftTransaksi,
+        enqueue(api.getTransactionGift(session.getCartCode()),
+                body -> body == null || body.transactionGift == null
+                        ? Collections.<CartResponses.TransactionGift>emptyList() : body.transactionGift,
                 r -> {
                     if (!r.isSuccess() || r.data == null || r.data.isEmpty()) {
                         live.setValue(Resource.success(new ArrayList<CartGift>()));
@@ -156,8 +156,8 @@ public class CartRepository extends BaseRepository {
     }
 
     /** Saves quantity and note of a cart line (legacy EditKeranjangItem.simpanPerubahan); data = statusAddCart. */
-    public void updateItem(String idCart, String quantity, String catatan, ResultCallback<Boolean> callback) {
-        enqueue(api.updateCart(idCart, body("quantity", quantity, "catatan", catatan)),
+    public void updateItem(String idCart, String quantity, String note, ResultCallback<Boolean> callback) {
+        enqueue(api.updateCart(idCart, body("quantity", quantity, "catatan", note)),
                 body -> body != null && body.statusAddCart, callback);
     }
 
@@ -174,7 +174,7 @@ public class CartRepository extends BaseRepository {
 
     /** "Bersihkan Keranjang": empties the server cart, then refreshes the count. data = status. */
     public void clearCart(ResultCallback<Boolean> callback) {
-        enqueue(api.bersihkanKeranjang(session.getCartCode()), body -> body != null && body.statusBersihkanKeranjang,
+        enqueue(api.clearCart(session.getCartCode()), body -> body != null && body.clearCartStatus,
                 r -> {
                     refreshCartCount();
                     callback.onResult(r);

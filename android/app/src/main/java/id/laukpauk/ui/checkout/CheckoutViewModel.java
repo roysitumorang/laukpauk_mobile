@@ -12,7 +12,7 @@ import java.util.Map;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
-import id.laukpauk.data.model.checkout.JadwalPengiriman;
+import id.laukpauk.data.model.checkout.ShippingSchedule;
 import id.laukpauk.data.model.checkout.Voucher;
 import id.laukpauk.data.model.payment.CheckoutResponse;
 import id.laukpauk.data.model.payment.PaymentChannel;
@@ -54,21 +54,21 @@ public class CheckoutViewModel extends ViewModel {
     private final MutableLiveData<Event<Boolean>> formLoaded = new MutableLiveData<>();
     private final MutableLiveData<Event<Boolean>> voucherRejected = new MutableLiveData<>();
     private final MutableLiveData<CheckoutSummary> summary = new MutableLiveData<>();
-    private final MutableLiveData<JadwalPengiriman> jadwal = new MutableLiveData<>();
+    private final MutableLiveData<ShippingSchedule> schedule = new MutableLiveData<>();
     private final MutableLiveData<Boolean> orderBusy = new MutableLiveData<>(false);
     private final MutableLiveData<Event<OrderOutcome>> orderResult = new MutableLiveData<>();
     private LiveData<Resource<List<PaymentChannel>>> channels;
 
     private boolean started;
     private CheckoutInit init;
-    private String nama = "", hp = "", alamat = "", catatan = "";
+    private String name = "", phone = "", address = "", note = "";
     private Voucher usedVoucher;
     private String statusVoucher;
     private boolean pointUsed;
-    private String kodePromo = "";
-    private Boolean kodePromoStatus;
-    private String kodePromoMessage;
-    private long kodePromoDiskon;
+    private String promoCode = "";
+    private Boolean promoCodeStatus;
+    private String promoCodeMessage;
+    private long promoCodeDiscount;
     private int promoSeq;
 
     public CheckoutViewModel(CheckoutRepository checkout, PaymentRepository payment) {
@@ -97,8 +97,8 @@ public class CheckoutViewModel extends ViewModel {
         return summary;
     }
 
-    public LiveData<JadwalPengiriman> jadwal() {
-        return jadwal;
+    public LiveData<ShippingSchedule> schedule() {
+        return schedule;
     }
 
     public LiveData<Boolean> orderBusy() {
@@ -147,10 +147,10 @@ public class CheckoutViewModel extends ViewModel {
                     return;
                 }
                 init = d;
-                nama = d.nama;
-                hp = d.nomorHP;
-                alamat = d.alamat;
-                reloadJadwal();
+                name = d.name;
+                phone = d.phoneNumber;
+                address = d.address;
+                reloadSchedule();
                 formLoaded.setValue(new Event<>(true));
                 recompute();
                 phase.setValue(PHASE_READY);
@@ -159,45 +159,45 @@ public class CheckoutViewModel extends ViewModel {
     }
 
     /** Re-reads the saved delivery schedule (after the delivery selection changed). */
-    public void reloadJadwal() {
-        jadwal.setValue(checkout.savedJadwal());
+    public void reloadSchedule() {
+        schedule.setValue(checkout.savedSchedule());
     }
 
     // ------------------------------------------------------------------ form / options
 
-    public String nama() {
-        return nama;
+    public String name() {
+        return name;
     }
 
-    public String hp() {
-        return hp;
+    public String phone() {
+        return phone;
     }
 
-    public String alamat() {
-        return alamat;
+    public String address() {
+        return address;
     }
 
-    public String catatan() {
-        return catatan;
+    public String note() {
+        return note;
     }
 
-    public void setNama(String v) {
-        nama = v;
+    public void setName(String v) {
+        name = v;
         recompute();
     }
 
-    public void setHp(String v) {
-        hp = v;
+    public void setPhone(String v) {
+        phone = v;
         recompute();
     }
 
-    public void setAlamat(String v) {
-        alamat = v;
+    public void setAddress(String v) {
+        address = v;
         recompute();
     }
 
-    public void setCatatan(String v) {
-        catatan = v;
+    public void setNote(String v) {
+        note = v;
         recompute();
     }
 
@@ -214,7 +214,7 @@ public class CheckoutViewModel extends ViewModel {
     }
 
     public LiveData<Resource<List<Voucher>>> vouchers() {
-        return checkout.getVouchers(init != null ? init.totalBelanja : 0);
+        return checkout.getVouchers(init != null ? init.shoppingTotal : 0);
     }
 
     /** A voucher was picked in the sheet: remember it, unless its value exceeds the total to pay. */
@@ -222,7 +222,7 @@ public class CheckoutViewModel extends ViewModel {
         checkout.selectVoucher(voucher.id, res -> {
             String status = res.data != null ? res.data : "kadaluarsa";
             CheckoutSummary s = summary.getValue();
-            if (s == null || voucher.nilai <= s.totalKeseluruhan) {
+            if (s == null || voucher.value <= s.overallTotal) {
                 usedVoucher = voucher;
                 statusVoucher = status;
                 recompute();
@@ -237,25 +237,25 @@ public class CheckoutViewModel extends ViewModel {
     }
 
     /** Called on every change of the promo code field. */
-    public void onKodePromo(final String kode) {
+    public void onPromoCode(final String code) {
         final int seq = ++promoSeq;
-        kodePromo = kode;
-        if (kode.isEmpty()) {
-            kodePromoStatus = null;
-            kodePromoMessage = null;
-            kodePromoDiskon = 0;
+        promoCode = code;
+        if (code.isEmpty()) {
+            promoCodeStatus = null;
+            promoCodeMessage = null;
+            promoCodeDiscount = 0;
             recompute();
             return;
         }
-        checkout.cekKodePromo(kode, res -> {
+        checkout.checkPromoCode(code, res -> {
             if (seq != promoSeq) {
                 return; // a newer code was typed meanwhile
             }
-            CheckoutResponses.KodePromo p = res.isSuccess() ? res.data : null;
+            CheckoutResponses.PromoCode p = res.isSuccess() ? res.data : null;
             if (p != null) {
-                kodePromoStatus = p.status;
-                kodePromoMessage = p.message;
-                kodePromoDiskon = p.data != null && p.data.promo != null ? p.data.promo.diskon : 0;
+                promoCodeStatus = p.status;
+                promoCodeMessage = p.message;
+                promoCodeDiscount = p.data != null && p.data.promo != null ? p.data.promo.discount : 0;
             }
             recompute();
         });
@@ -268,86 +268,86 @@ public class CheckoutViewModel extends ViewModel {
             return;
         }
         CheckoutSummary s = new CheckoutSummary();
-        s.isFormCompleted = nama.trim().length() >= 1 && hp.trim().length() >= 1 && alamat.trim().length() >= 1;
-        long totalBelanja = init.totalBelanja;
-        long totalOngkir = init.totalOngkir;
+        s.isFormCompleted = name.trim().length() >= 1 && phone.trim().length() >= 1 && address.trim().length() >= 1;
+        long shoppingTotal = init.shoppingTotal;
+        long totalShippingFee = init.totalShippingFee;
 
-        long nilaiVoucher = 0;
+        long voucherValue = 0;
         if (usedVoucher != null && statusVoucher != null && statusVoucher.toLowerCase().equals("aktif")) {
-            nilaiVoucher = usedVoucher.nilai;
+            voucherValue = usedVoucher.value;
         }
-        long nilaiDiskonKategori = init.diskonKategori != null ? Json.longVal(init.diskonKategori, "diskon") : 0;
+        long categoryDiscountValue = init.categoryDiscount != null ? Json.longVal(init.categoryDiscount, "diskon") : 0;
 
-        long potonganWallet = 0;
+        long walletDiscount = 0;
         boolean isWalletOn = false;
-        boolean walletDibatalkan = false;
+        boolean walletCancelled = false;
         if (init.walletConfiguration != null) {
             isWalletOn = init.walletConfiguration.isWalletOn;
-            if (isWalletOn && totalBelanja >= init.walletConfiguration.minGrandTotalTransactionForWallet) {
-                long potonganDompetConfig = init.walletConfiguration.walletDiscount;
-                if (init.totalDompetSaya >= potonganDompetConfig) {
-                    potonganWallet = potonganDompetConfig;
+            if (isWalletOn && shoppingTotal >= init.walletConfiguration.minGrandTotalTransactionForWallet) {
+                long walletDeductionConfig = init.walletConfiguration.walletDiscount;
+                if (init.myWalletTotal >= walletDeductionConfig) {
+                    walletDiscount = walletDeductionConfig;
                 } else {
-                    walletDibatalkan = true;
+                    walletCancelled = true;
                 }
             }
         }
 
-        long subTotalBersih = totalBelanja - potonganWallet - nilaiVoucher - nilaiDiskonKategori;
-        long nilaiPointOut = pointUsed ? init.point : 0;
-        if (nilaiPointOut >= subTotalBersih) {
-            nilaiPointOut = subTotalBersih;
+        long netSubTotal = shoppingTotal - walletDiscount - voucherValue - categoryDiscountValue;
+        long pointOutValue = pointUsed ? init.point : 0;
+        if (pointOutValue >= netSubTotal) {
+            pointOutValue = netSubTotal;
         }
 
         s.isPointUsed = pointUsed;
         s.isWalletOn = isWalletOn;
-        s.walletDibatalkan = walletDibatalkan;
-        s.jumlahBarang = init.jumlahBarang;
-        s.subTotal = totalBelanja;
-        s.totalOngkir = totalOngkir;
-        s.potonganWallet = potonganWallet;
-        s.potonganVoucher = nilaiVoucher;
-        s.potonganDiskon = nilaiDiskonKategori;
-        s.nilaiPointOut = nilaiPointOut;
+        s.walletCancelled = walletCancelled;
+        s.goodsCount = init.goodsCount;
+        s.subTotal = shoppingTotal;
+        s.totalShippingFee = totalShippingFee;
+        s.walletDiscount = walletDiscount;
+        s.voucherDiscount = voucherValue;
+        s.discountAmount = categoryDiscountValue;
+        s.pointOutValue = pointOutValue;
         s.point = init.point;
-        s.minimalPointTukarPoint = init.minimalPointTukarPoint;
-        s.totalKeseluruhan = (totalBelanja + totalOngkir)
-                - (nilaiVoucher + potonganWallet + nilaiPointOut + nilaiDiskonKategori + kodePromoDiskon);
-        s.penjelasanOngkir = init.penjelasanOngkir;
+        s.minimumPointRedeem = init.minimumPointRedeem;
+        s.overallTotal = (shoppingTotal + totalShippingFee)
+                - (voucherValue + walletDiscount + pointOutValue + categoryDiscountValue + promoCodeDiscount);
+        s.shippingFeeExplanation = init.shippingFeeExplanation;
         s.usedVoucher = usedVoucher;
         s.statusVoucher = statusVoucher;
         s.walletConfiguration = init.walletConfiguration;
-        s.jenisOngkir = init.jenisOngkir;
-        s.diskonKategori = init.diskonKategori;
-        s.kodePromoStatus = kodePromoStatus;
-        s.kodePromoMessage = kodePromoMessage;
+        s.shippingFeeType = init.shippingFeeType;
+        s.categoryDiscount = init.categoryDiscount;
+        s.promoCodeStatus = promoCodeStatus;
+        s.promoCodeMessage = promoCodeMessage;
         summary.setValue(s);
     }
 
     // ------------------------------------------------------------------ order
 
-    /** The body of the checkout request (legacy SubTotal.onBayar), or null when no schedule is saved. */
+    /** The body of the checkout request (legacy SubTotal.onPay), or null when no schedule is saved. */
     public Map<String, String> buildCheckoutData() {
-        JadwalPengiriman j = jadwal.getValue();
+        ShippingSchedule j = schedule.getValue();
         CheckoutSummary s = summary.getValue();
         if (j == null || s == null || init == null) {
             return null;
         }
         Map<String, String> m = new LinkedHashMap<>();
-        m.put("namaPenerima", nama.trim());
-        m.put("nomorHPPenerima", hp.trim());
-        m.put("alamatDetailLengkap", alamat.trim());
-        m.put("catatanTambahan", catatan.trim());
-        m.put("jadwalPengiriman", nz(j.day) + " | " + nz(j.rentangWaktu));
+        m.put("namaPenerima", name.trim());
+        m.put("nomorHPPenerima", phone.trim());
+        m.put("alamatDetailLengkap", address.trim());
+        m.put("catatanTambahan", note.trim());
+        m.put("jadwalPengiriman", nz(j.day) + " | " + nz(j.timeRange));
         m.put("cartCode", init.cartCode);
         m.put("voucher", usedVoucher == null ? "0" : nz(usedVoucher.id));
         m.put("latDelivery", checkout.latDelivery());
         m.put("longDelivery", checkout.longDelivery());
-        m.put("jadwalDeliveryCode", nz(j.kode));
+        m.put("jadwalDeliveryCode", nz(j.code));
         m.put("isPointUsed", pointUsed ? "true" : "false");
-        Map<String, Object> dk = init.diskonKategori;
+        Map<String, Object> dk = init.categoryDiscount;
         m.put("diskonKategori", dk != null ? Json.toJson(dk) : "");
-        m.put("kodePromo", kodePromo);
+        m.put("kodePromo", promoCode);
         return m;
     }
 
@@ -364,13 +364,13 @@ public class CheckoutViewModel extends ViewModel {
     }
 
     /** Places the order with the chosen channel; the answer arrives in {@link #orderResult()}. */
-    public void buatOrder(final PaymentChannel channel, final String moreData) {
+    public void placeOrder(final PaymentChannel channel, final String moreData) {
         final Map<String, String> data = buildCheckoutData();
         if (data == null || Boolean.TRUE.equals(orderBusy.getValue())) {
             return;
         }
         orderBusy.setValue(true);
-        payment.buatOrder(channel, data, moreData, res -> {
+        payment.placeOrder(channel, data, moreData, res -> {
             orderBusy.setValue(false);
             Map<String, String> dataCheckout = new LinkedHashMap<>(data);
             dataCheckout.put("metodePembayaran", nz(channel.channel_code));

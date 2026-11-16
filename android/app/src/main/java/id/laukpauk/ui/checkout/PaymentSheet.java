@@ -34,7 +34,7 @@ final class PaymentSheet {
 
     private final Fragment fragment;
     private final CheckoutViewModel vm;
-    private final long totalTagihan;
+    private final long totalBill;
     private final BottomSheetDialog dialog;
     private final SheetCheckoutPaymentBinding b;
     private final ChannelAdapter adapter;
@@ -46,21 +46,21 @@ final class PaymentSheet {
     private boolean tokenizing;
     private boolean ordering;
 
-    PaymentSheet(Fragment fragment, CheckoutViewModel vm, long totalTagihan) {
+    PaymentSheet(Fragment fragment, CheckoutViewModel vm, long totalBill) {
         this.fragment = fragment;
         this.vm = vm;
-        this.totalTagihan = totalTagihan;
+        this.totalBill = totalBill;
         this.dialog = new BottomSheetDialog(fragment.requireContext());
         this.b = SheetCheckoutPaymentBinding.inflate(dialog.getLayoutInflater());
         dialog.setContentView(b.getRoot());
         if (dialog.getWindow() != null) {
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
-        adapter = new ChannelAdapter(totalTagihan, this::onChannel);
+        adapter = new ChannelAdapter(totalBill, this::onChannel);
         b.list.setAdapter(adapter);
         b.btnOrder.setOnClickListener(v -> {
             if (selected != null && moreData != null) {
-                vm.buatOrder(selected, moreData);
+                vm.placeOrder(selected, moreData);
             }
         });
         setupCod();
@@ -102,7 +102,7 @@ final class PaymentSheet {
         } else if (code.equals("cod")) {
             showStep(b.stepCod.codRoot);
         } else if (E_WALLET.contains(code)) {
-            b.stepEwallet.tvNama.setText(ch.name == null ? "" : ch.name.toUpperCase(Locale.ROOT));
+            b.stepEwallet.tvName.setText(ch.name == null ? "" : ch.name.toUpperCase(Locale.ROOT));
             showStep(b.stepEwallet.ewalletRoot);
         } else {
             // tf_bca gets a random unique code (1..199); the other channels need no extra data
@@ -150,22 +150,22 @@ final class PaymentSheet {
 
     private void setupCod() {
         b.stepCod.back.setOnClickListener(v -> backToList());
-        b.stepCod.tvNote.setText(fragment.getString(R.string.checkout_uang_note,
-                Currency.formatRupiah(totalTagihan, 0)));
-        onText(b.stepCod.etUang, () -> {
-            boolean show = uang() != null && uang() >= totalTagihan;
+        b.stepCod.tvNote.setText(fragment.getString(R.string.checkout_money_note,
+                Currency.formatRupiah(totalBill, 0)));
+        onText(b.stepCod.etMoney, () -> {
+            boolean show = money() != null && money() >= totalBill;
             b.stepCod.btnOrder.setVisibility(show ? View.VISIBLE : View.GONE);
         });
         b.stepCod.btnOrder.setOnClickListener(v -> {
-            Long uang = uang();
-            if (selected != null && uang != null) {
-                vm.buatOrder(selected, String.valueOf(uang));
+            Long money = money();
+            if (selected != null && money != null) {
+                vm.placeOrder(selected, String.valueOf(money));
             }
         });
     }
 
-    private Long uang() {
-        String value = b.stepCod.etUang.getText().toString();
+    private Long money() {
+        String value = b.stepCod.etMoney.getText().toString();
         try {
             return value.isEmpty() ? null : Long.parseLong(value);
         } catch (NumberFormatException e) {
@@ -177,11 +177,11 @@ final class PaymentSheet {
 
     private void setupEwallet() {
         b.stepEwallet.back.setOnClickListener(v -> backToList());
-        onText(b.stepEwallet.etTelepon, () -> b.stepEwallet.btnOrder.setVisibility(
-                b.stepEwallet.etTelepon.length() >= 10 ? View.VISIBLE : View.GONE));
+        onText(b.stepEwallet.etTelephone, () -> b.stepEwallet.btnOrder.setVisibility(
+                b.stepEwallet.etTelephone.length() >= 10 ? View.VISIBLE : View.GONE));
         b.stepEwallet.btnOrder.setOnClickListener(v -> {
             if (selected != null) {
-                vm.buatOrder(selected, b.stepEwallet.etTelepon.getText().toString());
+                vm.placeOrder(selected, b.stepEwallet.etTelephone.getText().toString());
             }
         });
     }
@@ -189,46 +189,46 @@ final class PaymentSheet {
     // ------------------------------------------------------------------ credit card
 
     private void setupCard() {
-        Images.asset(b.stepCard.ivKartu, "payment/jcb-mastercard.png");
+        Images.asset(b.stepCard.ivCard, "payment/jcb-mastercard.png");
         Images.asset(b.stepCard.ivCvv, "payment/CVV.png");
         Images.asset(b.stepCard.ivLoading, "loading.png");
         b.stepCard.back.setOnClickListener(v -> backToList());
         if (Environment.environment.equals("development")) {
-            b.stepCard.etNomor.setText("4000000000000002");
-            b.stepCard.etBulan.setText("03");
-            b.stepCard.etTahun.setText("26");
+            b.stepCard.etNumber.setText("4000000000000002");
+            b.stepCard.etMonth.setText("03");
+            b.stepCard.etYear.setText("26");
             b.stepCard.etCvn.setText("266");
         }
-        Runnable refresh = () -> b.stepCard.btnVerifikasi.setVisibility(formOkay() ? View.VISIBLE : View.GONE);
-        onText(b.stepCard.etNomor, refresh);
-        onText(b.stepCard.etBulan, refresh);
-        onText(b.stepCard.etTahun, refresh);
+        Runnable refresh = () -> b.stepCard.btnVerification.setVisibility(formOkay() ? View.VISIBLE : View.GONE);
+        onText(b.stepCard.etNumber, refresh);
+        onText(b.stepCard.etMonth, refresh);
+        onText(b.stepCard.etYear, refresh);
         onText(b.stepCard.etCvn, refresh);
         refresh.run();
-        b.stepCard.btnVerifikasi.setOnClickListener(v -> verifikasi());
+        b.stepCard.btnVerification.setOnClickListener(v -> verification());
     }
 
     private boolean formOkay() {
-        return b.stepCard.etNomor.length() >= 16 && b.stepCard.etBulan.length() >= 2
-                && b.stepCard.etTahun.length() >= 2 && b.stepCard.etCvn.length() >= 3;
+        return b.stepCard.etNumber.length() >= 16 && b.stepCard.etMonth.length() >= 2
+                && b.stepCard.etYear.length() >= 2 && b.stepCard.etCvn.length() >= 3;
     }
 
     private void updateCardBusy() {
-        b.stepCard.btnVerifikasi.setEnabled(!tokenizing && !ordering);
+        b.stepCard.btnVerification.setEnabled(!tokenizing && !ordering);
         b.stepCard.overlay.setVisibility(ordering && cardStepVisible ? View.VISIBLE : View.GONE);
     }
 
-    private void verifikasi() {
+    private void verification() {
         if (selected == null || !formOkay() || tokenizing || ordering) {
             return;
         }
-        String number = b.stepCard.etNomor.getText().toString();
-        String month = b.stepCard.etBulan.getText().toString();
-        String year = "20" + b.stepCard.etTahun.getText().toString();
+        String number = b.stepCard.etNumber.getText().toString();
+        String month = b.stepCard.etMonth.getText().toString();
+        String year = "20" + b.stepCard.etYear.getText().toString();
         String cvn = b.stepCard.etCvn.getText().toString();
         tokenizing = true;
         updateCardBusy();
-        XenditTokenizer.createToken(fragment.requireActivity(), totalTagihan, number, month, year, cvn,
+        XenditTokenizer.createToken(fragment.requireActivity(), totalBill, number, month, year, cvn,
                 (CardToken token) -> {
                     tokenizing = false;
                     updateCardBusy();
@@ -236,7 +236,7 @@ final class PaymentSheet {
                         return; // token creation failed: nothing else happens (legacy)
                     }
                     String json = AppContainer.from(fragment.requireContext()).apiClient.toJson(token, CardToken.class);
-                    vm.buatOrder(selected, json);
+                    vm.placeOrder(selected, json);
                 });
     }
 }

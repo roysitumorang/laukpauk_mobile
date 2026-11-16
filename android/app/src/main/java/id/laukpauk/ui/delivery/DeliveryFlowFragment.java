@@ -34,9 +34,9 @@ import java.util.List;
 import id.laukpauk.MainActivity;
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.delivery.JadwalDelivery;
+import id.laukpauk.data.model.delivery.DeliverySchedule;
 import id.laukpauk.databinding.DialogDeliveryConfirmAddressBinding;
-import id.laukpauk.databinding.DialogDeliveryJadwalBinding;
+import id.laukpauk.databinding.DialogDeliveryScheduleBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.location.PinGMAPSFragment;
@@ -174,7 +174,7 @@ public class DeliveryFlowFragment extends Fragment {
                 notice(R.string.delivery_laukpauk, R.string.delivery_gps_off, vm::gpsOk);
                 break;
             case GEOCODE_FAILED:
-                notice(R.string.delivery_deteksi_gagal_title, R.string.delivery_deteksi_gagal, vm::geocodeFailedOk);
+                notice(R.string.delivery_detection_failed_title, R.string.delivery_detection_failed, vm::geocodeFailedOk);
                 break;
             case CONFIRM:
                 showConfirm();
@@ -182,8 +182,8 @@ public class DeliveryFlowFragment extends Fragment {
             case PIN:
                 openPin();
                 break;
-            case JADWAL:
-                showJadwal();
+            case SCHEDULE:
+                showSchedule();
                 break;
             default:
                 break;
@@ -264,13 +264,13 @@ public class DeliveryFlowFragment extends Fragment {
 
     private void showConfirm() {
         DialogDeliveryConfirmAddressBinding b = DialogDeliveryConfirmAddressBinding.inflate(android.view.LayoutInflater.from(requireContext()));
-        b.message.setText(R.string.delivery_alamat_content);
-        b.address.setText(vm.alamat);
+        b.message.setText(R.string.delivery_address_content);
+        b.address.setText(vm.address);
         dialog = new MaterialAlertDialogBuilder(requireActivity())
-                .setTitle(R.string.delivery_alamat_title).setView(b.getRoot()).setCancelable(false)
-                .setNeutralButton(R.string.delivery_tutup, (d, w) -> vm.confirmTutup())
-                .setNegativeButton(R.string.delivery_alamat_lain, (d, w) -> vm.confirmAlamatLain())
-                .setPositiveButton(R.string.delivery_ya, (d, w) -> vm.confirmYa())
+                .setTitle(R.string.delivery_address_title).setView(b.getRoot()).setCancelable(false)
+                .setNeutralButton(R.string.delivery_close, (d, w) -> vm.confirmClose())
+                .setNegativeButton(R.string.delivery_other_address, (d, w) -> vm.confirmOtherAddress())
+                .setPositiveButton(R.string.delivery_yes, (d, w) -> vm.confirmYes())
                 .show();
     }
 
@@ -290,38 +290,38 @@ public class DeliveryFlowFragment extends Fragment {
         ((MainActivity) getActivity()).getNavController().navigate(R.id.pinGMAPSFragment, args);
     }
 
-    private void showJadwal() {
-        DialogDeliveryJadwalBinding b = DialogDeliveryJadwalBinding.inflate(android.view.LayoutInflater.from(requireContext()));
-        b.alamat.setText(vm.alamat);
-        JadwalAdapter adapter = new JadwalAdapter(vm::selectJadwal);
+    private void showSchedule() {
+        DialogDeliveryScheduleBinding b = DialogDeliveryScheduleBinding.inflate(android.view.LayoutInflater.from(requireContext()));
+        b.address.setText(vm.address);
+        ScheduleAdapter adapter = new ScheduleAdapter(vm::selectSchedule);
         b.list.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         b.list.setAdapter(adapter);
         AlertDialog d = new MaterialAlertDialogBuilder(requireActivity())
-                .setTitle(R.string.delivery_jadwal_title).setView(b.getRoot()).setCancelable(false)
-                .setNegativeButton(R.string.delivery_jadwal_nanti_saja, (x, w) -> vm.jadwalNantiSaja())
-                .setPositiveButton(R.string.delivery_ok, (x, w) -> vm.jadwalOk())
+                .setTitle(R.string.delivery_schedule_title).setView(b.getRoot()).setCancelable(false)
+                .setNegativeButton(R.string.delivery_schedule_later, (x, w) -> vm.scheduleLater())
+                .setPositiveButton(R.string.delivery_ok, (x, w) -> vm.scheduleOk())
                 .create();
         d.show();
         d.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(android.view.View.GONE);
-        Observer<Resource<List<JadwalDelivery>>> listObs = res -> {
+        Observer<Resource<List<DeliverySchedule>>> listObs = res -> {
             if (res == null) {
                 return;
             }
             boolean loading = res.isLoading();
-            List<JadwalDelivery> items = res.data != null ? res.data : new ArrayList<JadwalDelivery>();
+            List<DeliverySchedule> items = res.data != null ? res.data : new ArrayList<DeliverySchedule>();
             b.progress.setVisibility(loading ? android.view.View.VISIBLE : android.view.View.GONE);
             b.list.setVisibility(!loading && !items.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
             b.none.setVisibility(!loading && items.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
             adapter.submitList(items);
         };
-        Observer<JadwalDelivery> selObs = j -> {
+        Observer<DeliverySchedule> selObs = j -> {
             adapter.setSelected(j);
             d.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(j != null ? android.view.View.VISIBLE : android.view.View.GONE);
         };
-        vm.jadwal.observe(this, listObs);
+        vm.schedule.observe(this, listObs);
         vm.selected.observe(this, selObs);
         d.setOnDismissListener(x -> {
-            vm.jadwal.removeObserver(listObs);
+            vm.schedule.removeObserver(listObs);
             vm.selected.removeObserver(selObs);
         });
         dialog = d;

@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProvider;
  * <pre>
  * AppContainer c = AppContainer.from(requireContext());
  * viewModel = new ViewModelProvider(this,
- *         ViewModelFactory.of(() -&gt; new NotifikasiViewModel(c.notifikasiRepository)))
- *         .get(NotifikasiViewModel.class);
+ *         ViewModelFactory.of(() -&gt; new NotificationViewModel(c.notificationRepository)))
+ *         .get(NotificationViewModel.class);
  * </pre>
  * The creator only runs when no ViewModel exists yet for that owner, so state survives rotation.
  */

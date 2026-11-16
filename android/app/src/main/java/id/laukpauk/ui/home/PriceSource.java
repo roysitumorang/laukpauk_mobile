@@ -5,5 +5,5 @@ import id.laukpauk.data.repository.BaseRepository;
 
 /** Loads the lowest price of a product tile ({@code HomeRepository::getLowestPrice}). */
 public interface PriceSource {
-    void load(String idProduk, BaseRepository.ResultCallback<LowestPrice> callback);
+    void load(String productId, BaseRepository.ResultCallback<LowestPrice> callback);
 }

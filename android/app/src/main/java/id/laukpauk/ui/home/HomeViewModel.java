@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.home.Artikel;
+import id.laukpauk.data.model.home.Article;
 import id.laukpauk.data.model.home.Banner;
-import id.laukpauk.data.model.home.Konten;
+import id.laukpauk.data.model.home.Content;
 import id.laukpauk.data.model.home.WalletInfo;
 import id.laukpauk.data.repository.HomeRepository;
 
@@ -21,38 +21,38 @@ public class HomeViewModel extends ViewModel {
     private final HomeRepository home;
 
     private final MediatorLiveData<Resource<List<Banner>>> banners = new MediatorLiveData<>();
-    private final MediatorLiveData<Resource<List<Artikel>>> artikel = new MediatorLiveData<>();
+    private final MediatorLiveData<Resource<List<Article>>> article = new MediatorLiveData<>();
     private final MediatorLiveData<Resource<WalletInfo>> wallet = new MediatorLiveData<>();
-    private final MediatorLiveData<Resource<List<KontenSection>>> konten = new MediatorLiveData<>();
+    private final MediatorLiveData<Resource<List<ContentSection>>> content = new MediatorLiveData<>();
     private final MutableLiveData<Boolean> loggedIn = new MutableLiveData<>(false);
 
     private LiveData<Resource<List<Banner>>> bannerSource;
-    private LiveData<Resource<List<Artikel>>> artikelSource;
+    private LiveData<Resource<List<Article>>> articleSource;
     private LiveData<Resource<WalletInfo>> walletSource;
-    private LiveData<Resource<List<Konten>>> kontenSource;
+    private LiveData<Resource<List<Content>>> contentSource;
     private final List<LiveData<?>> itemSources = new ArrayList<>();
     private boolean started;
-    private int kontenGeneration;
+    private int contentGeneration;
 
-    private final String kontenPage;
+    private final String contentPage;
     private final Integer itemLimit;
 
     public HomeViewModel(HomeRepository home) {
         this(home, HomeRepository.PAGE_HOMEPAGE, 8);
     }
 
-    /** @param kontenPage the konten page to show; @param itemLimit items per block (null = all) */
-    public HomeViewModel(HomeRepository home, String kontenPage, Integer itemLimit) {
+    /** @param contentPage the konten page to show; @param itemLimit items per block (null = all) */
+    public HomeViewModel(HomeRepository home, String contentPage, Integer itemLimit) {
         this.home = home;
-        this.kontenPage = kontenPage;
+        this.contentPage = contentPage;
         this.itemLimit = itemLimit;
     }
 
     /** Loads only the konten blocks (the search screen). */
-    public void startKonten() {
+    public void startContent() {
         if (!started) {
             started = true;
-            loadKonten();
+            loadContent();
         }
     }
 
@@ -60,8 +60,8 @@ public class HomeViewModel extends ViewModel {
         return banners;
     }
 
-    public LiveData<Resource<List<Artikel>>> getArtikel() {
-        return artikel;
+    public LiveData<Resource<List<Article>>> getArticle() {
+        return article;
     }
 
     /** Dompet / voucher / poin; only loaded while {@link #getLoggedIn()} is true. */
@@ -73,8 +73,8 @@ public class HomeViewModel extends ViewModel {
         return loggedIn;
     }
 
-    public LiveData<Resource<List<KontenSection>>> getKonten() {
-        return konten;
+    public LiveData<Resource<List<ContentSection>>> getContent() {
+        return content;
     }
 
     /** First open: loads everything once (a rotation keeps the loaded data). */
@@ -90,8 +90,8 @@ public class HomeViewModel extends ViewModel {
         home.clearPriceCache();
         loadBanners();
         loadWallet();
-        loadKonten();
-        loadArtikel();
+        loadContent();
+        loadArticle();
     }
 
     /** The user may have signed in or out meanwhile: reload the wallet when that changed. */
@@ -109,12 +109,12 @@ public class HomeViewModel extends ViewModel {
         banners.addSource(bannerSource, banners::setValue);
     }
 
-    private void loadArtikel() {
-        if (artikelSource != null) {
-            artikel.removeSource(artikelSource);
+    private void loadArticle() {
+        if (articleSource != null) {
+            article.removeSource(articleSource);
         }
-        artikelSource = home.getArtikel();
-        artikel.addSource(artikelSource, artikel::setValue);
+        articleSource = home.getArticle();
+        article.addSource(articleSource, article::setValue);
     }
 
     private void loadWallet() {
@@ -130,51 +130,51 @@ public class HomeViewModel extends ViewModel {
         }
     }
 
-    private void loadKonten() {
-        final int mine = ++kontenGeneration;
-        if (kontenSource != null) {
-            konten.removeSource(kontenSource);
+    private void loadContent() {
+        final int mine = ++contentGeneration;
+        if (contentSource != null) {
+            content.removeSource(contentSource);
         }
         for (LiveData<?> s : itemSources) {
-            konten.removeSource(s);
+            content.removeSource(s);
         }
         itemSources.clear();
-        kontenSource = home.getKonten(kontenPage);
-        final LiveData<Resource<List<Konten>>> source = kontenSource;
-        konten.addSource(source, res -> {
-            if (mine != kontenGeneration) {
+        contentSource = home.getContent(contentPage);
+        final LiveData<Resource<List<Content>>> source = contentSource;
+        content.addSource(source, res -> {
+            if (mine != contentGeneration) {
                 return;
             }
             if (res.isLoading()) {
-                konten.setValue(Resource.<List<KontenSection>>loading());
+                content.setValue(Resource.<List<ContentSection>>loading());
                 return;
             }
-            konten.removeSource(source);
-            List<Konten> list = res.isSuccess() && res.data != null ? res.data : new ArrayList<Konten>();
-            final List<KontenSection> sections = new ArrayList<>();
-            for (Konten k : list) {
-                sections.add(new KontenSection(k, null));
+            content.removeSource(source);
+            List<Content> list = res.isSuccess() && res.data != null ? res.data : new ArrayList<Content>();
+            final List<ContentSection> sections = new ArrayList<>();
+            for (Content k : list) {
+                sections.add(new ContentSection(k, null));
             }
-            konten.setValue(Resource.success(new ArrayList<>(sections)));
+            content.setValue(Resource.success(new ArrayList<>(sections)));
             for (int i = 0; i < list.size(); i++) {
                 loadItems(sections, i, mine);
             }
         });
     }
 
-    private void loadItems(final List<KontenSection> sections, final int index, final int mine) {
-        final Konten k = sections.get(index).konten;
-        final LiveData<Resource<List<id.laukpauk.data.model.home.KontenItem>>> source = home.getKontenItem(k.id, itemLimit);
+    private void loadItems(final List<ContentSection> sections, final int index, final int mine) {
+        final Content k = sections.get(index).content;
+        final LiveData<Resource<List<id.laukpauk.data.model.home.ContentItem>>> source = home.getContentItem(k.id, itemLimit);
         itemSources.add(source);
-        konten.addSource(source, res -> {
-            if (mine != kontenGeneration || res.isLoading()) {
+        content.addSource(source, res -> {
+            if (mine != contentGeneration || res.isLoading()) {
                 return;
             }
-            konten.removeSource(source);
+            content.removeSource(source);
             itemSources.remove(source);
-            sections.set(index, new KontenSection(k, res.isSuccess() && res.data != null ? res.data
-                    : new ArrayList<id.laukpauk.data.model.home.KontenItem>()));
-            konten.setValue(Resource.success(new ArrayList<>(sections)));
+            sections.set(index, new ContentSection(k, res.isSuccess() && res.data != null ? res.data
+                    : new ArrayList<id.laukpauk.data.model.home.ContentItem>()));
+            content.setValue(Resource.success(new ArrayList<>(sections)));
         });
     }
 }

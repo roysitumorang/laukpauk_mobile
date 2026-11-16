@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="@string/account_data_tidak_ditemukan"
+                android:text="@string/account_data_not_found"
                 android:textColor="@color/text_danger"
                 android:textSize="13sp" />
 
@@ -57,19 +57,19 @@
                 android:visibility="gone">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/masuk"
+                    android:id="@+id/login"
                     style="@style/Widget.Account.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/account_masuk" />
+                    android:text="@string/account_login" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/daftar"
+                    android:id="@+id/register"
                     style="@style/Widget.Account.Button.Outline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@string/account_daftar" />
+                    android:text="@string/account_register" />
             </LinearLayout>
         </LinearLayout>
 
@@ -99,14 +99,14 @@
                         android:paddingEnd="15dp">
 
                         <ImageView
-                            android:id="@+id/foto"
+                            android:id="@+id/photo"
                             android:layout_width="141dp"
                             android:layout_height="141dp"
                             android:importantForAccessibility="no"
                             android:scaleType="centerCrop" />
 
                         <TextView
-                            android:id="@+id/nama"
+                            android:id="@+id/name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="15dp"
@@ -115,7 +115,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/kodeReferal"
+                            android:id="@+id/referralCode"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/green"
@@ -123,7 +123,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/alamat"
+                            android:id="@+id/address"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
@@ -151,14 +151,14 @@
                         android:layout_weight="1" />
 
                     <LinearLayout
-                        android:id="@+id/walletDompet"
+                        android:id="@+id/walletBalance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:id="@+id/walletDompetIcon"
+                            android:id="@+id/walletBalanceIcon"
                             android:layout_width="19dp"
                             android:layout_height="19dp"
                             android:importantForAccessibility="no" />
@@ -172,12 +172,12 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/account_wallet_dompet"
+                                android:text="@string/account_wallet_balance"
                                 android:textColor="@color/account_text"
                                 android:textSize="11sp"
                                 android:textStyle="bold" />
                         <TextView
-                            android:id="@+id/dompetValue"
+                            android:id="@+id/walletValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
@@ -233,14 +233,14 @@
                         android:layout_weight="1" />
 
                     <LinearLayout
-                        android:id="@+id/walletPoin"
+                        android:id="@+id/walletPoints"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:id="@+id/walletPoinIcon"
+                            android:id="@+id/walletPointsIcon"
                             android:layout_width="19dp"
                             android:layout_height="19dp"
                             android:importantForAccessibility="no" />
@@ -254,12 +254,12 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/account_wallet_poin"
+                                android:text="@string/account_wallet_points"
                                 android:textColor="@color/account_text"
                                 android:textSize="11sp"
                                 android:textStyle="bold" />
                         <TextView
-                            android:id="@+id/poinValue"
+                            android:id="@+id/pointsValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
@@ -274,14 +274,14 @@
                         android:layout_weight="1" />
 
                     <LinearLayout
-                        android:id="@+id/walletReferal"
+                        android:id="@+id/walletReferral"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:id="@+id/walletReferalIcon"
+                            android:id="@+id/walletReferralIcon"
                             android:layout_width="19dp"
                             android:layout_height="19dp"
                             android:importantForAccessibility="no" />
@@ -295,7 +295,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/account_wallet_kode"
+                                android:text="@string/account_wallet_code"
                                 android:textColor="@color/account_text"
                                 android:textSize="11sp"
                                 android:textStyle="bold" />
@@ -303,7 +303,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/account_wallet_referal"
+                                android:text="@string/account_wallet_referral"
                                 android:textColor="@color/account_text"
                                 android:textSize="11sp"
                                 android:textStyle="bold" />
@@ -342,7 +342,7 @@
                             android:orientation="horizontal">
 
                     <LinearLayout
-                        android:id="@+id/trxHariIni"
+                        android:id="@+id/todayTrx"
                         android:layout_width="75dp"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
@@ -350,18 +350,18 @@
                         android:orientation="vertical">
 
                         <ImageView
-                            android:id="@+id/trxHariIniIcon"
+                            android:id="@+id/todayTrxIcon"
                             android:layout_width="34dp"
                             android:layout_height="34dp"
                             android:importantForAccessibility="no" />
 
                         <TextView
-                            android:id="@+id/trxHariIniLabel"
+                            android:id="@+id/todayTrxLabel"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:gravity="center"
-                            android:text="@string/account_trx_hari_ini"
+                            android:text="@string/account_today_trx"
                             android:textColor="@color/account_text"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -372,7 +372,7 @@
                         android:layout_weight="1" />
 
                     <LinearLayout
-                        android:id="@+id/trxHistori"
+                        android:id="@+id/trxHistory"
                         android:layout_width="75dp"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
@@ -380,18 +380,18 @@
                         android:orientation="vertical">
 
                         <ImageView
-                            android:id="@+id/trxHistoriIcon"
+                            android:id="@+id/trxHistoryIcon"
                             android:layout_width="34dp"
                             android:layout_height="34dp"
                             android:importantForAccessibility="no" />
 
                         <TextView
-                            android:id="@+id/trxHistoriLabel"
+                            android:id="@+id/trxHistoryLabel"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:gravity="center"
-                            android:text="@string/account_trx_histori"
+                            android:text="@string/account_trx_history"
                             android:textColor="@color/account_text"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -402,7 +402,7 @@
                         android:layout_weight="1" />
 
                     <LinearLayout
-                        android:id="@+id/trxAkun"
+                        android:id="@+id/trxAccount"
                         android:layout_width="75dp"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
@@ -410,18 +410,18 @@
                         android:orientation="vertical">
 
                         <ImageView
-                            android:id="@+id/trxAkunIcon"
+                            android:id="@+id/trxAccountIcon"
                             android:layout_width="34dp"
                             android:layout_height="34dp"
                             android:importantForAccessibility="no" />
 
                         <TextView
-                            android:id="@+id/trxAkunLabel"
+                            android:id="@+id/trxAccountLabel"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:gravity="center"
-                            android:text="@string/account_trx_akun"
+                            android:text="@string/account_trx_account"
                             android:textColor="@color/account_text"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -443,7 +443,7 @@
                             android:textStyle="bold" />
 
                 <LinearLayout
-                    android:id="@+id/menuReferal"
+                    android:id="@+id/menuReferral"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -460,12 +460,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/account_menu_referal"
+                            android:text="@string/account_menu_referral"
                             android:textColor="@color/grey"
                             android:textSize="14sp"
                             android:textStyle="bold" />
                         <TextView
-                            android:id="@+id/kodeReferalSub"
+                            android:id="@+id/referralCodeSub"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
@@ -483,7 +483,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/menuPrivasi"
+                    android:id="@+id/menuPrivacy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -500,7 +500,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/account_menu_privasi"
+                            android:text="@string/account_menu_privacy"
                             android:textColor="@color/grey"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -516,7 +516,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/menuHubungi"
+                    android:id="@+id/menuContact"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -533,7 +533,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/account_menu_hubungi"
+                            android:text="@string/account_menu_contact"
                             android:textColor="@color/grey"
                             android:textSize="14sp"
                             android:textStyle="bold" />

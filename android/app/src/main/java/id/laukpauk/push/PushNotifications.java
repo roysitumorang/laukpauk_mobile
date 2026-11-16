@@ -22,7 +22,7 @@ import id.laukpauk.ui.startup.MainRouter;
 /**
  * Shows push notifications and builds the intent that opens them. The data keys are the ones the backend used
  * with OneSignal's {@code additionalData} (see {@link MainRouter}): {@code notifikasi} ("update" |
- * "khususuntukkamu"), {@code idNotifikasi}, {@code routeName}, {@code routeParams}; plus {@code title},
+ * "khususuntukkamu"), {@code notificationId}, {@code routeName}, {@code routeParams}; plus {@code title},
  * {@code body} and an optional {@code image} URL for data-only messages.
  */
 public final class PushNotifications {

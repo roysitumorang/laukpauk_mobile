@@ -123,11 +123,11 @@ public class PinGMAPSFragment extends Fragment {
         viewModel.suggestions().observe(getViewLifecycleOwner(), list -> renderSuggestions(adapter, list));
         viewModel.position().observe(getViewLifecycleOwner(), p -> {
             if (p != null) {
-                binding.tetapkan.setVisibility(View.VISIBLE);
+                binding.set.setVisibility(View.VISIBLE);
                 showPosition(p, true);
             }
         });
-        binding.tetapkan.setOnClickListener(v -> {
+        binding.set.setOnClickListener(v -> {
             PinGMAPSViewModel.Position p = viewModel.position().getValue();
             if (p == null) {
                 return;

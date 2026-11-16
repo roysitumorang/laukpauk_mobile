@@ -11,14 +11,14 @@ final class SubTotalSection {
 
     private final ViewCheckoutSubtotalBinding b;
 
-    SubTotalSection(ViewCheckoutSubtotalBinding binding, Runnable onBayar) {
+    SubTotalSection(ViewCheckoutSubtotalBinding binding, Runnable onPay) {
         this.b = binding;
-        b.btnBayar.setOnClickListener(v -> onBayar.run());
+        b.btnPay.setOnClickListener(v -> onPay.run());
     }
 
     void render(CheckoutSummary s) {
-        b.tvTotal.setText(Currency.formatRupiah(s.totalKeseluruhan, 0));
-        b.btnBayar.setAlpha(s.isFormCompleted ? 1f : .35f);
+        b.tvTotal.setText(Currency.formatRupiah(s.overallTotal, 0));
+        b.btnPay.setAlpha(s.isFormCompleted ? 1f : .35f);
         if (!s.isWalletOn) {
             b.tvWallet.setVisibility(View.GONE);
             return;
@@ -29,7 +29,7 @@ final class SubTotalSection {
                     Currency.formatRupiah(s.walletConfiguration.walletDiscount, 0),
                     Currency.formatRupiah(s.walletConfiguration.minGrandTotalTransactionForWallet, 0)));
         } else {
-            b.tvWallet.setText(R.string.checkout_wallet_gagal);
+            b.tvWallet.setText(R.string.checkout_wallet_failed);
         }
     }
 }

@@ -53,11 +53,11 @@ final class VoucherAdapter extends ListAdapter<Voucher, VoucherAdapter.Holder> {
         ItemCheckoutVoucherBinding b = h.b;
         boolean selected = selectedId != null && selectedId.equals(v.id);
         b.row.setBackgroundResource(selected ? R.drawable.bg_checkout_selected : 0);
-        Images.circle(b.foto, Images.server(ServerPath.uploadGambarVoucher + "/compress", v.foto));
-        b.nama.setText(v.nama);
-        b.untuk.setText(b.getRoot().getContext().getString(R.string.checkout_voucher_untuk, v.jenis));
-        b.potongan.setText(b.getRoot().getContext().getString(R.string.checkout_voucher_potongan,
-                Currency.formatRupiah(v.nilai, 0), Currency.formatRupiah(v.minimumBelanja, 0)));
+        Images.circle(b.photo, Images.server(ServerPath.uploadImageVoucher + "/compress", v.photo));
+        b.name.setText(v.name);
+        b.voucherFor.setText(b.getRoot().getContext().getString(R.string.checkout_voucher_for, v.type));
+        b.deduction.setText(b.getRoot().getContext().getString(R.string.checkout_voucher_deduction,
+                Currency.formatRupiah(v.value, 0), Currency.formatRupiah(v.minimumShopping, 0)));
         b.tile.setOnClickListener(x -> listener.onVoucher(v));
     }
 

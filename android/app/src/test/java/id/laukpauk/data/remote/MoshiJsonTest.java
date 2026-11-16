@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import id.laukpauk.data.model.notifikasi.NotifikasiResponses;
+import id.laukpauk.data.model.notification.NotificationResponses;
 import id.laukpauk.data.model.payment.ReturnedDataFromCheckout;
 
 /** The app's Moshi setup ({@link ApiClient#createMoshi()}) against the backend's loosely typed JSON. */
@@ -103,16 +103,16 @@ public class MoshiJsonTest {
 
     @Test
     public void appDtosRoundTrip() throws Exception {
-        NotifikasiResponses.KhususList k = moshi.adapter(NotifikasiResponses.KhususList.class).fromJson(
+        NotificationResponses.SpecialList k = moshi.adapter(NotificationResponses.SpecialList.class).fromJson(
                 "{\"notifikasi\":[{\"id\":7,\"judul\":\"Hi\",\"isRead\":\"1\"}]}");
         assertNotNull(k);
-        assertEquals("7", k.notifikasi.get(0).id);
-        assertTrue(k.notifikasi.get(0).isRead);
+        assertEquals("7", k.notification.get(0).id);
+        assertTrue(k.notification.get(0).isRead);
 
         String json = "{\"responseCheckout\":{\"idTransaksi\":\"55\",\"paymentResponse\":{\"totalBayar\":10000}},"
                 + "\"dataCheckout\":{\"nama\":\"A\"}}";
         ReturnedDataFromCheckout r = moshi.adapter(ReturnedDataFromCheckout.class).fromJson(json);
-        assertEquals("55", r.responseCheckout.idTransaksi);
+        assertEquals("55", r.responseCheckout.transactionId);
         String again = moshi.adapter(ReturnedDataFromCheckout.class).toJson(r);
         assertTrue(again, again.contains("\"totalBayar\":10000"));
     }
@@ -120,7 +120,7 @@ public class MoshiJsonTest {
     /** Every class in data/model must be readable by Moshi (no platform types, no inner classes). */
     @Test
     public void everyDtoHasAnAdapter() throws Exception {
-        File root = new File(NotifikasiResponses.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        File root = new File(NotificationResponses.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         List<String> names = classNames(root);
         assertTrue("no model classes found in " + root, !names.isEmpty());
         List<String> failures = new ArrayList<>();

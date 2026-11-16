@@ -23,14 +23,14 @@
                 android:id="@+id/back"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:contentDescription="@string/batal"
+                android:contentDescription="@string/cancel"
                 android:src="@drawable/ic_arrow_back" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:text="@string/checkout_kartu_kredit"
+                android:text="@string/checkout_credit_card"
                 android:textColor="@color/checkout_text"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="19dp"
-            android:text="@string/checkout_kartu_info"
+            android:text="@string/checkout_card_info"
             android:textColor="@color/checkout_text"
             android:textSize="12sp" />
 
@@ -49,10 +49,10 @@
                 style="@style/Checkout.Field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/checkout_nomor_kartu">
+                android:hint="@string/checkout_card_number">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etNomor"
+                    android:id="@+id/etNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:importantForAutofill="noExcludeDescendants"
@@ -61,7 +61,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
         <ImageView
-            android:id="@+id/ivKartu"
+            android:id="@+id/ivCard"
             android:layout_width="175dp"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
@@ -79,10 +79,10 @@
                 android:layout_width="0dp"
             android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:hint="@string/checkout_bulan">
+                android:hint="@string/checkout_month">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etBulan"
+                    android:id="@+id/etMonth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:importantForAutofill="noExcludeDescendants"
@@ -104,10 +104,10 @@
                 android:layout_width="0dp"
             android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:hint="@string/checkout_tahun">
+                android:hint="@string/checkout_year">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etTahun"
+                    android:id="@+id/etYear"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:importantForAutofill="noExcludeDescendants"
@@ -159,13 +159,13 @@
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnVerifikasi"
+            android:id="@+id/btnVerification"
             style="@style/Checkout.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="19dp"
             android:layout_marginBottom="10dp"
-            android:text="@string/checkout_verifikasi_kartu"
+            android:text="@string/checkout_card_verification"
             android:visibility="gone" />
     </LinearLayout>
 
@@ -194,7 +194,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="9dp"
             android:gravity="center"
-            android:text="@string/checkout_memproses"
+            android:text="@string/checkout_processing"
             android:textColor="@color/checkout_text"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -204,7 +204,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:gravity="center"
-            android:text="@string/checkout_memproses_info"
+            android:text="@string/checkout_processing_info"
             android:textColor="@color/text_muted"
             android:textSize="12sp" />
 

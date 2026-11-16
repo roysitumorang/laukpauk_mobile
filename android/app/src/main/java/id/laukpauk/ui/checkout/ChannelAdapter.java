@@ -24,11 +24,11 @@ final class ChannelAdapter extends ListAdapter<PaymentChannel, ChannelAdapter.Ho
         void onChannel(PaymentChannel channel);
     }
 
-    private final long totalTagihan;
+    private final long totalBill;
     private final OnChannel listener;
     private String selectedCode;
 
-    ChannelAdapter(long totalTagihan, OnChannel listener) {
+    ChannelAdapter(long totalBill, OnChannel listener) {
         super(new DiffUtil.ItemCallback<PaymentChannel>() {
             @Override
             public boolean areItemsTheSame(@NonNull PaymentChannel a, @NonNull PaymentChannel b) {
@@ -40,7 +40,7 @@ final class ChannelAdapter extends ListAdapter<PaymentChannel, ChannelAdapter.Ho
                 return areItemsTheSame(a, b);
             }
         });
-        this.totalTagihan = totalTagihan;
+        this.totalBill = totalBill;
         this.listener = listener;
     }
 
@@ -60,15 +60,15 @@ final class ChannelAdapter extends ListAdapter<PaymentChannel, ChannelAdapter.Ho
         PaymentChannel ch = getItem(position);
         ItemCheckoutChannelBinding b = h.b;
         String code = ch.channel_code == null ? "" : ch.channel_code;
-        boolean enough = totalTagihan >= ch.minimalPembayaran;
+        boolean enough = totalBill >= ch.minimumPayment;
         Images.asset(b.logo, "payment/" + code.toUpperCase(Locale.ROOT) + ".png");
-        b.nama.setText(ch.name);
+        b.name.setText(ch.name);
         b.radio.setChecked(code.toLowerCase(Locale.ROOT).equals(selectedCode));
         b.radio.setEnabled(enough);
         b.row.setAlpha(enough ? 1f : 0.38f);
         b.minimal.setVisibility(enough ? View.GONE : View.VISIBLE);
-        b.minimal.setText(b.getRoot().getContext().getString(R.string.checkout_minimal_pembayaran,
-                Currency.formatRupiah(ch.minimalPembayaran, 0)));
+        b.minimal.setText(b.getRoot().getContext().getString(R.string.checkout_minimum_payment,
+                Currency.formatRupiah(ch.minimumPayment, 0)));
         b.row.setEnabled(enough);
         b.row.setOnClickListener(enough ? v -> listener.onChannel(ch) : null);
     }
