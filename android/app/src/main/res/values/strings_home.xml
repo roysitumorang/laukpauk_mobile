@@ -23,12 +23,7 @@
     <string name="home_product_searching">Sedang Mencari Produk ..</string>
     <string name="home_product_empty">Yahh! Belum ada produk untuk mu mak. Maaf ya mak...</string>
     <string name="home_content_empty">Tidak Ada Item Konten !</string>
-    <string name="home_article_title">Artikel</string>
-    <string name="home_article_empty">Tidak ada artikel yang bisa dibaca</string>
-    <string name="home_article_long_heading">%1$s .. read more</string>
     <string name="home_content_long_note">%1$s.. read more</string>
-    <string name="home_url_cannot">URL tidak bisa diakses !</string>
-    <string name="home_app_name">Lauk Pauk</string>
 
     <!-- Product tiles -->
     <string name="home_buy">Beli</string>

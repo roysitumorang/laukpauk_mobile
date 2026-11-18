@@ -9,25 +9,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.home.Article;
 import id.laukpauk.data.model.home.Banner;
 import id.laukpauk.data.model.home.Content;
 import id.laukpauk.data.model.home.WalletInfo;
 import id.laukpauk.data.repository.HomeRepository;
 
-/** State of the home page besides the products: hero banners, wallet summary, konten blocks and articles. */
+/** State of the home page besides the products: hero banners, wallet summary and konten blocks. */
 public class HomeViewModel extends ViewModel {
 
     private final HomeRepository home;
 
     private final MediatorLiveData<Resource<List<Banner>>> banners = new MediatorLiveData<>();
-    private final MediatorLiveData<Resource<List<Article>>> article = new MediatorLiveData<>();
     private final MediatorLiveData<Resource<WalletInfo>> wallet = new MediatorLiveData<>();
     private final MediatorLiveData<Resource<List<ContentSection>>> content = new MediatorLiveData<>();
     private final MutableLiveData<Boolean> loggedIn = new MutableLiveData<>(false);
 
     private LiveData<Resource<List<Banner>>> bannerSource;
-    private LiveData<Resource<List<Article>>> articleSource;
     private LiveData<Resource<WalletInfo>> walletSource;
     private LiveData<Resource<List<Content>>> contentSource;
     private final List<LiveData<?>> itemSources = new ArrayList<>();
@@ -60,9 +57,6 @@ public class HomeViewModel extends ViewModel {
         return banners;
     }
 
-    public LiveData<Resource<List<Article>>> getArticle() {
-        return article;
-    }
 
     /** Dompet / voucher / poin; only loaded while {@link #getLoggedIn()} is true. */
     public LiveData<Resource<WalletInfo>> getWallet() {
@@ -91,7 +85,6 @@ public class HomeViewModel extends ViewModel {
         loadBanners();
         loadWallet();
         loadContent();
-        loadArticle();
     }
 
     /** The user may have signed in or out meanwhile: reload the wallet when that changed. */
@@ -109,13 +102,6 @@ public class HomeViewModel extends ViewModel {
         banners.addSource(bannerSource, banners::setValue);
     }
 
-    private void loadArticle() {
-        if (articleSource != null) {
-            article.removeSource(articleSource);
-        }
-        articleSource = home.getArticle();
-        article.addSource(articleSource, article::setValue);
-    }
 
     private void loadWallet() {
         if (walletSource != null) {

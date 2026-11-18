@@ -14,8 +14,6 @@ public interface HomeApi {
     @GET("Banner/getBanner")
     Call<HomeResponses.Banners> getBanner();
 
-    @GET("Artikel/getArtikel")
-    Call<HomeResponses.Articles> getArticle();
 
     @GET("User/getJumlahVoucher")
     Call<HomeResponses.VoucherCount> getVoucherCount();

@@ -15,7 +15,6 @@ BASE_URL=https://CHANGE-ME.invalid
 # The Dart code builds image URLs as baseURL + '/' + uploadGambarX + '/' + file.
 # Defaults below follow the only hard-coded example in the Dart sources
 # ('/upload/gambar/gift/'); confirm them against your ServerPath.dart.
-UPLOAD_GAMBAR_ARTIKEL=upload/gambar/artikel
 UPLOAD_GAMBAR_BANNER=upload/gambar/banner
 UPLOAD_GAMBAR_GIFT=upload/gambar/gift
 UPLOAD_GAMBAR_KATEGORI_PRODUK=upload/gambar/kategori-produk

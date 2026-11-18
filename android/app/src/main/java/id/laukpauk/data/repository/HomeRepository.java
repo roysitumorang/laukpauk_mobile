@@ -12,7 +12,6 @@ import java.util.Map;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
-import id.laukpauk.data.model.home.Article;
 import id.laukpauk.data.model.home.Banner;
 import id.laukpauk.data.model.home.HomeProduct;
 import id.laukpauk.data.model.home.ProductCategory;
@@ -54,9 +53,6 @@ public class HomeRepository extends BaseRepository {
         return load(api.getBanner(), body -> nonNull(body == null ? null : body.listBanner));
     }
 
-    public LiveData<Resource<List<Article>>> getArticle() {
-        return load(api.getArticle(), body -> nonNull(body == null ? null : body.articleList));
-    }
 
     /** Dompet, voucher count and poin of the signed-in user (ERROR-free: a failed part counts as 0). */
     public LiveData<Resource<WalletInfo>> getWallet() {

@@ -1,8 +1,5 @@
 package id.laukpauk.ui.home;
 
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,24 +12,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.home.Article;
 import id.laukpauk.data.model.home.WalletInfo;
-import id.laukpauk.data.repository.SettingRepository;
 import id.laukpauk.databinding.FragmentHomePageBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.delivery.DeliveryFlow;
 import id.laukpauk.util.Currency;
-import id.laukpauk.util.ServerPath;
 
-/** HomePage.dart: header, hero slider, wallet, the first products, konten blocks and articles. */
+/** HomePage.dart: header, hero slider, wallet, the first products and konten blocks. */
 public class HomePageFragment extends Fragment {
 
     private FragmentHomePageBinding binding;
@@ -71,7 +63,6 @@ public class HomePageFragment extends Fragment {
         setupWallet();
         new ProductSection(this, binding.product, productViewModel);
         setupContent();
-        setupArticle();
         viewModel.start();
     }
 
@@ -160,64 +151,6 @@ public class HomePageFragment extends Fragment {
                 adapter.submitList(res.data);
             }
         });
-    }
-
-    private void setupArticle() {
-        SlideAdapter slides = new SlideAdapter(slide -> openUrl((String) slide.tag));
-        binding.articlePager.setAdapter(slides);
-        AutoPager.attach(binding.articlePager);
-        binding.articleEmpty.emptyText.setText(R.string.home_article_empty);
-        binding.articleView.setOnClickListener(v -> c.settingRepository.getSettingValue("seeAllArticleURL", result -> {
-            if (!isAdded()) {
-                return;
-            }
-            String url = SettingRepository.asString(result.data);
-            if (url != null) {
-                launch(url);
-            }
-        }));
-        viewModel.getArticle().observe(getViewLifecycleOwner(), res -> {
-            if (res == null) {
-                return;
-            }
-            binding.articleProgress.setVisibility(res.isLoading() ? View.VISIBLE : View.GONE);
-            if (res.isLoading()) {
-                return;
-            }
-            List<SlideAdapter.Slide> list = new ArrayList<>();
-            if (res.isSuccess() && res.data != null) {
-                for (Article a : res.data) {
-                    String heading = a.heading == null ? "" : a.heading;
-                    if (heading.length() >= 31) {
-                        heading = getString(R.string.home_article_long_heading, heading.substring(0, 30));
-                    }
-                    list.add(new SlideAdapter.Slide(Images.server(ServerPath.uploadImageArticle, a.photo), heading, a.link));
-                }
-            }
-            slides.submit(list);
-            binding.articlePager.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
-            binding.articleEmpty.getRoot().setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
-        });
-    }
-
-    /** Opens an article link; the "URL tidak bisa diakses" dialog when nothing can show it. */
-    private void openUrl(@Nullable String url) {
-        if (!launch(url)) {
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.home_app_name)
-                    .setMessage(R.string.home_url_cannot)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show();
-        }
-    }
-
-    private boolean launch(@Nullable String url) {
-        try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-            return true;
-        } catch (ActivityNotFoundException | SecurityException | NullPointerException e) {
-            return false;
-        }
     }
 
     @Override
