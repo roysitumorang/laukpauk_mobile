@@ -12,10 +12,6 @@ public final class HomeResponses {
         public List<Banner> listBanner;
     }
 
-    public static class Articles {
-        @Json(name = "listArtikel")
-        public List<Article> articleList;
-    }
 
     public static class ContentList {
         @Json(name = "dataKonten")

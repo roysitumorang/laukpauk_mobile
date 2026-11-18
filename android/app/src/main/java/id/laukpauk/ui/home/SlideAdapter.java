@@ -13,7 +13,7 @@ import java.util.List;
 import id.laukpauk.databinding.ItemHomeSlideBinding;
 import id.laukpauk.ui.common.Images;
 
-/** Rounded image slides with a white caption pill (konten banners and articles). */
+/** Rounded image slides with a white caption pill (konten banners). */
 public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.Holder> {
 
     public static final class Slide {
