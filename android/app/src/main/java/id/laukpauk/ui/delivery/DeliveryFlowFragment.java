@@ -6,8 +6,12 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,24 +26,34 @@ import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import id.laukpauk.MainActivity;
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
+import id.laukpauk.data.model.address.BuyerAddress;
 import id.laukpauk.data.model.delivery.DeliverySchedule;
+import id.laukpauk.databinding.DialogAddressFormBinding;
+import id.laukpauk.databinding.DialogAddressListBinding;
 import id.laukpauk.databinding.DialogDeliveryConfirmAddressBinding;
 import id.laukpauk.databinding.DialogDeliveryScheduleBinding;
+import id.laukpauk.databinding.ItemAddressBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.location.PinGMAPSFragment;
+import id.laukpauk.util.Json;
 
 /**
  * Headless fragment (added to the activity) that runs {@link DeliveryFlow#ask}: it owns the permission launcher and
@@ -55,7 +69,17 @@ public class DeliveryFlowFragment extends Fragment {
     private NavController listenedNav;
 
     private final ActivityResultLauncher<String[]> permission = registerForActivityResult(
-            new ActivityResultContracts.RequestMultiplePermissions(), r -> locate());
+            new ActivityResultContracts.RequestMultiplePermissions(), r -> {
+                if (hasPermission()) {
+                    turnOnLocation();
+                } else {
+                    locate(); // reports the failure: no permission
+                }
+            });
+
+    /** The system "turn on location" dialog of Google Play services; OK switches location on. */
+    private final ActivityResultLauncher<IntentSenderRequest> locationSettings = registerForActivityResult(
+            new ActivityResultContracts.StartIntentSenderForResult(), r -> locate());
 
     private final NavController.OnDestinationChangedListener pinListener = (controller, dest, args) -> {
         if (vm == null || vm.step.getValue() != DeliveryFlowViewModel.Step.PIN) {
@@ -108,7 +132,7 @@ public class DeliveryFlowFragment extends Fragment {
         super.onCreate(savedInstanceState);
         AppContainer c = AppContainer.from(requireContext());
         vm = new ViewModelProvider(this, ViewModelFactory.of(
-                () -> new DeliveryFlowViewModel(c.deliveryRepository, c.cartRepository)))
+                () -> new DeliveryFlowViewModel(c.deliveryRepository, c.cartRepository, c.addressRepository)))
                 .get(DeliveryFlowViewModel.class);
         vm.step.observe(this, this::render);
         List<DeliveryFlow.Callback> toStart = new ArrayList<>(pending);
@@ -167,6 +191,24 @@ public class DeliveryFlowFragment extends Fragment {
             unlistenPin();
         }
         switch (step) {
+            case ADDRESS_LOADING:
+                progress(R.string.address_loading);
+                break;
+            case ADDRESSES:
+                showAddresses();
+                break;
+            case ADDRESS_FAILED:
+                dialog = new MaterialAlertDialogBuilder(requireActivity()).setTitle(R.string.address_list_title)
+                        .setMessage(getString(R.string.address_load_failed, vm.error == null ? "" : vm.error))
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.delivery_ok, (d, w) -> vm.closeAddresses()).show();
+                break;
+            case FORM:
+                showForm();
+                break;
+            case FORM_SAVING:
+                progress(R.string.address_saving);
+                break;
             case DETECT:
                 detect();
                 break;
@@ -196,6 +238,115 @@ public class DeliveryFlowFragment extends Fragment {
                 .setPositiveButton(R.string.delivery_ok, (d, w) -> ok.run()).show();
     }
 
+    // ------------------------------------------------------------------ address book
+
+    private void progress(int message) {
+        ProgressBar bar = new ProgressBar(requireContext());
+        int pad = (int) (16 * getResources().getDisplayMetrics().density);
+        bar.setPadding(pad, pad, pad, pad);
+        dialog = new MaterialAlertDialogBuilder(requireActivity()).setTitle(message).setView(bar)
+                .setCancelable(false).show();
+    }
+
+    /** The buyer's addresses: tap = deliver there, "Ubah" = edit it, "Tambah Alamat Baru" = add one. */
+    private void showAddresses() {
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        DialogAddressListBinding b = DialogAddressListBinding.inflate(inflater);
+        for (BuyerAddress a : vm.addresses) {
+            ItemAddressBinding row = ItemAddressBinding.inflate(inflater, b.addresses, false);
+            row.label.setText(nz(a.label));
+            row.main.setVisibility(a.main ? View.VISIBLE : View.GONE);
+            row.recipient.setText(getString(R.string.address_recipient, nz(a.recipientName), nz(a.recipientMobilePhone)));
+            row.street.setText(nz(a.streetAddress));
+            boolean hasNote = !nz(a.deliveryNote).trim().isEmpty();
+            row.note.setVisibility(hasNote ? View.VISIBLE : View.GONE);
+            row.note.setText(hasNote ? a.deliveryNote.trim() : null);
+            row.getRoot().setOnClickListener(v -> vm.chooseAddress(a));
+            row.edit.setOnClickListener(v -> vm.editAddress(a));
+            b.addresses.addView(row.getRoot());
+        }
+        b.addAddress.setOnClickListener(v -> vm.addNewAddress());
+        dialog = new MaterialAlertDialogBuilder(requireActivity()).setTitle(R.string.address_list_title)
+                .setView(b.getRoot()).setCancelable(false)
+                .setNegativeButton(R.string.address_close, (d, w) -> vm.closeAddresses()).show();
+    }
+
+    /**
+     * The address form after the location was detected (or picked on the map): the street comes from it; the
+     * other fields from the edited address, or the buyer's name and phone for a new one.
+     */
+    private void showForm() {
+        DialogAddressFormBinding b = DialogAddressFormBinding.inflate(LayoutInflater.from(requireContext()));
+        BuyerAddress seed = vm.draft;
+        if (seed == null) {
+            seed = new BuyerAddress();
+            BuyerAddress e = vm.editing;
+            if (e != null) {
+                seed.label = e.label;
+                seed.recipientName = e.recipientName;
+                seed.recipientMobilePhone = e.recipientMobilePhone;
+                seed.deliveryNote = e.deliveryNote;
+                seed.main = e.main;
+            } else {
+                Map<String, Object> user = AppContainer.from(requireContext()).session.getCurrentUser();
+                seed.label = getString(R.string.address_default_label);
+                seed.recipientName = user == null ? null : Json.strOrNull(user, "name");
+                seed.recipientMobilePhone = user == null ? null : Json.strOrNull(user, "mobile_phone");
+                seed.main = vm.addresses.isEmpty();
+            }
+            seed.streetAddress = vm.address;
+        }
+        b.label.setText(nz(seed.label));
+        b.recipientName.setText(nz(seed.recipientName));
+        b.recipientPhone.setText(nz(seed.recipientMobilePhone));
+        b.street.setText(nz(seed.streetAddress));
+        b.deliveryNote.setText(nz(seed.deliveryNote));
+        b.main.setChecked(seed.main);
+        boolean hasError = vm.error != null && !vm.error.trim().isEmpty();
+        b.error.setVisibility(hasError ? View.VISIBLE : View.GONE);
+        b.error.setText(hasError ? vm.error : null);
+
+        AlertDialog d = new MaterialAlertDialogBuilder(requireActivity())
+                .setTitle(vm.editing != null ? R.string.address_form_edit : R.string.address_form_new)
+                .setView(b.getRoot()).setCancelable(false)
+                .setNegativeButton(R.string.address_cancel, (x, w) -> vm.cancelForm())
+                .setPositiveButton(R.string.address_save, null)
+                .create();
+        d.setOnShowListener(x -> d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            boolean ok = required(b.labelLayout, b.label.getText())
+                    & required(b.recipientNameLayout, b.recipientName.getText())
+                    & required(b.recipientPhoneLayout, b.recipientPhone.getText())
+                    & required(b.streetLayout, b.street.getText());
+            if (!ok) {
+                return;
+            }
+            BuyerAddress a = new BuyerAddress();
+            a.label = text(b.label.getText());
+            a.recipientName = text(b.recipientName.getText());
+            a.recipientMobilePhone = text(b.recipientPhone.getText());
+            a.streetAddress = text(b.street.getText());
+            a.deliveryNote = text(b.deliveryNote.getText());
+            a.main = b.main.isChecked();
+            vm.saveForm(a);
+        }));
+        dialog = d;
+        d.show();
+    }
+
+    private boolean required(TextInputLayout layout, @Nullable CharSequence value) {
+        boolean ok = value != null && value.toString().trim().length() > 0;
+        layout.setError(ok ? null : getString(R.string.address_required));
+        return ok;
+    }
+
+    private static String text(@Nullable CharSequence value) {
+        return value == null ? "" : value.toString().trim();
+    }
+
+    private static String nz(@Nullable String s) {
+        return s == null ? "" : s;
+    }
+
     // ------------------------------------------------------------------ location
 
     private boolean hasPermission() {
@@ -216,17 +367,65 @@ public class DeliveryFlowFragment extends Fragment {
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
+    /**
+     * Detects the current GPS position. When location is not usable yet (no permission or location switched off)
+     * the activation popup comes first; its OK asks the permission, switches location on through the system
+     * dialog, then reads the position. "Nanti" (or a refusal) continues as before without a position.
+     */
     private void detect() {
         if (vm.detecting) {
             return;
         }
-        vm.detecting = true;
-        if (hasPermission()) {
+        if (hasPermission() && isLocationServiceEnabled()) {
+            vm.detecting = true;
             locate();
-        } else {
-            permission.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION});
+            return;
         }
+        dialog = new MaterialAlertDialogBuilder(requireActivity())
+                .setTitle(R.string.delivery_location_title)
+                .setMessage(R.string.delivery_location_message)
+                .setCancelable(false)
+                .setNegativeButton(R.string.delivery_location_later, (d, w) -> {
+                    vm.detecting = false;
+                    vm.onLocation(null, null);
+                })
+                .setPositiveButton(R.string.delivery_location_activate, (d, w) -> {
+                    vm.detecting = true;
+                    if (hasPermission()) {
+                        turnOnLocation();
+                    } else {
+                        permission.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION});
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * Makes sure location is on (high accuracy): if it is off, Google Play services shows its "turn on location"
+     * dialog and {@link #locationSettings} reads the position afterwards; otherwise reads it now.
+     */
+    private void turnOnLocation() {
+        if (!isAdded()) {
+            return;
+        }
+        LocationRequest request = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10_000L).build();
+        LocationSettingsRequest settings = new LocationSettingsRequest.Builder()
+                .addLocationRequest(request).setAlwaysShow(true).build();
+        LocationServices.getSettingsClient(requireActivity()).checkLocationSettings(settings)
+                .addOnSuccessListener(r -> locate())
+                .addOnFailureListener(e -> {
+                    if (e instanceof ResolvableApiException && isAdded()) {
+                        try {
+                            locationSettings.launch(new IntentSenderRequest.Builder(
+                                    ((ResolvableApiException) e).getResolution()).build());
+                            return;
+                        } catch (RuntimeException ignored) {
+                            // fall through: read what we can
+                        }
+                    }
+                    locate();
+                });
     }
 
     private void locate() {

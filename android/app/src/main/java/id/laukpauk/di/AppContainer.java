@@ -11,6 +11,7 @@ import id.laukpauk.data.local.Prefs;
 import id.laukpauk.data.remote.ApiClient;
 import id.laukpauk.data.repository.RepositoryDeps;
 import id.laukpauk.data.repository.AccountRepository;
+import id.laukpauk.data.repository.AddressRepository;
 import id.laukpauk.data.repository.AuthRepository;
 import id.laukpauk.data.repository.CartRepository;
 import id.laukpauk.data.repository.CheckoutRepository;
@@ -49,6 +50,7 @@ public final class AppContainer {
     private final RepositoryDeps repositoryDeps;
 
     public final AccountRepository accountRepository;
+    public final AddressRepository addressRepository;
     public final AuthRepository authRepository;
     public final CartRepository cartRepository;
     public final CheckoutRepository checkoutRepository;
@@ -81,6 +83,7 @@ public final class AppContainer {
         this.notificationRepository = new NotificationRepository(repositoryDeps);
         this.pushRepository = new PushRepository(repositoryDeps);
         this.accountRepository = new AccountRepository(repositoryDeps, this.cartRepository, this.notificationRepository, this.pushRepository);
+        this.addressRepository = new AddressRepository(repositoryDeps);
         this.authRepository = new AuthRepository(repositoryDeps, this.cartRepository, this.notificationRepository, this.pushRepository);
         this.settingRepository = new SettingRepository(repositoryDeps);
         this.checkoutRepository = new CheckoutRepository(repositoryDeps, this.settingRepository);
