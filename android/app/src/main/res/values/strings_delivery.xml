@@ -7,6 +7,29 @@
     <string name="delivery_other_address">Alamat Lain</string>
     <string name="delivery_address_title">Alamat Pengantaran</string>
     <string name="delivery_address_content">Apakah belanjaan akan diantarkan ke alamat tempat anda berada sekarang ?</string>
+    <!-- checkout: the address list (GET buyer/addresses) and the address form -->
+    <string name="address_list_title">Alamat Pengantaran</string>
+    <string name="address_list_message">Pilih alamat pengantaran, atau tambah / ubah alamat dari lokasi mamak sekarang.</string>
+    <string name="address_add">Tambah Alamat Baru</string>
+    <string name="address_main">UTAMA</string>
+    <string name="address_edit">Ubah</string>
+    <string name="address_close">Tutup</string>
+    <string name="address_recipient">%1$s · %2$s</string>
+    <string name="address_load_failed">Gagal memuat daftar alamat. %1$s</string>
+    <string name="address_loading">Memuat alamat…</string>
+    <string name="address_saving">Menyimpan alamat…</string>
+    <string name="address_form_new">Alamat Baru</string>
+    <string name="address_form_edit">Ubah Alamat</string>
+    <string name="address_label">Label alamat (mis. Rumah, Kantor)</string>
+    <string name="address_recipient_name">Nama penerima</string>
+    <string name="address_recipient_phone">Nomor HP penerima</string>
+    <string name="address_street">Alamat lengkap</string>
+    <string name="address_delivery_note">Catatan untuk kurir (opsional)</string>
+    <string name="address_set_main">Jadikan alamat utama</string>
+    <string name="address_required">Wajib diisi</string>
+    <string name="address_save">Simpan</string>
+    <string name="address_cancel">Batal</string>
+    <string name="address_default_label">Rumah</string>
     <!-- checkout: the location activation popup -->
     <string name="delivery_location_title">Aktifkan Lokasi</string>
     <string name="delivery_location_message">Untuk checkout, mamak perlu mengaktifkan lokasi supaya kami bisa mendeteksi alamat pengantaran dari posisi mamak sekarang.</string>

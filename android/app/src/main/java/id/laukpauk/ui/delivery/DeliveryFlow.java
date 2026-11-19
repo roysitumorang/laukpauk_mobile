@@ -48,14 +48,15 @@ public final class DeliveryFlow {
     }
 
     /**
-     * Checkout is the only place that needs a delivery address and schedule: runs {@code onReady} at once
-     * when a selection is set, otherwise asks for one ({@link #ask}) and runs {@code onReady} when it was saved.
+     * Checkout is the only place that needs a delivery address and schedule. A signed-in buyer always picks one
+     * from the address list ({@code GET buyer/addresses}) or adds / edits one; otherwise {@code onReady} runs at
+     * once when a selection is set. {@code onReady} runs when the selection was saved.
      */
     public static void ensureForCheckout(Fragment fragment, Runnable onReady) {
         if (!fragment.isAdded()) {
             return;
         }
-        if (repo(fragment).isSetNow()) {
+        if (repo(fragment).isSetNow() && !AppContainer.from(fragment.requireContext()).addressRepository.isSignedIn()) {
             onReady.run();
             return;
         }
