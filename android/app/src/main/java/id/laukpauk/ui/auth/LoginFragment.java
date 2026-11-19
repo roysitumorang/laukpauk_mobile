@@ -59,18 +59,23 @@ public class LoginFragment extends Fragment {
                 if (!r.isSuccess() || r.data == null) {
                     Messages.snack(this, getString(R.string.auth_failed_connection));
                 } else if (!r.data.authenticated) {
-                    AuthFlow.alert(this, R.string.auth_login_heading,
-                            getString(R.string.auth_login_failed) + "\n\n" + getString(R.string.auth_login_failed_suggestion),
+                    AuthFlow.alert(this, R.string.auth_login_heading, loginFailedText(r.data.message),
                             R.string.auth_forgot_password,
                             () -> NavHostFragment.findNavController(this).navigate(R.id.forgotPasswordFragment),
                             R.string.auth_close, null);
-                } else if (!r.data.verified) {
-                    AuthFlow.replaceWith(this, R.id.userVerificationOtpFragment);
                 } else {
                     AuthFlow.finish(this);
                 }
             });
         });
+    }
+
+    /** The wrong-credentials text; a locked account says so instead (the backend's message). */
+    private String loginFailedText(String message) {
+        if (message != null && message.toLowerCase(java.util.Locale.ROOT).contains("lock")) {
+            return getString(R.string.auth_login_locked);
+        }
+        return getString(R.string.auth_login_failed) + "\n\n" + getString(R.string.auth_login_failed_suggestion);
     }
 
     @Override
