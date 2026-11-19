@@ -25,29 +25,11 @@ public interface CartApi {
     @POST("buyer/cart")
     Call<CartResponses.BuyerCartEnvelope> saveBuyerCart(@Body Map<String, Object> body);
 
-    @GET("User/getJumlahCart")
-    Call<CartResponses.Count> getCartQuantity(@Query("cartCode") String cartCode);
-
-    @GET("User/getCart")
-    Call<CartResponses.ProductList> getCart(@Query("cartCode") String cartCode);
-
-    @GET("User/getTotalKeranjang")
-    Call<CartResponses.Total> getCartTotal(@Query("cartCode") String cartCode,
-                                                @Query("latDelivery") String latDelivery,
-                                                @Query("longDelivery") String longDelivery);
-
     @GET("Keranjang/bersihkanKeranjang")
     Call<CartResponses.Clear> clearCart(@Query("cartCode") String cartCode);
 
     @POST("Keranjang/saveCart")
     Call<AddToCartResult> saveCart(@Body Map<String, String> fields);
-
-    @POST("Keranjang/saveCart/{idItem}")
-    Call<AddToCartResult> updateCart(@Path("idItem") String idItem, @Body Map<String, Object> body);
-
-    /** The body is an empty JSON object. */
-    @POST("Keranjang/deleteCart/{idCart}")
-    Call<CartResponses.Delete> deleteCart(@Path("idCart") String idCart, @Body Map<String, String> noFields);
 
     /** Duplicate of the checkout slice's wallet configuration call. */
     @GET("Pengaturan/getWalletConfiguration")

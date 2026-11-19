@@ -8,12 +8,12 @@ import java.util.List;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.cart.CartGift;
-import id.laukpauk.data.model.cart.CartProduct;
+import id.laukpauk.data.model.cart.BuyerCart;
 import id.laukpauk.data.model.cart.WalletConfiguration;
 import id.laukpauk.data.repository.BaseRepository;
 import id.laukpauk.data.repository.CartRepository;
 
-/** State of the Keranjang screen: cart lines, subtotal, wallet announcement and gifts. */
+/** State of the Keranjang screen: the buyer's cart ({@code GET buyer/cart}), wallet announcement and gifts. */
 public class CartViewModel extends ViewModel {
 
     /** A LiveData that can be re-pointed at a freshly loaded source (refresh). */
@@ -28,17 +28,21 @@ public class CartViewModel extends ViewModel {
             source = next;
             live.addSource(next, live::setValue);
         }
+
+        void post(Resource<T> value) {
+            if (source != null) {
+                live.removeSource(source);
+                source = null;
+            }
+            live.setValue(value);
+        }
     }
 
     private final CartRepository repository;
-    private final Slot<List<CartProduct>> products = new Slot<>();
-    private final Slot<Integer> total = new Slot<>();
+    private final Slot<BuyerCart> cart = new Slot<>();
     private final Slot<WalletConfiguration> wallet = new Slot<>();
     private final Slot<List<CartGift>> gifts = new Slot<>();
 
-    /** Failure text / button label (string resources) to show if the edit screen reports a failure. */
-    public int pendingEditMessage;
-    public int pendingEditButton;
     /** Set while the buyer went to Login from the Checkout button. */
     public boolean checkoutAfterLogin;
 
@@ -46,12 +50,8 @@ public class CartViewModel extends ViewModel {
         this.repository = repository;
     }
 
-    public LiveData<Resource<List<CartProduct>>> getProducts() {
-        return products.live;
-    }
-
-    public LiveData<Resource<Integer>> getTotal() {
-        return total.live;
+    public LiveData<Resource<BuyerCart>> getCart() {
+        return cart.live;
     }
 
     public LiveData<Resource<WalletConfiguration>> getWallet() {
@@ -62,20 +62,28 @@ public class CartViewModel extends ViewModel {
         return gifts.live;
     }
 
-    /** Loads everything (first open, pull-to-refresh, after a change). */
+    /** Loads everything (first open, pull-to-refresh, back from Login). */
     public void load() {
-        repository.refreshCartCount();
-        products.set(repository.cart());
-        total.set(repository.cartTotal());
+        cart.set(repository.buyerCart());
         wallet.set(repository.walletConfiguration());
         gifts.set(repository.gifts());
     }
 
-    public void deleteItem(String idCart, BaseRepository.ResultCallback<Boolean> callback) {
-        repository.deleteItem(idCart, callback);
+    /** Sets an item's quantity (0 removes it); the saved cart replaces the shown one. */
+    public void setQuantity(String variantId, long quantity, BaseRepository.ResultCallback<BuyerCart> callback) {
+        repository.setVariantQuantity(variantId, quantity, saved(callback));
     }
 
-    public void clearCart(BaseRepository.ResultCallback<Boolean> callback) {
-        repository.clearCart(callback);
+    public void clearCart(BaseRepository.ResultCallback<BuyerCart> callback) {
+        repository.clearBuyerCart(saved(callback));
+    }
+
+    private BaseRepository.ResultCallback<BuyerCart> saved(BaseRepository.ResultCallback<BuyerCart> callback) {
+        return result -> {
+            if (result.isSuccess()) {
+                cart.post(Resource.success(result.data == null ? new BuyerCart() : result.data));
+            }
+            callback.onResult(result);
+        };
     }
 }

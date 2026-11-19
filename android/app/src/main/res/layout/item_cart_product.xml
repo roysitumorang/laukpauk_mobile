@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Cart line: photo, name, total, quantity with edit pencil, unit price, delete and the note. -->
+<!-- Cart line (GET buyer/cart item): photo, name, total, quantity with edit pencil, unit price, delete. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -77,13 +77,24 @@
                 android:textSize="11sp" />
 
             <TextView
-                android:id="@+id/addNote"
+                android:id="@+id/strikePrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/cart_add_note"
-                android:textColor="@color/text_primary"
-                android:textSize="12sp" />
+                android:layout_marginTop="2dp"
+                android:textColor="@color/text_muted"
+                android:textSize="11sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/outOfStock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/cart_out_of_stock"
+                android:textColor="@color/red"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
 
         <ImageView
@@ -96,49 +107,4 @@
             android:tint="@color/red" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/noteBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_cart_note"
-        android:orientation="vertical"
-        android:paddingStart="15dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="15dp"
-        android:paddingBottom="10dp"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/cart_note_title"
-                android:textColor="@color/black"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/editNote"
-                android:layout_width="13dp"
-                android:layout_height="13dp"
-                android:contentDescription="@string/cart_edit_title"
-                android:src="@drawable/ic_edit"
-                android:tint="@color/text_warning" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/note"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/black"
-            android:textSize="12sp" />
-    </LinearLayout>
 </LinearLayout>

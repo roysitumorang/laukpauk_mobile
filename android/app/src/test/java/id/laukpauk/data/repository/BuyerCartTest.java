@@ -2,6 +2,7 @@ package id.laukpauk.data.repository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import id.laukpauk.data.model.cart.BuyerCart;
+import id.laukpauk.data.model.cart.BuyerCartItem;
 import id.laukpauk.data.model.cart.CartResponses;
 import id.laukpauk.data.remote.ApiClient;
 
@@ -57,5 +59,41 @@ public class BuyerCartTest {
         assertFalse(body.containsKey("id"));
         assertEquals(1, items(body).size());
         assertFalse(CartRepository.cartBody(null, "v1", 1).containsKey("id"));
+    }
+
+    @Test
+    public void quantityBody_setsOrRemovesAVariant() throws Exception {
+        BuyerCart cart = parse("{\"data\":{\"id\":\"c1\",\"items\":["
+                + "{\"product_variant_id\":\"v1\",\"quantity\":1},"
+                + "{\"product_variant_id\":\"v2\",\"quantity\":2}]}}");
+        List<Map<String, Object>> set = items(CartRepository.quantityBody(cart, "v2", 5));
+        assertEquals(2, set.size());
+        assertEquals(5L, set.get(1).get("quantity"));
+        List<Map<String, Object>> removed = items(CartRepository.quantityBody(cart, "v1", 0));
+        assertEquals(1, removed.size());
+        assertEquals("v2", removed.get(0).get("product_variant_id"));
+    }
+
+    @Test
+    public void items_carryProductAndPrices() throws Exception {
+        BuyerCart cart = parse("{\"data\":{\"id\":\"c1\",\"quantity\":4,\"items\":["
+                + "{\"id\":\"i1\",\"product_variant_id\":\"v1\",\"product_id\":\"p1\","
+                + "\"product_name\":\"Bayam\",\"product_photo\":\"https://sadia.id/images/bayam.webp\","
+                + "\"product_ready_stock\":true,\"stock_unit\":\"ikat\",\"selling_price\":5000,"
+                + "\"discount_type\":1,\"discount_rate\":10,\"discount_minimum_quantity\":3,"
+                + "\"discount_amount\":500,\"sale_price\":4500,\"quantity\":3},"
+                + "{\"id\":\"i2\",\"product_variant_id\":\"v2\",\"product_name\":\"Tahu\","
+                + "\"stock_unit\":\"pcs\",\"selling_price\":2000,\"discount_minimum_quantity\":5,"
+                + "\"discount_amount\":200,\"sale_price\":1800,\"quantity\":1}]}}");
+        BuyerCartItem bayam = cart.items.get(0);
+        assertEquals("Bayam", bayam.productName);
+        assertEquals("ikat", bayam.stockUnit);
+        assertTrue(bayam.discounted());       // 3 >= minimum 3
+        assertEquals(4500, bayam.unitPrice());
+        assertEquals(13500, bayam.lineTotal());
+        BuyerCartItem tahu = cart.items.get(1);
+        assertFalse(tahu.discounted());       // 1 < minimum 5
+        assertEquals(2000, tahu.unitPrice());
+        assertEquals(15500, cart.total());
     }
 }

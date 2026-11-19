@@ -16,7 +16,6 @@ import id.laukpauk.data.model.cart.AddToCartResult;
 import id.laukpauk.data.model.cart.BuyerCart;
 import id.laukpauk.data.model.cart.BuyerCartItem;
 import id.laukpauk.data.model.cart.CartGift;
-import id.laukpauk.data.model.cart.CartProduct;
 import id.laukpauk.data.model.cart.CartResponses;
 import id.laukpauk.data.model.cart.WalletConfiguration;
 import id.laukpauk.data.model.delivery.DeliverySelection;
@@ -46,10 +45,41 @@ public class CartRepository extends BaseRepository {
         return cartCount;
     }
 
-    /** Reloads {@link #cartCount()} from the server (legacy HeaderModel.getCartQuantity; 0 on failure). */
+    /** Reloads {@link #cartCount()}: the total quantity of {@code GET buyer/cart}; 0 when signed out or on failure. */
     public void refreshCartCount() {
-        enqueue(api.getCartQuantity(session.getCartCode()), body -> body == null ? 0 : body.cartCount,
-                r -> cartCount.setValue(r.isSuccess() && r.data != null ? r.data : 0));
+        if (authToken().isEmpty()) {
+            cartCount.setValue(0);
+            return;
+        }
+        enqueue(api.buyerCart(), CartRepository::cartOf, r -> setCount(r.isSuccess() ? r.data : null));
+    }
+
+    private void setCount(@Nullable BuyerCart cart) {
+        cartCount.setValue(cart == null ? 0 : (int) Math.min(Integer.MAX_VALUE, Math.max(0, cart.quantity)));
+    }
+
+    @Nullable
+    private static BuyerCart cartOf(@Nullable CartResponses.BuyerCartEnvelope body) {
+        return body == null ? null : body.data;
+    }
+
+    /**
+     * The signed-in buyer's cart ({@code GET buyer/cart}) with each item's product and price; an empty cart when
+     * signed out (buyers add to the cart only after logging in). Also updates the header badge.
+     */
+    public LiveData<Resource<BuyerCart>> buyerCart() {
+        if (authToken().isEmpty()) {
+            cartCount.setValue(0);
+            return new MutableLiveData<>(Resource.success(new BuyerCart()));
+        }
+        MutableLiveData<Resource<BuyerCart>> live = new MutableLiveData<>(Resource.loading());
+        enqueue(api.buyerCart(), CartRepository::cartOf, r -> {
+            if (r.isSuccess()) {
+                setCount(r.data);
+            }
+            live.setValue(r.isSuccess() && r.data == null ? Resource.success(new BuyerCart()) : r);
+        });
+        return live;
     }
 
     /**
@@ -58,18 +88,36 @@ public class CartRepository extends BaseRepository {
      * quantity increased (or the variant appended). On success the header badge shows the cart's total quantity.
      */
     public void addVariant(String variantId, long quantity, ResultCallback<BuyerCart> callback) {
-        enqueue(api.buyerCart(), (CartResponses.BuyerCartEnvelope body) -> body == null ? null : body.data, current -> {
+        updateCart(cart -> cartBody(cart, variantId, quantity), callback);
+    }
+
+    /** Sets a variant's quantity in the cart; 0 removes it. Same read-then-save as {@link #addVariant}. */
+    public void setVariantQuantity(String variantId, long quantity, ResultCallback<BuyerCart> callback) {
+        updateCart(cart -> quantityBody(cart, variantId, quantity), callback);
+    }
+
+    /** Empties the buyer's cart ({@code POST buyer/cart} with no items). */
+    public void clearBuyerCart(ResultCallback<BuyerCart> callback) {
+        updateCart(cart -> body(cart, new ArrayList<Map<String, Object>>()), callback);
+    }
+
+    private interface CartChange {
+        Map<String, Object> body(@Nullable BuyerCart current);
+    }
+
+    /** {@code GET buyer/cart}, then {@code POST buyer/cart} with the changed items; updates the badge on success. */
+    private void updateCart(CartChange change, ResultCallback<BuyerCart> callback) {
+        enqueue(api.buyerCart(), CartRepository::cartOf, current -> {
             if (!current.isSuccess()) {
                 callback.onResult(Resource.<BuyerCart>error(current.message, current.code));
                 return;
             }
-            enqueue(api.saveBuyerCart(cartBody(current.data, variantId, quantity)),
-                    (CartResponses.BuyerCartEnvelope body) -> body == null ? null : body.data, saved -> {
-                        if (saved.isSuccess() && saved.data != null) {
-                            cartCount.setValue((int) Math.min(Integer.MAX_VALUE, saved.data.quantity));
-                        }
-                        callback.onResult(saved);
-                    });
+            enqueue(api.saveBuyerCart(change.body(current.data)), CartRepository::cartOf, saved -> {
+                if (saved.isSuccess()) {
+                    setCount(saved.data);
+                }
+                callback.onResult(saved);
+            });
         });
     }
 
@@ -77,28 +125,54 @@ public class CartRepository extends BaseRepository {
     static Map<String, Object> cartBody(@Nullable BuyerCart cart, String variantId, long quantity) {
         List<Map<String, Object>> items = new ArrayList<>();
         boolean found = false;
-        if (cart != null && cart.items != null) {
-            for (BuyerCartItem item : cart.items) {
-                if (item == null || item.productVariantId == null || item.quantity <= 0) {
-                    continue;
-                }
-                long q = item.quantity;
-                if (item.productVariantId.equals(variantId)) {
-                    q += quantity;
-                    found = true;
-                }
-                Map<String, Object> row = new LinkedHashMap<>();
-                row.put("product_variant_id", item.productVariantId);
-                row.put("quantity", q);
-                items.add(row);
+        for (BuyerCartItem item : itemsOf(cart)) {
+            long q = item.quantity;
+            if (item.productVariantId.equals(variantId)) {
+                q += quantity;
+                found = true;
             }
+            items.add(row(item.productVariantId, q));
         }
         if (!found) {
-            Map<String, Object> row = new LinkedHashMap<>();
-            row.put("product_variant_id", variantId);
-            row.put("quantity", quantity);
-            items.add(row);
+            items.add(row(variantId, quantity));
         }
+        return body(cart, items);
+    }
+
+    /** The {@code POST buyer/cart} body with {@code variantId} at {@code quantity}; left out when 0 or less. */
+    static Map<String, Object> quantityBody(@Nullable BuyerCart cart, String variantId, long quantity) {
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (BuyerCartItem item : itemsOf(cart)) {
+            long q = item.productVariantId.equals(variantId) ? quantity : item.quantity;
+            if (q > 0) {
+                items.add(row(item.productVariantId, q));
+            }
+        }
+        return body(cart, items);
+    }
+
+    /** The cart's items that can be sent back (a variant id and a positive quantity). */
+    private static List<BuyerCartItem> itemsOf(@Nullable BuyerCart cart) {
+        List<BuyerCartItem> list = new ArrayList<>();
+        if (cart != null && cart.items != null) {
+            for (BuyerCartItem item : cart.items) {
+                if (item != null && item.productVariantId != null && item.quantity > 0) {
+                    list.add(item);
+                }
+            }
+        }
+        return list;
+    }
+
+    private static Map<String, Object> row(String variantId, long quantity) {
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("product_variant_id", variantId);
+        row.put("quantity", quantity);
+        return row;
+    }
+
+    /** {@code {"id": <cart id, left out while all zeros>, "items": [...]}}. */
+    private static Map<String, Object> body(@Nullable BuyerCart cart, List<Map<String, Object>> items) {
         Map<String, Object> body = new LinkedHashMap<>();
         if (cart != null && cart.id != null && !cart.id.isEmpty() && !cart.id.matches("[0-]+")) {
             body.put("id", cart.id);
@@ -158,22 +232,6 @@ public class CartRepository extends BaseRepository {
 
     // ---- cart screens --------------------------------------------------------------------------
 
-    /** The cart lines (empty list when nothing / on failure). */
-    public LiveData<Resource<List<CartProduct>>> cart() {
-        MutableLiveData<Resource<List<CartProduct>>> live = new MutableLiveData<>(Resource.loading());
-        enqueue(api.getCart(session.getCartCode()),
-                body -> body == null || body.listCart == null ? new ArrayList<CartProduct>() : body.listCart,
-                r -> live.setValue(r.isError() ? Resource.success(new ArrayList<CartProduct>()) : r));
-        return live;
-    }
-
-    /** SUBTOTAL (legacy CheckoutModel.getCartTotal). */
-    public LiveData<Resource<Integer>> cartTotal() {
-        DeliverySelection d = delivery.current();
-        return load(api.getCartTotal(session.getCartCode(), d.latitude == null ? "" : d.latitude,
-                d.longitude == null ? "" : d.longitude), body -> body == null ? 0 : body.cartTotal);
-    }
-
     /** Wallet discount configuration; SUCCESS with null data when the server has none. */
     public LiveData<Resource<WalletConfiguration>> walletConfiguration() {
         return load(api.getWalletConfiguration(), body -> body == null ? null : body.walletConfiguration);
@@ -210,31 +268,5 @@ public class CartRepository extends BaseRepository {
                     }
                 });
         return live;
-    }
-
-    /** Saves quantity and note of a cart line (legacy EditKeranjangItem.simpanPerubahan); data = statusAddCart. */
-    public void updateItem(String idCart, String quantity, String note, ResultCallback<Boolean> callback) {
-        enqueue(api.updateCart(idCart, body("quantity", quantity, "catatan", note)),
-                body -> body != null && body.statusAddCart, callback);
-    }
-
-    /** Deletes a cart line; on success the count is refreshed. data = statusDeleteCart. */
-    public void deleteItem(String idCart, ResultCallback<Boolean> callback) {
-        enqueue(api.deleteCart(idCart, new HashMap<String, String>()), body -> body != null && body.statusDeleteCart,
-                r -> {
-                    if (r.isSuccess() && Boolean.TRUE.equals(r.data)) {
-                        refreshCartCount();
-                    }
-                    callback.onResult(r);
-                });
-    }
-
-    /** "Bersihkan Keranjang": empties the server cart, then refreshes the count. data = status. */
-    public void clearCart(ResultCallback<Boolean> callback) {
-        enqueue(api.clearCart(session.getCartCode()), body -> body != null && body.clearCartStatus,
-                r -> {
-                    refreshCartCount();
-                    callback.onResult(r);
-                });
     }
 }

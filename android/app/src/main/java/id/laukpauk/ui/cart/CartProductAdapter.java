@@ -1,7 +1,9 @@
 package id.laukpauk.ui.cart;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -12,21 +14,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Objects;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.cart.CartProduct;
+import id.laukpauk.data.model.cart.BuyerCartItem;
 import id.laukpauk.databinding.ItemCartProductBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
-import id.laukpauk.util.ServerPath;
 
-/** The cart lines. */
-public class CartProductAdapter extends ListAdapter<CartProduct, CartProductAdapter.Holder> {
+/** The cart lines of {@code GET buyer/cart}: photo, name, line total, "2 x ikat", unit price, edit, delete. */
+public class CartProductAdapter extends ListAdapter<BuyerCartItem, CartProductAdapter.Holder> {
 
     public interface Listener {
-        void onOpenProduct(CartProduct product);
+        void onOpenProduct(BuyerCartItem item);
 
-        void onEdit(CartProduct product, int failMessage, int failButton);
+        void onEditQuantity(BuyerCartItem item);
 
-        void onDelete(CartProduct product);
+        void onDelete(BuyerCartItem item);
     }
 
     private final Listener listener;
@@ -44,36 +45,26 @@ public class CartProductAdapter extends ListAdapter<CartProduct, CartProductAdap
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
-        bindProduct(holder.binding.getRoot().getContext(), holder.binding, getItem(position));
+        bind(holder.binding.getRoot().getContext(), holder.binding, getItem(position));
     }
 
-    private void bindProduct(Context ctx, ItemCartProductBinding pb, CartProduct p) {
-        int price = CartProduct.toInt(p.price);
-        int discount = CartProduct.toInt(p.discount);
-        String unitName = p.isPack() ? ctx.getString(R.string.cart_pack_unit) : p.unitName;
-        String folder = p.isPack() ? ServerPath.uploadImagePack : ServerPath.uploadImageProduct;
-        Images.url(pb.photo, Images.server(folder + "/compress", p.productPhoto));
-        pb.photo.setOnClickListener(v -> listener.onOpenProduct(p));
-        pb.name.setText(p.productName);
-        pb.name.setOnClickListener(v -> listener.onOpenProduct(p));
-        pb.total.setText(Currency.formatRupiah(p.total(), 0));
-        pb.quantity.setText(ctx.getString(R.string.cart_qty_unit, p.quantity, unitName));
-        pb.unitPrice.setText(ctx.getString(R.string.cart_unit_price, unitName,
-                Currency.formatRupiah(price - discount, 0)));
-        pb.editQuantity.setOnClickListener(v ->
-                listener.onEdit(p, R.string.cart_edit_failed_qty, R.string.cart_retry));
-        pb.delete.setOnClickListener(v -> listener.onDelete(p));
-
-        boolean hasNote = p.note != null && !p.note.isEmpty();
-        pb.addNote.setVisibility(hasNote ? android.view.View.GONE : android.view.View.VISIBLE);
-        pb.addNote.setOnClickListener(v ->
-                listener.onEdit(p, R.string.cart_edit_failed_add_note, R.string.cart_ok));
-        pb.noteBox.setVisibility(hasNote ? android.view.View.VISIBLE : android.view.View.GONE);
-        if (hasNote) {
-            pb.note.setText(p.note);
-            pb.editNote.setOnClickListener(v ->
-                    listener.onEdit(p, R.string.cart_edit_failed_edit_note, R.string.cart_ok));
-        }
+    private void bind(Context ctx, ItemCartProductBinding b, BuyerCartItem item) {
+        String unit = item.stockUnit == null ? "" : item.stockUnit;
+        Images.url(b.photo, Images.product(item.productPhoto));
+        b.photo.setOnClickListener(v -> listener.onOpenProduct(item));
+        b.name.setText(item.productName == null ? "" : item.productName);
+        b.name.setOnClickListener(v -> listener.onOpenProduct(item));
+        b.total.setText(Currency.formatRupiah(item.lineTotal(), 0));
+        b.quantity.setText(ctx.getString(R.string.cart_qty_unit, String.valueOf(item.quantity), unit));
+        b.unitPrice.setText(ctx.getString(R.string.cart_unit_price, unit, Currency.formatRupiah(item.unitPrice(), 0)));
+        boolean discounted = item.discounted();
+        b.strikePrice.setVisibility(discounted ? View.VISIBLE : View.GONE);
+        b.strikePrice.setText(Currency.formatRupiah(item.sellingPrice, 0));
+        b.strikePrice.setPaintFlags(b.strikePrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        b.outOfStock.setVisibility(item.productReadyStock ? View.GONE : View.VISIBLE);
+        b.editQuantity.setOnClickListener(v -> listener.onEditQuantity(item));
+        b.quantity.setOnClickListener(v -> listener.onEditQuantity(item));
+        b.delete.setOnClickListener(v -> listener.onDelete(item));
     }
 
     static final class Holder extends RecyclerView.ViewHolder {
@@ -85,15 +76,19 @@ public class CartProductAdapter extends ListAdapter<CartProduct, CartProductAdap
         }
     }
 
-    private static final DiffUtil.ItemCallback<CartProduct> DIFF = new DiffUtil.ItemCallback<CartProduct>() {
+    private static final DiffUtil.ItemCallback<BuyerCartItem> DIFF = new DiffUtil.ItemCallback<BuyerCartItem>() {
         @Override
-        public boolean areItemsTheSame(@NonNull CartProduct a, @NonNull CartProduct b) {
-            return Objects.equals(a.idCart, b.idCart);
+        public boolean areItemsTheSame(@NonNull BuyerCartItem a, @NonNull BuyerCartItem b) {
+            return Objects.equals(a.productVariantId, b.productVariantId);
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull CartProduct a, @NonNull CartProduct b) {
-            return false; // lines change in place (quantity / note); always rebind
+        public boolean areContentsTheSame(@NonNull BuyerCartItem a, @NonNull BuyerCartItem b) {
+            return a.quantity == b.quantity && a.lineTotal() == b.lineTotal()
+                    && a.productReadyStock == b.productReadyStock
+                    && Objects.equals(a.productName, b.productName)
+                    && Objects.equals(a.productPhoto, b.productPhoto)
+                    && Objects.equals(a.stockUnit, b.stockUnit);
         }
     };
 }
