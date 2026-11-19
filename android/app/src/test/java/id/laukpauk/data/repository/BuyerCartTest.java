@@ -96,4 +96,20 @@ public class BuyerCartTest {
         assertEquals(2000, tahu.unitPrice());
         assertEquals(15500, cart.total());
     }
+
+    @Test
+    public void everyItemKeepsItsNote() throws Exception {
+        BuyerCart cart = parse("{\"data\":{\"id\":\"c1\",\"items\":["
+                + "{\"product_variant_id\":\"v1\",\"quantity\":1,\"note\":\"yang segar\"},"
+                + "{\"product_variant_id\":\"v2\",\"quantity\":2,\"note\":\"\"}]}}");
+        List<Map<String, Object>> added = items(CartRepository.cartBody(cart, "v2", 1));
+        assertEquals("yang segar", added.get(0).get("note"));
+        List<Map<String, Object>> quantity = items(CartRepository.quantityBody(cart, "v2", 4));
+        assertEquals("yang segar", quantity.get(0).get("note"));
+        List<Map<String, Object>> noted = items(CartRepository.noteBody(cart, "v2", "  potong kecil "));
+        assertEquals("yang segar", noted.get(0).get("note"));
+        assertEquals("potong kecil", noted.get(1).get("note"));
+        assertEquals(2L, noted.get(1).get("quantity"));
+        assertEquals("", items(CartRepository.noteBody(cart, "v1", "")).get(0).get("note"));
+    }
 }

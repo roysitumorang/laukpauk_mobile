@@ -96,6 +96,11 @@ public class CartRepository extends BaseRepository {
         updateCart(cart -> quantityBody(cart, variantId, quantity), callback);
     }
 
+    /** Sets an item's note ("Catatan Tambahan"); an empty note removes it. Same read-then-save. */
+    public void setVariantNote(String variantId, String note, ResultCallback<BuyerCart> callback) {
+        updateCart(cart -> noteBody(cart, variantId, note), callback);
+    }
+
     /** Empties the buyer's cart ({@code POST buyer/cart} with no items). */
     public void clearBuyerCart(ResultCallback<BuyerCart> callback) {
         updateCart(cart -> body(cart, new ArrayList<Map<String, Object>>()), callback);
@@ -131,10 +136,10 @@ public class CartRepository extends BaseRepository {
                 q += quantity;
                 found = true;
             }
-            items.add(row(item.productVariantId, q));
+            items.add(row(item.productVariantId, q, item.note));
         }
         if (!found) {
-            items.add(row(variantId, quantity));
+            items.add(row(variantId, quantity, null));
         }
         return body(cart, items);
     }
@@ -145,8 +150,18 @@ public class CartRepository extends BaseRepository {
         for (BuyerCartItem item : itemsOf(cart)) {
             long q = item.productVariantId.equals(variantId) ? quantity : item.quantity;
             if (q > 0) {
-                items.add(row(item.productVariantId, q));
+                items.add(row(item.productVariantId, q, item.note));
             }
+        }
+        return body(cart, items);
+    }
+
+    /** The {@code POST buyer/cart} body with {@code variantId}'s note set to {@code note} (trimmed). */
+    static Map<String, Object> noteBody(@Nullable BuyerCart cart, String variantId, @Nullable String note) {
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (BuyerCartItem item : itemsOf(cart)) {
+            String n = item.productVariantId.equals(variantId) ? (note == null ? "" : note.trim()) : item.note;
+            items.add(row(item.productVariantId, item.quantity, n));
         }
         return body(cart, items);
     }
@@ -164,10 +179,12 @@ public class CartRepository extends BaseRepository {
         return list;
     }
 
-    private static Map<String, Object> row(String variantId, long quantity) {
+    /** One item of the body. Every item carries its note: the saved cart takes the items exactly as sent. */
+    private static Map<String, Object> row(String variantId, long quantity, @Nullable String note) {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("product_variant_id", variantId);
         row.put("quantity", quantity);
+        row.put("note", note == null ? "" : note);
         return row;
     }
 

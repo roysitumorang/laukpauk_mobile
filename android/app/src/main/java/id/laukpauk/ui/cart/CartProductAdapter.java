@@ -19,7 +19,7 @@ import id.laukpauk.databinding.ItemCartProductBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
 
-/** The cart lines of {@code GET buyer/cart}: photo, name, line total, "2 x ikat", unit price, edit, delete. */
+/** The cart lines of {@code GET buyer/cart}: photo, name, line total, "2 x ikat", unit price, edit, delete, note. */
 public class CartProductAdapter extends ListAdapter<BuyerCartItem, CartProductAdapter.Holder> {
 
     public interface Listener {
@@ -28,6 +28,8 @@ public class CartProductAdapter extends ListAdapter<BuyerCartItem, CartProductAd
         void onEditQuantity(BuyerCartItem item);
 
         void onDelete(BuyerCartItem item);
+
+        void onEditNote(BuyerCartItem item);
     }
 
     private final Listener listener;
@@ -65,6 +67,13 @@ public class CartProductAdapter extends ListAdapter<BuyerCartItem, CartProductAd
         b.editQuantity.setOnClickListener(v -> listener.onEditQuantity(item));
         b.quantity.setOnClickListener(v -> listener.onEditQuantity(item));
         b.delete.setOnClickListener(v -> listener.onDelete(item));
+
+        boolean hasNote = item.note != null && !item.note.trim().isEmpty();
+        b.addNote.setVisibility(hasNote ? View.GONE : View.VISIBLE);
+        b.addNote.setOnClickListener(v -> listener.onEditNote(item));
+        b.noteBox.setVisibility(hasNote ? View.VISIBLE : View.GONE);
+        b.note.setText(hasNote ? item.note.trim() : null);
+        b.editNote.setOnClickListener(v -> listener.onEditNote(item));
     }
 
     static final class Holder extends RecyclerView.ViewHolder {
@@ -88,7 +97,8 @@ public class CartProductAdapter extends ListAdapter<BuyerCartItem, CartProductAd
                     && a.productReadyStock == b.productReadyStock
                     && Objects.equals(a.productName, b.productName)
                     && Objects.equals(a.productPhoto, b.productPhoto)
-                    && Objects.equals(a.stockUnit, b.stockUnit);
+                    && Objects.equals(a.stockUnit, b.stockUnit)
+                    && Objects.equals(a.note, b.note);
         }
     };
 }

@@ -11,6 +11,8 @@ public class BuyerCartItem {
     @Json(name = "product_variant_id")
     public String productVariantId;
     public long quantity;
+    /** The buyer's note for this item ("Catatan Tambahan"); empty when none. */
+    public String note;
 
     @Json(name = "product_id")
     public String productId;

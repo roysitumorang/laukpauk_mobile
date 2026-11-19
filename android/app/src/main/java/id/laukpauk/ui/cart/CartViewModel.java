@@ -74,6 +74,11 @@ public class CartViewModel extends ViewModel {
         repository.setVariantQuantity(variantId, quantity, saved(callback));
     }
 
+    /** Sets an item's note; an empty note removes it. */
+    public void setNote(String variantId, String note, BaseRepository.ResultCallback<BuyerCart> callback) {
+        repository.setVariantNote(variantId, note, saved(callback));
+    }
+
     public void clearCart(BaseRepository.ResultCallback<BuyerCart> callback) {
         repository.clearBuyerCart(saved(callback));
     }

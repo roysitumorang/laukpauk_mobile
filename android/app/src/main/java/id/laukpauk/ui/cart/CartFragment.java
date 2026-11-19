@@ -41,7 +41,7 @@ import id.laukpauk.ui.common.NavResults;
 import id.laukpauk.util.Currency;
 
 /**
- * Keranjang: the buyer's cart from {@code GET buyer/cart} (lines, subtotal), quantity changes, delete and
+ * Keranjang: the buyer's cart from {@code GET buyer/cart} (lines, notes, subtotal), quantity and note changes, delete and
  * "Bersihkan Keranjang" through {@code POST buyer/cart}, checkout, and the wallet note and earned gifts.
  */
 public class CartFragment extends Fragment {
@@ -83,6 +83,11 @@ public class CartFragment extends Fragment {
             @Override
             public void onDelete(BuyerCartItem item) {
                 confirmDelete(item);
+            }
+
+            @Override
+            public void onEditNote(BuyerCartItem item) {
+                editNote(item);
             }
         });
         binding.products.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -239,6 +244,33 @@ public class CartFragment extends Fragment {
                         confirmDelete(item);
                     } else {
                         viewModel.setQuantity(item.productVariantId, quantity, this::onSaved);
+                    }
+                })
+                .show();
+    }
+
+    /** "Tambah Catatan" / the note's pencil: a multi-line text dialog; an empty note removes it. */
+    private void editNote(BuyerCartItem item) {
+        final EditText input = new EditText(requireContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        input.setMinLines(2);
+        input.setHint(R.string.cart_note_input);
+        final String current = item.note == null ? "" : item.note.trim();
+        input.setText(current);
+        input.setSelection(current.length());
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        FrameLayout box = new FrameLayout(requireContext());
+        box.setPadding(pad, pad / 2, pad, 0);
+        box.addView(input);
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(item.productName == null ? getString(R.string.cart_note_input) : item.productName)
+                .setView(box)
+                .setNegativeButton(R.string.cart_no, null)
+                .setPositiveButton(R.string.cart_save, (d, w) -> {
+                    String note = input.getText().toString().trim();
+                    if (!note.equals(current)) {
+                        viewModel.setNote(item.productVariantId, note, this::onSaved);
                     }
                 })
                 .show();
