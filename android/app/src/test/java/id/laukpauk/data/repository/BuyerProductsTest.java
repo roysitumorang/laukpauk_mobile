@@ -73,12 +73,11 @@ public class BuyerProductsTest {
         HomeProduct tile = pack.toHomeProduct();
         assertEquals("Belanja hemat 2 Hari", tile.name);
         assertEquals("https://sadia.id/images/bundle-default.png", tile.photo);
-        assertTrue(tile.pack);
         assertTrue(tile.isStockAvailable());
-        assertEquals(37000, tile.pack ? pack.tilePrice().netPrice : 0);
+        assertEquals(37000, pack.tilePrice().netPrice);
 
         Product grid = pack.toProduct();
-        assertTrue(grid.pack);
+        assertEquals("Belanja hemat 2 Hari", grid.name);
         assertEquals(37000, pack.gridPrice().netPrice);
         assertSame(LowestPrice.NONE, page.items.get(1).gridPrice());
         assertNull(page.items.get(1).tilePrice());

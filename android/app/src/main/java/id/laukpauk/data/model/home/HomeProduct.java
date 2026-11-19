@@ -22,8 +22,6 @@ public class HomeProduct {
     public Boolean stockAvailable;
     /** Active promos; only "is there any" matters (dynamic: array, or false/"" when none). */
     public Object promo;
-    /** A pack (paket): "Beli" adds the pack. Set for {@code GET buyer/products} rows. */
-    public boolean pack;
 
     public boolean isStockAvailable() {
         return stockAvailable == null || stockAvailable;

@@ -30,6 +30,9 @@ import id.laukpauk.data.model.product.BuyerProductVariant;
 import id.laukpauk.databinding.FragmentProductDetailBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
+import id.laukpauk.ui.common.AuthGate;
+import id.laukpauk.ui.common.Messages;
+import id.laukpauk.ui.common.NavResults;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.ServerPath;
@@ -75,6 +78,14 @@ public class ProductDetailFragment extends Fragment {
         binding.others.setAdapter(othersAdapter);
 
         viewModel.getDetail().observe(getViewLifecycleOwner(), this::render);
+        // Back from Login after "Beli": add the variant that was chosen then.
+        NavResults.<Boolean>observe(this, AuthGate.LOGIN_RESULT, success -> {
+            String pending = viewModel.pendingVariantId;
+            viewModel.pendingVariantId = null;
+            if (Boolean.TRUE.equals(success) && pending != null) {
+                addToCart(pending);
+            }
+        });
         viewModel.getOthers().observe(getViewLifecycleOwner(), res -> {
             binding.othersProgress.setVisibility(res.isLoading() ? View.VISIBLE : View.GONE);
             if (!res.isLoading()) {
@@ -122,11 +133,43 @@ public class ProductDetailFragment extends Fragment {
         binding.buy.setText(R.string.product_buy);
         binding.buy.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.green)));
-        binding.buy.setOnClickListener(v -> {
-            if (p.isPack()) {
-                ProductActions.buyPack(this, p.id, p.name);
+        binding.buy.setEnabled(!viewModel.adding);
+        binding.buy.setOnClickListener(v -> onBuy());
+    }
+
+    /** "Beli": the chosen variant goes to the cart; a signed-out buyer logs in first. */
+    private void onBuy() {
+        String variantId = selectedVariantId;
+        if (variantId == null || viewModel.adding) {
+            return;
+        }
+        if (AuthGate.isSignedIn(this)) {
+            addToCart(variantId);
+        } else {
+            viewModel.pendingVariantId = variantId;
+            NavHostFragment.findNavController(this).navigate(R.id.loginFragment);
+        }
+    }
+
+    /** Adds one of the variant to the cart ({@code GET} then {@code POST buyer/cart}) and says how it went. */
+    private void addToCart(String variantId) {
+        viewModel.adding = true;
+        if (binding != null) {
+            binding.buy.setEnabled(false);
+        }
+        final AppContainer c = AppContainer.from(requireContext());
+        c.cartRepository.addVariant(variantId, 1, result -> {
+            viewModel.adding = false;
+            if (!isAdded() || binding == null) {
+                return;
+            }
+            binding.buy.setEnabled(true);
+            if (result.isSuccess()) {
+                Messages.cartSnack(this, getString(R.string.product_cart_success));
             } else {
-                ProductActions.buy(this, p.id, p.name);
+                String reason = result.message == null ? "" : result.message.trim();
+                Messages.snack(this, reason.isEmpty() ? getString(R.string.product_cart_failed)
+                        : getString(R.string.product_cart_failed) + " " + reason);
             }
         });
     }

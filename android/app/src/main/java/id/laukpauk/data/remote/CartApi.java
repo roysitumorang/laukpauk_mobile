@@ -14,6 +14,17 @@ import retrofit2.http.Query;
 /** Cart endpoints (JSON; ApiClient adds the auth and version headers). */
 public interface CartApi {
 
+    /** The signed-in buyer's cart (JWT required); an empty cart when there is none yet. */
+    @GET("buyer/cart")
+    Call<CartResponses.BuyerCartEnvelope> buyerCart();
+
+    /**
+     * Saves the buyer's whole cart: {@code {"id": <cart id, optional>, "items": [{"product_variant_id", "quantity"}]}}.
+     * The items replace the cart's items (a variant missing from the list is removed); answers the saved cart.
+     */
+    @POST("buyer/cart")
+    Call<CartResponses.BuyerCartEnvelope> saveBuyerCart(@Body Map<String, Object> body);
+
     @GET("User/getJumlahCart")
     Call<CartResponses.Count> getCartQuantity(@Query("cartCode") String cartCode);
 

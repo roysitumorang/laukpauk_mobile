@@ -13,6 +13,8 @@ import java.util.Map;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.cart.AddToCartResult;
+import id.laukpauk.data.model.cart.BuyerCart;
+import id.laukpauk.data.model.cart.BuyerCartItem;
 import id.laukpauk.data.model.cart.CartGift;
 import id.laukpauk.data.model.cart.CartProduct;
 import id.laukpauk.data.model.cart.CartResponses;
@@ -48,6 +50,61 @@ public class CartRepository extends BaseRepository {
     public void refreshCartCount() {
         enqueue(api.getCartQuantity(session.getCartCode()), body -> body == null ? 0 : body.cartCount,
                 r -> cartCount.setValue(r.isSuccess() && r.data != null ? r.data : 0));
+    }
+
+    /**
+     * Adds {@code quantity} of a product variant to the signed-in buyer's cart. {@code POST buyer/cart} replaces
+     * the whole cart, so the current cart is read first ({@code GET buyer/cart}) and sent back with the variant's
+     * quantity increased (or the variant appended). On success the header badge shows the cart's total quantity.
+     */
+    public void addVariant(String variantId, long quantity, ResultCallback<BuyerCart> callback) {
+        enqueue(api.buyerCart(), (CartResponses.BuyerCartEnvelope body) -> body == null ? null : body.data, current -> {
+            if (!current.isSuccess()) {
+                callback.onResult(Resource.<BuyerCart>error(current.message, current.code));
+                return;
+            }
+            enqueue(api.saveBuyerCart(cartBody(current.data, variantId, quantity)),
+                    (CartResponses.BuyerCartEnvelope body) -> body == null ? null : body.data, saved -> {
+                        if (saved.isSuccess() && saved.data != null) {
+                            cartCount.setValue((int) Math.min(Integer.MAX_VALUE, saved.data.quantity));
+                        }
+                        callback.onResult(saved);
+                    });
+        });
+    }
+
+    /** The {@code POST buyer/cart} body: the cart's items with {@code quantity} more of {@code variantId}. */
+    static Map<String, Object> cartBody(@Nullable BuyerCart cart, String variantId, long quantity) {
+        List<Map<String, Object>> items = new ArrayList<>();
+        boolean found = false;
+        if (cart != null && cart.items != null) {
+            for (BuyerCartItem item : cart.items) {
+                if (item == null || item.productVariantId == null || item.quantity <= 0) {
+                    continue;
+                }
+                long q = item.quantity;
+                if (item.productVariantId.equals(variantId)) {
+                    q += quantity;
+                    found = true;
+                }
+                Map<String, Object> row = new LinkedHashMap<>();
+                row.put("product_variant_id", item.productVariantId);
+                row.put("quantity", q);
+                items.add(row);
+            }
+        }
+        if (!found) {
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("product_variant_id", variantId);
+            row.put("quantity", quantity);
+            items.add(row);
+        }
+        Map<String, Object> body = new LinkedHashMap<>();
+        if (cart != null && cart.id != null && !cart.id.isEmpty() && !cart.id.matches("[0-]+")) {
+            body.put("id", cart.id);
+        }
+        body.put("items", items);
+        return body;
     }
 
     /**

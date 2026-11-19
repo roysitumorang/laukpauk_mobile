@@ -58,11 +58,8 @@ public class AllProductsFragment extends Fragment {
 
             @Override
             public void onBuy(Product p) {
-                if (p.pack) {
-                    ProductActions.buyPack(AllProductsFragment.this, p.id, p.name);
-                } else {
-                    ProductActions.buy(AllProductsFragment.this, p.id, p.name);
-                }
+                // the unit (variant) is chosen on the detail, which also adds it to the cart
+                ProductActions.open(AllProductsFragment.this, p.id);
             }
 
             @Override
