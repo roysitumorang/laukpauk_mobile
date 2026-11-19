@@ -4,10 +4,15 @@ import androidx.annotation.Nullable;
 
 import com.squareup.moshi.Json;
 
+import java.util.List;
+
 import id.laukpauk.data.model.home.HomeProduct;
 import id.laukpauk.data.model.search.SearchSuggestion;
 
-/** One row of {@code GET buyer/products} ({@code data.rows}). Only the keys the app uses are declared. */
+/**
+ * A product of {@code GET buyer/products} ({@code data.rows}) and {@code GET buyer/products/:id} ({@code data}).
+ * Only the keys the app uses are declared.
+ */
 public class BuyerProduct {
     /** {@code product_type} of a pack (paket); other values are unit products. */
     public static final int TYPE_PACK = 1;
@@ -31,6 +36,8 @@ public class BuyerProduct {
     /** Cheapest selling price of the product's variants (0 = no price). */
     @Json(name = "lowest_selling_price")
     public long lowestSellingPrice;
+    /** Selling units with their prices; filled by {@code GET buyer/products/:id} (empty in the lists). */
+    @Nullable public List<BuyerProductVariant> variants;
 
     public boolean isPack() {
         return productType == TYPE_PACK;
@@ -71,7 +78,6 @@ public class BuyerProduct {
         s.productPhoto = photo;
         s.itemType = productTypeName == null || productTypeName.isEmpty()
                 ? (isPack() ? "paket" : "produk") : productTypeName;
-        s.pack = isPack();
         return s;
     }
 

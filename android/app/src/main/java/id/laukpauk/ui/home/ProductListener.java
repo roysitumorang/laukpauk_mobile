@@ -12,12 +12,12 @@ public interface ProductListener {
 
     void onBuy(HomeProduct product);
 
-    /** The standard behaviour: the product (or pack) detail, ProductActions.buy / buyPack. */
+    /** The standard behaviour: the product detail, ProductActions.buy / buyPack. */
     static ProductListener navigating(final Fragment fragment) {
         return new ProductListener() {
             @Override
             public void onProduct(HomeProduct p) {
-                ProductActions.open(fragment, p.id, p.pack);
+                ProductActions.open(fragment, p.id);
             }
 
             @Override

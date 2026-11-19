@@ -16,6 +16,10 @@ public interface ProductApi {
     @GET("buyer/products")
     Call<ProductResponses.BuyerProducts> buyerProducts(@Query("limit") int limit, @Nullable @Query("q") String q);
 
+    /** One product with its variants; 404 when it does not exist or is not active. */
+    @GET("buyer/products/{id}")
+    Call<ProductResponses.BuyerProductDetail> buyerProduct(@Path("id") String id);
+
     /** A next page: {@code data.next} of the previous page, a full URL. */
     @GET
     Call<ProductResponses.BuyerProducts> buyerProductsPage(@Url String next);

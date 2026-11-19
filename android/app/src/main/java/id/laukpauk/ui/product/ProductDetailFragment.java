@@ -1,5 +1,6 @@
 package id.laukpauk.ui.product;
 
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,19 +15,24 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import java.util.List;
+import java.util.Locale;
 import android.widget.ImageView;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.product.Product;
+import id.laukpauk.data.model.product.BuyerProduct;
+import id.laukpauk.data.model.product.BuyerProductVariant;
 import id.laukpauk.databinding.FragmentProductDetailBinding;
+import id.laukpauk.databinding.ItemProductVariantBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Images;
-import id.laukpauk.util.DefaultImage;
+import id.laukpauk.util.Currency;
 import id.laukpauk.util.ServerPath;
 
-/** ProductDetail.dart. Arg: productId. */
+/** Product detail from {@code GET buyer/products/:id}: photo, name, category, description, variants. Arg: idProduk. */
 public class ProductDetailFragment extends Fragment {
 
     private FragmentProductDetailBinding binding;
@@ -75,7 +81,7 @@ public class ProductDetailFragment extends Fragment {
         });
     }
 
-    private void render(Resource<Product> res) {
+    private void render(Resource<BuyerProduct> res) {
         if (res == null) {
             return;
         }
@@ -86,27 +92,84 @@ public class ProductDetailFragment extends Fragment {
         }
         binding.progress.setVisibility(View.GONE);
         binding.refresh.setRefreshing(false);
-        Product p = res.isSuccess() ? res.data : null;
+        BuyerProduct p = res.isSuccess() ? res.data : null;
         binding.notFound.setVisibility(p == null ? View.VISIBLE : View.GONE);
         binding.content.setVisibility(p == null ? View.GONE : View.VISIBLE);
         if (p == null) {
             return;
         }
-        boolean isDefault = DefaultImage.defaultProduct.equalsIgnoreCase(p.photo);
+        boolean isDefault = p.photo == null || p.photo.trim().isEmpty()
+                || p.photo.toLowerCase(Locale.ROOT).endsWith("-default.png");
         binding.image.setScaleType(isDefault ? ImageView.ScaleType.FIT_CENTER : ImageView.ScaleType.CENTER_CROP);
-        Images.url(binding.image, Images.server(ServerPath.uploadImageProduct, p.photo == null ? "" : p.photo));
-        binding.name.setText(p.name == null ? "" : p.name.toUpperCase());
-        boolean hasCategory = p.productCategoryName != null;
-        binding.category.setText((hasCategory ? p.productCategoryName : getString(R.string.product_category_unknown)).toUpperCase());
+        Images.url(binding.image, Images.product(p.photo));
+        binding.name.setText(p.name == null ? "" : p.name.toUpperCase(Locale.ROOT));
+        boolean hasCategory = p.categoryName != null && !p.categoryName.trim().isEmpty();
+        binding.category.setText((hasCategory ? p.categoryName : getString(R.string.product_category_unknown))
+                .toUpperCase(Locale.ROOT));
         binding.category.setTypeface(null, hasCategory ? Typeface.NORMAL : Typeface.ITALIC);
-        boolean has = p.remarks != null && !p.remarks.isEmpty();
-        binding.description.setText(has ? p.remarks : getString(R.string.product_description_empty));
+        boolean has = p.description != null && !p.description.trim().isEmpty();
+        binding.description.setText(has ? p.description : getString(R.string.product_description_empty));
         binding.description.setTypeface(null, has ? Typeface.NORMAL : Typeface.ITALIC);
 
+        renderVariants(p.variants);
+
+        binding.outOfStock.setVisibility(p.readyStock ? View.GONE : View.VISIBLE);
+        binding.buy.setVisibility(p.readyStock ? View.VISIBLE : View.GONE);
         binding.buy.setText(R.string.product_buy);
         binding.buy.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.green)));
-        binding.buy.setOnClickListener(v -> ProductActions.buy(this, p.id, p.name));
+        binding.buy.setOnClickListener(v -> {
+            if (p.isPack()) {
+                ProductActions.buyPack(this, p.id, p.name);
+            } else {
+                ProductActions.buy(this, p.id, p.name);
+            }
+        });
+    }
+
+    /** One row per variant: unit, sale price (selling price struck through when discounted), discount, note. */
+    private void renderVariants(@Nullable List<BuyerProductVariant> variants) {
+        binding.variants.removeAllViews();
+        int shown = 0;
+        if (variants != null) {
+            LayoutInflater inflater = LayoutInflater.from(requireContext());
+            for (BuyerProductVariant v : variants) {
+                if (v == null) {
+                    continue;
+                }
+                ItemProductVariantBinding row = ItemProductVariantBinding.inflate(inflater, binding.variants, false);
+                row.unit.setText(v.stockUnit == null ? "" : v.stockUnit);
+                row.price.setText(Currency.formatRupiah(v.price(), 0));
+                boolean discounted = v.hasDiscount() && v.price() < v.sellingPrice;
+                row.strikePrice.setVisibility(discounted ? View.VISIBLE : View.GONE);
+                row.strikePrice.setText(Currency.formatRupiah(v.sellingPrice, 0));
+                row.strikePrice.setPaintFlags(row.strikePrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                String discount = discountText(v);
+                row.discount.setVisibility(discount == null ? View.GONE : View.VISIBLE);
+                row.discount.setText(discount);
+                boolean hasNote = v.description != null && !v.description.trim().isEmpty();
+                row.note.setVisibility(hasNote ? View.VISIBLE : View.GONE);
+                row.note.setText(hasNote ? v.description.trim() : null);
+                binding.variants.addView(row.getRoot());
+                shown++;
+            }
+        }
+        binding.variantsEmpty.setVisibility(shown == 0 ? View.VISIBLE : View.GONE);
+    }
+
+    /** "Diskon 10 %" / "Diskon Rp. 2.000", plus "untuk pembelian min. 3" when it starts from a quantity. */
+    @Nullable
+    private String discountText(BuyerProductVariant v) {
+        if (!v.hasDiscount()) {
+            return null;
+        }
+        String text = v.discountType == BuyerProductVariant.DISCOUNT_PERCENTAGE
+                ? getString(R.string.product_discount, String.valueOf(v.discountRate))
+                : getString(R.string.product_discount_amount, Currency.formatRupiah(v.discountAmount, 0));
+        if (v.discountMinimumQuantity > 1) {
+            text = getString(R.string.product_discount_from_quantity, text, (int) v.discountMinimumQuantity);
+        }
+        return text;
     }
 
     @Override

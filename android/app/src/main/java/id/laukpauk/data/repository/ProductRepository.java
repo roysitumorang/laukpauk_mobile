@@ -66,10 +66,13 @@ public class ProductRepository extends BaseRepository {
         return new Paged<>(rows, data.next);
     }
 
-    /** Legacy ProdukModel.getProductDetail; SUCCESS with null data = product not found. */
-    public LiveData<Resource<Product>> getProductDetail(String productId) {
-        return load(api.productDetail(productId == null ? "" : productId),
-                body -> body == null ? null : body.productDetail);
+    /**
+     * {@code GET buyer/products/:id}: the product with its variants. SUCCESS with null data = an empty answer;
+     * a missing product answers 404, i.e. ERROR.
+     */
+    public LiveData<Resource<BuyerProduct>> getBuyerProduct(String productId) {
+        return load(api.buyerProduct(productId == null ? "" : productId),
+                (ProductResponses.BuyerProductDetail body) -> body == null ? null : body.data);
     }
 
     /** "Produk Lainnya" (empty list on an empty answer). */

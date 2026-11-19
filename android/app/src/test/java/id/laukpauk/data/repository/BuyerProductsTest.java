@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import id.laukpauk.data.model.home.HomeProduct;
 import id.laukpauk.data.model.product.BuyerProduct;
+import id.laukpauk.data.model.product.BuyerProductVariant;
 import id.laukpauk.data.model.product.LowestPrice;
 import id.laukpauk.data.Paged;
 import id.laukpauk.data.model.product.Product;
@@ -86,5 +87,33 @@ public class BuyerProductsTest {
         assertEquals("paket", s.itemType);
         assertEquals("Belanja hemat 2 Hari", s.productName);
         assertEquals("produk", page.items.get(1).toSuggestion().itemType);
+    }
+
+    @Test
+    public void detail_readsProductAndVariants() throws Exception {
+        String json = "{\"status_code\":200,\"data\":{\"id\":\"p1\",\"category_name\":\"Sayur\","
+                + "\"product_type\":0,\"product_type_name\":\"non paket\",\"name\":\"Bayam\","
+                + "\"photo\":\"https://sadia.id/images/bayam.webp\",\"description\":\"Segar\","
+                + "\"ready_stock\":true,\"lowest_selling_price\":5000,\"variants\":["
+                + "{\"id\":\"v1\",\"product_id\":\"p1\",\"stock_unit\":\"ikat\",\"selling_price\":5000,"
+                + "\"discount_type\":1,\"discount_type_name\":\"persentase\",\"discount_rate\":10,"
+                + "\"discount_minimum_quantity\":3,\"discount_amount\":500,\"sale_price\":4500,"
+                + "\"description\":\"\",\"deleted_at\":null},"
+                + "{\"id\":\"v2\",\"stock_unit\":\"1 kg\",\"selling_price\":20000,\"discount_type\":0,"
+                + "\"discount_rate\":0,\"discount_amount\":0,\"sale_price\":20000}]}}";
+        ProductResponses.BuyerProductDetail body = ApiClient.createMoshi()
+                .adapter(ProductResponses.BuyerProductDetail.class).fromJson(json);
+        BuyerProduct p = body.data;
+        assertEquals("Bayam", p.name);
+        assertFalse(p.isPack());
+        assertEquals(2, p.variants.size());
+        BuyerProductVariant v = p.variants.get(0);
+        assertEquals("ikat", v.stockUnit);
+        assertEquals(BuyerProductVariant.DISCOUNT_PERCENTAGE, v.discountType);
+        assertEquals(3, v.discountMinimumQuantity);
+        assertTrue(v.hasDiscount());
+        assertEquals(4500, v.price());
+        assertFalse(p.variants.get(1).hasDiscount());
+        assertEquals(20000, p.variants.get(1).price());
     }
 }

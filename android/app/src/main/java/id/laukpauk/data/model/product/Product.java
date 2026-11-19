@@ -25,7 +25,7 @@ public class Product {
     @Nullable public Boolean stockAvailable;
     /** Active promos; only the size matters (dynamic payload). */
     @Nullable public List<Object> promo;
-    /** A pack (paket): opens the pack detail. Set for {@code GET buyer/products} rows. */
+    /** A pack (paket): "Beli" adds the pack. Set for {@code GET buyer/products} rows. */
     public boolean pack;
 
     public boolean isStockAvailable() {
