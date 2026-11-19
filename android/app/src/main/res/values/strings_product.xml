@@ -29,5 +29,9 @@
     <string name="product_discount">Diskon %1$s %%</string>
     <!-- product detail variants: a fixed-amount discount, and the quantity it starts from -->
     <string name="product_discount_amount">Diskon %1$s</string>
+    <!-- a product list price: the cheapest variant -->
+    <string name="product_price_from">Mulai %1$s</string>
+    <!-- one option of the Pilihan Satuan select box: unit - price -->
+    <string name="product_variant_option">%1$s - %2$s</string>
     <string name="product_discount_from_quantity">%1$s untuk pembelian min. %2$d</string>
 </resources>

@@ -16,8 +16,11 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import id.laukpauk.R;
@@ -25,18 +28,19 @@ import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.product.BuyerProduct;
 import id.laukpauk.data.model.product.BuyerProductVariant;
 import id.laukpauk.databinding.FragmentProductDetailBinding;
-import id.laukpauk.databinding.ItemProductVariantBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.ServerPath;
 
-/** Product detail from {@code GET buyer/products/:id}: photo, name, category, description, variants. Arg: idProduk. */
+/** Product detail from {@code GET buyer/products/:id}: photo, name, category, the "Pilihan Satuan" select box, "Beli" and the description. Arg: idProduk. */
 public class ProductDetailFragment extends Fragment {
 
     private FragmentProductDetailBinding binding;
     private ProductDetailViewModel viewModel;
+    /** The variant chosen in "Pilihan Satuan" (kept across reloads). */
+    @Nullable private String selectedVariantId;
 
     @Nullable
     @Override
@@ -127,34 +131,70 @@ public class ProductDetailFragment extends Fragment {
         });
     }
 
-    /** One row per variant: unit, sale price (selling price struck through when discounted), discount, note. */
+    /**
+     * The "Pilihan Satuan" select box: one option per variant ("unit - price"). The chosen variant's price (its
+     * selling price struck through when discounted), discount and note show below it. The choice survives a reload.
+     */
     private void renderVariants(@Nullable List<BuyerProductVariant> variants) {
-        binding.variants.removeAllViews();
-        int shown = 0;
+        final List<BuyerProductVariant> list = new ArrayList<>();
         if (variants != null) {
-            LayoutInflater inflater = LayoutInflater.from(requireContext());
             for (BuyerProductVariant v : variants) {
-                if (v == null) {
-                    continue;
+                if (v != null) {
+                    list.add(v);
                 }
-                ItemProductVariantBinding row = ItemProductVariantBinding.inflate(inflater, binding.variants, false);
-                row.unit.setText(v.stockUnit == null ? "" : v.stockUnit);
-                row.price.setText(Currency.formatRupiah(v.price(), 0));
-                boolean discounted = v.hasDiscount() && v.price() < v.sellingPrice;
-                row.strikePrice.setVisibility(discounted ? View.VISIBLE : View.GONE);
-                row.strikePrice.setText(Currency.formatRupiah(v.sellingPrice, 0));
-                row.strikePrice.setPaintFlags(row.strikePrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                String discount = discountText(v);
-                row.discount.setVisibility(discount == null ? View.GONE : View.VISIBLE);
-                row.discount.setText(discount);
-                boolean hasNote = v.description != null && !v.description.trim().isEmpty();
-                row.note.setVisibility(hasNote ? View.VISIBLE : View.GONE);
-                row.note.setText(hasNote ? v.description.trim() : null);
-                binding.variants.addView(row.getRoot());
-                shown++;
             }
         }
-        binding.variantsEmpty.setVisibility(shown == 0 ? View.VISIBLE : View.GONE);
+        boolean empty = list.isEmpty();
+        binding.variantBox.setVisibility(empty ? View.GONE : View.VISIBLE);
+        binding.variantInfo.setVisibility(empty ? View.GONE : View.VISIBLE);
+        binding.variantsEmpty.setVisibility(empty ? View.VISIBLE : View.GONE);
+        if (empty) {
+            binding.variantSelect.setAdapter(null);
+            return;
+        }
+        List<String> options = new ArrayList<>();
+        int selected = 0;
+        for (int i = 0; i < list.size(); i++) {
+            BuyerProductVariant v = list.get(i);
+            options.add(getString(R.string.product_variant_option, v.stockUnit == null ? "" : v.stockUnit,
+                    Currency.formatRupiah(v.price(), 0)));
+            if (v.id != null && v.id.equals(selectedVariantId)) {
+                selected = i;
+            }
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, options);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.variantSelect.setAdapter(adapter);
+        binding.variantSelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                showVariant(list.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        binding.variantSelect.setSelection(selected, false);
+        showVariant(list.get(selected));
+    }
+
+    private void showVariant(BuyerProductVariant v) {
+        if (binding == null) {
+            return;
+        }
+        selectedVariantId = v.id;
+        binding.variantPrice.setText(Currency.formatRupiah(v.price(), 0));
+        boolean discounted = v.hasDiscount() && v.price() < v.sellingPrice;
+        binding.variantStrikePrice.setVisibility(discounted ? View.VISIBLE : View.GONE);
+        binding.variantStrikePrice.setText(Currency.formatRupiah(v.sellingPrice, 0));
+        binding.variantStrikePrice.setPaintFlags(binding.variantStrikePrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        String discount = discountText(v);
+        binding.variantDiscount.setVisibility(discount == null ? View.GONE : View.VISIBLE);
+        binding.variantDiscount.setText(discount);
+        boolean hasNote = v.description != null && !v.description.trim().isEmpty();
+        binding.variantNote.setVisibility(hasNote ? View.VISIBLE : View.GONE);
+        binding.variantNote.setText(hasNote ? v.description.trim() : null);
     }
 
     /** "Diskon 10 %" / "Diskon Rp. 2.000", plus "untuk pembelian min. 3" when it starts from a quantity. */
