@@ -14,7 +14,6 @@ public final class ServerPath {
     public static final String apiBaseURL = BuildConfig.API_BASE_URL;
     public static final String baseURL = BuildConfig.BASE_URL;
 
-    public static final String uploadImageBanner = BuildConfig.UPLOAD_IMAGE_BANNER;
     public static final String uploadImageGift = BuildConfig.UPLOAD_IMAGE_GIFT;
     public static final String uploadImageProductCategory = BuildConfig.UPLOAD_IMAGE_PRODUCT_CATEGORY;
     public static final String uploadImageContentItem = BuildConfig.UPLOAD_IMAGE_CONTENT_ITEM;

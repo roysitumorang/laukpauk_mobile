@@ -11,7 +11,8 @@ import retrofit2.http.Query;
 /** Home page / product list / konten / category endpoints (JSON; ApiClient adds the auth and version headers). */
 public interface HomeApi {
 
-    @GET("Banner/getBanner")
+    /** Hero banners; the list is in {@code data}. */
+    @GET("buyer/banners")
     Call<HomeResponses.Banners> getBanner();
 
 
