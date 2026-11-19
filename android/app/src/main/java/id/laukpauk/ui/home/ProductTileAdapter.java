@@ -81,7 +81,8 @@ public class ProductTileAdapter extends ListAdapter<HomeProduct, ProductTileAdap
         b.buy.setVisibility(View.GONE);
         b.info.setVisibility(View.GONE);
         if (price != null) {
-            b.price.setText(Currency.formatRupiah(price.netPrice, 0));
+            b.price.setText(b.getRoot().getContext().getString(R.string.product_price_from,
+                    Currency.formatRupiah(price.netPrice, 0)));
             b.strikePrice.setText(Currency.formatRupiah(price.price, 0));
             b.strikePrice.setPaintFlags(b.strikePrice.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
         }

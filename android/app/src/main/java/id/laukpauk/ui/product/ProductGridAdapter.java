@@ -123,7 +123,8 @@ public class ProductGridAdapter extends ListAdapter<Product, ProductGridAdapter.
 
             boolean hasPrice = price != LowestPrice.NONE;
             if (hasPrice) {
-                b.netPrice.setText(Currency.formatRupiah(price.netPrice, 0));
+                b.netPrice.setText(b.getRoot().getContext().getString(R.string.product_price_from,
+                        Currency.formatRupiah(price.netPrice, 0)));
                 b.strikePrice.setVisibility(percent > 0 ? View.VISIBLE : View.GONE);
                 b.strikePrice.setText(Currency.formatRupiah(price.price, 0));
                 b.strikePrice.setPaintFlags(b.strikePrice.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
