@@ -15,27 +15,9 @@ public final class CartResponses {
         @Nullable public BuyerCart data;
     }
 
-    public static final class Count {
-        @Json(name = "jumlahKeranjang")
-        public int cartCount;
-    }
-
-    public static final class ProductList {
-        public List<CartProduct> listCart;
-    }
-
-    public static final class Total {
-        @Json(name = "totalKeranjang")
-        public int cartTotal;
-    }
-
     public static final class Clear {
         @Json(name = "statusBersihkanKeranjang")
         public boolean clearCartStatus;
-    }
-
-    public static final class Delete {
-        public boolean statusDeleteCart;
     }
 
     /** walletConfiguration is {@code false} on the server when unavailable (the lenient Moshi adapters map it to null). */

@@ -143,11 +143,6 @@
         android:name="id.laukpauk.ui.cart.CartFragment">
     </fragment>
 
-    <fragment
-        android:id="@+id/editCartItemFragment"
-        android:name="id.laukpauk.ui.cart.EditCartItemFragment">
-        <argument android:name="dataKeranjangItem" app:argType="string" />
-    </fragment>
 
     <fragment
         android:id="@+id/checkoutFragment"

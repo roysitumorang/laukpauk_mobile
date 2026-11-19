@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.text.InputType;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,12 +18,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.cart.CartGift;
-import id.laukpauk.data.model.cart.CartProduct;
+import id.laukpauk.data.model.cart.BuyerCart;
+import id.laukpauk.data.model.cart.BuyerCartItem;
 import id.laukpauk.data.model.cart.WalletConfiguration;
 import id.laukpauk.databinding.FragmentCartBinding;
 import id.laukpauk.databinding.ItemCartGiftBinding;
@@ -28,16 +33,18 @@ import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.AppBars;
 import id.laukpauk.ui.common.AuthGate;
+import id.laukpauk.ui.product.ProductActions;
+import id.laukpauk.ui.common.Messages;
 import id.laukpauk.ui.delivery.DeliveryFlow;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.common.NavResults;
 import id.laukpauk.util.Currency;
 
-/** Keranjang.dart: the cart lines, subtotal, checkout, "Bersihkan Keranjang" and earned gifts. */
+/**
+ * Keranjang: the buyer's cart from {@code GET buyer/cart} (lines, notes, subtotal), quantity and note changes, delete and
+ * "Bersihkan Keranjang" through {@code POST buyer/cart}, checkout, and the wallet note and earned gifts.
+ */
 public class CartFragment extends Fragment {
-
-    /** Result of EditCartItemFragment: Boolean, true when the item was saved. */
-    public static final String EDIT_RESULT = "edit_keranjang_item_result";
 
     private FragmentCartBinding binding;
     private CartViewModel viewModel;
@@ -62,30 +69,25 @@ public class CartFragment extends Fragment {
 
         adapter = new CartProductAdapter(new CartProductAdapter.Listener() {
             @Override
-            public void onOpenProduct(CartProduct product) {
-                String type = product.productType == null ? "" : product.productType.toLowerCase();
-                Bundle args = new Bundle();
-                if (type.equals("nonpaket")) {
-                    args.putString("idProduk", product.productId);
-                    nav.navigate(R.id.productDetailFragment, args);
-                } else if (type.equals("paket")) {
-                    args.putString("idPaket", product.productId);
-                    nav.navigate(R.id.packDetailFragment, args);
+            public void onOpenProduct(BuyerCartItem item) {
+                if (item.productId != null) {
+                    ProductActions.open(CartFragment.this, item.productId);
                 }
             }
 
             @Override
-            public void onEdit(CartProduct product, int failMessage, int failButton) {
-                viewModel.pendingEditMessage = failMessage;
-                viewModel.pendingEditButton = failButton;
-                Bundle args = new Bundle();
-                args.putString("dataKeranjangItem", c.apiClient.toJson(product, CartProduct.class));
-                nav.navigate(R.id.editCartItemFragment, args);
+            public void onEditQuantity(BuyerCartItem item) {
+                editQuantity(item);
             }
 
             @Override
-            public void onDelete(CartProduct product) {
-                confirmDelete(product);
+            public void onDelete(BuyerCartItem item) {
+                confirmDelete(item);
+            }
+
+            @Override
+            public void onEditNote(BuyerCartItem item) {
+                editNote(item);
             }
         });
         binding.products.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -102,15 +104,12 @@ public class CartFragment extends Fragment {
             }
         });
 
-        NavResults.<Boolean>observe(this, EDIT_RESULT, saved -> {
-            if (Boolean.TRUE.equals(saved)) {
-                viewModel.load();
-            } else if (saved != null) {
-                showEditFailure();
-            }
-        });
         NavResults.<Boolean>observe(this, AuthGate.LOGIN_RESULT, success -> {
-            if (Boolean.TRUE.equals(success) && viewModel.checkoutAfterLogin) {
+            if (!Boolean.TRUE.equals(success)) {
+                return;
+            }
+            viewModel.load(); // the signed-in buyer's cart
+            if (viewModel.checkoutAfterLogin) {
                 viewModel.checkoutAfterLogin = false;
                 openCheckout(nav);
             }
@@ -121,32 +120,36 @@ public class CartFragment extends Fragment {
     }
 
     private void observe() {
-        viewModel.getProducts().observe(getViewLifecycleOwner(), res -> {
+        viewModel.getCart().observe(getViewLifecycleOwner(), res -> {
             if (res == null) {
                 return;
             }
             boolean loading = res.isLoading();
             binding.progress.setVisibility(loading && !binding.refresh.isRefreshing() ? View.VISIBLE : View.GONE);
+            binding.totalProgress.setVisibility(loading ? View.VISIBLE : View.GONE);
             if (loading) {
                 return;
             }
             binding.refresh.setRefreshing(false);
-            List<CartProduct> list = res.data;
-            boolean any = list != null && !list.isEmpty();
-            adapter.submitList(list);
+            if (!res.isSuccess()) {
+                Messages.snack(this, getString(R.string.cart_load_failed));
+            }
+            BuyerCart cart = res.isSuccess() ? res.data : null;
+            List<BuyerCartItem> items = new ArrayList<>();
+            if (cart != null && cart.items != null) {
+                for (BuyerCartItem item : cart.items) {
+                    if (item != null && item.quantity > 0) {
+                        items.add(item);
+                    }
+                }
+            }
+            boolean any = !items.isEmpty();
+            adapter.submitList(items);
+            binding.total.setText(Currency.formatRupiah(cart == null ? 0 : cart.total(), 0));
+            binding.total.setVisibility(View.VISIBLE);
             binding.productsCard.setVisibility(any ? View.VISIBLE : View.GONE);
             binding.summaryGroup.setVisibility(any ? View.VISIBLE : View.GONE);
             binding.emptyGroup.setVisibility(any ? View.GONE : View.VISIBLE);
-        });
-        viewModel.getTotal().observe(getViewLifecycleOwner(), res -> {
-            if (res != null && res.isSuccess() && res.data != null) {
-                binding.totalProgress.setVisibility(View.GONE);
-                binding.total.setText(Currency.formatRupiah(res.data, 0));
-                binding.total.setVisibility(View.VISIBLE);
-            } else if (res != null && res.isLoading()) {
-                binding.totalProgress.setVisibility(View.VISIBLE);
-                binding.total.setVisibility(View.GONE);
-            }
         });
         viewModel.getWallet().observe(getViewLifecycleOwner(), this::renderWallet);
         viewModel.getGifts().observe(getViewLifecycleOwner(), res -> {
@@ -188,8 +191,8 @@ public class CartFragment extends Fragment {
             binding.walletText.setVisibility(View.VISIBLE);
         } else if (w.isWalletOn) {
             binding.walletText.setText(getString(R.string.cart_wallet_discount,
-                    Currency.formatRupiah(CartProduct.toInt(w.walletDiscount), 0),
-                    Currency.formatRupiah(CartProduct.toInt(w.minGrandTotalTransactionForWallet), 0)));
+                    Currency.formatRupiah(amount(w.walletDiscount), 0),
+                    Currency.formatRupiah(amount(w.minGrandTotalTransactionForWallet), 0)));
             binding.walletText.setTextSize(12f);
             binding.walletText.setTypeface(null, android.graphics.Typeface.ITALIC);
             binding.walletText.setGravity(android.view.Gravity.CENTER);
@@ -217,16 +220,77 @@ public class CartFragment extends Fragment {
         });
     }
 
-    private void confirmDelete(CartProduct product) {
+    /** The quantity dialog of a line: a whole number from 1; 0 asks to delete the line. */
+    private void editQuantity(BuyerCartItem item) {
+        final EditText input = new EditText(requireContext());
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setText(String.valueOf(item.quantity));
+        input.setSelectAllOnFocus(true);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        FrameLayout box = new FrameLayout(requireContext());
+        box.setPadding(pad, pad / 2, pad, 0);
+        box.addView(input);
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(item.productName == null ? getString(R.string.cart_quantity) : item.productName)
+                .setMessage(getString(R.string.cart_quantity_hint, item.stockUnit == null ? "" : item.stockUnit))
+                .setView(box)
+                .setNegativeButton(R.string.cart_no, null)
+                .setPositiveButton(R.string.cart_save, (d, w) -> {
+                    long quantity = parseQuantity(input.getText().toString());
+                    if (quantity == item.quantity || quantity < 0) {
+                        return;
+                    }
+                    if (quantity == 0) {
+                        confirmDelete(item);
+                    } else {
+                        viewModel.setQuantity(item.productVariantId, quantity, this::onSaved);
+                    }
+                })
+                .show();
+    }
+
+    /** "Tambah Catatan" / the note's pencil: a multi-line text dialog; an empty note removes it. */
+    private void editNote(BuyerCartItem item) {
+        final EditText input = new EditText(requireContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        input.setMinLines(2);
+        input.setHint(R.string.cart_note_input);
+        final String current = item.note == null ? "" : item.note.trim();
+        input.setText(current);
+        input.setSelection(current.length());
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        FrameLayout box = new FrameLayout(requireContext());
+        box.setPadding(pad, pad / 2, pad, 0);
+        box.addView(input);
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(item.productName == null ? getString(R.string.cart_note_input) : item.productName)
+                .setView(box)
+                .setNegativeButton(R.string.cart_no, null)
+                .setPositiveButton(R.string.cart_save, (d, w) -> {
+                    String note = input.getText().toString().trim();
+                    if (!note.equals(current)) {
+                        viewModel.setNote(item.productVariantId, note, this::onSaved);
+                    }
+                })
+                .show();
+    }
+
+    private static long parseQuantity(String text) {
+        try {
+            return Long.parseLong(text.trim());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    private void confirmDelete(BuyerCartItem item) {
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.cart_delete_title)
-                .setMessage(getString(R.string.cart_delete_message, product.productName))
+                .setMessage(getString(R.string.cart_delete_message, item.productName == null ? "" : item.productName))
                 .setNegativeButton(R.string.cart_no, null)
-                .setPositiveButton(R.string.cart_yes, (d, w) -> viewModel.deleteItem(product.idCart, result -> {
-                    if (isAdded() && result.isSuccess() && Boolean.TRUE.equals(result.data)) {
-                        viewModel.load();
-                    }
-                }))
+                .setPositiveButton(R.string.cart_yes, (d, w) ->
+                        viewModel.setQuantity(item.productVariantId, 0, this::onSaved))
                 .show();
     }
 
@@ -235,24 +299,32 @@ public class CartFragment extends Fragment {
                 .setTitle(R.string.cart_clear_title)
                 .setMessage(R.string.cart_clear_message)
                 .setNegativeButton(R.string.cart_no, null)
-                .setPositiveButton(R.string.cart_clear_yes, (d, w) -> viewModel.clearCart(result -> {
-                    if (isAdded() && result.isSuccess() && Boolean.TRUE.equals(result.data)) {
-                        viewModel.load();
-                    }
-                }))
+                .setPositiveButton(R.string.cart_clear_yes, (d, w) -> viewModel.clearCart(this::onSaved))
                 .show();
     }
 
-    private void showEditFailure() {
-        if (viewModel.pendingEditMessage == 0) {
+    /** After {@code POST buyer/cart}: the saved cart is already shown; a failure shows the backend's reason. */
+    private void onSaved(Resource<BuyerCart> result) {
+        if (!isAdded() || result.isSuccess()) {
             return;
         }
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.cart_title)
-                .setMessage(viewModel.pendingEditMessage)
-                .setCancelable(false)
-                .setPositiveButton(viewModel.pendingEditButton, null)
-                .show();
+        String reason = result.message == null ? "" : result.message.trim();
+        Messages.snack(this, getString(R.string.cart_edit_failed, reason));
+    }
+
+    /** A wallet amount sent as a number or a numeric string; 0 when missing or not a number. */
+    private static long amount(@Nullable Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        }
+        if (value == null) {
+            return 0;
+        }
+        try {
+            return (long) Double.parseDouble(value.toString().trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     @Override

@@ -15,4 +15,17 @@ public class BuyerCart {
     /** Total quantity of all items. */
     public long quantity;
     @Nullable public List<BuyerCartItem> items;
+
+    /** The cart's value: the sum of the items' {@link BuyerCartItem#lineTotal()}. */
+    public long total() {
+        long sum = 0;
+        if (items != null) {
+            for (BuyerCartItem item : items) {
+                if (item != null) {
+                    sum += item.lineTotal();
+                }
+            }
+        }
+        return sum;
+    }
 }

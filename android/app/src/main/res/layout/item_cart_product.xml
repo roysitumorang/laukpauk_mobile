@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Cart line: photo, name, total, quantity with edit pencil, unit price, delete and the note. -->
+<!-- Cart line (GET buyer/cart item): photo, name, total, quantity with edit pencil, unit price, delete, and the note ("Tambah Catatan" / "Catatan Tambahan"). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -77,6 +77,26 @@
                 android:textSize="11sp" />
 
             <TextView
+                android:id="@+id/strikePrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/text_muted"
+                android:textSize="11sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/outOfStock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/cart_out_of_stock"
+                android:textColor="@color/red"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/addNote"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,6 +115,7 @@
             android:src="@drawable/ic_delete"
             android:tint="@color/red" />
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/noteBox"
