@@ -23,13 +23,14 @@
 
     <string name="auth_login_heading">Autentikasi User</string>
     <string name="auth_login_failed">Kombinasi nomor telepon dan password tidak sesuai !</string>
+    <string name="auth_login_locked">Akun anda terkunci karena terlalu banyak percobaan masuk yang gagal.</string>
     <string name="auth_login_failed_suggestion">Silahkan ke halaman lupa password untuk memulihkan password anda !</string>
     <string name="auth_close">Tutup</string>
 
     <string name="auth_register_heading">Registrasi</string>
     <string name="auth_hint_username">Username</string>
     <string name="auth_register_password_mismatch">Konfirmasi password tidak sama dengan password.</string>
-    <string name="auth_register_success">Registrasi berhasil ! Silahkan konfirmasikan kode OTP yang kami kirim ke nomor yang anda gunakan untuk mendaftar!</string>
+    <string name="auth_register_success">Registrasi berhasil ! Silahkan masuk dengan nomor HP dan password anda.</string>
     <string name="auth_register_failed">Gagal Registrasi ! %1$s</string>
     <string name="auth_ok">OK</string>
     <string name="auth_confirm_otp_action">Konfirmasi OTP</string>

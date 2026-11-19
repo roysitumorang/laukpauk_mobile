@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 
 import id.laukpauk.R;
 import id.laukpauk.di.AppContainer;
@@ -69,14 +68,29 @@ public class RegisterFragment extends Fragment {
                     Messages.snack(this, getString(R.string.auth_failed_connection));
                     return;
                 }
-                boolean failed = r.data.failed;
-                String message = r.data.success ? getString(R.string.auth_register_success)
-                        : getString(R.string.auth_register_failed, r.data.message);
-                AuthFlow.alert(this, R.string.auth_register_heading, message,
-                        failed ? R.string.auth_ok : R.string.auth_confirm_otp_action,
-                        failed ? null : () -> NavHostFragment.findNavController(this)
-                                .navigate(R.id.registrationOtpFragment), 0, null);
+                if (!r.data.success) {
+                    AuthFlow.alert(this, R.string.auth_register_heading,
+                            getString(R.string.auth_register_failed, r.data.message), R.string.auth_ok, null, 0, null);
+                    return;
+                }
+                // Registered: sign in right away with the new account (the backend needs no OTP step).
+                signInAfterRegister(binding.phoneNumber.getText().toString(), password);
             });
+        });
+    }
+
+    /** Signs the new buyer in; if that fails the Login screen opens to try again by hand. */
+    private void signInAfterRegister(String phoneNumber, String password) {
+        viewModel.login(phoneNumber, password, r -> {
+            if (binding == null) {
+                return;
+            }
+            if (r.isSuccess() && r.data != null && r.data.authenticated) {
+                AuthFlow.finish(this);
+            } else {
+                AuthFlow.alert(this, R.string.auth_register_heading, getString(R.string.auth_register_success),
+                        R.string.auth_ok, () -> AuthFlow.replaceWith(this, R.id.loginFragment), 0, null);
+            }
         });
     }
 

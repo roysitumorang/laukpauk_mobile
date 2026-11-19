@@ -19,4 +19,19 @@ public class AuthRepositoryTest {
         assertEquals("", AuthRepository.base64(""));
         assertEquals("", AuthRepository.base64(null));
     }
+
+    @Test
+    public void loginValue_phoneNumbersBecomeE164() {
+        assertEquals("+6281234567890", AuthRepository.loginValue("081234567890"));
+        assertEquals("+6281234567890", AuthRepository.loginValue("6281234567890"));
+        assertEquals("+6281234567890", AuthRepository.loginValue("81234567890"));
+        assertEquals("+6281234567890", AuthRepository.loginValue("+62 812-3456-7890"));
+        assertEquals("+6281234567890", AuthRepository.loginValue(" 0812 3456 7890 "));
+    }
+
+    @Test
+    public void loginValue_usernameAndEmailAreLowerCased() {
+        assertEquals("budi", AuthRepository.loginValue(" Budi "));
+        assertEquals("budi@example.com", AuthRepository.loginValue("Budi@Example.com"));
+    }
 }

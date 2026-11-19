@@ -20,11 +20,12 @@ public class AuthRepository extends BaseRepository {
     public static final class LoginResult {
         /** false: wrong phone/password combination. */
         public final boolean authenticated;
-        public final boolean verified;
+        /** The backend's {@code message} when it refused (e.g. a locked account); empty otherwise. */
+        public final String message;
 
-        LoginResult(boolean authenticated, boolean verified) {
+        LoginResult(boolean authenticated, String message) {
             this.authenticated = authenticated;
-            this.verified = verified;
+            this.message = message == null ? "" : message;
         }
     }
 
@@ -57,30 +58,31 @@ public class AuthRepository extends BaseRepository {
     }
 
     /**
-     * POST users/sign_in; on success the session (JWT, its expiry and the current user) is saved and the
+     * POST buyer/users/sign_in; on success the session (JWT, its expiry and the current user) is saved and the
      * badges refreshed. A 4xx answer means the login or password is wrong.
      * The password is always sent base64-encoded (standard alphabet, of its UTF-8 bytes), never as typed.
      */
     public void login(String login, String password, ResultCallback<LoginResult> callback) {
-        enqueue(api.signIn(body("login", login, "password", base64(password))), body -> {
+        enqueue(api.signIn(body("login", loginValue(login), "password", base64(password))), body -> {
             // The backend wraps the payload in "data"; a bare payload is accepted too.
             Map<String, Object> payload = Json.isObject(Json.get(body, "data")) ? Json.object(body, "data") : body;
             String idToken = Json.str(payload, "id_token", "");
             Map<String, Object> user = Json.objectOrNull(payload, "user");
             if (idToken.isEmpty() || user == null) {
-                return new LoginResult(false, false);
+                return new LoginResult(false, "");
             }
             session.saveSignIn(idToken, Json.strOrNull(payload, "expired_at"), user);
             onSignedIn(session.getCurrentUserID());
-            return new LoginResult(true, Json.get(user, "mobile_phone_confirmed_at") != null);
+            // The backend signs in active buyers whether or not their phone is confirmed: no OTP step here.
+            return new LoginResult(true, "");
         }, result -> {
             boolean rejected = result.isError() && result.code >= 400 && result.code < 500;
-            callback.onResult(rejected ? Resource.success(new LoginResult(false, false)) : result);
+            callback.onResult(rejected ? Resource.success(new LoginResult(false, nz(result.message))) : result);
         });
     }
 
     /**
-     * POST users (buyer registration). On success the new user's id is kept for the OTP confirmation that
+     * POST buyer/users (buyer registration). On success the new user's id is kept for the OTP confirmation that
      * follows. The password is sent base64-encoded, like sign-in's; an empty referral code is left out.
      * A 4xx answer is a refusal whose reason is the server's message.
      */
@@ -144,6 +146,32 @@ public class AuthRepository extends BaseRepository {
         push.onSignedIn();
         cart.refreshCartCount();
         notification.refreshUnreadCount();
+    }
+
+    /**
+     * The {@code login} sent to sign-in. The backend matches it exactly against the username, the email and the
+     * mobile phone, which it stores in E.164 ({@code +62812...}); so a phone number typed as {@code 0812...},
+     * {@code 62812...}, {@code 812...} or with spaces/dashes is sent as {@code +62812...}. Anything else (a
+     * username or an email) is sent trimmed and lower-cased.
+     */
+    static String loginValue(String login) {
+        String text = login == null ? "" : login.trim();
+        String compact = text.replaceAll("[\\s().-]", "");
+        if (!compact.matches("\\+?\\d+")) {
+            return text.toLowerCase(java.util.Locale.ROOT);
+        }
+        boolean plus = compact.startsWith("+");
+        String digits = plus ? compact.substring(1) : compact;
+        if (plus) {
+            return "+" + digits;
+        }
+        if (digits.startsWith("0")) {
+            return "+62" + digits.substring(1);
+        }
+        if (digits.startsWith("62")) {
+            return "+" + digits;
+        }
+        return "+62" + digits;
     }
 
     /** Standard base64 (with padding, no line breaks) of the text's UTF-8 bytes. */
