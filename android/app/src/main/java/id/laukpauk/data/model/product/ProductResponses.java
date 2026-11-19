@@ -20,6 +20,11 @@ public final class ProductResponses {
         @Nullable public Page data;
     }
 
+    /** {@code GET buyer/products/:id}: the backend envelope; the product (with its variants) is in {@code data}. */
+    public static class BuyerProductDetail {
+        @Nullable public BuyerProduct data;
+    }
+
     /** {@code data} of {@code GET buyer/products}: {@code next} is the full URL of the next page, null on the last. */
     public static class Page {
         @Nullable public String current;

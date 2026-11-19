@@ -11,6 +11,4 @@ public class SearchSuggestion {
     public String productPhoto;
     @Json(name = "namaProduk")
     public String productName;
-    /** A pack (paket): opens the pack detail. */
-    public boolean pack;
 }

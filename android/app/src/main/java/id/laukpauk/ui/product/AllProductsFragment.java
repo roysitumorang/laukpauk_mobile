@@ -53,7 +53,7 @@ public class AllProductsFragment extends Fragment {
         adapter = new ProductGridAdapter(0.45f, new ProductGridAdapter.Listener() {
             @Override
             public void onOpen(Product p) {
-                ProductActions.open(AllProductsFragment.this, p.id, p.pack);
+                ProductActions.open(AllProductsFragment.this, p.id);
             }
 
             @Override

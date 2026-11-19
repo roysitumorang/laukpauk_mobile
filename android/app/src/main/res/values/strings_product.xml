@@ -27,4 +27,7 @@
     <string name="product_other_packs">Paket Lainnya</string>
     <string name="product_other_packs_empty">Maaf mak, tidak ada paket lainnya…</string>
     <string name="product_discount">Diskon %1$s %%</string>
+    <!-- product detail variants: a fixed-amount discount, and the quantity it starts from -->
+    <string name="product_discount_amount">Diskon %1$s</string>
+    <string name="product_discount_from_quantity">%1$s untuk pembelian min. %2$d</string>
 </resources>

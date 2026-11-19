@@ -204,11 +204,7 @@ public class SearchFragment extends Fragment {
     }
 
     private void openSuggestion(SearchSuggestion s) {
-        if (s.pack) {
-            replaceWith(R.id.packDetailFragment, "idPaket", s.id);
-        } else {
-            replaceWith(R.id.productDetailFragment, "idProduk", s.id);
-        }
+        replaceWith(R.id.productDetailFragment, "idProduk", s.id);
     }
 
     /** Legacy pushReplacement: the search dialog closes, so back from the detail returns to the previous screen. */
