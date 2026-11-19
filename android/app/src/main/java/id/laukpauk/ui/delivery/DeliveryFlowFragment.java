@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +23,10 @@ import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -55,7 +59,17 @@ public class DeliveryFlowFragment extends Fragment {
     private NavController listenedNav;
 
     private final ActivityResultLauncher<String[]> permission = registerForActivityResult(
-            new ActivityResultContracts.RequestMultiplePermissions(), r -> locate());
+            new ActivityResultContracts.RequestMultiplePermissions(), r -> {
+                if (hasPermission()) {
+                    turnOnLocation();
+                } else {
+                    locate(); // reports the failure: no permission
+                }
+            });
+
+    /** The system "turn on location" dialog of Google Play services; OK switches location on. */
+    private final ActivityResultLauncher<IntentSenderRequest> locationSettings = registerForActivityResult(
+            new ActivityResultContracts.StartIntentSenderForResult(), r -> locate());
 
     private final NavController.OnDestinationChangedListener pinListener = (controller, dest, args) -> {
         if (vm == null || vm.step.getValue() != DeliveryFlowViewModel.Step.PIN) {
@@ -216,17 +230,65 @@ public class DeliveryFlowFragment extends Fragment {
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
+    /**
+     * Detects the current GPS position. When location is not usable yet (no permission or location switched off)
+     * the activation popup comes first; its OK asks the permission, switches location on through the system
+     * dialog, then reads the position. "Nanti" (or a refusal) continues as before without a position.
+     */
     private void detect() {
         if (vm.detecting) {
             return;
         }
-        vm.detecting = true;
-        if (hasPermission()) {
+        if (hasPermission() && isLocationServiceEnabled()) {
+            vm.detecting = true;
             locate();
-        } else {
-            permission.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION});
+            return;
         }
+        dialog = new MaterialAlertDialogBuilder(requireActivity())
+                .setTitle(R.string.delivery_location_title)
+                .setMessage(R.string.delivery_location_message)
+                .setCancelable(false)
+                .setNegativeButton(R.string.delivery_location_later, (d, w) -> {
+                    vm.detecting = false;
+                    vm.onLocation(null, null);
+                })
+                .setPositiveButton(R.string.delivery_location_activate, (d, w) -> {
+                    vm.detecting = true;
+                    if (hasPermission()) {
+                        turnOnLocation();
+                    } else {
+                        permission.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION});
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * Makes sure location is on (high accuracy): if it is off, Google Play services shows its "turn on location"
+     * dialog and {@link #locationSettings} reads the position afterwards; otherwise reads it now.
+     */
+    private void turnOnLocation() {
+        if (!isAdded()) {
+            return;
+        }
+        LocationRequest request = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10_000L).build();
+        LocationSettingsRequest settings = new LocationSettingsRequest.Builder()
+                .addLocationRequest(request).setAlwaysShow(true).build();
+        LocationServices.getSettingsClient(requireActivity()).checkLocationSettings(settings)
+                .addOnSuccessListener(r -> locate())
+                .addOnFailureListener(e -> {
+                    if (e instanceof ResolvableApiException && isAdded()) {
+                        try {
+                            locationSettings.launch(new IntentSenderRequest.Builder(
+                                    ((ResolvableApiException) e).getResolution()).build());
+                            return;
+                        } catch (RuntimeException ignored) {
+                            // fall through: read what we can
+                        }
+                    }
+                    locate();
+                });
     }
 
     private void locate() {

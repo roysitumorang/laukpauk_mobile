@@ -7,6 +7,11 @@
     <string name="delivery_other_address">Alamat Lain</string>
     <string name="delivery_address_title">Alamat Pengantaran</string>
     <string name="delivery_address_content">Apakah belanjaan akan diantarkan ke alamat tempat anda berada sekarang ?</string>
+    <!-- checkout: the location activation popup -->
+    <string name="delivery_location_title">Aktifkan Lokasi</string>
+    <string name="delivery_location_message">Untuk checkout, mamak perlu mengaktifkan lokasi supaya kami bisa mendeteksi alamat pengantaran dari posisi mamak sekarang.</string>
+    <string name="delivery_location_activate">Aktifkan</string>
+    <string name="delivery_location_later">Nanti</string>
     <string name="delivery_gps_off">Supaya mamak bisa belanja, aktifkan GPSnya dulu ya mak :)</string>
     <string name="delivery_detection_failed_title">Pendeteksian Lokasi</string>
     <string name="delivery_detection_failed">Gagal mendeteksi lokasi anda saat ini !</string>
