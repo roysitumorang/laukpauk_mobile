@@ -12,7 +12,7 @@ public interface ProductListener {
 
     void onBuy(HomeProduct product);
 
-    /** The standard behaviour: the product detail, ProductActions.buy / buyPack. */
+    /** The standard behaviour: both open the product detail, where the variant is chosen and added. */
     static ProductListener navigating(final Fragment fragment) {
         return new ProductListener() {
             @Override
@@ -22,11 +22,8 @@ public interface ProductListener {
 
             @Override
             public void onBuy(HomeProduct p) {
-                if (p.pack) {
-                    ProductActions.buyPack(fragment, p.id, p.name);
-                } else {
-                    ProductActions.buy(fragment, p.id, p.name);
-                }
+                // the unit (variant) is chosen on the detail, which also adds it to the cart
+                ProductActions.open(fragment, p.id);
             }
         };
     }

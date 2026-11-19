@@ -1,5 +1,6 @@
 package id.laukpauk.ui.product;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
@@ -26,6 +27,11 @@ public class ProductDetailViewModel extends ViewModel {
         this.productId = productId;
         load();
     }
+
+    /** The variant "Beli" was tapped for while signed out; added to the cart once the login succeeds. */
+    @Nullable public String pendingVariantId;
+    /** True while a variant is being added to the cart ("Beli" disabled). */
+    public boolean adding;
 
     public LiveData<Resource<BuyerProduct>> getDetail() {
         return detail;

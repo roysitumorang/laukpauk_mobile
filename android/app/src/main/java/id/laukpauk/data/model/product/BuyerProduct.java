@@ -52,7 +52,6 @@ public class BuyerProduct {
         p.productCategoryName = categoryName;
         p.shortDescription = description;
         p.stockAvailable = readyStock;
-        p.pack = isPack();
         return p;
     }
 
@@ -66,7 +65,6 @@ public class BuyerProduct {
         p.remarks = description;
         p.shortDescription = description;
         p.stockAvailable = readyStock;
-        p.pack = isPack();
         return p;
     }
 
