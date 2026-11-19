@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -53,14 +53,16 @@ public class AllProductsFragment extends Fragment {
         adapter = new ProductGridAdapter(0.45f, new ProductGridAdapter.Listener() {
             @Override
             public void onOpen(Product p) {
-                Bundle args = new Bundle();
-                args.putString("idProduk", p.id);
-                NavHostFragment.findNavController(AllProductsFragment.this).navigate(R.id.productDetailFragment, args);
+                ProductActions.open(AllProductsFragment.this, p.id, p.pack);
             }
 
             @Override
             public void onBuy(Product p) {
-                ProductActions.buy(AllProductsFragment.this, p.id, p.name);
+                if (p.pack) {
+                    ProductActions.buyPack(AllProductsFragment.this, p.id, p.name);
+                } else {
+                    ProductActions.buy(AllProductsFragment.this, p.id, p.name);
+                }
             }
 
             @Override
@@ -76,6 +78,12 @@ public class AllProductsFragment extends Fragment {
                 if (dy > 0 && !rv.canScrollVertically(1)) {
                     viewModel.loadMore();
                 }
+            }
+        });
+        // The grid sits inside a NestedScrollView, which does the scrolling: load the next page at its end.
+        binding.scroll.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, x, y, oldX, oldY) -> {
+            if (y > oldY && !v.canScrollVertically(1)) {
+                viewModel.loadMore();
             }
         });
 

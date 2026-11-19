@@ -18,6 +18,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
@@ -175,6 +176,14 @@ public class SearchFragment extends Fragment {
         SearchSuggestionAdapter adapter = new SearchSuggestionAdapter(this::openSuggestion);
         binding.resultList.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.resultList.setAdapter(adapter);
+        binding.resultList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
+                if (dy > 0 && !rv.canScrollVertically(1)) {
+                    viewModel.loadMore();
+                }
+            }
+        });
         viewModel.getState().observe(getViewLifecycleOwner(), state -> {
             boolean loading = state.kind == SearchState.Kind.LOADING;
             boolean results = state.kind == SearchState.Kind.RESULTS;
@@ -195,7 +204,11 @@ public class SearchFragment extends Fragment {
     }
 
     private void openSuggestion(SearchSuggestion s) {
-        replaceWith(R.id.productDetailFragment, "idProduk", s.id);
+        if (s.pack) {
+            replaceWith(R.id.packDetailFragment, "idPaket", s.id);
+        } else {
+            replaceWith(R.id.productDetailFragment, "idProduk", s.id);
+        }
     }
 
     /** Legacy pushReplacement: the search dialog closes, so back from the detail returns to the previous screen. */

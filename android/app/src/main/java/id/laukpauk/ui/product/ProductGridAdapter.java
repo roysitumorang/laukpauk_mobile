@@ -20,7 +20,6 @@ import id.laukpauk.databinding.ItemProductGridBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.DefaultImage;
-import id.laukpauk.util.ServerPath;
 
 /**
  * Product tile of the 3-column grid: photo with "Hemat x%" / "Promo" badges,
@@ -93,7 +92,7 @@ public class ProductGridAdapter extends ListAdapter<Product, ProductGridAdapter.
             boolean isDefault = DefaultImage.defaultProduct.equals(p.photo);
             b.image.setScaleType(isDefault ? android.widget.ImageView.ScaleType.FIT_CENTER
                     : android.widget.ImageView.ScaleType.FIT_XY);
-            Images.url(b.image, Images.server(ServerPath.uploadImageProduct + "/compress", p.photo == null ? "" : p.photo));
+            Images.url(b.image, Images.product(p.photo));
             b.promo.setVisibility(p.isInActivePromo() ? View.VISIBLE : View.GONE);
             b.card.setOnClickListener(v -> listener.onOpen(p));
 

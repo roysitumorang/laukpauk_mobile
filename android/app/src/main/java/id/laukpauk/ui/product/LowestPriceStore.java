@@ -30,6 +30,16 @@ public class LowestPriceStore {
         return live;
     }
 
+    /** A price already known from the product list ({@code lowest_selling_price}); no request is made for it. */
+    public void put(String productId, LowestPrice price) {
+        if (productId == null) {
+            return;
+        }
+        requested.add(productId);
+        prices.put(productId, price);
+        live.setValue(new HashMap<>(prices));
+    }
+
     /** Starts loading the price of a product once. */
     public void request(String productId) {
         if (productId == null || !requested.add(productId)) {

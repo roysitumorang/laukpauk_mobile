@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.laukpauk.data.model.search.SearchHistory;
+import androidx.annotation.Nullable;
+import id.laukpauk.data.Paged;
+import id.laukpauk.data.model.search.SearchSuggestion;
 import id.laukpauk.data.repository.SearchRepository;
 
-/** Search suggestions for the typed term (debounced 500 ms like the legacy SearchResult) and the history. */
+/** Product search ({@code GET buyer/products?q=}, debounced 500 ms, more pages from {@code data.next}) and the history. */
 public class SearchViewModel extends ViewModel {
 
     private static final long DEBOUNCE_MS = 500L;
@@ -26,6 +29,9 @@ public class SearchViewModel extends ViewModel {
     private Runnable pending;
     private int generation;
     private String term = "";
+    /** {@code data.next} of the last loaded result page (null = no more). */
+    @Nullable private String next;
+    private boolean loadingMore;
 
     public SearchViewModel(SearchRepository repository) {
         this.repository = repository;
@@ -60,15 +66,45 @@ public class SearchViewModel extends ViewModel {
             return;
         }
         state.setValue(new SearchState(SearchState.Kind.LOADING, t, null));
+        next = null;
+        loadingMore = false;
         pending = () -> repository.search(t, result -> {
             if (mine != generation) {
                 return;
             }
-            List<id.laukpauk.data.model.search.SearchSuggestion> list =
-                    result.isSuccess() && result.data != null ? result.data : new ArrayList<>();
-            state.setValue(new SearchState(list.isEmpty() ? SearchState.Kind.EMPTY : SearchState.Kind.RESULTS, t, list));
+            Paged<SearchSuggestion> page = result.isSuccess() && result.data != null ? result.data
+                    : Paged.<SearchSuggestion>empty();
+            next = page.next;
+            state.setValue(new SearchState(page.items.isEmpty() ? SearchState.Kind.EMPTY : SearchState.Kind.RESULTS,
+                    t, page.items));
         });
         handler.postDelayed(pending, DEBOUNCE_MS);
+    }
+
+    /** The result list reached its end: appends the page at {@code data.next}. */
+    public void loadMore() {
+        SearchState current = state.getValue();
+        if (loadingMore || next == null || current == null || current.kind != SearchState.Kind.RESULTS) {
+            return;
+        }
+        final int mine = generation;
+        final String url = next;
+        loadingMore = true;
+        repository.searchPage(url, result -> {
+            if (mine != generation) {
+                return;
+            }
+            loadingMore = false;
+            if (!result.isSuccess() || result.data == null) {
+                return; // keep the URL: scrolling to the end again retries
+            }
+            next = result.data.next;
+            SearchState now = state.getValue();
+            List<SearchSuggestion> merged = new ArrayList<>(now == null || now.list == null
+                    ? new ArrayList<SearchSuggestion>() : now.list);
+            merged.addAll(result.data.items);
+            state.setValue(new SearchState(SearchState.Kind.RESULTS, term, merged));
+        });
     }
 
     public void addHistory(String search) {

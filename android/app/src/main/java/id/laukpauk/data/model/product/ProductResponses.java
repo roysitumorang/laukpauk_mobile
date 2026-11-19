@@ -15,9 +15,17 @@ public final class ProductResponses {
         @Nullable public Product productDetail;
     }
 
-    public static class ProductList {
-        @Json(name = "listProduk")
-        public List<Product> productList;
+    /** {@code GET buyer/products}: the backend envelope; the page is in {@code data}. */
+    public static class BuyerProducts {
+        @Nullable public Page data;
+    }
+
+    /** {@code data} of {@code GET buyer/products}: {@code next} is the full URL of the next page, null on the last. */
+    public static class Page {
+        @Nullable public String current;
+        @Nullable public String next;
+        public int limit;
+        @Nullable public List<BuyerProduct> rows;
     }
 
     public static class LowestPriceResponse {

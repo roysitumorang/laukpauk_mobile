@@ -2,6 +2,8 @@ package id.laukpauk.ui.common;
 
 import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
@@ -37,5 +39,21 @@ public final class Images {
     /** {@code BASE_URL/<folder>/<file>}, e.g. {@code Images.server(ServerPath.uploadImageProduct, foto)}. */
     public static String server(String folder, String file) {
         return ServerPath.baseURL + "/" + folder + "/" + file;
+    }
+
+    /**
+     * A product photo: a full URL (as {@code GET buyer/products} sends it) is used as is, {@code http://} upgraded
+     * to {@code https://} because the app allows no cleartext traffic; a bare file name is a legacy photo in the
+     * compressed product folder.
+     */
+    public static String product(@Nullable String photo) {
+        String p = photo == null ? "" : photo.trim();
+        if (p.regionMatches(true, 0, "http://", 0, 7)) {
+            return "https://" + p.substring(7);
+        }
+        if (p.regionMatches(true, 0, "https://", 0, 8)) {
+            return p;
+        }
+        return server(ServerPath.uploadImageProduct, "compress/" + p);
     }
 }

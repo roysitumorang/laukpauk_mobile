@@ -15,7 +15,6 @@ import id.laukpauk.R;
 import id.laukpauk.data.model.search.SearchSuggestion;
 import id.laukpauk.databinding.ItemSearchSuggestionBinding;
 import id.laukpauk.ui.common.Images;
-import id.laukpauk.util.ServerPath;
 
 /** Rows of the suggestion list: photo, PRODUK tag and title (legacy SearchResult). */
 public class SearchSuggestionAdapter extends ListAdapter<SearchSuggestion, SearchSuggestionAdapter.Holder> {
@@ -59,7 +58,7 @@ public class SearchSuggestionAdapter extends ListAdapter<SearchSuggestion, Searc
         if (leading == null || leading.isEmpty()) {
             Images.asset(b.photo, "laukpauk.png");
         } else {
-            Images.circle(b.photo, Images.server(ServerPath.uploadImageProduct, "compress/" + leading));
+            Images.circle(b.photo, Images.product(leading));
         }
         b.type.setText(s.itemType == null ? "" : s.itemType.toUpperCase(Locale.ROOT));
         b.type.setBackgroundResource(R.drawable.bg_home_product_tag);

@@ -24,11 +24,6 @@ public final class HomeResponses {
         public List<ContentItem> contentItem;
     }
 
-    public static class ProductList {
-        @Json(name = "listProduk")
-        public List<HomeProduct> productList;
-    }
-
     public static class VoucherCount {
         @Json(name = "jumlahVoucher")
         public int voucherCount;

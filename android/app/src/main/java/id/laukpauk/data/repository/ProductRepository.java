@@ -3,11 +3,15 @@ package id.laukpauk.data.repository;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
+import id.laukpauk.data.model.product.ProductResponses;
+import id.laukpauk.data.Paged;
+import id.laukpauk.data.model.product.BuyerProduct;
 import id.laukpauk.data.model.product.ProductPrice;
 import id.laukpauk.data.model.product.Others;
 import id.laukpauk.data.model.product.LowestPrice;
@@ -31,17 +35,35 @@ public class ProductRepository extends BaseRepository {
         this.settings = settings;
     }
 
-    /**
-     * A page of the product list (useLimit=y). {@code startFrom} / {@code searchProduct} may be null.
-     * The schedule code is sent only when a delivery selection is set.
-     */
-    public void getProduct(@Nullable String startFrom, @Nullable String searchProduct,
-                          ResultCallback<List<Product>> callback) {
-        DeliverySelection sel = delivery.current();
-        String schedule = sel.isSet ? sel.deliveryScheduleCode : null;
-        enqueue(api.getProduct(schedule, startFrom, "y", searchProduct),
-                body -> body == null || body.productList == null ? Collections.<Product>emptyList() : body.productList,
-                callback);
+    /** Products per page of {@code GET buyer/products} unless a screen asks for another count. */
+    public static final int DEFAULT_LIMIT = 10;
+
+    /** The first page of {@code GET buyer/products}; {@code q} (trimmed, null or blank = no filter) searches. */
+    public void getBuyerProducts(@Nullable String q, int limit, ResultCallback<Paged<BuyerProduct>> callback) {
+        String query = q == null || q.trim().isEmpty() ? null : q.trim();
+        enqueue(api.buyerProducts(limit, query), ProductRepository::page, callback);
+    }
+
+    /** The page at {@code next} ({@code data.next} of the previous page). */
+    public void getBuyerProductsPage(String next, ResultCallback<Paged<BuyerProduct>> callback) {
+        enqueue(api.buyerProductsPage(next), ProductRepository::page, callback);
+    }
+
+    /** Rows and next-page URL of a {@code GET buyer/products} response (the payload is in {@code data}). */
+    public static Paged<BuyerProduct> page(@Nullable ProductResponses.BuyerProducts body) {
+        ProductResponses.Page data = body == null ? null : body.data;
+        if (data == null) {
+            return Paged.empty();
+        }
+        List<BuyerProduct> rows = new ArrayList<>();
+        if (data.rows != null) {
+            for (BuyerProduct p : data.rows) {
+                if (p != null) {
+                    rows.add(p);
+                }
+            }
+        }
+        return new Paged<>(rows, data.next);
     }
 
     /** Legacy ProdukModel.getProductDetail; SUCCESS with null data = product not found. */

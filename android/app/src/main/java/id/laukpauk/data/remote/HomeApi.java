@@ -25,12 +25,6 @@ public interface HomeApi {
     @GET("Point/getPoint")
     Call<HomeResponses.Point> getPoint(@Query("point") String point);
 
-    /** The first page of the product list (see ProductApi.getProduct). */
-    @GET("Produk/getProduk")
-    Call<HomeResponses.ProductList> getProduct(@Nullable @Query("jadwalDeliveryCode") String deliveryScheduleCode,
-                                             @Query("startFrom") String startFrom,
-                                             @Query("useLimit") String useLimit);
-
     @GET("Konten/getKonten")
     Call<HomeResponses.ContentList> getContent(@Query("page") String page);
 

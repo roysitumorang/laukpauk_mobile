@@ -7,9 +7,13 @@ import java.util.List;
 
 import id.laukpauk.data.model.search.SearchHistory;
 import id.laukpauk.data.model.search.SearchSuggestion;
-import id.laukpauk.data.remote.SearchApi;
+import androidx.annotation.Nullable;
+import id.laukpauk.data.model.product.BuyerProduct;
+import id.laukpauk.data.Paged;
+import id.laukpauk.data.model.product.ProductResponses;
+import id.laukpauk.data.remote.ProductApi;
 
-/** Search suggestions (legacy SearchResult) and the saved search history (legacy HistoriPencarianModel). */
+/** Product search ({@code GET buyer/products?q=}) and the saved search history (legacy HistoriPencarianModel). */
 public class SearchRepository extends BaseRepository {
 
     private static final java.lang.reflect.Type HISTORY_TYPE =
@@ -17,19 +21,30 @@ public class SearchRepository extends BaseRepository {
 
     private static final String HISTORY_KEY = "historiPencarian";
 
-    private final SearchApi api;
+    private final ProductApi api;
 
     public SearchRepository(RepositoryDeps deps) {
         super(deps);
-        this.api = api(SearchApi.class);
+        this.api = api(ProductApi.class);
     }
 
-    /** Products matching {@code term}. */
-    public void search(String term, ResultCallback<List<SearchSuggestion>> callback) {
-        enqueue(api.search(term), body -> {
-            List<SearchSuggestion> list = body == null ? null : body.searchResults;
-            return list == null ? new ArrayList<SearchSuggestion>() : list;
-        }, callback);
+    /** The first page of products matching {@code term} ({@code GET buyer/products?q=}). */
+    public void search(String term, ResultCallback<Paged<SearchSuggestion>> callback) {
+        enqueue(api.buyerProducts(ProductRepository.DEFAULT_LIMIT, term.trim()), SearchRepository::suggestions, callback);
+    }
+
+    /** The next page of a search: {@code next} is {@code data.next} of the previous page. */
+    public void searchPage(String next, ResultCallback<Paged<SearchSuggestion>> callback) {
+        enqueue(api.buyerProductsPage(next), SearchRepository::suggestions, callback);
+    }
+
+    private static Paged<SearchSuggestion> suggestions(@Nullable ProductResponses.BuyerProducts body) {
+        Paged<BuyerProduct> page = ProductRepository.page(body);
+        List<SearchSuggestion> list = new ArrayList<>();
+        for (BuyerProduct p : page.items) {
+            list.add(p.toSuggestion());
+        }
+        return new Paged<>(list, page.next);
     }
 
     /** Saved searches, oldest first. */
