@@ -5,22 +5,23 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.model.home.Banner;
 import id.laukpauk.data.model.home.HomeProduct;
 import id.laukpauk.data.model.home.HomeResponses;
+import id.laukpauk.data.model.product.BuyerProduct;
+import id.laukpauk.data.model.product.ProductResponses;
 import id.laukpauk.data.model.home.ProductCategory;
 import id.laukpauk.data.model.home.Content;
 import id.laukpauk.data.model.home.ContentItem;
 import id.laukpauk.data.model.home.LowestPrice;
 import id.laukpauk.data.model.home.WalletInfo;
 import id.laukpauk.data.remote.HomeApi;
+import id.laukpauk.data.remote.ProductApi;
 
 /**
  * Data of the home page and the screens built from the same blocks (product list, category list, konten blocks,
@@ -34,6 +35,7 @@ public class HomeRepository extends BaseRepository {
     public static final String PAGE_HEADERSEARCH = "headersearch";
 
     private final HomeApi api;
+    private final ProductApi productApi;
     private final DeliveryRepository delivery;
     /** productId -> lowest price (a NO_PRICE marker when the product has none). Cleared by pull-to-refresh. */
     private final Map<String, LowestPrice> priceCache = new HashMap<>();
@@ -42,6 +44,7 @@ public class HomeRepository extends BaseRepository {
     public HomeRepository(RepositoryDeps deps, DeliveryRepository delivery) {
         super(deps);
         this.api = api(HomeApi.class);
+        this.productApi = api(ProductApi.class);
         this.delivery = delivery;
     }
 
@@ -85,19 +88,20 @@ public class HomeRepository extends BaseRepository {
         return live;
     }
 
-    /** The first products of the product list (useLimit "y", startFrom 0). */
+    /**
+     * The first products of {@code GET buyer/products} ({@link ProductRepository#DEFAULT_LIMIT} of them). Their
+     * {@code lowest_selling_price} goes into the price cache, so the tiles need no price request.
+     */
     public LiveData<Resource<List<HomeProduct>>> getProduct() {
-        DeliverySelection s = delivery.current();
-        String code = null;
-        if (s.isSet) {
-            code = s.deliveryScheduleCode;
-            if (code == null) {
-                // legacy: the missing code made the request fail -> an empty list
-                return new MutableLiveData<>(Resource.success(Collections.<HomeProduct>emptyList()));
+        return load(productApi.buyerProducts(ProductRepository.DEFAULT_LIMIT, null), (ProductResponses.BuyerProducts body) -> {
+            List<HomeProduct> list = new ArrayList<>();
+            for (BuyerProduct p : ProductRepository.page(body).items) {
+                LowestPrice price = p.tilePrice();
+                priceCache.put(p.id, price == null ? NO_PRICE : price);
+                list.add(p.toHomeProduct());
             }
-        }
-        return load(api.getProduct(code, "0", "y"),
-                body -> nonNull(body == null ? null : body.productList));
+            return list;
+        });
     }
 
     public LiveData<Resource<List<Content>>> getContent(String page) {

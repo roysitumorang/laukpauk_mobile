@@ -16,7 +16,6 @@ import id.laukpauk.databinding.ItemHomeProductBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.DefaultImage;
-import id.laukpauk.util.ServerPath;
 
 /** The horizontal product tiles of the home page. */
 public class ProductTileAdapter extends ListAdapter<HomeProduct, ProductTileAdapter.Holder> {
@@ -47,7 +46,7 @@ public class ProductTileAdapter extends ListAdapter<HomeProduct, ProductTileAdap
         } else {
             b.photo.setScaleType(ImageView.ScaleType.FIT_XY);
         }
-        Images.url(b.photo, Images.server(ServerPath.uploadImageProduct, "compress/" + p.photo));
+        Images.url(b.photo, Images.product(p.photo));
         b.promo.setVisibility(p.isInActivePromo() ? View.VISIBLE : View.GONE);
         b.saving.setVisibility(View.GONE);
         b.progress.setVisibility(View.VISIBLE);

@@ -13,7 +13,6 @@ import java.util.Objects;
 import id.laukpauk.data.model.home.HomeProduct;
 import id.laukpauk.databinding.ItemSearchProductRowBinding;
 import id.laukpauk.ui.common.Images;
-import id.laukpauk.util.ServerPath;
 
 /** The dense product rows of a "headersearch" konten block (photo, name, category). */
 public class SearchProductRowAdapter extends ListAdapter<HomeProduct, SearchProductRowAdapter.Holder> {
@@ -48,7 +47,7 @@ public class SearchProductRowAdapter extends ListAdapter<HomeProduct, SearchProd
     @Override
     public void onBindViewHolder(@NonNull Holder h, int position) {
         HomeProduct p = getItem(position);
-        Images.circle(h.binding.photo, Images.server(ServerPath.uploadImageProduct, "compress/" + p.photo));
+        Images.circle(h.binding.photo, Images.product(p.photo));
         h.binding.name.setText(p.name);
         h.binding.category.setText(p.productCategoryName);
         h.binding.getRoot().setOnClickListener(v -> onClick.onClick(p));

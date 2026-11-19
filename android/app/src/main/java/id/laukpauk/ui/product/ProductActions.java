@@ -2,7 +2,10 @@ package id.laukpauk.ui.product;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+import android.os.Bundle;
 
+import id.laukpauk.R;
 import id.laukpauk.data.Resource;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.ui.common.Messages;
@@ -14,6 +17,14 @@ import id.laukpauk.ui.common.Messages;
  */
 public final class ProductActions {
     private ProductActions() {}
+
+    /** Opens the detail of a product, or of a pack (paket) when {@code pack}. */
+    public static void open(Fragment fragment, String productId, boolean pack) {
+        Bundle args = new Bundle();
+        args.putString(pack ? "idPaket" : "idProduk", productId);
+        NavHostFragment.findNavController(fragment)
+                .navigate(pack ? R.id.packDetailFragment : R.id.productDetailFragment, args);
+    }
 
     /** Guards against opening two sheets / adding a paket twice while a request is running. */
     private static boolean busy;
