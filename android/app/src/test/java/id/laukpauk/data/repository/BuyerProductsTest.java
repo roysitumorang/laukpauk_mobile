@@ -11,7 +11,7 @@ import org.junit.Test;
 import id.laukpauk.data.model.home.HomeProduct;
 import id.laukpauk.data.model.product.BuyerProduct;
 import id.laukpauk.data.model.product.LowestPrice;
-import id.laukpauk.data.model.product.Paged;
+import id.laukpauk.data.Paged;
 import id.laukpauk.data.model.product.Product;
 import id.laukpauk.data.model.product.ProductResponses;
 import id.laukpauk.data.model.search.SearchSuggestion;

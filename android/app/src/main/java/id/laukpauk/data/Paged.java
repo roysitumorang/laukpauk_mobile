@@ -1,4 +1,4 @@
-package id.laukpauk.data.model.product;
+package id.laukpauk.data;
 
 import androidx.annotation.Nullable;
 

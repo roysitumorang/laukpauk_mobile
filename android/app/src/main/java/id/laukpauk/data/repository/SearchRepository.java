@@ -9,7 +9,7 @@ import id.laukpauk.data.model.search.SearchHistory;
 import id.laukpauk.data.model.search.SearchSuggestion;
 import androidx.annotation.Nullable;
 import id.laukpauk.data.model.product.BuyerProduct;
-import id.laukpauk.data.model.product.Paged;
+import id.laukpauk.data.Paged;
 import id.laukpauk.data.model.product.ProductResponses;
 import id.laukpauk.data.remote.ProductApi;
 

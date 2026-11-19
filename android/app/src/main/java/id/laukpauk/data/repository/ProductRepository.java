@@ -10,7 +10,7 @@ import java.util.List;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.model.product.ProductResponses;
-import id.laukpauk.data.model.product.Paged;
+import id.laukpauk.data.Paged;
 import id.laukpauk.data.model.product.BuyerProduct;
 import id.laukpauk.data.model.product.ProductPrice;
 import id.laukpauk.data.model.product.Others;

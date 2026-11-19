@@ -12,7 +12,7 @@ import java.util.List;
 
 import id.laukpauk.data.model.search.SearchHistory;
 import androidx.annotation.Nullable;
-import id.laukpauk.data.model.product.Paged;
+import id.laukpauk.data.Paged;
 import id.laukpauk.data.model.search.SearchSuggestion;
 import id.laukpauk.data.repository.SearchRepository;
 
