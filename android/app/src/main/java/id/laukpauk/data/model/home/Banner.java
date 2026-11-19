@@ -1,14 +1,13 @@
 package id.laukpauk.data.model.home;
 
-import com.squareup.moshi.Json;
-
-/** A hero slider banner (Banner/getBanner). */
+/**
+ * A hero slider banner, one entry of {@code data} in {@code GET buyer/banners}.
+ * {@code photo} is a full image URL; {@code name} and {@code description} may be empty.
+ */
 public class Banner {
     public String id;
-    @Json(name = "gambar")
-    public String image;
-    @Json(name = "nama")
     public String name;
-    @Json(name = "keterangan")
-    public String remarks;
+    public String description;
+    public String photo;
+    public Boolean visible;
 }

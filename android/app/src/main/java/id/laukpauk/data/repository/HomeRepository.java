@@ -14,6 +14,7 @@ import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.model.home.Banner;
 import id.laukpauk.data.model.home.HomeProduct;
+import id.laukpauk.data.model.home.HomeResponses;
 import id.laukpauk.data.model.home.ProductCategory;
 import id.laukpauk.data.model.home.Content;
 import id.laukpauk.data.model.home.ContentItem;
@@ -49,8 +50,18 @@ public class HomeRepository extends BaseRepository {
         return !authToken().isEmpty();
     }
 
+    /** Hero banners from {@code GET buyer/banners}, without the ones marked {@code visible: false}. */
     public LiveData<Resource<List<Banner>>> getBanner() {
-        return load(api.getBanner(), body -> nonNull(body == null ? null : body.listBanner));
+        return load(api.getBanner(), (HomeResponses.Banners body) -> {
+            List<Banner> all = nonNull(body == null ? null : body.data);
+            List<Banner> shown = new ArrayList<>();
+            for (Banner b : all) {
+                if (b != null && !Boolean.FALSE.equals(b.visible)) {
+                    shown.add(b);
+                }
+            }
+            return shown;
+        });
     }
 
 

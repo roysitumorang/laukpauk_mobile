@@ -9,7 +9,8 @@ public final class HomeResponses {
     private HomeResponses() {}
 
     public static class Banners {
-        public List<Banner> listBanner;
+        /** {@code GET buyer/banners}: the backend envelope's {@code data}. */
+        public List<Banner> data;
     }
 
 
