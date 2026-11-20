@@ -29,11 +29,14 @@ import java.lang.ref.WeakReference;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 
 import id.laukpauk.BuildConfig;
 import id.laukpauk.MainActivity;
 import id.laukpauk.R;
+import id.laukpauk.data.model.delivery.DeliveryPlans;
+import id.laukpauk.data.model.delivery.DeliverySchedule;
 import id.laukpauk.databinding.DialogStartupUpdateBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.ui.common.Images;
@@ -254,6 +257,9 @@ public final class AppStartup {
         /** The rules of MyIntentService.java. */
         private boolean isExpired(Map<String, Object> saved) {
             try {
+                if (saved.containsKey(DeliverySchedule.KEY_DELIVERY_TIME)) {
+                    return DeliveryPlans.isPast(saved.get(DeliverySchedule.KEY_DELIVERY_TIME), ZonedDateTime.now());
+                }
                 String id = Json.str(saved, "id");
                 String dayDeliveryLC = Json.str(saved, "day").toLowerCase(Locale.ROOT);
 

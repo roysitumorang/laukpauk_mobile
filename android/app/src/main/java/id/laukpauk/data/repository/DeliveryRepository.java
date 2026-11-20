@@ -11,12 +11,14 @@ import androidx.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 import id.laukpauk.data.Resource;
+import id.laukpauk.data.model.delivery.DeliveryPlans;
 import id.laukpauk.data.model.delivery.DeliveryResponses;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.model.delivery.Gift;
@@ -102,6 +104,18 @@ public class DeliveryRepository extends BaseRepository {
 
     /** Legacy JadwalPengantaran.getJadwalDelivery: the schedules the buyer can choose from (empty on failure). */
     public void loadSchedule(ResultCallback<List<DeliverySchedule>> callback) {
+        if (!authToken().isEmpty()) {
+            // signed-in buyer: the options are the delivery times of the current delivery plan (404 = none)
+            enqueue(api.deliveryPlanNow(), (DeliveryResponses.PlanNow body) ->
+                    DeliveryPlans.toSchedules(body == null ? null : body.data, ZonedDateTime.now()), r -> {
+                if (!r.isSuccess() && r.code == 404) {
+                    callback.onResult(Resource.success(new ArrayList<DeliverySchedule>()));
+                } else {
+                    callback.onResult(r);
+                }
+            });
+            return;
+        }
         enqueue(api.getAvailableDeliverySchedule(), body -> {
             List<DeliverySchedule> list = new ArrayList<>();
             if (body != null && body.availableDeliverySchedule != null) {
@@ -229,6 +243,9 @@ public class DeliveryRepository extends BaseRepository {
         }
         try {
             Map<String, Object> map = Json.parseObject(saved);
+            if (map.containsKey(DeliverySchedule.KEY_DELIVERY_TIME)) {
+                return DeliveryPlans.isPast(map.get(DeliverySchedule.KEY_DELIVERY_TIME), ZonedDateTime.now());
+            }
             String id = Json.str(map, "id");
             String day = Json.str(map, "day").toLowerCase(Locale.ROOT);
             LocalDateTime now = LocalDateTime.now();
