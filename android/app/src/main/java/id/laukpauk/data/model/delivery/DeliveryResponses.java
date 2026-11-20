@@ -17,6 +17,11 @@ public final class DeliveryResponses {
     }
 
     /** {@code {"gift": [...]}}. */
+    /** {@code GET buyer/delivery_plans/now}: the backend envelope; the plan is in {@code data}. */
+    public static class PlanNow {
+        @androidx.annotation.Nullable public DeliveryPlan data;
+    }
+
     public static class Gifts {
         public List<Gift> gift;
     }

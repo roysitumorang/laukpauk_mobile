@@ -14,6 +14,13 @@ public interface DeliveryApi {
     @GET("JadwalDelivery/getAvailableJadwalDelivery")
     Call<DeliveryResponses.Schedule> getAvailableDeliverySchedule();
 
+    /**
+     * The delivery plan of the current transaction window (buyer JWT required): its {@code delivery_times} are the
+     * schedule options. 404 when no plan covers now.
+     */
+    @GET("buyer/delivery_plans/now")
+    Call<DeliveryResponses.PlanNow> deliveryPlanNow();
+
     @GET("Gift/getGift")
     Call<DeliveryResponses.Gifts> getGifts();
 

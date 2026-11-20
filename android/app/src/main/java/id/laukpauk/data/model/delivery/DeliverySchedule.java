@@ -13,6 +13,9 @@ import id.laukpauk.util.Json;
  * (plus {@code setOn}) and the expiry check reads {@code id}, {@code day}, {@code maxTime}, {@code currentDate}.
  */
 public final class DeliverySchedule {
+    /** Key of the slot's start time (RFC 3339) in {@link #raw} for the options of {@code GET buyer/delivery_plans/now}. */
+    public static final String KEY_DELIVERY_TIME = "delivery_time";
+
     public final Map<String, Object> raw;
     @com.squareup.moshi.Json(name = "kode")
     @Nullable public final String code;
@@ -34,9 +37,12 @@ public final class DeliverySchedule {
         this.isOpened = Json.bool(raw, "isOpened");
     }
 
-    /** "Besok Pagi" style identity used to mark the selected tile (legacy readAbleJadwalPengantaran). */
+    /**
+     * Identity used to mark the selected tile: the delivery time of a delivery plan option, otherwise "Besok Pagi"
+     * style (legacy readAbleJadwalPengantaran).
+     */
     public String readable() {
-        return day + " " + session;
+        return code != null && raw.containsKey(KEY_DELIVERY_TIME) ? code : day + " " + session;
     }
 
     /** Legacy: tappable only when neither full nor closed. */
