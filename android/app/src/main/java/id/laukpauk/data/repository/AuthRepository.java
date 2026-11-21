@@ -116,7 +116,8 @@ public class AuthRepository extends BaseRepository {
 
     /**
      * POST buyer/users/mobile_phone/confirm with the SMS code (sent base64-encoded like passwords). TRUE when the
-     * phone is confirmed now or already was (the stored user is updated), FALSE for a wrong code, ERROR otherwise.
+     * phone is confirmed now (the returned user is stored) or already was (200 "mobile phone already confirmed",
+     * no user), FALSE for a wrong code (422 "mobile phone confirmation failed"), ERROR otherwise.
      */
     public void confirmOtp(String otp, ResultCallback<Boolean> callback) {
         String code = otp == null ? "" : otp.trim();
@@ -129,10 +130,7 @@ public class AuthRepository extends BaseRepository {
             return true;
         }, result -> {
             String message = nz(result.message).toLowerCase(java.util.Locale.ROOT);
-            if (result.isError() && result.code == 422 && message.contains("already confirmed")) {
-                prefs.setBool("otpHasConfirmed", true);
-                callback.onResult(Resource.success(true));
-            } else if (result.isError() && result.code == 422 && message.contains("confirmation failed")) {
+            if (result.isError() && result.code == 422 && message.contains("confirmation failed")) {
                 callback.onResult(Resource.success(false));
             } else {
                 callback.onResult(result);
