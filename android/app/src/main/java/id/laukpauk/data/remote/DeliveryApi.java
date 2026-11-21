@@ -2,17 +2,13 @@ package id.laukpauk.data.remote;
 
 import java.util.Map;
 
-
 import id.laukpauk.data.model.delivery.DeliveryResponses;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-/** Delivery schedule, gifts, cart reset and the Google Maps web services (JSON; ApiClient adds the auth and version headers). */
+/** Delivery plan (schedule options), gifts, cart reset and the Google Maps web services (JSON; ApiClient adds the auth and version headers). */
 public interface DeliveryApi {
-
-    @GET("JadwalDelivery/getAvailableJadwalDelivery")
-    Call<DeliveryResponses.Schedule> getAvailableDeliverySchedule();
 
     /**
      * The delivery plan of the current transaction window (buyer JWT required): its {@code delivery_times} are the

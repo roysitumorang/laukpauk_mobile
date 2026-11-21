@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -34,10 +35,18 @@ public final class DeliveryFlow {
         return AppContainer.from(f.requireContext()).deliveryRepository;
     }
 
-    /** Legacy HeaderModel.adjd(context): asks the address (detect/PinGMAPS) then the schedule; onDone(true) when a selection was saved. */
+    /**
+     * Asks the delivery address (the buyer's addresses, or a new / edited one from the detected location) then the
+     * schedule (the current delivery plan); onDone(true) when a selection was saved. Both need a signed-in buyer:
+     * signed out, the Login screen opens instead and nothing is asked.
+     */
     public static void ask(Fragment fragment, @Nullable Callback onDone) {
         FragmentActivity a = fragment.getActivity();
         if (a == null) {
+            return;
+        }
+        if (!AppContainer.from(a).addressRepository.isSignedIn()) {
+            NavHostFragment.findNavController(fragment).navigate(R.id.loginFragment);
             return;
         }
         DeliveryFlowFragment.request(a, ok -> {
@@ -48,16 +57,12 @@ public final class DeliveryFlow {
     }
 
     /**
-     * Checkout is the only place that needs a delivery address and schedule. A signed-in buyer always picks one
-     * from the address list ({@code GET buyer/addresses}) or adds / edits one; otherwise {@code onReady} runs at
-     * once when a selection is set. {@code onReady} runs when the selection was saved.
+     * Checkout is the only place that needs a delivery address and schedule: the (signed-in) buyer picks one from
+     * the address list ({@code GET buyer/addresses}) or adds / edits one, then a schedule; {@code onReady} runs when
+     * the selection was saved.
      */
     public static void ensureForCheckout(Fragment fragment, Runnable onReady) {
         if (!fragment.isAdded()) {
-            return;
-        }
-        if (repo(fragment).isSetNow() && !AppContainer.from(fragment.requireContext()).addressRepository.isSignedIn()) {
-            onReady.run();
             return;
         }
         ask(fragment, ok -> {

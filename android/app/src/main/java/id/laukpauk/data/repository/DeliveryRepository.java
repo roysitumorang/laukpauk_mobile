@@ -8,14 +8,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.annotation.Nullable;
 
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliveryPlans;
@@ -102,31 +98,19 @@ public class DeliveryRepository extends BaseRepository {
         return session.isDeliveryAddressAndScheduleSet();
     }
 
-    /** Legacy JadwalPengantaran.getJadwalDelivery: the schedules the buyer can choose from (empty on failure). */
+    /**
+     * The schedules the (signed-in) buyer can choose from: the delivery times of the current delivery plan,
+     * {@code GET buyer/delivery_plans/now}; empty when no plan covers now (404).
+     */
     public void loadSchedule(ResultCallback<List<DeliverySchedule>> callback) {
-        if (!authToken().isEmpty()) {
-            // signed-in buyer: the options are the delivery times of the current delivery plan (404 = none)
-            enqueue(api.deliveryPlanNow(), (DeliveryResponses.PlanNow body) ->
-                    DeliveryPlans.toSchedules(body == null ? null : body.data, ZonedDateTime.now()), r -> {
-                if (!r.isSuccess() && r.code == 404) {
-                    callback.onResult(Resource.success(new ArrayList<DeliverySchedule>()));
-                } else {
-                    callback.onResult(r);
-                }
-            });
-            return;
-        }
-        enqueue(api.getAvailableDeliverySchedule(), body -> {
-            List<DeliverySchedule> list = new ArrayList<>();
-            if (body != null && body.availableDeliverySchedule != null) {
-                for (Map<String, Object> o : body.availableDeliverySchedule) {
-                    if (o != null) {
-                        list.add(new DeliverySchedule(o));
-                    }
-                }
+        enqueue(api.deliveryPlanNow(), (DeliveryResponses.PlanNow body) ->
+                DeliveryPlans.toSchedules(body == null ? null : body.data, ZonedDateTime.now()), r -> {
+            if (!r.isSuccess() && r.code == 404) {
+                callback.onResult(Resource.success(new ArrayList<DeliverySchedule>()));
+            } else {
+                callback.onResult(r);
             }
-            return list;
-        }, callback);
+        });
     }
 
     /**
@@ -243,26 +227,11 @@ public class DeliveryRepository extends BaseRepository {
         }
         try {
             Map<String, Object> map = Json.parseObject(saved);
-            if (map.containsKey(DeliverySchedule.KEY_DELIVERY_TIME)) {
-                return DeliveryPlans.isPast(map.get(DeliverySchedule.KEY_DELIVERY_TIME), ZonedDateTime.now());
-            }
-            String id = Json.str(map, "id");
-            String day = Json.str(map, "day").toLowerCase(Locale.ROOT);
-            LocalDateTime now = LocalDateTime.now();
-            LocalTime maxTime = LocalTime.parse(Json.str(map, "maxTime"));
-            LocalDate maxDay = LocalDate.parse(Json.str(map, "currentDate"));
-            if (day.equals("besok")) {
-                maxDay = maxDay.plusDays(1);
-            }
-            if (day.equals("lusa")) {
-                maxDay = maxDay.plusDays(2);
-            }
-            if (id.equals("1") && (day.equals("besok") || day.equals("lusa"))) {
-                maxDay = maxDay.minusDays(1);
-            }
-            return now.toLocalDate().isEqual(maxDay) && now.toLocalTime().isAfter(maxTime);
+            // a delivery plan option expires when its delivery time starts; an older (legacy) schedule is expired
+            return !map.containsKey(DeliverySchedule.KEY_DELIVERY_TIME)
+                    || DeliveryPlans.isPast(map.get(DeliverySchedule.KEY_DELIVERY_TIME), ZonedDateTime.now());
         } catch (RuntimeException e) {
-            return false;
+            return true;
         }
     }
 

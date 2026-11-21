@@ -10,12 +10,6 @@ import java.util.List;
 public final class DeliveryResponses {
     private DeliveryResponses() {}
 
-    /** {@code {"availableDeliverySchedule": [...]}}; the items are dynamic objects, see {@link DeliverySchedule}. */
-    public static class Schedule {
-        @Json(name = "availableJadwalDelivery")
-        public List<Map<String, Object>> availableDeliverySchedule;
-    }
-
     /** {@code {"gift": [...]}}. */
     /** {@code GET buyer/delivery_plans/now}: the backend envelope; the plan is in {@code data}. */
     public static class PlanNow {
