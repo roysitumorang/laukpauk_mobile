@@ -12,7 +12,7 @@
     <string name="checkout_wallet_failed">Gagal mengambil data konfigurasi Dompet/Wallet</string>
     <string name="checkout_form_incomplete">Anda harus melengkapi terlebih dahulu data - data yang diperlukan</string>
     <string name="checkout_ok">OK</string>
-    <string name="checkout_insufficient">Anda tidak dapat chekout karena total belanjaan anda kurang dari pembelian minimal!</string>
+    <string name="checkout_insufficient">Anda tidak dapat checkout karena total belanja anda Rp 0. Tambahkan produk ke keranjang dulu ya!</string>
     <string name="checkout_schedule_closed_title">Jadwal Pengantaran</string>
     <string name="checkout_schedule_closed">Yah, jadwal pengantarannya sudah ditutup mak! Pilih jadwal pengantaran lainnya yuk ...</string>
     <string name="checkout_choose_other_schedule">Pilih Jadwal Lain</string>

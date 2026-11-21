@@ -112,4 +112,12 @@ public class BuyerCartTest {
         assertEquals(2L, noted.get(1).get("quantity"));
         assertEquals("", items(CartRepository.noteBody(cart, "v1", "")).get(0).get("note"));
     }
+
+    @Test
+    public void checkoutNeedsATotalAboveZero() {
+        assertFalse(CheckoutRepository.hasPositiveTotal(0));
+        assertFalse(CheckoutRepository.hasPositiveTotal(-500));
+        assertTrue(CheckoutRepository.hasPositiveTotal(1));
+        assertEquals(0, new BuyerCart().total());
+    }
 }

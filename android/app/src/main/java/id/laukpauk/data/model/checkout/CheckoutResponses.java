@@ -9,11 +9,6 @@ import java.util.List;
 public final class CheckoutResponses {
     private CheckoutResponses() {}
 
-    public static class CartTotal {
-        @Json(name = "totalKeranjang")
-        public long cartTotal;
-    }
-
     public static class TotalShippingFee {
         @Json(name = "totalOngkir")
         public long totalShippingFee;
