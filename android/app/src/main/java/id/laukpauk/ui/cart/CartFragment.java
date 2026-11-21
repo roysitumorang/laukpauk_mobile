@@ -111,7 +111,12 @@ public class CartFragment extends Fragment {
             viewModel.load(); // the signed-in buyer's cart
             if (viewModel.checkoutAfterLogin) {
                 viewModel.checkoutAfterLogin = false;
-                openCheckout(nav);
+                if (phoneConfirmed()) {
+                    openCheckout(nav); // the next checkout step: the delivery address
+                } else {
+                    // "Lewati" on the confirmation screen: no checkout without a confirmed phone
+                    Messages.snack(this, getString(R.string.cart_confirm_phone_first));
+                }
             }
         });
 
@@ -202,13 +207,25 @@ public class CartFragment extends Fragment {
         }
     }
 
+    /**
+     * Checkout: a signed-out buyer logs in first (Login opens the phone confirmation when needed); a signed-in buyer
+     * whose phone is not confirmed confirms it first. Both come back here through LOGIN_RESULT and continue with
+     * the delivery address.
+     */
     private void onCheckout(NavController nav) {
-        if (AuthGate.isSignedIn(this)) {
-            openCheckout(nav);
-        } else {
+        if (!AuthGate.isSignedIn(this)) {
             viewModel.checkoutAfterLogin = true;
             nav.navigate(R.id.loginFragment);
+        } else if (!phoneConfirmed()) {
+            viewModel.checkoutAfterLogin = true;
+            nav.navigate(R.id.registrationOtpFragment);
+        } else {
+            openCheckout(nav);
         }
+    }
+
+    private boolean phoneConfirmed() {
+        return AppContainer.from(requireContext()).session.isMobilePhoneConfirmed();
     }
 
     /** Checkout is where the delivery address and schedule are required: asks for them first when none is set. */

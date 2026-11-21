@@ -104,25 +104,16 @@ public class CheckoutRepository extends BaseRepository {
     }
 
     /**
-     * Legacy _initializeState steps after sign-in: verified user, OTP completed, schedule still open.
+     * Steps before checkout: the buyer's mobile phone is confirmed ({@code mobile_phone_confirmed_at} of the
+     * signed-in user, set by {@code POST buyer/users/mobile_phone/confirm}), then the schedule is still open.
      * Result is one of the STEP_ constants.
      */
     public void checkPrerequisites(ResultCallback<Integer> callback) {
-        this.<CheckoutResponses.Verified, Boolean>call(api.checkUserVerification(),
-                b -> b.isVerified, Boolean.FALSE, verified -> {
-                    if (!verified) {
-                        callback.onResult(Resource.success(STEP_NOT_VERIFIED));
-                        return;
-                    }
-                    this.<CheckoutResponses.DetailUserResponse, Boolean>call(api.getDetailUser("statusOTP"),
-                            b -> b.detailUser != null && "1".equals(b.detailUser.statusOTP), Boolean.FALSE, otp -> {
-                                if (!otp) {
-                                    callback.onResult(Resource.success(STEP_OTP_NOT_COMPLETED));
-                                    return;
-                                }
-                                checkScheduleOpened(callback);
-                            });
-                });
+        if (!session.isMobilePhoneConfirmed()) {
+            callback.onResult(Resource.success(STEP_NOT_VERIFIED));
+            return;
+        }
+        checkScheduleOpened(callback);
     }
 
     private void checkScheduleOpened(ResultCallback<Integer> callback) {
