@@ -31,8 +31,8 @@ public interface AuthApi {
 
     /**
      * Confirms the signed-in buyer's mobile phone with the code sent by SMS at sign-up (JWT required). Body:
-     * {@code {"token": <base64 of the code>}}. Answers the updated user in {@code data}; 422 "mobile phone
-     * confirmation failed" for a wrong code, 422 "mobile phone already confirmed" when there is nothing to confirm.
+     * {@code {"token": <base64 of the code>}}. Answers 200 with the updated user in {@code data}, or 200 "mobile
+     * phone already confirmed" without data; 422 "mobile phone confirmation failed" for a wrong code.
      */
     @POST("buyer/users/mobile_phone/confirm")
     Call<Map<String, Object>> confirmMobilePhone(@Body Map<String, Object> body);
