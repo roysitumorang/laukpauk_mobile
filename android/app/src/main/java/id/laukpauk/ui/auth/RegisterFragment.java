@@ -86,7 +86,12 @@ public class RegisterFragment extends Fragment {
                 return;
             }
             if (r.isSuccess() && r.data != null && r.data.authenticated) {
-                AuthFlow.finish(this);
+                // signed in: confirm the phone with the code the backend sent by SMS
+                if (r.data.phoneConfirmed) {
+                    AuthFlow.finish(this);
+                } else {
+                    AuthFlow.replaceWith(this, R.id.registrationOtpFragment);
+                }
             } else {
                 AuthFlow.alert(this, R.string.auth_register_heading, getString(R.string.auth_register_success),
                         R.string.auth_ok, () -> AuthFlow.replaceWith(this, R.id.loginFragment), 0, null);

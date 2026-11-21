@@ -63,6 +63,9 @@ public class LoginFragment extends Fragment {
                             R.string.auth_forgot_password,
                             () -> NavHostFragment.findNavController(this).navigate(R.id.forgotPasswordFragment),
                             R.string.auth_close, null);
+                } else if (!r.data.phoneConfirmed) {
+                    // the SMS code of sign-up still has to be entered (it can be skipped there)
+                    AuthFlow.replaceWith(this, R.id.registrationOtpFragment);
                 } else {
                     AuthFlow.finish(this);
                 }

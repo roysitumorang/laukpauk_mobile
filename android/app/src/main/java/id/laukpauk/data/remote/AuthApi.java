@@ -29,11 +29,13 @@ public interface AuthApi {
     @POST("buyer/users")
     Call<Map<String, Object>> signUp(@Body Map<String, Object> body);
 
-    @POST("Auth/konfirmasiOTP")
-    Call<AuthResponses.ConfirmOtp> confirmOtp(@Body Map<String, Object> body);
-
-    @POST("Auth/verifikasiUser")
-    Call<AuthResponses.UserVerification> userVerification(@Body Map<String, Object> body);
+    /**
+     * Confirms the signed-in buyer's mobile phone with the code sent by SMS at sign-up (JWT required). Body:
+     * {@code {"token": <base64 of the code>}}. Answers the updated user in {@code data}; 422 "mobile phone
+     * confirmation failed" for a wrong code, 422 "mobile phone already confirmed" when there is nothing to confirm.
+     */
+    @POST("buyer/users/mobile_phone/confirm")
+    Call<Map<String, Object>> confirmMobilePhone(@Body Map<String, Object> body);
 
     @POST("Auth/resendOTP")
     Call<AuthResponses.ResendOTP> resendOTP(@Body Map<String, Object> body);
