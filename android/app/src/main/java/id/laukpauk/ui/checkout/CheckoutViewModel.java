@@ -30,7 +30,7 @@ public class CheckoutViewModel extends ViewModel {
     public static final int PHASE_READY = 1;
     public static final int PHASE_INCOMPLETE = 2;
 
-    /** Redirect code (besides CheckoutRepository.STEP_*): the cart is below the minimum purchase. */
+    /** Redirect code (besides CheckoutRepository.STEP_*): the cart's total is 0 (nothing to check out). */
     public static final int REDIRECT_NOT_ENOUGH = 100;
 
     /** Result of placing an order. */

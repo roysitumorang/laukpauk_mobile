@@ -281,6 +281,10 @@ public class CheckoutFragment extends Fragment {
         if (vm.schedule().getValue() == null) {
             return; // legacy: no saved schedule, nothing happens
         }
+        if (!CheckoutRepository.hasPositiveTotal(s.overallTotal)) {
+            info(R.string.checkout_title, R.string.checkout_insufficient, null);
+            return;
+        }
         paymentSheet = new PaymentSheet(this, vm, s.overallTotal);
         paymentSheet.show();
     }

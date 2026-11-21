@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.laukpauk.data.Resource;
+import id.laukpauk.data.model.cart.CartResponses;
 import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
 import id.laukpauk.data.model.checkout.ShippingSchedule;
 import id.laukpauk.data.model.checkout.Voucher;
 import id.laukpauk.data.model.checkout.WalletConfiguration;
+import id.laukpauk.data.remote.CartApi;
 import id.laukpauk.data.remote.CheckoutApi;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.Json;
@@ -37,11 +39,13 @@ public class CheckoutRepository extends BaseRepository {
     public static final int STEP_OK = 4;
 
     private final CheckoutApi api;
+    private final CartApi cartApi;
     private final SettingRepository settings;
 
     public CheckoutRepository(RepositoryDeps deps, SettingRepository settings) {
         super(deps);
         this.api = api(CheckoutApi.class);
+        this.cartApi = api(CartApi.class);
         this.settings = settings;
     }
 
@@ -128,16 +132,22 @@ public class CheckoutRepository extends BaseRepository {
                 open -> callback.onResult(Resource.success(open ? STEP_OK : STEP_SCHEDULE_CLOSED)));
     }
 
+    /** Checkout goes on only for a grand total above 0 (validated in the app; the backend has no minimum). */
+    public static boolean hasPositiveTotal(long grandTotal) {
+        return grandTotal > 0;
+    }
+
     /** Legacy _dataInitialization: totals, shipping type, wallet, points, buyer details. Always SUCCESS. */
     public void loadInit(ResultCallback<CheckoutInit> callback) {
         final CheckoutInit d = new CheckoutInit();
         d.cartCode = session.getCartCode();
         final String lat = savedLatitude();
         final String lng = savedLongitude();
-        this.<CheckoutResponses.CartTotal, Long>call(api.getCartTotal(d.cartCode, lat, lng),
-                b -> b.cartTotal, 0L, total -> {
+        // the shopping total is the buyer's cart (GET buyer/cart): Σ unit price × quantity; checked in the app
+        this.<CartResponses.BuyerCartEnvelope, Long>call(cartApi.buyerCart(),
+                b -> b.data == null ? 0L : b.data.total(), 0L, total -> {
                     d.shoppingTotal = total;
-                    if (total < 1) {
+                    if (!hasPositiveTotal(total)) {
                         callback.onResult(Resource.success(d));
                         return;
                     }

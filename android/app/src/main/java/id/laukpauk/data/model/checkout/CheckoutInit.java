@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
  * CheckoutActivity._dataInitialization). Assembled by CheckoutRepository from several requests.
  */
 public class CheckoutInit {
-    /** shoppingTotal >= 1; false = the cart is below the minimum purchase. */
+    /** shoppingTotal > 0 (the buyer cart's total); false = nothing to check out. */
     public boolean enough;
     /** The shipping type answer arrived (legacy only shows the page then). */
     public boolean complete;

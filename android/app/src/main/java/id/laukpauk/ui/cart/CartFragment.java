@@ -29,6 +29,7 @@ import id.laukpauk.data.model.cart.BuyerCartItem;
 import id.laukpauk.data.model.cart.WalletConfiguration;
 import id.laukpauk.databinding.FragmentCartBinding;
 import id.laukpauk.databinding.ItemCartGiftBinding;
+import id.laukpauk.data.repository.CheckoutRepository;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.AppBars;
@@ -45,6 +46,9 @@ import id.laukpauk.util.Currency;
  * "Bersihkan Keranjang" through {@code POST buyer/cart}, checkout, and the wallet note and earned gifts.
  */
 public class CartFragment extends Fragment {
+
+    /** The subtotal on screen (the buyer cart's total); checkout needs it above 0. */
+    private long shownTotal;
 
     private FragmentCartBinding binding;
     private CartViewModel viewModel;
@@ -150,7 +154,8 @@ public class CartFragment extends Fragment {
             }
             boolean any = !items.isEmpty();
             adapter.submitList(items);
-            binding.total.setText(Currency.formatRupiah(cart == null ? 0 : cart.total(), 0));
+            shownTotal = cart == null ? 0 : cart.total();
+            binding.total.setText(Currency.formatRupiah(shownTotal, 0));
             binding.total.setVisibility(View.VISIBLE);
             binding.productsCard.setVisibility(any ? View.VISIBLE : View.GONE);
             binding.summaryGroup.setVisibility(any ? View.VISIBLE : View.GONE);
@@ -213,6 +218,10 @@ public class CartFragment extends Fragment {
      * the delivery address.
      */
     private void onCheckout(NavController nav) {
+        if (!CheckoutRepository.hasPositiveTotal(shownTotal)) {
+            Messages.snack(this, getString(R.string.checkout_insufficient));
+            return;
+        }
         if (!AuthGate.isSignedIn(this)) {
             viewModel.checkoutAfterLogin = true;
             nav.navigate(R.id.loginFragment);
