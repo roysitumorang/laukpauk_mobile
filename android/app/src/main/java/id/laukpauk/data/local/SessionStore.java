@@ -101,6 +101,11 @@ public final class SessionStore {
         prefs.setString("idUser", Json.str(user, "id", ""));
     }
 
+    /** Replaces the stored current user (e.g. after the phone was confirmed); the JWT stays. */
+    public void updateCurrentUser(Map<String, Object> user) {
+        prefs.setString(KEY_CURRENT_USER, Json.toJson(user));
+    }
+
     /** Forgets the JWT, its expiry and the current user (sign-out, or a session that starts another way). */
     public void clearSignIn() {
         prefs.remove("authToken");

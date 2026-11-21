@@ -38,7 +38,7 @@
     <string name="auth_otp_note">Silahkan masukkan kode OTP yang dikirim ke nomor yang anda daftarkan</string>
     <string name="auth_confirm_otp">Konfirmasi OTP</string>
     <string name="auth_skip">Lewati</string>
-    <string name="auth_otp_success">Konfirmasi OTP Berhasil ! Anda sudah terautentikasi, jadi anda tidak perlu login kembali.</string>
+    <string name="auth_otp_success">Nomor HP berhasil dikonfirmasi !</string>
     <string name="auth_otp_failed">Konfirmasi OTP gagal, silahkan ulangi kembali !</string>
     <string name="auth_sign_in">Masuk</string>
 

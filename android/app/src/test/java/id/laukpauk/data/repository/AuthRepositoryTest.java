@@ -34,4 +34,9 @@ public class AuthRepositoryTest {
         assertEquals("budi", AuthRepository.loginValue(" Budi "));
         assertEquals("budi@example.com", AuthRepository.loginValue("Budi@Example.com"));
     }
+
+    @Test
+    public void confirmToken_isTheBase64OfTheCode() {
+        assertEquals("MTIzNDU2", AuthRepository.base64("123456"));
+    }
 }

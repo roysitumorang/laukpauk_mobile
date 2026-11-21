@@ -22,10 +22,17 @@ public class AuthRepository extends BaseRepository {
         public final boolean authenticated;
         /** The backend's {@code message} when it refused (e.g. a locked account); empty otherwise. */
         public final String message;
+        /** The buyer's mobile phone is confirmed ({@code user.mobile_phone_confirmed_at} set). */
+        public final boolean phoneConfirmed;
 
         LoginResult(boolean authenticated, String message) {
+            this(authenticated, message, false);
+        }
+
+        LoginResult(boolean authenticated, String message, boolean phoneConfirmed) {
             this.authenticated = authenticated;
             this.message = message == null ? "" : message;
+            this.phoneConfirmed = phoneConfirmed;
         }
     }
 
@@ -73,8 +80,7 @@ public class AuthRepository extends BaseRepository {
             }
             session.saveSignIn(idToken, Json.strOrNull(payload, "expired_at"), user);
             onSignedIn(session.getCurrentUserID());
-            // The backend signs in active buyers whether or not their phone is confirmed: no OTP step here.
-            return new LoginResult(true, "");
+            return new LoginResult(true, "", Json.get(user, "mobile_phone_confirmed_at") != null);
         }, result -> {
             boolean rejected = result.isError() && result.code >= 400 && result.code < 500;
             callback.onResult(rejected ? Resource.success(new LoginResult(false, nz(result.message))) : result);
@@ -108,24 +114,35 @@ public class AuthRepository extends BaseRepository {
         });
     }
 
-    /** Auth/konfirmasiOTP; true when confirmed (the returned auth token becomes the session). */
+    /**
+     * POST buyer/users/mobile_phone/confirm with the SMS code (sent base64-encoded like passwords). TRUE when the
+     * phone is confirmed now or already was (the stored user is updated), FALSE for a wrong code, ERROR otherwise.
+     */
     public void confirmOtp(String otp, ResultCallback<Boolean> callback) {
-        enqueue(api.confirmOtp(body("idUser", session.getCurrentUserID(), "otp", otp)), body -> {
-            if (body == null || !body.otpConfirmationStatus) {
-                return false;
+        String code = otp == null ? "" : otp.trim();
+        enqueue(api.confirmMobilePhone(body("token", base64(code))), body -> {
+            Map<String, Object> user = Json.isObject(Json.get(body, "data")) ? Json.object(body, "data") : null;
+            if (user != null) {
+                session.updateCurrentUser(user);
             }
             prefs.setBool("otpHasConfirmed", true);
-            session.clearSignIn();
-            prefs.setString("authToken", body.returnData == null ? "" : nz(body.returnData.authToken));
-            onSignedIn(session.getCurrentUserID());
             return true;
-        }, callback);
+        }, result -> {
+            String message = nz(result.message).toLowerCase(java.util.Locale.ROOT);
+            if (result.isError() && result.code == 422 && message.contains("already confirmed")) {
+                prefs.setBool("otpHasConfirmed", true);
+                callback.onResult(Resource.success(true));
+            } else if (result.isError() && result.code == 422 && message.contains("confirmation failed")) {
+                callback.onResult(Resource.success(false));
+            } else {
+                callback.onResult(result);
+            }
+        });
     }
 
-    /** Auth/verifikasiUser. */
+    /** Checkout's "verify your number" step: the same phone confirmation as {@link #confirmOtp}. */
     public void userVerification(String code, ResultCallback<Boolean> callback) {
-        enqueue(api.userVerification(body("idUser", session.getCurrentUserID(), "verificationCode", code)),
-                body -> body != null && body.userVerificationStatus, callback);
+        confirmOtp(code, callback);
     }
 
     public void resendOTP(String telephoneNumber, ResultCallback<AuthResponses.ResendOTP> callback) {

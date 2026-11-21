@@ -14,19 +14,6 @@ public final class AuthResponses {
         public String authToken;
     }
 
-    /** Auth/konfirmasiOTP. */
-    public static class ConfirmOtp {
-        @Json(name = "statusKonfirmasiOTP")
-        public boolean otpConfirmationStatus;
-        public ReturnData returnData;
-    }
-
-    /** Auth/verifikasiUser. */
-    public static class UserVerification {
-        @Json(name = "statusVerifikasiUser")
-        public boolean userVerificationStatus;
-    }
-
     /** Auth/resendOTP. */
     public static class ResendOTP {
         public boolean statusResendOTP;
