@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -62,8 +63,10 @@ public class RegistrationOtpFragment extends Fragment {
                     String reason = r.message == null ? "" : r.message.trim();
                     Messages.snack(this, reason.isEmpty() ? getString(R.string.auth_failed_connection) : reason);
                 } else if (Boolean.TRUE.equals(r.data)) {
-                    AuthFlow.alert(this, R.string.auth_confirm_otp_action, getString(R.string.auth_otp_success),
-                            R.string.auth_ok, () -> AuthFlow.finish(this), 0, null);
+                    // confirmed: close this screen and go on with what the buyer was doing (e.g. the next
+                    // checkout step, the delivery address)
+                    Toast.makeText(requireContext(), R.string.auth_otp_success, Toast.LENGTH_SHORT).show();
+                    AuthFlow.finish(this);
                 } else {
                     AuthFlow.alert(this, R.string.auth_confirm_otp_action, getString(R.string.auth_otp_failed),
                             R.string.auth_ok, null, 0, null);

@@ -13,9 +13,6 @@ import retrofit2.http.Query;
 /** Checkout endpoints (JSON; ApiClient adds the auth and version headers). */
 public interface CheckoutApi {
 
-    @GET("Auth/cekVerifikasiUser")
-    Call<CheckoutResponses.Verified> checkUserVerification();
-
     @GET("User/getDetailUser")
     Call<CheckoutResponses.DetailUserResponse> getDetailUser(@Query("getUserEntities") String select);
 

@@ -73,10 +73,6 @@ public final class CheckoutResponses {
         public DetailUser detailUser;
     }
 
-    public static class Verified {
-        public boolean isVerified;
-    }
-
     public static class ScheduleOpened {
         @Json(name = "isJadwalDeliveryOpened")
         public boolean isDeliveryScheduleOpened;

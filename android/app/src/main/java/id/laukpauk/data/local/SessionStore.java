@@ -89,6 +89,12 @@ public final class SessionStore {
         return Json.isObject(user) ? Json.obj(user) : null;
     }
 
+    /** True when the signed-in buyer's mobile phone is confirmed ({@code mobile_phone_confirmed_at} set). */
+    public boolean isMobilePhoneConfirmed() {
+        Map<String, Object> user = getCurrentUser();
+        return user != null && Json.get(user, "mobile_phone_confirmed_at") != null;
+    }
+
     /** Stores a sign-in: the JWT, its expiry (RFC 3339, may be null) and the current user. */
     public void saveSignIn(String idToken, @Nullable String expiredAt, Map<String, Object> user) {
         prefs.setString("authToken", idToken);
