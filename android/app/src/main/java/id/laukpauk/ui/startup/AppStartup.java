@@ -26,11 +26,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
 import java.lang.ref.WeakReference;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.Locale;
 
 import id.laukpauk.BuildConfig;
 import id.laukpauk.MainActivity;
@@ -41,7 +37,6 @@ import id.laukpauk.databinding.DialogStartupUpdateBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.delivery.DeliveryFlow;
-import id.laukpauk.util.Json;
 
 /**
  * Everything the app does at start (legacy MainModel + LaukpaukApp + native MainActivity/MyIntentService):
@@ -254,36 +249,13 @@ public final class AppStartup {
             });
         }
 
-        /** The rules of MyIntentService.java. */
+        /**
+         * A saved delivery plan option expires when its delivery time starts. An older (legacy) saved schedule is
+         * not alerted here: checkout asks for an address and schedule again anyway.
+         */
         private boolean isExpired(Map<String, Object> saved) {
-            try {
-                if (saved.containsKey(DeliverySchedule.KEY_DELIVERY_TIME)) {
-                    return DeliveryPlans.isPast(saved.get(DeliverySchedule.KEY_DELIVERY_TIME), ZonedDateTime.now());
-                }
-                String id = Json.str(saved, "id");
-                String dayDeliveryLC = Json.str(saved, "day").toLowerCase(Locale.ROOT);
-
-                LocalDateTime now = LocalDateTime.now();
-                LocalDate nowDate = now.toLocalDate();
-                LocalTime nowTime = now.toLocalTime();
-
-                LocalTime savedDeliveryMaxTime = LocalTime.parse(Json.str(saved, "maxTime"));
-                LocalDate savedDeliveryMaxDay = LocalDate.parse(Json.str(saved, "currentDate"));
-
-                if (dayDeliveryLC.equals("besok")) {
-                    savedDeliveryMaxDay = savedDeliveryMaxDay.plusDays(1);
-                }
-                if (dayDeliveryLC.equals("lusa")) {
-                    savedDeliveryMaxDay = savedDeliveryMaxDay.plusDays(2);
-                }
-                if (id.equals("1") && (dayDeliveryLC.equals("besok") || dayDeliveryLC.equals("lusa"))) {
-                    // morning session: the transaction session must be cancelled the day before delivery
-                    savedDeliveryMaxDay = savedDeliveryMaxDay.minusDays(1);
-                }
-                return nowDate.isEqual(savedDeliveryMaxDay) && nowTime.isAfter(savedDeliveryMaxTime);
-            } catch (RuntimeException e) {
-                return false;
-            }
+            return saved.containsKey(DeliverySchedule.KEY_DELIVERY_TIME)
+                    && DeliveryPlans.isPast(saved.get(DeliverySchedule.KEY_DELIVERY_TIME), ZonedDateTime.now());
         }
     }
 }

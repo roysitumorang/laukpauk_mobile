@@ -8,9 +8,9 @@ import androidx.annotation.Nullable;
 import id.laukpauk.util.Json;
 
 /**
- * One available delivery schedule (JadwalDelivery/getAvailableJadwalDelivery). The server object is kept
- * whole in {@link #raw} (dynamic payload): the legacy app stored it verbatim as {@code savedDeliveryScheduleMap}
- * (plus {@code setOn}) and the expiry check reads {@code id}, {@code day}, {@code maxTime}, {@code currentDate}.
+ * One delivery schedule option: a delivery time of {@code GET buyer/delivery_plans/now}, built by
+ * {@link DeliveryPlans}. {@link #raw} is stored as {@code savedDeliveryScheduleMap} (plus {@code setOn}); the expiry
+ * check reads its {@link #KEY_DELIVERY_TIME}.
  */
 public final class DeliverySchedule {
     /** Key of the slot's start time (RFC 3339) in {@link #raw} for the options of {@code GET buyer/delivery_plans/now}. */

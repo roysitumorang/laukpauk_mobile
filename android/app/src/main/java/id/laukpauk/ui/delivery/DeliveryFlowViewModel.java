@@ -47,8 +47,6 @@ public class DeliveryFlowViewModel extends ViewModel {
     /** The map screen was already opened for this PIN step. */
     public boolean pinOpened;
 
-    /** A signed-in buyer picks from / adds to the address book ({@code buyer/addresses}). */
-    public boolean addressBook;
     /** The buyer's addresses (main first); empty until loaded or when there are none. */
     public final List<BuyerAddress> addresses = new ArrayList<>();
     /** The address being edited, null when adding a new one. */
@@ -93,13 +91,10 @@ public class DeliveryFlowViewModel extends ViewModel {
         error = null;
         savedThisRun = false;
         addresses.clear();
-        addressBook = addressRepository.isSignedIn();
-        if (addressBook) {
+        if (addressRepository.isSignedIn()) {
             loadAddresses();
-        } else if (delivery.isSetNow()) {
-            finish();
         } else {
-            step.setValue(Step.DETECT);
+            finish(); // addresses and delivery plans need a signed-in buyer (DeliveryFlow.ask sends to Login)
         }
     }
 
@@ -210,8 +205,8 @@ public class DeliveryFlowViewModel extends ViewModel {
 
     private void finish() {
         step.setValue(Step.IDLE);
-        // With the address book only a selection saved in this run counts: closing the list must not checkout.
-        boolean set = addressBook ? savedThisRun : delivery.current().isSet;
+        // Only a selection saved in this run counts: closing the list must not open checkout.
+        boolean set = savedThisRun;
         List<DeliveryFlow.Callback> toCall = new ArrayList<>(callbacks);
         callbacks.clear();
         for (DeliveryFlow.Callback cb : toCall) {
@@ -241,36 +236,25 @@ public class DeliveryFlowViewModel extends ViewModel {
 
     /** "OK" of the GPS-off hint: the flow ends without saving (legacy finishAdjd). */
     public void gpsOk() {
-        if (addressBook && !addresses.isEmpty()) {
+        if (!addresses.isEmpty()) {
             step.setValue(Step.ADDRESSES);
         } else {
             finish();
         }
     }
 
-    /** "OK" of the failed-geocoding notice: legacy continues with setNewADJD(false). */
+    /** "OK" of the failed-geocoding notice: pick the place on the map. */
     public void geocodeFailedOk() {
-        if (addressBook) {
-            confirmOtherAddress(); // pick the place on the map
-        } else {
-            save(false);
-        }
+        confirmOtherAddress();
     }
 
     public void confirmClose() {
-        if (addressBook) {
-            cancelForm();
-        } else {
-            save(false);
-        }
+        cancelForm();
     }
 
+    /** The detected address is right: on to the address form. */
     public void confirmYes() {
-        if (addressBook) {
-            openForm();
-        } else {
-            startSchedule();
-        }
+        openForm();
     }
 
     public void confirmOtherAddress() {
@@ -291,14 +275,10 @@ public class DeliveryFlowViewModel extends ViewModel {
                 // keep the detected location
             }
         }
-        if (addressBook) {
-            if (latitude == null || longitude == null) {
-                cancelForm(); // nothing detected or picked
-            } else {
-                openForm();
-            }
+        if (latitude == null || longitude == null) {
+            cancelForm(); // nothing detected or picked
         } else {
-            startSchedule();
+            openForm();
         }
     }
 
