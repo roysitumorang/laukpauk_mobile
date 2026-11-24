@@ -12,7 +12,7 @@ import id.laukpauk.data.model.address.AddressResponses;
 import id.laukpauk.data.model.address.BuyerAddress;
 import id.laukpauk.data.remote.AddressApi;
 
-/** The signed-in buyer's delivery addresses ({@code buyer/addresses}). */
+/** The signed-in buyer's delivery addresses ({@code buyer/delivery_addresses}). */
 public class AddressRepository extends BaseRepository {
 
     /** Addresses per request (the largest page the backend allows). */
@@ -35,7 +35,7 @@ public class AddressRepository extends BaseRepository {
     /** All the buyer's addresses, the main one first ({@code data.links.next} pages are followed). */
     public void list(ResultCallback<List<BuyerAddress>> callback) {
         List<BuyerAddress> all = new ArrayList<>();
-        enqueue(api.list(LIMIT, "main:desc"), AddressRepository::page, r -> collect(r, all, 1, callback));
+        enqueue(api.list(LIMIT), AddressRepository::page, r -> collect(r, all, 1, callback));
     }
 
     private void collect(Resource<AddressResponses.Page> r, List<BuyerAddress> all, int pages,
@@ -76,10 +76,10 @@ public class AddressRepository extends BaseRepository {
 
     static Map<String, Object> body(BuyerAddress a) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("longitude", nz(a.longitude).trim());
-        body.put("latitude", nz(a.latitude).trim());
+        body.put("destination_longitude", nz(a.destinationLongitude).trim());
+        body.put("destination_latitude", nz(a.destinationLatitude).trim());
         body.put("street_address", nz(a.streetAddress).trim());
-        body.put("delivery_note", nz(a.deliveryNote).trim());
+        body.put("street_address_note", nz(a.streetAddressNote).trim());
         body.put("label", nz(a.label).trim());
         body.put("recipient_name", nz(a.recipientName).trim());
         body.put("recipient_mobile_phone", nz(a.recipientMobilePhone).trim());

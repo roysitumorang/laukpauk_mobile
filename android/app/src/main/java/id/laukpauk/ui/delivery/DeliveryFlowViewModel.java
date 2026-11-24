@@ -100,7 +100,7 @@ public class DeliveryFlowViewModel extends ViewModel {
 
     // ------------------------------------------------------------------ address book (signed in)
 
-    /** {@code GET buyer/addresses}: the list, or straight to adding one when there is none. */
+    /** {@code GET buyer/delivery_addresses}: the list, or straight to adding one when there is none. */
     private void loadAddresses() {
         step.setValue(Step.ADDRESS_LOADING);
         addressRepository.list(r -> {
@@ -126,8 +126,8 @@ public class DeliveryFlowViewModel extends ViewModel {
 
     /** An address of the list was chosen: it is the delivery address; the schedule comes next. */
     public void chooseAddress(BuyerAddress a) {
-        latitude = a.latitude;
-        longitude = a.longitude;
+        latitude = a.destinationLatitude;
+        longitude = a.destinationLongitude;
         address = a.streetAddress;
         startSchedule();
     }
@@ -170,8 +170,8 @@ public class DeliveryFlowViewModel extends ViewModel {
     public void saveForm(BuyerAddress a) {
         draft = a;
         a.id = editing != null ? editing.id : null;
-        a.latitude = latitude;
-        a.longitude = longitude;
+        a.destinationLatitude = latitude;
+        a.destinationLongitude = longitude;
         step.setValue(Step.FORM_SAVING);
         addressRepository.save(a, r -> {
             if (stepNow() != Step.FORM_SAVING) {
@@ -183,8 +183,8 @@ public class DeliveryFlowViewModel extends ViewModel {
                 return;
             }
             BuyerAddress saved = r.data != null ? r.data : a;
-            latitude = saved.latitude != null ? saved.latitude : latitude;
-            longitude = saved.longitude != null ? saved.longitude : longitude;
+            latitude = saved.destinationLatitude != null ? saved.destinationLatitude : latitude;
+            longitude = saved.destinationLongitude != null ? saved.destinationLongitude : longitude;
             address = saved.streetAddress != null ? saved.streetAddress : a.streetAddress;
             draft = null;
             error = null;
