@@ -7,6 +7,7 @@ import java.util.Map;
 import androidx.annotation.Nullable;
 
 
+import id.laukpauk.data.model.setting.BuyerSetting;
 import id.laukpauk.data.remote.SettingApi;
 
 /**
@@ -22,7 +23,12 @@ public class SettingRepository extends BaseRepository {
         this.api = api(SettingApi.class);
     }
 
-    /** One setting value, e.g. {@code "costPerKm"}. */
+    /** {@code GET buyer/setting}: the store settings (null data when the answer has none). */
+    public void getBuyerSetting(ResultCallback<BuyerSetting> callback) {
+        enqueue(api.buyerSetting(), body -> body == null ? null : body.data, callback);
+    }
+
+    /** One setting value, e.g. {@code "minimalPointTukarPoint"}. */
     public void getSettingValue(String key, ResultCallback<Object> callback) {
         enqueue(api.getSettingValue(key), body -> value(body, "settingValue"), callback);
     }

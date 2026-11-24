@@ -128,7 +128,7 @@ final class PaymentSummarySection {
 
         long shippingFeeShown = shippingFeeVoucher ? s.totalShippingFee - s.voucherDiscount : s.totalShippingFee;
         b.tvShippingFee.setText(rp(shippingFeeShown));
-        boolean explanation = s.shippingFeeType != null && s.shippingFeeExplanation != null && !s.shippingFeeExplanation.isEmpty();
+        boolean explanation = s.shippingFeeExplanation != null && !s.shippingFeeExplanation.isEmpty();
         show(b.tvExplanation, explanation);
         b.tvExplanation.setText(s.shippingFeeExplanation);
         b.tvGrandTotal.setText(rp(s.overallTotal));

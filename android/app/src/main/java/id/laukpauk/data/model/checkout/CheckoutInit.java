@@ -14,12 +14,19 @@ import androidx.annotation.Nullable;
 public class CheckoutInit {
     /** shoppingTotal > 0 (the buyer cart's total); false = nothing to check out. */
     public boolean enough;
-    /** The shipping type answer arrived (legacy only shows the page then). */
+    /** The delivery cost is known (the delivery address and {@code buyer/setting} arrived). */
     public boolean complete;
     @Json(name = "totalBelanja")
     public long shoppingTotal;
+    /** Delivery cost: {@link #distanceKm} × {@link #deliveryCostPerKm}. */
     @Json(name = "totalOngkir")
     public long totalShippingFee;
+    /** {@code distance_km} of the delivery address. */
+    @Json(name = "distance_km")
+    public long distanceKm;
+    /** {@code delivery_cost_per_km} of {@code GET buyer/setting}. */
+    @Json(name = "delivery_cost_per_km")
+    public long deliveryCostPerKm;
     @Json(name = "jumlahBarang")
     public long goodsCount;
     @Json(name = "totalDompetSaya")
@@ -31,8 +38,6 @@ public class CheckoutInit {
     @Json(name = "penjelasanOngkir")
     public String shippingFeeExplanation = "";
     @Nullable public WalletConfiguration walletConfiguration;
-    @Json(name = "jenisOngkir")
-    @Nullable public CheckoutResponses.ShippingFeeType shippingFeeType;
     /** Dynamic server object ({diskon, ...}) forwarded verbatim to the checkout request; null = no discount. */
     @Json(name = "diskonKategori")
     @Nullable public Map<String, Object> categoryDiscount;

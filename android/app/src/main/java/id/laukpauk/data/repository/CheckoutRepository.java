@@ -12,12 +12,14 @@ import java.util.List;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.account.AccountResponses;
 import id.laukpauk.data.model.account.UserDetail;
+import id.laukpauk.data.model.address.BuyerAddress;
 import id.laukpauk.data.model.cart.CartResponses;
 import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
 import id.laukpauk.data.model.checkout.ShippingSchedule;
 import id.laukpauk.data.model.checkout.Voucher;
 import id.laukpauk.data.model.checkout.WalletConfiguration;
+import id.laukpauk.data.model.setting.BuyerSetting;
 import id.laukpauk.data.remote.CartApi;
 import id.laukpauk.data.remote.CheckoutApi;
 import id.laukpauk.data.remote.UserApi;
@@ -45,13 +47,15 @@ public class CheckoutRepository extends BaseRepository {
     private final CartApi cartApi;
     private final UserApi userApi;
     private final SettingRepository settings;
+    private final AddressRepository addresses;
 
-    public CheckoutRepository(RepositoryDeps deps, SettingRepository settings) {
+    public CheckoutRepository(RepositoryDeps deps, SettingRepository settings, AddressRepository addresses) {
         super(deps);
         this.api = api(CheckoutApi.class);
         this.cartApi = api(CartApi.class);
         this.userApi = api(UserApi.class);
         this.settings = settings;
+        this.addresses = addresses;
     }
 
     private interface Next<R> {
@@ -142,7 +146,7 @@ public class CheckoutRepository extends BaseRepository {
         return grandTotal > 0;
     }
 
-    /** Legacy _dataInitialization: totals, shipping type, wallet, points, buyer details. Always SUCCESS. */
+    /** Legacy _dataInitialization: totals, delivery cost, wallet, points, buyer details. Always SUCCESS. */
     public void loadInit(ResultCallback<CheckoutInit> callback) {
         final CheckoutInit d = new CheckoutInit();
         d.cartCode = session.getCartCode();
@@ -169,11 +173,6 @@ public class CheckoutRepository extends BaseRepository {
                     d.walletConfiguration = w;
                     all.step();
                 });
-        this.<CheckoutResponses.TotalShippingFee, Long>call(api.getTotalShippingFee(d.cartCode, lat, lng),
-                b -> b.totalShippingFee, 0L, v -> {
-                    d.totalShippingFee = v;
-                    all.step();
-                });
         this.<CheckoutResponses.CartQuantity, Long>call(api.getCartQuantity(d.cartCode),
                 b -> b.cartCount, 0L, v -> {
                     d.goodsCount = v;
@@ -184,8 +183,7 @@ public class CheckoutRepository extends BaseRepository {
                     d.categoryDiscount = v;
                     all.step();
                 });
-        // 5th: the buyer (GET buyer/users/me: name, phone, address, wallet and points), then the shipping
-        // explanation (which needs the shipping type)
+        // the buyer (GET buyer/users/me): name, phone, address, wallet and points
         this.<AccountResponses.Me, UserDetail>call(userApi.me(), UserRepository::me, null, user -> {
             if (user != null) {
                 d.name = nz(user.name);
@@ -194,46 +192,53 @@ public class CheckoutRepository extends BaseRepository {
                 d.myWalletTotal = user.walletOrZero();
                 d.point = user.rewardPointsOrZero();
             }
-            loadShipping(d, lat, lng, all);
+            all.step();
+        });
+        loadShipping(d, lat, lng, all);
+    }
+
+    /**
+     * The delivery cost: {@code distance_km} of the delivery address ({@code GET buyer/delivery_addresses}, the
+     * address at the saved point) times {@code delivery_cost_per_km} of {@code GET buyer/setting}. Without both,
+     * {@code complete} stays false.
+     */
+    private void loadShipping(final CheckoutInit d, String lat, String lng, final Join all) {
+        final BuyerAddress[] address = {null};
+        final BuyerSetting[] setting = {null};
+        final Join inner = new Join(3, () -> {
+            if (address[0] != null && setting[0] != null) {
+                d.distanceKm = address[0].distanceKm;
+                d.deliveryCostPerKm = setting[0].deliveryCostPerKm;
+                d.totalShippingFee = deliveryCost(d.distanceKm, d.deliveryCostPerKm);
+                d.shippingFeeExplanation = explanation(d.distanceKm, d.deliveryCostPerKm);
+                d.complete = true;
+            }
+            all.step();
+        });
+        addresses.list(r -> {
+            address[0] = r.isSuccess() ? AddressRepository.at(r.data, lat, lng) : null;
+            inner.step();
+        });
+        settings.getBuyerSetting(r -> {
+            setting[0] = r.isSuccess() ? r.data : null;
+            inner.step();
+        });
+        settings.getSettingValue("minimalPointTukarPoint", res -> {
+            if (res.isSuccess() && res.data != null) {
+                d.minimumPointRedeem = Json.asLong(res.data, 0);
+            }
+            inner.step();
         });
     }
 
-    private void loadShipping(final CheckoutInit d, String lat, String lng, final Join all) {
-        this.<CheckoutResponses.ShippingFeeType, CheckoutResponses.ShippingFeeType>call(
-                api.getShippingFeeType(d.cartCode, lat, lng), b -> b, null, type -> {
-                    if (type == null) {
-                        all.step(); // legacy: the page never shows, the loading view stays
-                        return;
-                    }
-                    d.shippingFeeType = type;
-                    final boolean needsCost = "perkm".equals(type.shippingFeeType);
-                    final Join inner = new Join(needsCost ? 2 : 1, () -> {
-                        d.complete = true;
-                        all.step();
-                    });
-                    if (needsCost) {
-                        ResultCallback<Object> onCost = res -> {
-                            long rate = res.isSuccess() ? Json.asLong(res.data, 0) : 0;
-                            d.shippingFeeExplanation = explanation(type, rate);
-                            inner.step();
-                        };
-                        settings.getSettingValue("costPerKm", onCost);
-                    }
-                    ResultCallback<Object> onMinimal = res -> {
-                        if (res.isSuccess() && res.data != null) {
-                            d.minimumPointRedeem = Json.asLong(res.data, 0);
-                        }
-                        inner.step();
-                    };
-                    settings.getSettingValue("minimalPointTukarPoint", onMinimal);
-                });
+    /** Delivery cost in rupiah: the distance (whole km) times the cost per km. */
+    public static long deliveryCost(long distanceKm, long costPerKm) {
+        return Math.max(0, distanceKm) * Math.max(0, costPerKm);
     }
 
-    private static String explanation(CheckoutResponses.ShippingFeeType type, long rate) {
-        return "Anda dikenakan ongkir PERKM karena alamat pengantaran berada di luar "
-                + "Coverage Area anda. Jarak yang harus ditempuh kurir adalah "
-                + Currency.formatUnit((long) type.distance, "KM")
-                + ". Tarif ongkir per km adalah " + Currency.formatRupiah(rate, 0);
+    static String explanation(long distanceKm, long costPerKm) {
+        return "Ongkir dihitung dari jarak pengantaran " + Currency.formatUnit(distanceKm, "KM")
+                + " dengan tarif " + Currency.formatRupiah(costPerKm, 0) + " per km.";
     }
 
     /** Active vouchers usable for this basket total (empty list when none or on failure). */

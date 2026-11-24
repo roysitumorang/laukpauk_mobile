@@ -5,7 +5,6 @@ import java.util.Map;
 import androidx.annotation.Nullable;
 
 
-import id.laukpauk.data.model.checkout.CheckoutResponses;
 import id.laukpauk.data.model.checkout.Voucher;
 import id.laukpauk.data.model.checkout.WalletConfiguration;
 
@@ -30,7 +29,6 @@ public final class CheckoutSummary {
     @Nullable public Voucher usedVoucher;
     @Nullable public String statusVoucher;
     @Nullable public WalletConfiguration walletConfiguration;
-    @Nullable public CheckoutResponses.ShippingFeeType shippingFeeType;
     @Nullable public Map<String, Object> categoryDiscount;
     @Nullable public Boolean promoCodeStatus;
     @Nullable public String promoCodeMessage;

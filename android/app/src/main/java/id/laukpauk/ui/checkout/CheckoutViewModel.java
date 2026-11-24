@@ -317,7 +317,6 @@ public class CheckoutViewModel extends ViewModel {
         s.usedVoucher = usedVoucher;
         s.statusVoucher = statusVoucher;
         s.walletConfiguration = init.walletConfiguration;
-        s.shippingFeeType = init.shippingFeeType;
         s.categoryDiscount = init.categoryDiscount;
         s.promoCodeStatus = promoCodeStatus;
         s.promoCodeMessage = promoCodeMessage;

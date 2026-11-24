@@ -16,18 +16,8 @@ public interface CheckoutApi {
     @POST("JadwalDelivery/isJadwalDeliveryOpened")
     Call<CheckoutResponses.ScheduleOpened> isDeliveryScheduleOpened(@Body Map<String, Object> body);
 
-    @GET("User/getTotalOngkir")
-    Call<CheckoutResponses.TotalShippingFee> getTotalShippingFee(@Query("cartCode") String cartCode,
-                                                       @Query("latDelivery") String lat,
-                                                       @Query("longDelivery") String lng);
-
     @GET("User/getJumlahCart")
     Call<CheckoutResponses.CartQuantity> getCartQuantity(@Query("cartCode") String cartCode);
-
-    @GET("Transaksi/getJenisOngkir")
-    Call<CheckoutResponses.ShippingFeeType> getShippingFeeType(@Query("cartCode") String cartCode,
-                                                       @Query("latDelivery") String lat,
-                                                       @Query("longDelivery") String lng);
 
     @GET("User/getDiskonKategori")
     Call<CheckoutResponses.CategoryDiscount> getCategoryDiscount(@Query("cartCode") String cartCode);

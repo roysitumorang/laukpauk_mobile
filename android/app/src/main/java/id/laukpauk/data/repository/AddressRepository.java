@@ -74,6 +74,40 @@ public class AddressRepository extends BaseRepository {
                 (AddressResponses.Saved s) -> s == null ? null : s.data, callback);
     }
 
+    /**
+     * The address at this point ({@code destination_latitude} / {@code destination_longitude}), or null. The
+     * backend keeps one address per point, and the saved delivery point is copied from an address.
+     */
+    @Nullable
+    public static BuyerAddress at(@Nullable List<BuyerAddress> addresses, @Nullable String latitude,
+                                  @Nullable String longitude) {
+        Double lat = number(latitude);
+        Double lng = number(longitude);
+        if (addresses == null || lat == null || lng == null) {
+            return null;
+        }
+        for (BuyerAddress a : addresses) {
+            Double aLat = a == null ? null : number(a.destinationLatitude);
+            Double aLng = a == null ? null : number(a.destinationLongitude);
+            if (aLat != null && aLng != null && Math.abs(aLat - lat) < 1e-7 && Math.abs(aLng - lng) < 1e-7) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private static Double number(@Nullable String s) {
+        if (s == null) {
+            return null;
+        }
+        try {
+            return Double.parseDouble(s.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     static Map<String, Object> body(BuyerAddress a) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("destination_longitude", nz(a.destinationLongitude).trim());
