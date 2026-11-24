@@ -13,9 +13,6 @@ import retrofit2.http.Query;
 /** Checkout endpoints (JSON; ApiClient adds the auth and version headers). */
 public interface CheckoutApi {
 
-    @GET("User/getDetailUser")
-    Call<CheckoutResponses.DetailUserResponse> getDetailUser(@Query("getUserEntities") String select);
-
     @POST("JadwalDelivery/isJadwalDeliveryOpened")
     Call<CheckoutResponses.ScheduleOpened> isDeliveryScheduleOpened(@Body Map<String, Object> body);
 
@@ -37,12 +34,6 @@ public interface CheckoutApi {
 
     @GET("Pengaturan/getWalletConfiguration")
     Call<CheckoutResponses.WalletConfig> getWalletConfiguration();
-
-    @GET("User/getTotalDompet")
-    Call<CheckoutResponses.WalletTotal> getWalletTotal();
-
-    @GET("Point/getPoint")
-    Call<CheckoutResponses.PointResponse> getPoint(@Query("point") String point);
 
     @GET("User/getVoucher")
     Call<CheckoutResponses.VoucherList> getVoucher(@Query("entitasVoucher") String voucherEntities,

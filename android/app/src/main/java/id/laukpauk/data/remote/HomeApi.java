@@ -15,15 +15,8 @@ public interface HomeApi {
     @GET("buyer/banners")
     Call<HomeResponses.Banners> getBanner();
 
-
     @GET("User/getJumlahVoucher")
     Call<HomeResponses.VoucherCount> getVoucherCount();
-
-    @GET("User/getTotalDompet")
-    Call<HomeResponses.WalletTotal> getWalletTotal();
-
-    @GET("Point/getPoint")
-    Call<HomeResponses.Point> getPoint(@Query("point") String point);
 
     @GET("Konten/getKonten")
     Call<HomeResponses.ContentList> getContent(@Query("page") String page);

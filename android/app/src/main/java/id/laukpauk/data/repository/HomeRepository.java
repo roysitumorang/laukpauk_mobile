@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import id.laukpauk.data.Resource;
+import id.laukpauk.data.model.account.AccountResponses;
+import id.laukpauk.data.model.account.UserDetail;
 import id.laukpauk.data.model.home.Banner;
 import id.laukpauk.data.model.home.HomeProduct;
 import id.laukpauk.data.model.home.HomeResponses;
@@ -22,6 +24,7 @@ import id.laukpauk.data.model.home.LowestPrice;
 import id.laukpauk.data.model.home.WalletInfo;
 import id.laukpauk.data.remote.HomeApi;
 import id.laukpauk.data.remote.ProductApi;
+import id.laukpauk.data.remote.UserApi;
 
 /**
  * Data of the home page and the screens built from the same blocks (product list, category list, konten blocks,
@@ -36,6 +39,7 @@ public class HomeRepository extends BaseRepository {
 
     private final HomeApi api;
     private final ProductApi productApi;
+    private final UserApi userApi;
     private final DeliveryRepository delivery;
     /** productId -> lowest price (a NO_PRICE marker when the product has none). Cleared by pull-to-refresh. */
     private final Map<String, LowestPrice> priceCache = new HashMap<>();
@@ -45,6 +49,7 @@ public class HomeRepository extends BaseRepository {
         super(deps);
         this.api = api(HomeApi.class);
         this.productApi = api(ProductApi.class);
+        this.userApi = api(UserApi.class);
         this.delivery = delivery;
     }
 
@@ -74,17 +79,20 @@ public class HomeRepository extends BaseRepository {
         final long[] wallet = new long[1];
         final int[] voucher = new int[1];
         final long[] points = new long[1];
-        final int[] pending = {3};
+        final int[] pending = {2};
         ResultCallback<Long> done = r -> {
             if (--pending[0] == 0) {
                 live.setValue(Resource.success(new WalletInfo(wallet[0], voucher[0], points[0])));
             }
         };
-        enqueue(api.getWalletTotal(), body -> wallet[0] = body == null ? 0L : body.walletTotal, done);
+        // wallet and points: one GET buyer/users/me
+        enqueue(userApi.me(), (AccountResponses.Me body) -> {
+            UserDetail user = UserRepository.me(body);
+            points[0] = user == null ? 0L : user.rewardPointsOrZero();
+            return wallet[0] = user == null ? 0L : user.walletOrZero();
+        }, done);
         enqueue(api.getVoucherCount(),
                 body -> (long) (voucher[0] = body == null ? 0 : body.voucherCount), done);
-        enqueue(api.getPoint("true"),
-                body -> points[0] = body == null || body.response == null ? 0L : body.response.point, done);
         return live;
     }
 

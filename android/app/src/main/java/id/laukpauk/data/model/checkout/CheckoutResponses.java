@@ -19,11 +19,6 @@ public final class CheckoutResponses {
         public long cartCount;
     }
 
-    public static class WalletTotal {
-        @Json(name = "totalDompet")
-        public long walletTotal;
-    }
-
     /** GET Transaksi/getJenisOngkir: the fields are at the top level of the answer. */
     public static class ShippingFeeType {
         /** "perkm" when the address is outside the coverage area, otherwise the flat delivery cost applies. */
@@ -43,29 +38,6 @@ public final class CheckoutResponses {
         /** Dynamic: an object, or false when there is no category discount. */
         @Json(name = "diskonKategori")
         public Object categoryDiscount;
-    }
-
-    public static class Point {
-        public long point;
-    }
-
-    public static class PointResponse {
-        /** null when the server answers false. */
-        public Point response;
-    }
-
-    public static class DetailUser {
-        @Json(name = "nama")
-        public String name;
-        @Json(name = "nomorHP")
-        public String phoneNumber;
-        @Json(name = "alamat")
-        public String address;
-        public String statusOTP;
-    }
-
-    public static class DetailUserResponse {
-        public DetailUser detailUser;
     }
 
     public static class ScheduleOpened {

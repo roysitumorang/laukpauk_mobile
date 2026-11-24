@@ -8,31 +8,14 @@ import java.util.List;
 public final class AccountResponses {
     private AccountResponses() {}
 
-    public static class DetailUser {
-        /** null when the server answers false ("no active user"). */
-        @Json(name = "detailUser")
-        public UserDetail detailUser;
-    }
-
-    public static class WalletTotal {
-        @Json(name = "totalDompet")
-        public long walletTotal;
+    /** {@code GET buyer/users/me}: the backend envelope; the user is in {@code data}. */
+    public static class Me {
+        @androidx.annotation.Nullable public UserDetail data;
     }
 
     public static class VoucherCount {
         @Json(name = "jumlahVoucher")
         public int voucherCount;
-    }
-
-    public static class Point {
-        /** null when the server answers false. */
-        @Json(name = "response")
-        public PointData response;
-    }
-
-    public static class PointData {
-        @Json(name = "point")
-        public long point;
     }
 
     public static class WalletRecordList {

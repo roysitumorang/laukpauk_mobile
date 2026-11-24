@@ -25,7 +25,6 @@ import id.laukpauk.ui.common.Messages;
 import id.laukpauk.ui.common.NavResults;
 import id.laukpauk.ui.common.StatusBar;
 import id.laukpauk.util.Currency;
-import id.laukpauk.util.ServerPath;
 
 /** UserAndDashboard.dart: the "Akun" bottom-navigation tab. */
 public class UserAndDashboardFragment extends Fragment {
@@ -175,7 +174,7 @@ public class UserAndDashboardFragment extends Fragment {
     }
 
     private void showUser(UserDetail user) {
-        Images.circle(binding.photo, ServerPath.baseURL + "/" + ServerPath.uploadImageUser + "/" + user.photo);
+        Images.circle(binding.photo, Images.user(user.photo));
         binding.name.setText(user.name);
         binding.referralCode.setText(user.referralCode);
         boolean hasAddress = user.address != null && user.address.length() >= 1;

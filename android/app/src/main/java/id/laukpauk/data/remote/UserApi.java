@@ -12,19 +12,12 @@ import retrofit2.http.Query;
 /** The signed-in user: profile, wallet, vouchers, points (JSON; ApiClient adds the auth and version headers). */
 public interface UserApi {
 
-    /** {@code getUserEntities}: optional comma separated column list (legacy "select"). */
-    @GET("User/getDetailUser")
-    Call<AccountResponses.DetailUser> getDetailUser(@Query("getUserEntities") String select);
-
-    @GET("User/getTotalDompet")
-    Call<AccountResponses.WalletTotal> getWalletTotal();
+    /** The signed-in buyer (buyer JWT), including the {@code wallet} balance. */
+    @GET("buyer/users/me")
+    Call<AccountResponses.Me> me();
 
     @GET("User/getJumlahVoucher")
     Call<AccountResponses.VoucherCount> getVoucherCount();
-
-    /** Legacy getPoint("point=true"). */
-    @GET("Point/getPoint")
-    Call<AccountResponses.Point> getPoint(@Query("point") String point);
 
     /** {@code walletType}: "referral", "potongantransaksi" or null for all. */
     @GET("User/getRiwayatDompet")

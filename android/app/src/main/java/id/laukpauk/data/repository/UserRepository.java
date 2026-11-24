@@ -27,26 +27,38 @@ public class UserRepository extends BaseRepository {
         this.api = api(UserApi.class);
     }
 
-    /** The active user; data is null when the server has no active user ("Data Akun Anda tidak Ditemukan"). */
+    /** The signed-in buyer ({@code GET buyer/users/me}); data is null on an empty answer. */
     public LiveData<Resource<UserDetail>> getDetailUser() {
-        return load(api.getDetailUser(null), body -> body == null ? null : body.detailUser);
+        return load(api.me(), UserRepository::me);
     }
 
     public void getDetailUser(ResultCallback<UserDetail> callback) {
-        enqueue(api.getDetailUser(null), body -> body == null ? null : body.detailUser, callback);
+        enqueue(api.me(), UserRepository::me, callback);
     }
 
+    /** The wallet balance: {@code wallet} of {@code GET buyer/users/me}. */
     public LiveData<Resource<Long>> getWalletTotal() {
-        return load(api.getWalletTotal(), body -> body == null ? 0L : body.walletTotal);
+        return load(api.me(), (AccountResponses.Me body) -> {
+            UserDetail user = me(body);
+            return user == null ? 0L : user.walletOrZero();
+        });
+    }
+
+    @Nullable
+    static UserDetail me(@Nullable AccountResponses.Me body) {
+        return body == null ? null : body.data;
     }
 
     public LiveData<Resource<Integer>> getVoucherCount() {
         return load(api.getVoucherCount(), body -> body == null ? 0 : body.voucherCount);
     }
 
+    /** The buyer's points: {@code reward_points} of {@code GET buyer/users/me}. */
     public LiveData<Resource<Long>> getPoint() {
-        return load(api.getPoint("true"),
-                (AccountResponses.Point body) -> body == null || body.response == null ? 0L : body.response.point);
+        return load(api.me(), (AccountResponses.Me body) -> {
+            UserDetail user = me(body);
+            return user == null ? 0L : user.rewardPointsOrZero();
+        });
     }
 
     /** {@code jenis}: WALLET_ALL (null), WALLET_REFERRAL or WALLET_TRANSACTION_DEDUCTION. */

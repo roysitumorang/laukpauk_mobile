@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.laukpauk.data.Resource;
+import id.laukpauk.data.model.account.AccountResponses;
+import id.laukpauk.data.model.account.UserDetail;
 import id.laukpauk.data.model.cart.CartResponses;
 import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
@@ -18,6 +20,7 @@ import id.laukpauk.data.model.checkout.Voucher;
 import id.laukpauk.data.model.checkout.WalletConfiguration;
 import id.laukpauk.data.remote.CartApi;
 import id.laukpauk.data.remote.CheckoutApi;
+import id.laukpauk.data.remote.UserApi;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.Json;
 import retrofit2.Call;
@@ -40,12 +43,14 @@ public class CheckoutRepository extends BaseRepository {
 
     private final CheckoutApi api;
     private final CartApi cartApi;
+    private final UserApi userApi;
     private final SettingRepository settings;
 
     public CheckoutRepository(RepositoryDeps deps, SettingRepository settings) {
         super(deps);
         this.api = api(CheckoutApi.class);
         this.cartApi = api(CartApi.class);
+        this.userApi = api(UserApi.class);
         this.settings = settings;
     }
 
@@ -157,7 +162,7 @@ public class CheckoutRepository extends BaseRepository {
     }
 
     private void loadRest(final CheckoutInit d, String lat, String lng, ResultCallback<CheckoutInit> callback) {
-        final Join all = new Join(6, () -> callback.onResult(Resource.success(d)));
+        final Join all = new Join(5, () -> callback.onResult(Resource.success(d)));
 
         this.<CheckoutResponses.WalletConfig, WalletConfiguration>call(api.getWalletConfiguration(),
                 b -> b.walletConfiguration, null, w -> {
@@ -179,22 +184,18 @@ public class CheckoutRepository extends BaseRepository {
                     d.categoryDiscount = v;
                     all.step();
                 });
-        this.<CheckoutResponses.WalletTotal, Long>call(api.getWalletTotal(),
-                b -> b.walletTotal, 0L, v -> {
-                    d.myWalletTotal = v;
-                    all.step();
-                });
-        // 6th: the buyer's details, then the shipping explanation (which needs the shipping type)
-        this.<CheckoutResponses.DetailUserResponse, CheckoutResponses.DetailUser>call(
-                api.getDetailUser("nama, nomorHP, alamat"),
-                b -> b.detailUser, null, user -> {
-                    if (user != null) {
-                        d.name = nz(user.name);
-                        d.phoneNumber = nz(user.phoneNumber);
-                        d.address = nz(user.address);
-                    }
-                    loadShipping(d, lat, lng, all);
-                });
+        // 5th: the buyer (GET buyer/users/me: name, phone, address, wallet and points), then the shipping
+        // explanation (which needs the shipping type)
+        this.<AccountResponses.Me, UserDetail>call(userApi.me(), UserRepository::me, null, user -> {
+            if (user != null) {
+                d.name = nz(user.name);
+                d.phoneNumber = nz(user.phoneNumber);
+                d.address = nz(user.address);
+                d.myWalletTotal = user.walletOrZero();
+                d.point = user.rewardPointsOrZero();
+            }
+            loadShipping(d, lat, lng, all);
+        });
     }
 
     private void loadShipping(final CheckoutInit d, String lat, String lng, final Join all) {
@@ -206,7 +207,7 @@ public class CheckoutRepository extends BaseRepository {
                     }
                     d.shippingFeeType = type;
                     final boolean needsCost = "perkm".equals(type.shippingFeeType);
-                    final Join inner = new Join(needsCost ? 3 : 2, () -> {
+                    final Join inner = new Join(needsCost ? 2 : 1, () -> {
                         d.complete = true;
                         all.step();
                     });
@@ -218,11 +219,6 @@ public class CheckoutRepository extends BaseRepository {
                         };
                         settings.getSettingValue("costPerKm", onCost);
                     }
-                    this.<CheckoutResponses.PointResponse, Long>call(api.getPoint("true"),
-                            b -> b.response == null ? 0L : b.response.point, 0L, v -> {
-                                d.point = v;
-                                inner.step();
-                            });
                     ResultCallback<Object> onMinimal = res -> {
                         if (res.isSuccess() && res.data != null) {
                             d.minimumPointRedeem = Json.asLong(res.data, 0);

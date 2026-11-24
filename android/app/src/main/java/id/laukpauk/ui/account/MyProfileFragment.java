@@ -24,7 +24,6 @@ import id.laukpauk.ui.common.AuthGate;
 import id.laukpauk.ui.common.ImagePicker;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.common.Messages;
-import id.laukpauk.util.ServerPath;
 
 /** ProfilSaya.dart: photo, profile data, phone number and password changes, and logout. */
 public class MyProfileFragment extends Fragment {
@@ -223,14 +222,27 @@ public class MyProfileFragment extends Fragment {
     }
 
     private void showPhoto(UserDetail user) {
-        Images.circle(binding.photo, ServerPath.baseURL + "/" + ServerPath.uploadImageUser + "/" + user.photo);
+        Images.circle(binding.photo, Images.user(user.photo));
+    }
+
+    /** {@code created_at} (RFC 3339) as "24 November 2026"; the text as is when it is not a date. */
+    static String joinDate(@Nullable String createdAt) {
+        if (createdAt == null || createdAt.trim().isEmpty()) {
+            return "";
+        }
+        try {
+            return java.time.format.DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("id", "ID"))
+                    .format(java.time.OffsetDateTime.parse(createdAt.trim()));
+        } catch (java.time.format.DateTimeParseException e) {
+            return createdAt.trim();
+        }
     }
 
     private void showUser(UserDetail user) {
         if (viewModel.getPhotoNew().getValue() == null) {
             showPhoto(user);
         }
-        String created = user.createdAt == null ? "" : user.createdAt.toUpperCase(Locale.ROOT);
+        String created = joinDate(user.createdAt).toUpperCase(Locale.ROOT);
         binding.name.setText(user.name == null ? "" : user.name.toUpperCase(Locale.ROOT));
         binding.referralCode.setText(user.referralCode);
         binding.join.setText(getString(R.string.account_join, created));
