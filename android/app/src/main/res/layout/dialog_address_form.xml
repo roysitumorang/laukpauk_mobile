@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Checkout: add / edit an address after the location was detected (POST buyer/addresses[/:id]). -->
+<!-- Checkout: add / edit an address after the location was detected (POST buyer/delivery_addresses, PUT buyer/delivery_addresses/:id). -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -73,14 +73,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/deliveryNoteLayout"
+            android:id="@+id/streetAddressNoteLayout"
             style="@style/Checkout.Field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/address_delivery_note">
+            android:hint="@string/address_street_address_note">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/deliveryNote"
+                android:id="@+id/streetAddressNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine|textCapSentences"

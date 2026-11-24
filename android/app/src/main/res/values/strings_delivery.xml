@@ -7,7 +7,7 @@
     <string name="delivery_other_address">Alamat Lain</string>
     <string name="delivery_address_title">Alamat Pengantaran</string>
     <string name="delivery_address_content">Apakah belanjaan akan diantarkan ke alamat tempat anda berada sekarang ?</string>
-    <!-- checkout: the address list (GET buyer/addresses) and the address form -->
+    <!-- checkout: the address list (GET buyer/delivery_addresses) and the address form -->
     <string name="address_list_title">Alamat Pengantaran</string>
     <string name="address_list_message">Pilih alamat pengantaran, atau tambah / ubah alamat dari lokasi mamak sekarang.</string>
     <string name="address_add">Tambah Alamat Baru</string>
@@ -24,7 +24,7 @@
     <string name="address_recipient_name">Nama penerima</string>
     <string name="address_recipient_phone">Nomor HP penerima</string>
     <string name="address_street">Alamat lengkap</string>
-    <string name="address_delivery_note">Catatan untuk kurir (opsional)</string>
+    <string name="address_street_address_note">Catatan untuk kurir (opsional)</string>
     <string name="address_set_main">Jadikan alamat utama</string>
     <string name="address_required">Wajib diisi</string>
     <string name="address_save">Simpan</string>

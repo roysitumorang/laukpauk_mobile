@@ -58,7 +58,7 @@ public final class DeliveryFlow {
 
     /**
      * Checkout is the only place that needs a delivery address and schedule: the (signed-in) buyer picks one from
-     * the address list ({@code GET buyer/addresses}) or adds / edits one, then a schedule; {@code onReady} runs when
+     * the address list ({@code GET buyer/delivery_addresses}) or adds / edits one, then a schedule; {@code onReady} runs when
      * the selection was saved.
      */
     public static void ensureForCheckout(Fragment fragment, Runnable onReady) {

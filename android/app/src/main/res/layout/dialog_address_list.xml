@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Checkout: the buyer's addresses (GET buyer/addresses) and "Tambah Alamat Baru". -->
+<!-- Checkout: the buyer's addresses (GET buyer/delivery_addresses) and "Tambah Alamat Baru". -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

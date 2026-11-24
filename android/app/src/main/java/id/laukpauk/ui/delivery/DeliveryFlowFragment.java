@@ -258,9 +258,9 @@ public class DeliveryFlowFragment extends Fragment {
             row.main.setVisibility(a.main ? View.VISIBLE : View.GONE);
             row.recipient.setText(getString(R.string.address_recipient, nz(a.recipientName), nz(a.recipientMobilePhone)));
             row.street.setText(nz(a.streetAddress));
-            boolean hasNote = !nz(a.deliveryNote).trim().isEmpty();
+            boolean hasNote = !nz(a.streetAddressNote).trim().isEmpty();
             row.note.setVisibility(hasNote ? View.VISIBLE : View.GONE);
-            row.note.setText(hasNote ? a.deliveryNote.trim() : null);
+            row.note.setText(hasNote ? a.streetAddressNote.trim() : null);
             row.getRoot().setOnClickListener(v -> vm.chooseAddress(a));
             row.edit.setOnClickListener(v -> vm.editAddress(a));
             b.addresses.addView(row.getRoot());
@@ -285,7 +285,7 @@ public class DeliveryFlowFragment extends Fragment {
                 seed.label = e.label;
                 seed.recipientName = e.recipientName;
                 seed.recipientMobilePhone = e.recipientMobilePhone;
-                seed.deliveryNote = e.deliveryNote;
+                seed.streetAddressNote = e.streetAddressNote;
                 seed.main = e.main;
             } else {
                 Map<String, Object> user = AppContainer.from(requireContext()).session.getCurrentUser();
@@ -300,7 +300,7 @@ public class DeliveryFlowFragment extends Fragment {
         b.recipientName.setText(nz(seed.recipientName));
         b.recipientPhone.setText(nz(seed.recipientMobilePhone));
         b.street.setText(nz(seed.streetAddress));
-        b.deliveryNote.setText(nz(seed.deliveryNote));
+        b.streetAddressNote.setText(nz(seed.streetAddressNote));
         b.main.setChecked(seed.main);
         boolean hasError = vm.error != null && !vm.error.trim().isEmpty();
         b.error.setVisibility(hasError ? View.VISIBLE : View.GONE);
@@ -325,7 +325,7 @@ public class DeliveryFlowFragment extends Fragment {
             a.recipientName = text(b.recipientName.getText());
             a.recipientMobilePhone = text(b.recipientPhone.getText());
             a.streetAddress = text(b.street.getText());
-            a.deliveryNote = text(b.deliveryNote.getText());
+            a.streetAddressNote = text(b.streetAddressNote.getText());
             a.main = b.main.isChecked();
             vm.saveForm(a);
         }));

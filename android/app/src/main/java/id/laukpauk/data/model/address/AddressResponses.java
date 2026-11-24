@@ -4,11 +4,11 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-/** Envelopes of the {@code buyer/addresses} endpoints (the payload is in {@code data}). */
+/** Envelopes of the {@code buyer/delivery_addresses} endpoints (the payload is in {@code data}). */
 public final class AddressResponses {
     private AddressResponses() {}
 
-    /** {@code GET buyer/addresses}: a page of addresses. */
+    /** {@code GET buyer/delivery_addresses}: a page of addresses. */
     public static class AddressList {
         @Nullable public Page data;
     }
@@ -23,7 +23,7 @@ public final class AddressResponses {
         @Nullable public String next;
     }
 
-    /** {@code POST buyer/addresses} and {@code POST buyer/addresses/:id}: the saved address. */
+    /** {@code POST buyer/delivery_addresses} and {@code PUT buyer/delivery_addresses/:id}: the saved address. */
     public static class Saved {
         @Nullable public BuyerAddress data;
     }
