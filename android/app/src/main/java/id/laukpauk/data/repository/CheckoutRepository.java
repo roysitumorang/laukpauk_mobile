@@ -108,10 +108,15 @@ public class CheckoutRepository extends BaseRepository {
     }
 
     /**
-     * Steps before checkout: the saved schedule is still open. Confirming the mobile phone is optional (offered
-     * before checkout, "Lewati" skips it), so it is not checked here. Result is one of the STEP_ constants.
+     * Steps before checkout: the buyer's mobile phone is confirmed ({@code mobile_phone_confirmed_at} of the
+     * signed-in user, set by {@code POST buyer/users/mobile_phone/confirm}), then the schedule is still open.
+     * Result is one of the STEP_ constants.
      */
     public void checkPrerequisites(ResultCallback<Integer> callback) {
+        if (!session.isMobilePhoneConfirmed()) {
+            callback.onResult(Resource.success(STEP_NOT_VERIFIED));
+            return;
+        }
         checkScheduleOpened(callback);
     }
 
