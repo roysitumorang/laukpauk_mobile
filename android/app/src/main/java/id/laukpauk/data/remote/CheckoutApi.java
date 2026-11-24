@@ -35,9 +35,6 @@ public interface CheckoutApi {
     @GET("Pengaturan/getWalletConfiguration")
     Call<CheckoutResponses.WalletConfig> getWalletConfiguration();
 
-    @GET("Point/getPoint")
-    Call<CheckoutResponses.PointResponse> getPoint(@Query("point") String point);
-
     @GET("User/getVoucher")
     Call<CheckoutResponses.VoucherList> getVoucher(@Query("entitasVoucher") String voucherEntities,
                                                    @Query("forThisTotalBelanja") String shoppingTotal);

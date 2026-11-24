@@ -18,17 +18,6 @@ public final class AccountResponses {
         public int voucherCount;
     }
 
-    public static class Point {
-        /** null when the server answers false. */
-        @Json(name = "response")
-        public PointData response;
-    }
-
-    public static class PointData {
-        @Json(name = "point")
-        public long point;
-    }
-
     public static class WalletRecordList {
         @Json(name = "riwayatDompet")
         public List<WalletRecords> walletRecords;

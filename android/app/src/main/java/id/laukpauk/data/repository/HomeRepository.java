@@ -79,20 +79,20 @@ public class HomeRepository extends BaseRepository {
         final long[] wallet = new long[1];
         final int[] voucher = new int[1];
         final long[] points = new long[1];
-        final int[] pending = {3};
+        final int[] pending = {2};
         ResultCallback<Long> done = r -> {
             if (--pending[0] == 0) {
                 live.setValue(Resource.success(new WalletInfo(wallet[0], voucher[0], points[0])));
             }
         };
+        // wallet and points: one GET buyer/users/me
         enqueue(userApi.me(), (AccountResponses.Me body) -> {
             UserDetail user = UserRepository.me(body);
+            points[0] = user == null ? 0L : user.rewardPointsOrZero();
             return wallet[0] = user == null ? 0L : user.walletOrZero();
         }, done);
         enqueue(api.getVoucherCount(),
                 body -> (long) (voucher[0] = body == null ? 0 : body.voucherCount), done);
-        enqueue(api.getPoint("true"),
-                body -> points[0] = body == null || body.response == null ? 0L : body.response.point, done);
         return live;
     }
 

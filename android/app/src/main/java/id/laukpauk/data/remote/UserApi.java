@@ -19,10 +19,6 @@ public interface UserApi {
     @GET("User/getJumlahVoucher")
     Call<AccountResponses.VoucherCount> getVoucherCount();
 
-    /** Legacy getPoint("point=true"). */
-    @GET("Point/getPoint")
-    Call<AccountResponses.Point> getPoint(@Query("point") String point);
-
     /** {@code walletType}: "referral", "potongantransaksi" or null for all. */
     @GET("User/getRiwayatDompet")
     Call<AccountResponses.WalletRecordList> getWalletRecords(@Query("jenisDompet") String walletType);

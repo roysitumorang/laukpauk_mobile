@@ -4,7 +4,10 @@ import androidx.annotation.Nullable;
 
 import com.squareup.moshi.Json;
 
-/** The signed-in buyer: {@code data} of {@code GET buyer/users/me}. Only the keys the app uses are declared. */
+/**
+ * The signed-in buyer: {@code data} of {@code GET buyer/users/me}, including the wallet and reward points. Only the
+ * keys the app uses are declared.
+ */
 public class UserDetail {
     public String id;
     public String name;
@@ -24,8 +27,15 @@ public class UserDetail {
     @Nullable public String createdAt;
     /** Wallet (dompet) balance in rupiah; null when the backend has none. */
     @Nullable public Long wallet;
+    /** The buyer's points (poin); null when the backend has none. */
+    @Json(name = "reward_points")
+    @Nullable public Long rewardPoints;
 
     public long walletOrZero() {
         return wallet == null ? 0L : wallet;
+    }
+
+    public long rewardPointsOrZero() {
+        return rewardPoints == null ? 0L : rewardPoints;
     }
 }

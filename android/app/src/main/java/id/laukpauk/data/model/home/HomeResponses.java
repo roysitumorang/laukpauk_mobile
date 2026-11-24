@@ -29,15 +29,6 @@ public final class HomeResponses {
         public int voucherCount;
     }
 
-    public static class PointData {
-        public long point;
-    }
-
-    public static class Point {
-        /** false when the user has no point record. */
-        public PointData response;
-    }
-
     public static class LowestPriceResponse {
         /** false when the product has no price list. */
         public LowestPrice lowestPrice;

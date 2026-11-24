@@ -40,15 +40,6 @@ public final class CheckoutResponses {
         public Object categoryDiscount;
     }
 
-    public static class Point {
-        public long point;
-    }
-
-    public static class PointResponse {
-        /** null when the server answers false. */
-        public Point response;
-    }
-
     public static class ScheduleOpened {
         @Json(name = "isJadwalDeliveryOpened")
         public boolean isDeliveryScheduleOpened;

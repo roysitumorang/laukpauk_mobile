@@ -53,9 +53,12 @@ public class UserRepository extends BaseRepository {
         return load(api.getVoucherCount(), body -> body == null ? 0 : body.voucherCount);
     }
 
+    /** The buyer's points: {@code reward_points} of {@code GET buyer/users/me}. */
     public LiveData<Resource<Long>> getPoint() {
-        return load(api.getPoint("true"),
-                (AccountResponses.Point body) -> body == null || body.response == null ? 0L : body.response.point);
+        return load(api.me(), (AccountResponses.Me body) -> {
+            UserDetail user = me(body);
+            return user == null ? 0L : user.rewardPointsOrZero();
+        });
     }
 
     /** {@code jenis}: WALLET_ALL (null), WALLET_REFERRAL or WALLET_TRANSACTION_DEDUCTION. */

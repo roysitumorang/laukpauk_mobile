@@ -29,12 +29,14 @@ public class UserMeTest {
         assertEquals("Jl. Merdeka 1", u.address);
         assertEquals("BUDI01", u.referralCode);
         assertEquals(25000L, u.walletOrZero());
+        assertEquals(10L, u.rewardPointsOrZero());
     }
 
     @Test
     public void missingWalletIsZero() throws Exception {
-        UserDetail u = UserRepository.me(parse("{\"data\":{\"id\":\"u1\",\"name\":\"Budi\",\"wallet\":null}}"));
+        UserDetail u = UserRepository.me(parse("{\"data\":{\"id\":\"u1\",\"name\":\"Budi\",\"wallet\":null,\"reward_points\":null}}"));
         assertEquals(0L, u.walletOrZero());
+        assertEquals(0L, u.rewardPointsOrZero());
         assertNull(UserRepository.me(parse("{\"status_code\":200}")));
         assertNull(UserRepository.me(null));
     }

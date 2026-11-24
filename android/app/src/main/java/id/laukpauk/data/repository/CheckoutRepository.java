@@ -184,7 +184,7 @@ public class CheckoutRepository extends BaseRepository {
                     d.categoryDiscount = v;
                     all.step();
                 });
-        // 5th: the buyer (GET buyer/users/me: name, phone, address and the wallet balance), then the shipping
+        // 5th: the buyer (GET buyer/users/me: name, phone, address, wallet and points), then the shipping
         // explanation (which needs the shipping type)
         this.<AccountResponses.Me, UserDetail>call(userApi.me(), UserRepository::me, null, user -> {
             if (user != null) {
@@ -192,6 +192,7 @@ public class CheckoutRepository extends BaseRepository {
                 d.phoneNumber = nz(user.phoneNumber);
                 d.address = nz(user.address);
                 d.myWalletTotal = user.walletOrZero();
+                d.point = user.rewardPointsOrZero();
             }
             loadShipping(d, lat, lng, all);
         });
@@ -206,7 +207,7 @@ public class CheckoutRepository extends BaseRepository {
                     }
                     d.shippingFeeType = type;
                     final boolean needsCost = "perkm".equals(type.shippingFeeType);
-                    final Join inner = new Join(needsCost ? 3 : 2, () -> {
+                    final Join inner = new Join(needsCost ? 2 : 1, () -> {
                         d.complete = true;
                         all.step();
                     });
@@ -218,11 +219,6 @@ public class CheckoutRepository extends BaseRepository {
                         };
                         settings.getSettingValue("costPerKm", onCost);
                     }
-                    this.<CheckoutResponses.PointResponse, Long>call(api.getPoint("true"),
-                            b -> b.response == null ? 0L : b.response.point, 0L, v -> {
-                                d.point = v;
-                                inner.step();
-                            });
                     ResultCallback<Object> onMinimal = res -> {
                         if (res.isSuccess() && res.data != null) {
                             d.minimumPointRedeem = Json.asLong(res.data, 0);
