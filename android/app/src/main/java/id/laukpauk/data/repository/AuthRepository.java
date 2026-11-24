@@ -5,8 +5,11 @@ package id.laukpauk.data.repository;
 import java.util.Map;
 import id.laukpauk.data.Resource;
 import id.laukpauk.util.Json;
+import id.laukpauk.data.model.account.AccountResponses;
+import id.laukpauk.data.model.account.UserDetail;
 import id.laukpauk.data.model.auth.AuthResponses;
 import id.laukpauk.data.remote.AuthApi;
+import id.laukpauk.data.remote.UserApi;
 import okio.ByteString;
 
 /**
@@ -51,6 +54,7 @@ public class AuthRepository extends BaseRepository {
     }
 
     private final AuthApi api;
+    private final UserApi userApi;
     private final CartRepository cart;
     private final NotificationRepository notification;
     private final PushRepository push;
@@ -59,6 +63,7 @@ public class AuthRepository extends BaseRepository {
                           PushRepository push) {
         super(deps);
         this.api = api(AuthApi.class);
+        this.userApi = api(UserApi.class);
         this.cart = cart;
         this.notification = notification;
         this.push = push;
@@ -153,8 +158,10 @@ public class AuthRepository extends BaseRepository {
 
     /** The signed-in user's phone number (null when unknown). */
     public void getPhoneNumber(ResultCallback<String> callback) {
-        enqueue(api.getDetailUser(null),
-                body -> body == null || body.detailUser == null ? null : body.detailUser.phoneNumber, callback);
+        enqueue(userApi.me(), (AccountResponses.Me body) -> {
+            UserDetail user = UserRepository.me(body);
+            return user == null ? null : user.phoneNumber;
+        }, callback);
     }
 
     private void onSignedIn(String idUser) {

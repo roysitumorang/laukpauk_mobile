@@ -42,6 +42,21 @@ public final class Images {
     }
 
     /**
+     * A user photo ({@code photo} of {@code GET buyer/users/me}): a full URL is used as is ({@code http://} loaded
+     * over {@code https://}); a bare file name is a legacy photo in the user upload folder.
+     */
+    public static String user(@Nullable String photo) {
+        String p = photo == null ? "" : photo.trim();
+        if (p.regionMatches(true, 0, "http://", 0, 7)) {
+            return "https://" + p.substring(7);
+        }
+        if (p.regionMatches(true, 0, "https://", 0, 8)) {
+            return p;
+        }
+        return ServerPath.baseURL + "/" + ServerPath.uploadImageUser + "/" + p;
+    }
+
+    /**
      * A product photo: a full URL (as {@code GET buyer/products} sends it) is used as is, {@code http://} upgraded
      * to {@code https://} because the app allows no cleartext traffic; a bare file name is a legacy photo in the
      * compressed product folder.

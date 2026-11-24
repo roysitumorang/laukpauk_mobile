@@ -43,6 +43,4 @@ public interface AuthApi {
     @POST("Auth/lupaPassword")
     Call<AuthResponses.ForgotPassword> forgotPassword(@Body Map<String, Object> body);
 
-    @GET("User/getDetailUser")
-    Call<AuthResponses.DetailUserResponse> getDetailUser(@Query("getUserEntities") String getUserEntities);
 }

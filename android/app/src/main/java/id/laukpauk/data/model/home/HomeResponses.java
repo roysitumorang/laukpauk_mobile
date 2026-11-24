@@ -29,11 +29,6 @@ public final class HomeResponses {
         public int voucherCount;
     }
 
-    public static class WalletTotal {
-        @Json(name = "totalDompet")
-        public long walletTotal;
-    }
-
     public static class PointData {
         public long point;
     }

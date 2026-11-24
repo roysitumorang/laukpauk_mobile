@@ -3,7 +3,7 @@ package id.laukpauk.data.model.auth;
 import com.squareup.moshi.Json;
 
 
-/** Response wrappers of the /Auth (other than sign-in) and /User/getDetailUser endpoints used by the auth screens. */
+/** Response wrappers of the /Auth endpoints (other than sign-in) used by the auth screens. */
 public final class AuthResponses {
     private AuthResponses() {}
 
@@ -26,13 +26,4 @@ public final class AuthResponses {
         public ReturnData returnData;
     }
 
-    /** User/getDetailUser (the fields the auth screens need). */
-    public static class DetailUserResponse {
-        public DetailUser detailUser;
-    }
-
-    public static class DetailUser {
-        @Json(name = "nomorHP")
-        public String phoneNumber;
-    }
 }
