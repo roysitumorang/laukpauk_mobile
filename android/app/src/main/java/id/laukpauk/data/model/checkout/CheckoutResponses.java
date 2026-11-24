@@ -9,24 +9,9 @@ import java.util.List;
 public final class CheckoutResponses {
     private CheckoutResponses() {}
 
-    public static class TotalShippingFee {
-        @Json(name = "totalOngkir")
-        public long totalShippingFee;
-    }
-
     public static class CartQuantity {
         @Json(name = "jumlahKeranjang")
         public long cartCount;
-    }
-
-    /** GET Transaksi/getJenisOngkir: the fields are at the top level of the answer. */
-    public static class ShippingFeeType {
-        /** "perkm" when the address is outside the coverage area, otherwise the flat delivery cost applies. */
-        @Json(name = "jenisOngkir")
-        public String shippingFeeType;
-        /** Distance the courier travels, in km (only meaningful for "perkm"). */
-        @Json(name = "jarak")
-        public double distance;
     }
 
     public static class WalletConfig {

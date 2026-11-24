@@ -86,7 +86,7 @@ public final class AppContainer {
         this.addressRepository = new AddressRepository(repositoryDeps);
         this.authRepository = new AuthRepository(repositoryDeps, this.cartRepository, this.notificationRepository, this.pushRepository);
         this.settingRepository = new SettingRepository(repositoryDeps);
-        this.checkoutRepository = new CheckoutRepository(repositoryDeps, this.settingRepository);
+        this.checkoutRepository = new CheckoutRepository(repositoryDeps, this.settingRepository, this.addressRepository);
         this.homeRepository = new HomeRepository(repositoryDeps, this.deliveryRepository);
         this.packRepository = new PackRepository(repositoryDeps, this.deliveryRepository);
         this.paymentRepository = new PaymentRepository(repositoryDeps);

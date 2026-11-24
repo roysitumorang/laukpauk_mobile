@@ -19,7 +19,6 @@ import id.laukpauk.data.model.product.Product;
 import id.laukpauk.data.model.product.UnitSheetData;
 import id.laukpauk.data.remote.ProductApi;
 import id.laukpauk.util.Currency;
-import id.laukpauk.util.Json;
 
 /** Unit products: the list, detail, prices, "other products" and the data of the unit picker sheet. */
 public class ProductRepository extends BaseRepository {
@@ -122,13 +121,9 @@ public class ProductRepository extends BaseRepository {
                     data.inCoverageArea = r.isSuccess() && Boolean.TRUE.equals(r.data);
                     done.run();
                 });
-        settings.getSettingValue("costPerKm", r -> {
-            String value = r.isSuccess() ? SettingRepository.asString(r.data) : null;
-            if (value != null) {
-                int cost = Json.parseInt(value, Integer.MIN_VALUE);
-                if (cost != Integer.MIN_VALUE) {
-                    data.shippingFeePerKm = Currency.formatRupiah(cost, 0);
-                }
+        settings.getBuyerSetting(r -> {
+            if (r.isSuccess() && r.data != null) {
+                data.shippingFeePerKm = Currency.formatRupiah(r.data.deliveryCostPerKm, 0);
             }
             done.run();
         });
