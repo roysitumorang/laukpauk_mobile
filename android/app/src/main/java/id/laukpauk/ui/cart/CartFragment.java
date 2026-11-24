@@ -115,8 +115,12 @@ public class CartFragment extends Fragment {
             viewModel.load(); // the signed-in buyer's cart
             if (viewModel.checkoutAfterLogin) {
                 viewModel.checkoutAfterLogin = false;
-                // confirmed or skipped ("Lewati"): the next checkout step, the delivery address
-                openCheckout(nav);
+                if (phoneConfirmed()) {
+                    openCheckout(nav); // the next checkout step: the delivery address
+                } else {
+                    // "Lewati" on the confirmation screen: no checkout without a confirmed phone
+                    Messages.snack(this, getString(R.string.cart_confirm_phone_first));
+                }
             }
         });
 
@@ -209,9 +213,9 @@ public class CartFragment extends Fragment {
     }
 
     /**
-     * Checkout: a signed-out buyer logs in first (Login offers the phone confirmation when needed); a signed-in
-     * buyer whose phone is not confirmed is offered it first. The confirmation is optional: confirmed or skipped
-     * ("Lewati"), both come back here through LOGIN_RESULT and continue with the delivery address.
+     * Checkout: a signed-out buyer logs in first (Login opens the phone confirmation when needed); a signed-in buyer
+     * whose phone is not confirmed confirms it first. Both come back here through LOGIN_RESULT and continue with
+     * the delivery address.
      */
     private void onCheckout(NavController nav) {
         if (!CheckoutRepository.hasPositiveTotal(shownTotal)) {

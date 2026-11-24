@@ -32,6 +32,7 @@
     <string name="cart_save">Simpan Perubahan</string>
     <string name="cart_load_failed">Gagal memuat keranjang, tarik ke bawah untuk mencoba lagi.</string>
     <string name="cart_quantity_hint">Jumlah (%1$s). Isi 0 untuk menghapus item ini.</string>
+    <string name="cart_confirm_phone_first">Konfirmasi nomor HP mamak dulu untuk checkout.</string>
     <string name="cart_out_of_stock">Stok habis, hapus atau ganti item ini sebelum checkout</string>
     <string name="cart_edit_failed">Gagal mengubah keranjang ! %1$s</string>
     <string name="cart_gift_pcs">%1$s 1 pcs</string>

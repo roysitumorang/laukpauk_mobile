@@ -46,7 +46,7 @@ public class RegistrationOtpFragment extends Fragment {
         Images.asset(binding.logo, "laukpauk.png");
         viewModel.getBusy().observe(getViewLifecycleOwner(),
                 busy -> AuthFlow.setBusy(binding.confirmButton, binding.confirmSpinner, busy));
-        // "Lewati": optional, stay signed in without confirming now (checkout goes on); the next login asks again.
+        // "Lewati": stay signed in without confirming now; the next login asks again.
         binding.skipButton.setOnClickListener(v -> {
             AppContainer.from(requireContext()).session.skipRegistrationOtp();
             AuthFlow.finish(this);
