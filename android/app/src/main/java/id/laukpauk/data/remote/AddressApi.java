@@ -25,8 +25,7 @@ public interface AddressApi {
 
     /**
      * Creates an address. Body: {@code destination_longitude}, {@code destination_latitude},
-     * {@code street_address}, {@code street_address_note}, {@code label}, {@code recipient_name},
-     * {@code recipient_mobile_phone}, {@code main}. 422 when the point is out of the delivery area or already saved.
+     * {@code street_address}, {@code street_address_note}, {@code label}, {@code main}. 422 when the point is out of the delivery area or already saved.
      */
     @POST("buyer/delivery_addresses")
     Call<AddressResponses.Saved> create(@Body Map<String, Object> body);

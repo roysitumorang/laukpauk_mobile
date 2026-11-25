@@ -256,7 +256,6 @@ public class DeliveryFlowFragment extends Fragment {
             ItemAddressBinding row = ItemAddressBinding.inflate(inflater, b.addresses, false);
             row.label.setText(nz(a.label));
             row.main.setVisibility(a.main ? View.VISIBLE : View.GONE);
-            row.recipient.setText(getString(R.string.address_recipient, nz(a.recipientName), nz(a.recipientMobilePhone)));
             row.street.setText(nz(a.streetAddress));
             boolean hasNote = !nz(a.streetAddressNote).trim().isEmpty();
             row.note.setVisibility(hasNote ? View.VISIBLE : View.GONE);
@@ -283,22 +282,15 @@ public class DeliveryFlowFragment extends Fragment {
             BuyerAddress e = vm.editing;
             if (e != null) {
                 seed.label = e.label;
-                seed.recipientName = e.recipientName;
-                seed.recipientMobilePhone = e.recipientMobilePhone;
                 seed.streetAddressNote = e.streetAddressNote;
                 seed.main = e.main;
             } else {
-                Map<String, Object> user = AppContainer.from(requireContext()).session.getCurrentUser();
                 seed.label = getString(R.string.address_default_label);
-                seed.recipientName = user == null ? null : Json.strOrNull(user, "name");
-                seed.recipientMobilePhone = user == null ? null : Json.strOrNull(user, "mobile_phone");
                 seed.main = vm.addresses.isEmpty();
             }
             seed.streetAddress = vm.address;
         }
         b.label.setText(nz(seed.label));
-        b.recipientName.setText(nz(seed.recipientName));
-        b.recipientPhone.setText(nz(seed.recipientMobilePhone));
         b.street.setText(nz(seed.streetAddress));
         b.streetAddressNote.setText(nz(seed.streetAddressNote));
         b.main.setChecked(seed.main);
@@ -314,16 +306,12 @@ public class DeliveryFlowFragment extends Fragment {
                 .create();
         d.setOnShowListener(x -> d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             boolean ok = required(b.labelLayout, b.label.getText())
-                    & required(b.recipientNameLayout, b.recipientName.getText())
-                    & required(b.recipientPhoneLayout, b.recipientPhone.getText())
                     & required(b.streetLayout, b.street.getText());
             if (!ok) {
                 return;
             }
             BuyerAddress a = new BuyerAddress();
             a.label = text(b.label.getText());
-            a.recipientName = text(b.recipientName.getText());
-            a.recipientMobilePhone = text(b.recipientPhone.getText());
             a.streetAddress = text(b.street.getText());
             a.streetAddressNote = text(b.streetAddressNote.getText());
             a.main = b.main.isChecked();

@@ -21,14 +21,13 @@ public class AddressRepositoryTest {
                 + "\"total\":1},\"rows\":[{\"id\":\"a1\",\"record_status\":0,\"user_id\":\"u1\","
                 + "\"origin_longitude\":\"98.6\",\"origin_latitude\":\"3.5\",\"destination_longitude\":98.67,"
                 + "\"destination_latitude\":\"3.59\",\"distance_km\":4,\"street_address\":\"Jl. Merdeka 1\","
-                + "\"street_address_note\":\"Pagar hijau\",\"label\":\"Rumah\",\"recipient_name\":\"Budi\","
-                + "\"recipient_mobile_phone\":\"+6281234567890\",\"main\":true}]}}";
+                + "\"street_address_note\":\"Pagar hijau\",\"label\":\"Rumah\","
+                + "\"main\":true}]}}";
         AddressResponses.AddressList body = ApiClient.createMoshi()
                 .adapter(AddressResponses.AddressList.class).fromJson(json);
         BuyerAddress a = body.data.rows.get(0);
         assertEquals("Rumah", a.label);
         assertEquals("Jl. Merdeka 1", a.streetAddress);
-        assertEquals("+6281234567890", a.recipientMobilePhone);
         assertTrue(a.main);
         assertTrue(a.hasLocation());
         assertEquals("98.67", a.destinationLongitude);
@@ -45,8 +44,6 @@ public class AddressRepositoryTest {
         a.destinationLongitude = "98.67";
         a.streetAddress = "Jl. Merdeka 1 ";
         a.label = "Kantor";
-        a.recipientName = "Budi";
-        a.recipientMobilePhone = "0812 3456 7890";
         a.main = true;
         Map<String, Object> body = AddressRepository.body(a);
         assertEquals("3.59", body.get("destination_latitude"));
@@ -54,9 +51,7 @@ public class AddressRepositoryTest {
         assertEquals("Jl. Merdeka 1", body.get("street_address"));
         assertEquals("", body.get("street_address_note"));
         assertEquals("Kantor", body.get("label"));
-        assertEquals("Budi", body.get("recipient_name"));
-        assertEquals("0812 3456 7890", body.get("recipient_mobile_phone"));
         assertEquals(true, body.get("main"));
-        assertEquals(8, body.size());
+        assertEquals(6, body.size());
     }
 }

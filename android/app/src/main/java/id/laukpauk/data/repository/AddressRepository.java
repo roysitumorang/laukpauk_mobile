@@ -115,8 +115,6 @@ public class AddressRepository extends BaseRepository {
         body.put("street_address", nz(a.streetAddress).trim());
         body.put("street_address_note", nz(a.streetAddressNote).trim());
         body.put("label", nz(a.label).trim());
-        body.put("recipient_name", nz(a.recipientName).trim());
-        body.put("recipient_mobile_phone", nz(a.recipientMobilePhone).trim());
         body.put("main", a.main);
         return body;
     }
