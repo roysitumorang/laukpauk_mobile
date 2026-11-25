@@ -12,7 +12,7 @@ import java.util.List;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.checkout.Voucher;
+import id.laukpauk.data.model.voucher.Voucher;
 import id.laukpauk.databinding.SheetCheckoutVoucherBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;

@@ -40,16 +40,18 @@ public class HomeRepository extends BaseRepository {
     private final HomeApi api;
     private final ProductApi productApi;
     private final UserApi userApi;
+    private final VoucherRepository vouchers;
     private final DeliveryRepository delivery;
     /** productId -> lowest price (a NO_PRICE marker when the product has none). Cleared by pull-to-refresh. */
     private final Map<String, LowestPrice> priceCache = new HashMap<>();
     private static final LowestPrice NO_PRICE = new LowestPrice();
 
-    public HomeRepository(RepositoryDeps deps, DeliveryRepository delivery) {
+    public HomeRepository(RepositoryDeps deps, DeliveryRepository delivery, VoucherRepository vouchers) {
         super(deps);
         this.api = api(HomeApi.class);
         this.productApi = api(ProductApi.class);
         this.userApi = api(UserApi.class);
+        this.vouchers = vouchers;
         this.delivery = delivery;
     }
 
@@ -91,8 +93,11 @@ public class HomeRepository extends BaseRepository {
             points[0] = user == null ? 0L : user.rewardPointsOrZero();
             return wallet[0] = user == null ? 0L : user.walletOrZero();
         }, done);
-        enqueue(api.getVoucherCount(),
-                body -> (long) (voucher[0] = body == null ? 0 : body.voucherCount), done);
+        // voucher count: the vouchers usable for the cart grand total
+        vouchers.countForCart(r -> {
+            voucher[0] = r.isSuccess() && r.data != null ? r.data.intValue() : 0;
+            done.onResult(r);
+        });
         return live;
     }
 

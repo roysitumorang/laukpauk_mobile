@@ -13,7 +13,7 @@ import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
 import id.laukpauk.data.model.checkout.ShippingSchedule;
-import id.laukpauk.data.model.checkout.Voucher;
+import id.laukpauk.data.model.voucher.Voucher;
 import id.laukpauk.data.model.payment.CheckoutResponse;
 import id.laukpauk.data.model.payment.PaymentChannel;
 import id.laukpauk.data.repository.CheckoutRepository;

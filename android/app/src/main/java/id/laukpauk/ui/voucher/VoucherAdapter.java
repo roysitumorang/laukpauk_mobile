@@ -50,10 +50,10 @@ public class VoucherAdapter extends ListAdapter<Voucher, VoucherAdapter.Holder> 
             lp.topMargin = height / 2;
             notch.setLayoutParams(lp);
         }
-        Images.url(b.photo, Images.server(ServerPath.uploadImageVoucher, v.photo));
-        b.valid.setText(b.getRoot().getContext().getString(R.string.voucher_valid_until, v.validUntil));
+        Images.url(b.photo, Images.voucher(v.photo));
+        b.valid.setText(b.getRoot().getContext().getString(R.string.voucher_valid_until, v.validUntil()));
         b.minimum.setText(b.getRoot().getContext().getString(R.string.voucher_min_purchase_short,
-                Currency.formatRupiah(Voucher.toInt(v.minimumShopping), 0)));
+                Currency.formatRupiah(v.minimumShopping, 0)));
         b.photo.setOnClickListener(view -> onClick.onClick(v));
     }
 

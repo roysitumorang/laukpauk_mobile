@@ -8,7 +8,7 @@ import android.view.View;
 import androidx.core.content.ContextCompat;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.checkout.Voucher;
+import id.laukpauk.data.model.voucher.Voucher;
 import id.laukpauk.databinding.ViewCheckoutSummaryBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;

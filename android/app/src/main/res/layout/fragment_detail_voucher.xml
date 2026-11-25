@@ -155,24 +155,6 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/labelUsage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/voucher_label_usage"
-                android:textColor="@color/voucher_text"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/usage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:textColor="@color/voucher_text"
-                android:textSize="12sp" />
-
-            <TextView
                 android:id="@+id/labelValid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -214,18 +196,6 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
                                 android:textAllCaps="false" />
-
-                            <TextView
-                                android:id="@+id/exhausted"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="15dp"
-                                android:gravity="center"
-                                android:text="@string/voucher_exhausted"
-                                android:textColor="@color/text_danger"
-                                android:textSize="14sp"
-                                android:textStyle="italic"
-                                android:visibility="gone" />
                         </LinearLayout>
                     </LinearLayout>
 

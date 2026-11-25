@@ -5,7 +5,7 @@ import java.util.Map;
 import androidx.annotation.Nullable;
 
 
-import id.laukpauk.data.model.checkout.Voucher;
+import id.laukpauk.data.model.voucher.Voucher;
 
 /** The computed totals of the Checkout screen (legacy CheckoutGlobalState + dataRingkasanPembayaran). Immutable. */
 public final class CheckoutSummary {

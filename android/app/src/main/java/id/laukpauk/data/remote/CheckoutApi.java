@@ -22,13 +22,6 @@ public interface CheckoutApi {
     @GET("User/getDiskonKategori")
     Call<CheckoutResponses.CategoryDiscount> getCategoryDiscount(@Query("cartCode") String cartCode);
 
-    /**
-     * The buyer's active vouchers whose {@code minimum_purchase} is at most {@code purchase} (buyer JWT required);
-     * the vouchers are in {@code data}.
-     */
-    @GET("buyer/vouchers")
-    Call<CheckoutResponses.VoucherList> buyerVouchers(@Query("purchase") long purchase);
-
     @GET("Promo/cekKodePromo/{kode}")
     Call<CheckoutResponses.PromoCode> checkPromoCode(@Path("kode") String promoCode);
 }

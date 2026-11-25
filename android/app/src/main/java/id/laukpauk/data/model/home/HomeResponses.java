@@ -24,11 +24,6 @@ public final class HomeResponses {
         public List<ContentItem> contentItem;
     }
 
-    public static class VoucherCount {
-        @Json(name = "jumlahVoucher")
-        public int voucherCount;
-    }
-
     public static class LowestPriceResponse {
         /** false when the product has no price list. */
         public LowestPrice lowestPrice;
