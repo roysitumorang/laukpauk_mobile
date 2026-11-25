@@ -213,13 +213,14 @@ public class CheckoutViewModel extends ViewModel {
         recompute();
     }
 
+    /** The vouchers usable for the cart grand total (the shopping total). */
     public LiveData<Resource<List<Voucher>>> vouchers() {
         return checkout.getVouchers(init != null ? init.shoppingTotal : 0);
     }
 
     /** A voucher was picked in the sheet: remember it, unless its value exceeds the total to pay. */
     public void chooseVoucher(final Voucher voucher) {
-        checkout.selectVoucher(voucher.id, res -> {
+        checkout.selectVoucher(voucher, res -> {
             String status = res.data != null ? res.data : "kadaluarsa";
             CheckoutSummary s = summary.getValue();
             if (s == null || voucher.value <= s.overallTotal) {

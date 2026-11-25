@@ -28,7 +28,7 @@ import retrofit2.Call;
 
 /**
  * Checkout (legacy CheckoutModel, KodePromoModel, PointModel / ProfilSayaModel / SettingModel as the checkout
- * uses them, LocalStorage.isUserVerified / getStatusVoucher). The cart is read through the cart code and the
+ * uses them, LocalStorage.isUserVerified). The cart is read through the cart code and the
  * saved delivery coordinates; the cart itself is edited by CartRepository.
  */
 public class CheckoutRepository extends BaseRepository {
@@ -235,23 +235,23 @@ public class CheckoutRepository extends BaseRepository {
                 + " dengan tarif " + Currency.formatRupiah(costPerKm, 0) + " per km.";
     }
 
-    /** Active vouchers usable for this basket total (empty list when none or on failure). */
-    public LiveData<Resource<List<Voucher>>> getVouchers(long shoppingTotal) {
-        return load(api.getVoucher("id, nama, foto, minimumBelanja, nilai, jenis, kode, maximumUsage",
-                String.valueOf(shoppingTotal)),
-                body -> body == null || body.listVoucher == null ? new ArrayList<Voucher>() : body.listVoucher);
+    /**
+     * The buyer's vouchers usable for this cart grand total ({@code GET buyer/vouchers?purchase=...}): active, with
+     * {@code minimum_purchase} at most the total. Empty list when none (also on 404).
+     */
+    public LiveData<Resource<List<Voucher>>> getVouchers(long cartGrandTotal) {
+        return load(api.buyerVouchers(Math.max(0, cartGrandTotal)),
+                body -> body == null || body.data == null ? new ArrayList<Voucher>() : body.data);
     }
 
     /**
-     * Voucher chosen: fetches its status ("aktif", ... or "kadaluarsa" on failure), remembers it as the used
-     * voucher and reports the status (legacy getStatusVoucher + setUsedVoucher).
+     * Voucher chosen: remembers it as the used voucher and reports its status, "aktif" within its effective dates,
+     * otherwise "kadaluarsa".
      */
-    public void selectVoucher(final String idVoucher, final ResultCallback<String> callback) {
-        this.<CheckoutResponses.StatusVoucher, String>call(api.getStatusVoucher(idVoucher),
-                b -> b.statusVoucher, "kadaluarsa", status -> {
-                    session.setUsedVoucher(idVoucher);
-                    callback.onResult(Resource.success(status));
-                });
+    public void selectVoucher(final Voucher voucher, final ResultCallback<String> callback) {
+        session.setUsedVoucher(voucher.id);
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
+        callback.onResult(Resource.success(voucher.status(today)));
     }
 
     public void clearUsedVoucher() {

@@ -73,7 +73,7 @@ final class PaymentSummarySection {
         Voucher v = s.usedVoucher;
         String code = v != null && v.code != null ? v.code : "";
         String name = v != null && v.name != null ? v.name : "";
-        String type = v != null && v.type != null ? v.type : "";
+        String type = v != null ? v.type() : "";
         show(b.tvVoucherInfo, v != null);
         show(b.tvCancelVoucher, v != null);
         b.tvVoucherInfo.setText(code + "  " + name);
