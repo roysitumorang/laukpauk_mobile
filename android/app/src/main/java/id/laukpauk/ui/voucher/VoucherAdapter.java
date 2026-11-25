@@ -74,8 +74,8 @@ public class VoucherAdapter extends ListAdapter<Voucher, VoucherAdapter.Holder> 
 
         @Override
         public boolean areContentsTheSame(@NonNull Voucher a, @NonNull Voucher b) {
-            return Objects.equals(a.photo, b.photo) && Objects.equals(a.validUntil, b.validUntil)
-                    && Objects.equals(a.minimumShopping, b.minimumShopping);
+            return Objects.equals(a.photo, b.photo) && Objects.equals(a.effectiveEndDate, b.effectiveEndDate)
+                    && a.minimumShopping == b.minimumShopping;
         }
     };
 }
