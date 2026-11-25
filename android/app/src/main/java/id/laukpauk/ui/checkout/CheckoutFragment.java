@@ -118,7 +118,6 @@ public class CheckoutFragment extends Fragment {
         fillForm();
         watch(binding.etName, vm::setName);
         watch(binding.etPhone, vm::setPhone);
-        watch(binding.etAddress, vm::setAddress);
         watch(binding.etNote, vm::setNote);
         binding.refresh.setColorSchemeResources(R.color.green);
         binding.refresh.setOnRefreshListener(() -> {

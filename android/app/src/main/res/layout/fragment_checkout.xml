@@ -117,7 +117,11 @@
                                     android:id="@+id/etAddress"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:inputType="textPostalAddress|textMultiLine"
+                                    android:cursorVisible="false"
+                                    android:focusable="false"
+                                    android:focusableInTouchMode="false"
+                                    android:inputType="textMultiLine"
+                                    android:longClickable="false"
                                     android:textSize="13sp" />
                             </com.google.android.material.textfield.TextInputLayout>
 
