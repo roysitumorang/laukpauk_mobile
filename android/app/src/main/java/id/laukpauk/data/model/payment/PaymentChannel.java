@@ -7,6 +7,6 @@ public class PaymentChannel {
     @Nullable public String id;
     /** e.g. "BCA Virtual Account". */
     @Nullable public String name;
-    /** e.g. "BCA_VIRTUAL_ACCOUNT"; also picks the logo in assets/payment/. */
+    /** e.g. "BCA_VIRTUAL_ACCOUNT"; also picks the logo in assets/img/payment/. */
     @Nullable public String channel_code;
 }
