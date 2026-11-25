@@ -72,18 +72,15 @@ public final class Images {
     }
 
     /**
-     * A recipe photo: a full URL is used as is ({@code http://} upgraded to {@code https://}); a bare file name is a
-     * legacy picture in the recipe folder.
+     * A recipe photo: the full URL {@code buyer/recipes} sends, used as is ({@code http://} upgraded to
+     * {@code https://} because the app allows no cleartext traffic).
      */
     public static String recipe(@Nullable String photo) {
         String p = photo == null ? "" : photo.trim();
         if (p.regionMatches(true, 0, "http://", 0, 7)) {
             return "https://" + p.substring(7);
         }
-        if (p.regionMatches(true, 0, "https://", 0, 8)) {
-            return p;
-        }
-        return ServerPath.baseURL + "/" + ServerPath.uploadImageRecipe + "/" + p;
+        return p;
     }
 
     /**
