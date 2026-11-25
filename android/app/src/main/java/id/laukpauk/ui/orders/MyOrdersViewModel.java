@@ -20,13 +20,20 @@ import id.laukpauk.data.repository.SettingRepository;
 import id.laukpauk.data.repository.TransactionRepository;
 
 /**
- * State of Pesanan Saya ({@code GET buyer/transactions}): the status tab ({@code status}), the date range
+ * State of Pesanan Saya ({@code GET buyer/transactions}): the tab ("Hari Ini" with its status dropdown, or a
+ * status tab: {@code status}), the date range
  * ({@code created_at_start} / {@code created_at_end}) and the list, which grows page by page ({@code data.links.next}).
  */
 public class MyOrdersViewModel extends ViewModel {
 
-    /** The status of each tab: Semua, Belum Bayar, Dibayar, Diproses, Dikirim, Selesai, Dibatalkan. */
-    static final Integer[] TAB_STATUS = {null, BuyerTransaction.STATUS_PENDING, BuyerTransaction.STATUS_PAID,
+    /** Tab 0: the transactions created today, filtered by the status dropdown ({@link #setTodayStatus}). */
+    static final int TAB_TODAY = 0;
+
+    /**
+     * The status of each tab: Hari Ini (the dropdown's), Semua, Belum Bayar, Dibayar, Diproses, Dikirim, Selesai,
+     * Dibatalkan.
+     */
+    static final Integer[] TAB_STATUS = {null, null, BuyerTransaction.STATUS_PENDING, BuyerTransaction.STATUS_PAID,
             BuyerTransaction.STATUS_PROCESSED, BuyerTransaction.STATUS_SHIPPED, BuyerTransaction.STATUS_COMPLETED,
             BuyerTransaction.STATUS_CANCELLED};
 
@@ -41,6 +48,8 @@ public class MyOrdersViewModel extends ViewModel {
     private int generation;
 
     private int tab;
+    /** The status chosen in the "Hari Ini" dropdown; null = all. */
+    @Nullable private Integer todayStatus;
     private String startDate = "";
     private String endDate = "";
     private boolean started;
@@ -57,6 +66,19 @@ public class MyOrdersViewModel extends ViewModel {
 
     public int getTab() {
         return tab;
+    }
+
+    @Nullable
+    public Integer getTodayStatus() {
+        return todayStatus;
+    }
+
+    /** The "Hari Ini" dropdown: a status 0..8, or null for all. */
+    public void setTodayStatus(@Nullable Integer value) {
+        if (value == null ? todayStatus != null : !value.equals(todayStatus)) {
+            todayStatus = value;
+            load();
+        }
     }
 
     public String getStartDate() {
@@ -110,8 +132,21 @@ public class MyOrdersViewModel extends ViewModel {
         next = null;
         loadingMore = false;
         list.setValue(Resource.loading());
-        Integer status = tab >= 0 && tab < TAB_STATUS.length ? TAB_STATUS[tab] : null;
-        repository.getBuyerTransactions(status, dayStart(startDate), dayEnd(endDate), r -> {
+        Integer status;
+        String start;
+        String end;
+        if (tab == TAB_TODAY) {
+            // created today, in the phone's time zone
+            String today = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new java.util.Date());
+            status = todayStatus;
+            start = dayStart(today);
+            end = dayEnd(today);
+        } else {
+            status = tab >= 0 && tab < TAB_STATUS.length ? TAB_STATUS[tab] : null;
+            start = dayStart(startDate);
+            end = dayEnd(endDate);
+        }
+        repository.getBuyerTransactions(status, start, end, r -> {
             if (gen != generation) {
                 return;
             }

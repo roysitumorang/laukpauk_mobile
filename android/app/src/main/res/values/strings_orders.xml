@@ -2,7 +2,9 @@
 <resources>
     <!-- Pesanan Saya -->
     <string name="orders_transaction_records">Riwayat Transaksi</string>
+    <string name="orders_tab_today">Hari Ini</string>
     <string name="orders_tab_all">Semua</string>
+    <string name="orders_status_all">Semua Status</string>
     <string name="orders_tab_unpaid">Belum Bayar</string>
     <string name="orders_tab_paid">Dibayar</string>
     <string name="orders_tab_in_process">Diproses</string>

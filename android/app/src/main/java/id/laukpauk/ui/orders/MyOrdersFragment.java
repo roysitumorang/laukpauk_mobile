@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,13 +35,16 @@ import id.laukpauk.ui.common.Messages;
 import id.laukpauk.util.Json;
 
 /**
- * PesananSaya.dart: the buyer's transactions ({@code GET buyer/transactions}), by status tab and creation dates.
- * Args: statusTransaksi (initial tab 0..6).
+ * PesananSaya.dart: the buyer's transactions ({@code GET buyer/transactions}): "Hari Ini" (created today, with a
+ * status dropdown) or a status tab with creation dates. Args: statusTransaksi (initial tab 0..7).
  */
 public class MyOrdersFragment extends Fragment {
 
+    /** Statuses 0..8 of {@code buyer/transactions}. */
+    private static final int STATUSES = 9;
+
     /** The tabs; their statuses are {@link MyOrdersViewModel#TAB_STATUS}. */
-    private static final int[] TAB_LABELS = {R.string.orders_tab_all, R.string.orders_tab_unpaid,
+    private static final int[] TAB_LABELS = {R.string.orders_tab_today, R.string.orders_tab_all, R.string.orders_tab_unpaid,
             R.string.orders_tab_paid, R.string.orders_tab_in_process, R.string.orders_tab_in_transit,
             R.string.orders_tab_completed, R.string.orders_tab_cancelled};
 
@@ -164,6 +169,28 @@ public class MyOrdersFragment extends Fragment {
     }
 
     private void setupFilter() {
+        // "Hari Ini": all statuses, or one of them
+        String[] labels = new String[STATUSES + 1];
+        labels[0] = getString(R.string.orders_status_all);
+        for (int i = 0; i < STATUSES; i++) {
+            labels[i + 1] = OrderUi.statusLabel(requireContext(), i);
+        }
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_orders_spinner,
+                labels);
+        spinnerAdapter.setDropDownViewResource(R.layout.item_orders_spinner_dropdown);
+        binding.statusSpinner.setAdapter(spinnerAdapter);
+        Integer chosen = viewModel.getTodayStatus();
+        binding.statusSpinner.setSelection(chosen == null ? 0 : chosen + 1, false);
+        binding.statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+                viewModel.setTodayStatus(position == 0 ? null : position - 1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         binding.startDate.setOnClickListener(v -> showDatePicker(true));
         binding.endDate.setOnClickListener(v -> showDatePicker(false));
         binding.clearDates.setOnClickListener(v -> {
@@ -174,7 +201,9 @@ public class MyOrdersFragment extends Fragment {
     }
 
     private void renderFilter() {
-        binding.dateBox.setVisibility(View.VISIBLE);
+        boolean today = viewModel.getTab() == MyOrdersViewModel.TAB_TODAY;
+        binding.statusBox.setVisibility(today ? View.VISIBLE : View.GONE);
+        binding.dateBox.setVisibility(today ? View.GONE : View.VISIBLE);
         binding.startDate.setText(viewModel.getStartDate());
         binding.endDate.setText(viewModel.getEndDate());
         binding.clearDates.setVisibility(viewModel.hasDateRange() ? View.VISIBLE : View.GONE);
