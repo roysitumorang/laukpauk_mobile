@@ -23,11 +23,9 @@ import java.util.List;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.cart.CartGift;
 import id.laukpauk.data.model.cart.BuyerCart;
 import id.laukpauk.data.model.cart.BuyerCartItem;
 import id.laukpauk.databinding.FragmentCartBinding;
-import id.laukpauk.databinding.ItemCartGiftBinding;
 import id.laukpauk.data.repository.CheckoutRepository;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
@@ -42,7 +40,7 @@ import id.laukpauk.util.Currency;
 
 /**
  * Keranjang: the buyer's cart from {@code GET buyer/cart} (lines, notes, subtotal), quantity and note changes, delete and
- * "Bersihkan Keranjang" through {@code POST buyer/cart}, checkout, and earned gifts.
+ * "Bersihkan Keranjang" through {@code POST buyer/cart} and checkout.
  */
 public class CartFragment extends Fragment {
 
@@ -159,24 +157,6 @@ public class CartFragment extends Fragment {
             binding.productsCard.setVisibility(any ? View.VISIBLE : View.GONE);
             binding.summaryGroup.setVisibility(any ? View.VISIBLE : View.GONE);
             binding.emptyGroup.setVisibility(any ? View.GONE : View.VISIBLE);
-        });
-        viewModel.getGifts().observe(getViewLifecycleOwner(), res -> {
-            if (res == null || !res.isSuccess()) {
-                return;
-            }
-            binding.giftList.removeAllViews();
-            List<CartGift> gifts = res.data;
-            boolean any = gifts != null && !gifts.isEmpty();
-            binding.giftCard.setVisibility(any ? View.VISIBLE : View.GONE);
-            if (any) {
-                LayoutInflater inflater = LayoutInflater.from(requireContext());
-                for (CartGift gift : gifts) {
-                    ItemCartGiftBinding gb = ItemCartGiftBinding.inflate(inflater, binding.giftList, false);
-                    gb.name.setText(getString(R.string.cart_gift_pcs, gift.name == null ? "" : gift.name));
-                    gb.description.setText(gift.description == null ? "" : gift.description);
-                    binding.giftList.addView(gb.getRoot());
-                }
-            }
         });
     }
 

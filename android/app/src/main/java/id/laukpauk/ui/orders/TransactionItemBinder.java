@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 
 import id.laukpauk.R;
 import id.laukpauk.data.model.orders.TransactionItem;
-import id.laukpauk.databinding.ItemOrdersGiftRowBinding;
 import id.laukpauk.databinding.ItemOrdersItemRowBinding;
 import id.laukpauk.databinding.ViewOrdersTransactionItemBinding;
 import id.laukpauk.util.Currency;
@@ -41,22 +40,6 @@ final class TransactionItemBinder {
                     bindRow(f, row, item);
                     b.itemsContainer.addView(row.getRoot());
                 }
-            }
-        });
-        vm.getCartCodeMissing().observe(f.getViewLifecycleOwner(), missing ->
-                b.giftMessage.setVisibility(Boolean.TRUE.equals(missing) ? View.VISIBLE : View.GONE));
-        vm.getGifts().observe(f.getViewLifecycleOwner(), rows -> {
-            b.giftContainer.removeAllViews();
-            LayoutInflater inflater = LayoutInflater.from(f.requireContext());
-            for (TransactionItemViewModel.GiftRow g : rows) {
-                ItemOrdersGiftRowBinding row = ItemOrdersGiftRowBinding.inflate(inflater, b.giftContainer, false);
-                if (g.info != null) {
-                    row.progress.setVisibility(View.GONE);
-                    row.content.setVisibility(View.VISIBLE);
-                    row.name.setText(f.getString(R.string.orders_gift_format, OrderUi.nz(g.info.name)));
-                    row.description.setText(OrderUi.nz(g.info.description));
-                }
-                b.giftContainer.addView(row.getRoot());
             }
         });
     }

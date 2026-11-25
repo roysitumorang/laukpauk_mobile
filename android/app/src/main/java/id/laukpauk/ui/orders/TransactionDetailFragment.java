@@ -110,7 +110,7 @@ public class TransactionDetailFragment extends Fragment {
         }
         renderStatus(current);
         renderBreakdown(current);
-        itemsViewModel.load(current.cartCode);
+        itemsViewModel.load();
         awaitingDelivery = current.statusLower().equals("rejected");
         binding.refundSlot.setVisibility(awaitingDelivery ? View.VISIBLE : View.GONE);
         binding.refundProgress.setVisibility(View.VISIBLE);

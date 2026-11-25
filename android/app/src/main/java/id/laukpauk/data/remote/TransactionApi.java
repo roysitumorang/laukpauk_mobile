@@ -37,10 +37,4 @@ public interface TransactionApi {
 
     @POST("Transaksi/belanjaUlang/{id}")
     Call<TransactionResponses.Reorder> reorder(@Path("id") String id, @Body Map<String, Object> body);
-
-    @GET("gift/gift-transaksi")
-    Call<TransactionResponses.GiftList> getTransactionGift(@Query("cartCode") String cartCode);
-
-    @GET("Gift/getGift/{idGift}")
-    Call<TransactionResponses.GiftDetail> getGift(@Path("idGift") String idGift);
 }

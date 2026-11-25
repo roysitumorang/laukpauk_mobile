@@ -30,10 +30,4 @@ public interface CartApi {
 
     @POST("Keranjang/saveCart")
     Call<AddToCartResult> saveCart(@Body Map<String, String> fields);
-
-    @GET("gift/gift-transaksi")
-    Call<CartResponses.TransactionGiftList> getTransactionGift(@Query("cartCode") String cartCode);
-
-    @GET("Gift/getGift/{idGift}")
-    Call<CartResponses.GiftDetail> getGift(@Path("idGift") String idGift);
 }

@@ -15,14 +15,13 @@ import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.cart.AddToCartResult;
 import id.laukpauk.data.model.cart.BuyerCart;
 import id.laukpauk.data.model.cart.BuyerCartItem;
-import id.laukpauk.data.model.cart.CartGift;
 import id.laukpauk.data.model.cart.CartResponses;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.remote.CartApi;
 
 /**
  * The shopping cart (legacy CheckoutModel cart parts, ProdukModel.addToCart, HeaderModel.getCartQuantity,
- * TransaksiModel.removeTransactionSession, AppState.jumlahCart, GiftModel / GiftTransaksiModel).
+ * TransaksiModel.removeTransactionSession, AppState.jumlahCart).
  *
  * The first block of public methods is a CONTRACT used by other slices (header badge, product buy sheet,
  * checkout, payment results); the rest serves the cart screens.
@@ -244,40 +243,5 @@ public class CartRepository extends BaseRepository {
                     cartCount.setValue(0);
                     callback.onResult(Resource.success(true));
                 });
-    }
-
-    // ---- cart screens --------------------------------------------------------------------------
-
-    /** Gifts earned by the current cart (gift-transaksi + the details of each existing gift). */
-    public LiveData<Resource<List<CartGift>>> gifts() {
-        MutableLiveData<Resource<List<CartGift>>> live = new MutableLiveData<>(Resource.loading());
-        enqueue(api.getTransactionGift(session.getCartCode()),
-                body -> body == null || body.transactionGift == null
-                        ? Collections.<CartResponses.TransactionGift>emptyList() : body.transactionGift,
-                r -> {
-                    if (!r.isSuccess() || r.data == null || r.data.isEmpty()) {
-                        live.setValue(Resource.success(new ArrayList<CartGift>()));
-                        return;
-                    }
-                    final int total = r.data.size();
-                    final CartGift[] found = new CartGift[total];
-                    final int[] pending = {total};
-                    for (int i = 0; i < total; i++) {
-                        final int index = i;
-                        enqueue(api.getGift(r.data.get(i).idGift), body -> body == null ? null : body.gift, g -> {
-                            found[index] = g.isSuccess() ? g.data : null;
-                            if (--pending[0] == 0) {
-                                List<CartGift> list = new ArrayList<>();
-                                for (CartGift gift : found) {
-                                    if (gift != null) {
-                                        list.add(gift);
-                                    }
-                                }
-                                live.setValue(Resource.success(list));
-                            }
-                        });
-                    }
-                });
-        return live;
     }
 }
