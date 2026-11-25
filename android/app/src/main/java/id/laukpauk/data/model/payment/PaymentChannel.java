@@ -1,11 +1,12 @@
 package id.laukpauk.data.model.payment;
 
-import com.squareup.moshi.Json;
+import androidx.annotation.Nullable;
 
-/** A payment method offered by GET Xendit/getPaymentChannels. */
+/** A payment channel of {@code GET buyer/payment_channels} ({@code data[]}). */
 public class PaymentChannel {
-    public String channel_code;
-    public String name;
-    @Json(name = "minimalPembayaran")
-    public long minimumPayment;
+    @Nullable public String id;
+    /** e.g. "BCA Virtual Account". */
+    @Nullable public String name;
+    /** e.g. "BCA_VIRTUAL_ACCOUNT"; also picks the logo in assets/payment/. */
+    @Nullable public String channel_code;
 }

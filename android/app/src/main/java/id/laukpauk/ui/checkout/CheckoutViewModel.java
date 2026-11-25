@@ -57,6 +57,7 @@ public class CheckoutViewModel extends ViewModel {
     private final MutableLiveData<Boolean> orderBusy = new MutableLiveData<>(false);
     private final MutableLiveData<Event<OrderOutcome>> orderResult = new MutableLiveData<>();
     private LiveData<Resource<List<PaymentChannel>>> channels;
+    private long channelsAmount;
 
     private boolean started;
     private CheckoutInit init;
@@ -350,10 +351,11 @@ public class CheckoutViewModel extends ViewModel {
         return s == null ? "" : s;
     }
 
-    /** The payment channels, loaded once. */
-    public LiveData<Resource<List<PaymentChannel>>> channels() {
-        if (channels == null) {
-            channels = payment.getPaymentChannels();
+    /** The payment channels for the amount to pay (loaded again when the amount changes). */
+    public LiveData<Resource<List<PaymentChannel>>> channels(long amount) {
+        if (channels == null || channelsAmount != amount) {
+            channels = payment.getPaymentChannels(amount);
+            channelsAmount = amount;
         }
         return channels;
     }

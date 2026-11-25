@@ -56,7 +56,7 @@ final class PaymentSheet {
         if (dialog.getWindow() != null) {
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
-        adapter = new ChannelAdapter(totalBill, this::onChannel);
+        adapter = new ChannelAdapter(this::onChannel);
         b.list.setAdapter(adapter);
         b.btnOrder.setOnClickListener(v -> {
             if (selected != null && moreData != null) {
@@ -67,7 +67,7 @@ final class PaymentSheet {
         setupEwallet();
         setupCard();
 
-        vm.channels().observe(fragment.getViewLifecycleOwner(), res -> {
+        vm.channels(totalBill).observe(fragment.getViewLifecycleOwner(), res -> {
             b.progress.setVisibility(res.isLoading() ? View.VISIBLE : View.GONE);
             if (!res.isLoading()) {
                 adapter.submitList(res.isSuccess() ? res.data : null);

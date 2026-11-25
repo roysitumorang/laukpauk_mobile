@@ -45,14 +45,5 @@
                 android:textColor="@color/checkout_text"
                 android:textSize="13sp" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/minimal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/text_danger"
-            android:textSize="14sp"
-            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>
