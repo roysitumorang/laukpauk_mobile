@@ -14,7 +14,7 @@
     <string name="voucher_label_valid">Masa Berlaku</string>
     <string name="voucher_label_description">Deskripsi Voucher</string>
     <string name="voucher_times_used">%1$s Kali Penggunaan</string>
-    <string name="voucher_valid_range">%1$s s/d %2$s</string>
+    <string name="voucher_valid_range_time">%1$s s/d %2$s, pukul %3$s - %4$s</string>
     <string name="voucher_use">Gunakan Voucher</string>
     <string name="voucher_cancel_use">Batal Gunakan Voucher</string>
     <string name="voucher_used_message">Voucher %1$s digunakan!</string>

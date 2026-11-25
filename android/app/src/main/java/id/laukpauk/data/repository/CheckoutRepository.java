@@ -246,14 +246,9 @@ public class CheckoutRepository extends BaseRepository {
         return load(vouchers.buyerVouchers(Math.max(0, cartGrandTotal)), VoucherRepository::rows);
     }
 
-    /**
-     * Voucher chosen: remembers it as the used voucher and reports its status, "aktif" within its effective dates,
-     * otherwise "kadaluarsa".
-     */
-    public void selectVoucher(final Voucher voucher, final ResultCallback<String> callback) {
+    /** Voucher chosen: remembers it as the used voucher. */
+    public void selectVoucher(Voucher voucher) {
         session.setUsedVoucher(voucher.id);
-        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
-        callback.onResult(Resource.success(voucher.status(today)));
     }
 
     public void clearUsedVoucher() {

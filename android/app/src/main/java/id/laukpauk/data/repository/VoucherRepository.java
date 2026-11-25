@@ -30,9 +30,9 @@ public class VoucherRepository extends BaseRepository {
         return load(api.buyerVouchers(null), VoucherRepository::rows);
     }
 
-    /** One voucher of the buyer's list; SUCCESS with null data when it is not there. */
+    /** One voucher ({@code GET buyer/vouchers/:id}); ERROR 404 when it is not there. */
     public LiveData<Resource<Voucher>> getVoucherDetail(String idVoucher) {
-        return load(api.buyerVouchers(null), body -> find(rows(body), idVoucher));
+        return load(api.buyerVoucher(idVoucher), (VoucherResponses.BuyerVoucher body) -> body == null ? null : body.data);
     }
 
     /**
@@ -61,16 +61,6 @@ public class VoucherRepository extends BaseRepository {
     /** {@code data} of {@code GET buyer/vouchers}, never null. */
     public static List<Voucher> rows(@Nullable VoucherResponses.BuyerVouchers body) {
         return body == null || body.data == null ? new ArrayList<Voucher>() : body.data;
-    }
-
-    @Nullable
-    static Voucher find(List<Voucher> vouchers, @Nullable String id) {
-        for (Voucher v : vouchers) {
-            if (v != null && v.id != null && v.id.equals(id)) {
-                return v;
-            }
-        }
-        return null;
     }
 
     /** Id of the voucher the buyer chose to use, or null. */

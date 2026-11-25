@@ -38,6 +38,11 @@ public class Voucher {
     @Nullable public String effectiveStartDate;
     @Json(name = "effective_end_date")
     @Nullable public String effectiveEndDate;
+    /** Time of day only, e.g. "0000-01-01T08:00:00Z" (the date part is meaningless). */
+    @Json(name = "effective_start_time")
+    @Nullable public String effectiveStartTime;
+    @Json(name = "effective_end_time")
+    @Nullable public String effectiveEndTime;
 
     /** What the voucher reduces, as the checkout shows it: "ongkir" or "belanja". */
     public String type() {
@@ -45,15 +50,50 @@ public class Voucher {
     }
 
     /**
-     * "aktif" when {@code today} (yyyy-MM-dd) is within the effective dates, otherwise "kadaluarsa"; a missing date
-     * does not limit.
+     * Whether the buyer can use it now: {@code shoppingCost} is at least {@code minimum_purchase}, {@code today}
+     * (yyyy-MM-dd) is within {@code effective_start_date}..{@code effective_end_date} and {@code timeOfDay}
+     * (HH:mm:ss) within {@code effective_start_time}..{@code effective_end_time}, all inclusive. A missing bound does
+     * not limit.
      */
-    public String status(String today) {
-        String start = day(effectiveStartDate);
-        String end = day(effectiveEndDate);
-        boolean started = start == null || start.compareTo(today) <= 0;
-        boolean notEnded = end == null || end.compareTo(today) >= 0;
-        return started && notEnded ? "aktif" : "kadaluarsa";
+    public boolean canUse(long shoppingCost, String today, String timeOfDay) {
+        return shoppingCost >= minimumShopping
+                && within(today, day(effectiveStartDate), day(effectiveEndDate))
+                && within(timeOfDay, time(effectiveStartTime), time(effectiveEndTime));
+    }
+
+    /**
+     * The deduction: {@code discount}, up to the delivery cost when {@code voucher_type} is 0, otherwise up to the
+     * shopping cost.
+     */
+    public long deduction(long shoppingCost, long deliveryCost) {
+        long cost = voucherType == TYPE_DELIVERY_COST ? deliveryCost : shoppingCost;
+        return Math.max(0, Math.min(value, cost));
+    }
+
+    /** "08:00" .. "17:00" of the effective times (empty when missing). */
+    public String timeFrom() {
+        String t = time(effectiveStartTime);
+        return t == null ? "" : t.substring(0, 5);
+    }
+
+    public String timeUntil() {
+        String t = time(effectiveEndTime);
+        return t == null ? "" : t.substring(0, 5);
+    }
+
+    private static boolean within(String value, @Nullable String from, @Nullable String until) {
+        return (from == null || from.compareTo(value) <= 0) && (until == null || until.compareTo(value) >= 0);
+    }
+
+    /** "HH:mm:ss" of a Go time ("0000-01-01T08:00:00Z"), or null. */
+    @Nullable
+    static String time(@Nullable String value) {
+        if (value == null) {
+            return null;
+        }
+        int t = value.indexOf('T');
+        String rest = t >= 0 ? value.substring(t + 1) : value;
+        return rest.length() >= 8 && rest.charAt(2) == ':' && rest.charAt(5) == ':' ? rest.substring(0, 8) : null;
     }
 
     /** {@code effective_start_date} as "1 November 2026" (empty when missing). */

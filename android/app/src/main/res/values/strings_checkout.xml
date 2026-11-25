@@ -42,7 +42,7 @@
     <string name="checkout_total_paid">Total Yang Harus Dibayar</string>
     <string name="checkout_minus">(%1$s)</string>
     <string name="checkout_voucher_not_title">Voucher Tidak Dapat Digunakan</string>
-    <string name="checkout_voucher_not">Voucher tidak dapat digunakan karena potongan voucher lebih besar dari total belanjaan anda!</string>
+    <string name="checkout_voucher_not">Voucher ini hanya bisa digunakan untuk belanja minimal %1$s, pada %2$s s/d %3$s, pukul %4$s - %5$s.</string>
     <string name="checkout_voucher_you">Voucher Kamu</string>
     <string name="checkout_voucher_active">Voucher aktif untuk minimal belanja %1$s : </string>
     <string name="checkout_voucher_empty">Tidak ada voucher yang bisa anda gunakan.</string>

@@ -1,29 +1,16 @@
 package id.laukpauk.data.repository;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.List;
 
 import id.laukpauk.data.model.voucher.Voucher;
 import id.laukpauk.data.model.voucher.VoucherResponses;
 
-/** The voucher screens read {@code GET buyer/vouchers}: the detail is found by id, the count is the length. */
+/** The voucher screens read {@code GET buyer/vouchers}: the count is the length of {@code data}. */
 public class VoucherRepositoryTest {
-
-    @Test
-    public void detailIsTheVoucherWithThatId() {
-        Voucher a = voucher("a");
-        Voucher b = voucher("b");
-        List<Voucher> all = Arrays.asList(a, b);
-        assertSame(b, VoucherRepository.find(all, "b"));
-        assertNull(VoucherRepository.find(all, "c"));
-        assertNull(VoucherRepository.find(all, null));
-    }
 
     @Test
     public void rowsAreNeverNull() {
