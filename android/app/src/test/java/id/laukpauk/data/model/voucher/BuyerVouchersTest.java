@@ -1,4 +1,4 @@
-package id.laukpauk.data.model.checkout;
+package id.laukpauk.data.model.voucher;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -22,8 +22,8 @@ public class BuyerVouchersTest {
 
     @Test
     public void readsTheVouchers() throws Exception {
-        CheckoutResponses.VoucherList body = ApiClient.createMoshi()
-                .adapter(CheckoutResponses.VoucherList.class).fromJson(JSON);
+        VoucherResponses.BuyerVouchers body = ApiClient.createMoshi()
+                .adapter(VoucherResponses.BuyerVouchers.class).fromJson(JSON);
         assertEquals(2, body.data.size());
         Voucher v = body.data.get(0);
         assertEquals("v1", v.id);
@@ -36,11 +36,15 @@ public class BuyerVouchersTest {
         Voucher shopping = body.data.get(1);
         assertEquals("belanja", shopping.type());
         assertNull(shopping.code);
+        assertEquals(1, v.quotaPerBuyer);
+        assertEquals("1 November 2026", v.validFrom());
+        assertEquals("30 November 2026", v.validUntil());
+        assertEquals("", shopping.validUntil());
     }
 
     @Test
     public void statusFollowsTheEffectiveDates() throws Exception {
-        Voucher v = ApiClient.createMoshi().adapter(CheckoutResponses.VoucherList.class).fromJson(JSON).data.get(0);
+        Voucher v = ApiClient.createMoshi().adapter(VoucherResponses.BuyerVouchers.class).fromJson(JSON).data.get(0);
         assertEquals("aktif", v.status("2026-11-01"));
         assertEquals("aktif", v.status("2026-11-30"));
         assertEquals("kadaluarsa", v.status("2026-10-31"));

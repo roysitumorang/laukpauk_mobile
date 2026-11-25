@@ -77,42 +77,30 @@ public class DetailVoucherFragment extends Fragment {
         binding.notFound.setVisibility(View.GONE);
         binding.content.setVisibility(View.VISIBLE);
 
-        int usageCount = Voucher.toInt(v.usageCount);
-        int maximumUsage = Voucher.toInt(v.maximumUsage);
-        String type = v.type == null ? "" : v.type;
+        String type = v.type();
         boolean used = viewModel.isThisVoucherUsed();
 
-        Images.url(binding.photo, Images.server(ServerPath.uploadImageVoucher, v.photo));
+        Images.url(binding.photo, Images.voucher(v.photo));
         binding.name.setText(v.name);
         binding.type.setText(type.toUpperCase(Locale.ROOT));
         binding.explanation.setText(type.toLowerCase(Locale.ROOT).equals("ongkir")
                 ? R.string.voucher_shipping_type : R.string.voucher_shopping_type);
-        binding.value.setText(Currency.formatRupiah(Voucher.toInt(v.value), 0));
+        binding.value.setText(Currency.formatRupiah(v.value, 0));
         binding.code.setText(v.code == null ? "" : v.code.toUpperCase(Locale.ROOT));
-        binding.minimum.setText(Currency.formatRupiah(Voucher.toInt(v.minimumShopping), 0));
-        binding.maxUsage.setText(getString(R.string.voucher_times_used, Currency.formatUnit(maximumUsage)));
-        binding.usage.setText(usageCount >= 1
-                ? getString(R.string.voucher_times_used, Currency.formatUnit(usageCount))
-                : getString(R.string.voucher_no_usage));
-        binding.valid.setText(getString(R.string.voucher_valid_range, v.validFrom, v.validUntil));
+        binding.minimum.setText(Currency.formatRupiah(v.minimumShopping, 0));
+        binding.maxUsage.setText(getString(R.string.voucher_times_used, Currency.formatUnit(v.quotaPerBuyer)));
+        binding.valid.setText(getString(R.string.voucher_valid_range, v.validFrom(), v.validUntil()));
         binding.description.setText(v.description);
 
-        if (maximumUsage - usageCount >= 1) {
-            binding.toggle.setVisibility(View.VISIBLE);
-            binding.exhausted.setVisibility(View.GONE);
-            binding.toggle.setText(used ? R.string.voucher_cancel_use : R.string.voucher_use);
-            binding.toggle.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),
-                    used ? R.color.text_danger : R.color.green)));
-            binding.toggle.setOnClickListener(x -> {
-                boolean nowUsed = viewModel.toggle();
-                String name = v.name == null ? "" : v.name;
-                Messages.snack(this, getString(nowUsed ? R.string.voucher_used_message
-                        : R.string.voucher_cancelled_message, name));
-            });
-        } else {
-            binding.toggle.setVisibility(View.GONE);
-            binding.exhausted.setVisibility(View.VISIBLE);
-        }
+        binding.toggle.setText(used ? R.string.voucher_cancel_use : R.string.voucher_use);
+        binding.toggle.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),
+                used ? R.color.text_danger : R.color.green)));
+        binding.toggle.setOnClickListener(x -> {
+            boolean nowUsed = viewModel.toggle();
+            String name = v.name == null ? "" : v.name;
+            Messages.snack(this, getString(nowUsed ? R.string.voucher_used_message
+                    : R.string.voucher_cancelled_message, name));
+        });
     }
 
     @Override

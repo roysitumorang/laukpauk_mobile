@@ -25,10 +25,6 @@ public final class CheckoutResponses {
         public boolean isDeliveryScheduleOpened;
     }
 
-    /** {@code GET buyer/vouchers}: the backend envelope; the vouchers are in {@code data}. */
-    public static class VoucherList {
-        public List<Voucher> data;
-    }
 
     public static class Promo {
         @Json(name = "diskon")

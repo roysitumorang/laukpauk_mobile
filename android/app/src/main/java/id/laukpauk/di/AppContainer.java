@@ -87,7 +87,8 @@ public final class AppContainer {
         this.authRepository = new AuthRepository(repositoryDeps, this.cartRepository, this.notificationRepository, this.pushRepository);
         this.settingRepository = new SettingRepository(repositoryDeps);
         this.checkoutRepository = new CheckoutRepository(repositoryDeps, this.settingRepository, this.addressRepository);
-        this.homeRepository = new HomeRepository(repositoryDeps, this.deliveryRepository);
+        this.voucherRepository = new VoucherRepository(repositoryDeps);
+        this.homeRepository = new HomeRepository(repositoryDeps, this.deliveryRepository, this.voucherRepository);
         this.packRepository = new PackRepository(repositoryDeps, this.deliveryRepository);
         this.paymentRepository = new PaymentRepository(repositoryDeps);
         this.productRepository = new ProductRepository(repositoryDeps, this.deliveryRepository, this.settingRepository);
@@ -97,8 +98,7 @@ public final class AppContainer {
         this.searchRepository = new SearchRepository(repositoryDeps);
         this.startupRepository = new StartupRepository(repositoryDeps);
         this.transactionRepository = new TransactionRepository(repositoryDeps, this.deliveryRepository);
-        this.userRepository = new UserRepository(repositoryDeps);
-        this.voucherRepository = new VoucherRepository(repositoryDeps);
+        this.userRepository = new UserRepository(repositoryDeps, this.voucherRepository);
     }
 
     /** The container of the running app, from any Context (Activity, Fragment's context, View, Application). */

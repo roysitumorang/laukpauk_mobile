@@ -17,10 +17,11 @@ import id.laukpauk.data.model.cart.CartResponses;
 import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
 import id.laukpauk.data.model.checkout.ShippingSchedule;
-import id.laukpauk.data.model.checkout.Voucher;
+import id.laukpauk.data.model.voucher.Voucher;
 import id.laukpauk.data.model.setting.BuyerSetting;
 import id.laukpauk.data.remote.CartApi;
 import id.laukpauk.data.remote.CheckoutApi;
+import id.laukpauk.data.remote.VoucherApi;
 import id.laukpauk.data.remote.UserApi;
 import id.laukpauk.util.Currency;
 import id.laukpauk.util.Json;
@@ -47,6 +48,7 @@ public class CheckoutRepository extends BaseRepository {
     private final UserApi userApi;
     private final SettingRepository settings;
     private final AddressRepository addresses;
+    private final VoucherApi vouchers;
 
     public CheckoutRepository(RepositoryDeps deps, SettingRepository settings, AddressRepository addresses) {
         super(deps);
@@ -55,6 +57,7 @@ public class CheckoutRepository extends BaseRepository {
         this.userApi = api(UserApi.class);
         this.settings = settings;
         this.addresses = addresses;
+        this.vouchers = api(VoucherApi.class);
     }
 
     private interface Next<R> {
@@ -240,8 +243,7 @@ public class CheckoutRepository extends BaseRepository {
      * {@code minimum_purchase} at most the total. Empty list when none (also on 404).
      */
     public LiveData<Resource<List<Voucher>>> getVouchers(long cartGrandTotal) {
-        return load(api.buyerVouchers(Math.max(0, cartGrandTotal)),
-                body -> body == null || body.data == null ? new ArrayList<Voucher>() : body.data);
+        return load(vouchers.buyerVouchers(Math.max(0, cartGrandTotal)), VoucherRepository::rows);
     }
 
     /**

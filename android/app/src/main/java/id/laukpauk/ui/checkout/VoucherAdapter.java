@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.checkout.Voucher;
+import id.laukpauk.data.model.voucher.Voucher;
 import id.laukpauk.databinding.ItemCheckoutVoucherBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;

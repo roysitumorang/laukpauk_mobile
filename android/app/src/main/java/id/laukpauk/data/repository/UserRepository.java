@@ -2,6 +2,7 @@ package id.laukpauk.data.repository;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +22,12 @@ public class UserRepository extends BaseRepository {
     public static final String WALLET_TRANSACTION_DEDUCTION = "potongantransaksi";
 
     private final UserApi api;
+    private final VoucherRepository vouchers;
 
-    public UserRepository(RepositoryDeps deps) {
+    public UserRepository(RepositoryDeps deps, VoucherRepository vouchers) {
         super(deps);
         this.api = api(UserApi.class);
+        this.vouchers = vouchers;
     }
 
     /** The signed-in buyer ({@code GET buyer/users/me}); data is null on an empty answer. */
@@ -49,8 +52,13 @@ public class UserRepository extends BaseRepository {
         return body == null ? null : body.data;
     }
 
+    /** How many vouchers the buyer has for the cart grand total (see {@link VoucherRepository#countForCart}). */
     public LiveData<Resource<Integer>> getVoucherCount() {
-        return load(api.getVoucherCount(), body -> body == null ? 0 : body.voucherCount);
+        MutableLiveData<Resource<Integer>> live = new MutableLiveData<>(Resource.loading());
+        vouchers.countForCart(r -> live.setValue(r.isSuccess()
+                ? Resource.success(r.data == null ? 0 : r.data.intValue())
+                : Resource.<Integer>error(r.message, r.code)));
+        return live;
     }
 
     /** The buyer's points: {@code reward_points} of {@code GET buyer/users/me}. */

@@ -13,11 +13,6 @@ public final class AccountResponses {
         @androidx.annotation.Nullable public UserDetail data;
     }
 
-    public static class VoucherCount {
-        @Json(name = "jumlahVoucher")
-        public int voucherCount;
-    }
-
     public static class WalletRecordList {
         @Json(name = "riwayatDompet")
         public List<WalletRecords> walletRecords;

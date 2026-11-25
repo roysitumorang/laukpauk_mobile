@@ -16,9 +16,6 @@ public interface UserApi {
     @GET("buyer/users/me")
     Call<AccountResponses.Me> me();
 
-    @GET("User/getJumlahVoucher")
-    Call<AccountResponses.VoucherCount> getVoucherCount();
-
     /** {@code walletType}: "referral", "potongantransaksi" or null for all. */
     @GET("User/getRiwayatDompet")
     Call<AccountResponses.WalletRecordList> getWalletRecords(@Query("jenisDompet") String walletType);
