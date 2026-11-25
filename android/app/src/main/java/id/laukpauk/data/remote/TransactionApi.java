@@ -35,20 +35,9 @@ public interface TransactionApi {
     @GET("buyer/transactions/{id}")
     Call<BuyerTransactionResponses.One> buyerTransaction(@Path("id") String id);
 
-    @GET("User/getRiwayatTransaksi")
-    Call<TransactionResponses.RecordsList> getTransactionRecords(
-            @Query("statusTransaksi") String transactionStatus,
-            @Query("statusTransaksiHariIni") String todayTransactionStatus,
-            @Query("rentangAwal") String rangeStart,
-            @Query("rentangAkhir") String rangeEnd);
-
     @GET("Transaksi/getTransaksi/{id}")
     Call<TransactionResponses.Detail> getTransaction(@Path("id") String id,
                                                  @Query("entitasTransaksi") String transactionEntities);
-
-    @GET("Transaksi/getItemTransaksiFromTransaksi/{id}")
-    Call<TransactionResponses.Items> getTransactionItem(@Path("id") String id,
-                                                    @Query("entitasItemTransaksi") String transactionItemEntities);
 
     @GET("Transaksi/getJumlahItemDiantar/{id}")
     Call<TransactionResponses.Delivered> getDeliveredItemCount(@Path("id") String id);

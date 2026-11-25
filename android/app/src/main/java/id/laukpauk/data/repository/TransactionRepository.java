@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import id.laukpauk.data.Resource;
@@ -12,19 +11,15 @@ import id.laukpauk.data.model.orders.BuyerTransactionResponses;
 import id.laukpauk.data.model.orders.BuyerTransaction;
 import id.laukpauk.data.Paged;
 import id.laukpauk.data.model.delivery.DeliverySelection;
-import id.laukpauk.data.model.orders.TransactionItem;
 import id.laukpauk.data.model.orders.Transaction;
 import id.laukpauk.data.model.orders.TransactionResponses;
 import id.laukpauk.data.remote.TransactionApi;
 
-/** The buyer's transactions: history, detail, items, "pesanan diterima" and "belanja ulang". */
+/**
+ * The buyer's transactions: {@code GET buyer/transactions} (list, detail), and the legacy detail (belanja lagi),
+ * "pesanan diterima" and "belanja ulang".
+ */
 public class TransactionRepository extends BaseRepository {
-
-    /** Status filter of each tab of Pesanan Saya (tab 0 = today, no status). */
-    private static final String[] TAB_STATUS = {null, "pending", "processing", "otw", "received", "rejected"};
-
-    private static final String ITEM_ENTITIES =
-            "id,  namaProduk, namaSatuan, quantity, harga, diskon, catatan, jenisProduk, status, diskonPromo";
 
     private final TransactionApi api;
     private final DeliveryRepository delivery;
@@ -75,20 +70,6 @@ public class TransactionRepository extends BaseRepository {
                 (BuyerTransactionResponses.One body) -> body == null ? null : body.data);
     }
 
-    /**
-     * Legacy PesananSaya.getTransactionRecords. {@code tab} 0..5; {@code today} (tab 0 only) is the status
-     * dropdown value ("" = all); {@code awal}/{@code akhir} ("yyyy-MM-d", tabs 1..5 only) the date range.
-     */
-    public LiveData<Resource<List<Transaction>>> getRecords(int tab, String today, String start, String end) {
-        String status = (tab >= 0 && tab < TAB_STATUS.length) ? TAB_STATUS[tab] : null;
-        String todayQ = (status == null && today != null && !today.isEmpty()) ? today : null;
-        String startQ = (status != null && start != null && !start.isEmpty()) ? start : null;
-        String endQ = (status != null && end != null && !end.isEmpty()) ? end : null;
-        return load(api.getTransactionRecords(status, todayQ, startQ, endQ),
-                body -> body == null || body.transactionRecords == null
-                        ? Collections.<Transaction>emptyList() : body.transactionRecords);
-    }
-
     /** Transaction detail; SUCCESS with null data when it does not exist. */
     public LiveData<Resource<Transaction>> getDetail(String transactionId) {
         return getDetail(transactionId, null);
@@ -98,13 +79,6 @@ public class TransactionRepository extends BaseRepository {
     public LiveData<Resource<Transaction>> getDetail(String transactionId, @Nullable String entities) {
         return load(api.getTransaction(transactionId, entities),
                 body -> body == null ? null : body.transaction);
-    }
-
-    /** The lines of a transaction. */
-    public LiveData<Resource<List<TransactionItem>>> getTransactionItem(String transactionId) {
-        return load(api.getTransactionItem(transactionId, ITEM_ENTITIES),
-                body -> body == null || body.transactionItem == null
-                        ? Collections.<TransactionItem>emptyList() : body.transactionItem);
     }
 
     /** Number of items already delivered (a rejected transaction can be refunded/re-ordered when 0). */
