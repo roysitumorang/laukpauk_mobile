@@ -10,6 +10,7 @@ import java.util.Map;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.payment.CheckoutResponse;
 import id.laukpauk.data.model.payment.PaymentChannel;
+import id.laukpauk.data.model.payment.PaymentChannelsResponse;
 import id.laukpauk.data.remote.PaymentApi;
 import id.laukpauk.util.Json;
 
@@ -23,11 +24,14 @@ public class PaymentRepository extends BaseRepository {
         this.api = api(PaymentApi.class);
     }
 
-    /** The payment channels (empty list on failure). */
-    public LiveData<Resource<List<PaymentChannel>>> getPaymentChannels() {
-        return load(api.getPaymentChannels(),
-                body -> body == null || body.paymentChannels == null ? new ArrayList<PaymentChannel>()
-                        : body.paymentChannels);
+    /** The payment channels for the amount to pay ({@code GET buyer/payment_channels?amount=...}). */
+    public LiveData<Resource<List<PaymentChannel>>> getPaymentChannels(long amount) {
+        return load(api.buyerPaymentChannels(Math.max(0, amount)), PaymentRepository::channels);
+    }
+
+    /** {@code data} of {@code GET buyer/payment_channels}, never null. */
+    static List<PaymentChannel> channels(PaymentChannelsResponse body) {
+        return body == null || body.data == null ? new ArrayList<PaymentChannel>() : body.data;
     }
 
     /**

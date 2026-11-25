@@ -22,11 +22,6 @@ public class BuyerAddress {
     @Nullable public String streetAddressNote;
     /** e.g. "Rumah", "Kantor". */
     @Nullable public String label;
-    @Json(name = "recipient_name")
-    @Nullable public String recipientName;
-    /** E.164, e.g. +6281234567890. */
-    @Json(name = "recipient_mobile_phone")
-    @Nullable public String recipientMobilePhone;
     /** The buyer's main address (listed first). */
     public boolean main;
 

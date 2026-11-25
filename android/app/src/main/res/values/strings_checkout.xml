@@ -51,7 +51,6 @@
     <string name="checkout_payment_method">Metode Pembayaran</string>
     <string name="checkout_choose_method">Silahkan pilih metode pembayaran yang anda inginkan : </string>
     <string name="checkout_create_order">Buat Orderan</string>
-    <string name="checkout_minimum_payment">Minimal pembayaran %1$s</string>
     <string name="checkout_pay_cash">Bayar Tunai</string>
     <string name="checkout_rp">Rp.</string>
     <string name="checkout_money_hint">Uang yang dipersiapkan untuk membayar</string>
