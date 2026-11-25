@@ -62,6 +62,7 @@ public class CheckoutViewModel extends ViewModel {
     private CheckoutInit init;
     private String name = "", phone = "", address = "", note = "";
     private Voucher usedVoucher;
+    private final MutableLiveData<Event<Voucher>> voucherRejected = new MutableLiveData<>();
     private String statusVoucher;
     private boolean pointUsed;
     private String promoCode = "";
@@ -207,6 +208,11 @@ public class CheckoutViewModel extends ViewModel {
         recompute();
     }
 
+    /** A voucher whose minimum_purchase the shopping cost does not reach (shown as a dialog). */
+    public LiveData<Event<Voucher>> voucherRejected() {
+        return voucherRejected;
+    }
+
     public void removeVoucher() {
         checkout.clearUsedVoucher();
         usedVoucher = null;
@@ -219,8 +225,12 @@ public class CheckoutViewModel extends ViewModel {
         return checkout.getVouchers(init != null ? init.shoppingTotal : 0);
     }
 
-    /** A voucher was picked in the sheet (the backend lists only vouchers the buyer can use). */
+    /** A voucher was picked in the sheet: used when the shopping cost reaches its minimum_purchase. */
     public void chooseVoucher(final Voucher voucher) {
+        if (!voucher.canUse(init != null ? init.shoppingTotal : 0)) {
+            voucherRejected.setValue(new Event<>(voucher));
+            return;
+        }
         checkout.selectVoucher(voucher);
         usedVoucher = voucher;
         pointUsed = false; // the backend applies either the points or a voucher
@@ -275,8 +285,9 @@ public class CheckoutViewModel extends ViewModel {
             usedVoucher = null;
         }
         if (usedVoucher != null) {
-            statusVoucher = "aktif";
-            voucherValue = usedVoucher.deduction(shoppingTotal, totalShippingFee);
+            boolean usable = usedVoucher.canUse(shoppingTotal);
+            statusVoucher = usable ? "aktif" : "tidak berlaku";
+            voucherValue = usable ? usedVoucher.deduction(shoppingTotal, totalShippingFee) : 0;
         }
         long shoppingVoucher = usedVoucher != null && usedVoucher.voucherType != Voucher.TYPE_DELIVERY_COST
                 ? voucherValue : 0;

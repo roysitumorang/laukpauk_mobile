@@ -90,6 +90,11 @@ public class Voucher {
         return ("-".equals(m.group(1)) ? -minutes : minutes) * 60000;
     }
 
+    /** The only check the app makes: the shopping cost is at least {@code minimum_purchase}. */
+    public boolean canUse(long shoppingCost) {
+        return shoppingCost >= minimumShopping;
+    }
+
     /**
      * The deduction: {@code discount}, up to the delivery cost when {@code voucher_type} is 0, otherwise up to the
      * shopping cost.

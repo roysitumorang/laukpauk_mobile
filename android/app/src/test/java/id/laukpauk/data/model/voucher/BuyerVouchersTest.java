@@ -1,7 +1,9 @@
 package id.laukpauk.data.model.voucher;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -40,6 +42,14 @@ public class BuyerVouchersTest {
         assertEquals("1 November 2026", v.validFrom());
         assertEquals("30 November 2026", v.validUntil());
         assertEquals("", shopping.validUntil());
+    }
+
+    @Test
+    public void canUseOnlyChecksTheMinimumPurchase() throws Exception {
+        Voucher v = first(); // minimum Rp50.000
+        assertTrue(v.canUse(50000));
+        assertTrue(v.canUse(80000));
+        assertFalse(v.canUse(49999));
     }
 
     @Test
