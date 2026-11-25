@@ -4,13 +4,18 @@ import id.laukpauk.util.Json;
 
 import java.util.Map;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import id.laukpauk.data.Resource;
+import id.laukpauk.data.model.recipe.BuyerRecipeResponses;
+import id.laukpauk.data.model.recipe.BuyerRecipe;
+import id.laukpauk.data.Paged;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.model.recipe.RecipeResponses;
 import id.laukpauk.data.model.recipe.Recipe;
@@ -51,9 +56,35 @@ public class RecipeRepository extends BaseRepository {
         this.delivery = delivery;
     }
 
-    public LiveData<Resource<List<Recipe>>> getRecipe() {
-        return load(api.getRecipe(),
-                body -> body == null || body.recipeData == null ? Collections.<Recipe>emptyList() : body.recipeData);
+    /** Recipes per page of {@code GET buyer/recipes}. */
+    public static final int PAGE_LIMIT = 25;
+
+    /** {@code GET buyer/recipes}: the first page; {@code q} (the name searched) or null. */
+    public void getBuyerRecipes(@Nullable String q, ResultCallback<Paged<BuyerRecipe>> callback) {
+        String query = q == null || q.trim().isEmpty() ? null : q.trim();
+        enqueue(api.buyerRecipes(PAGE_LIMIT, query), RecipeRepository::page, callback);
+    }
+
+    /** The page at {@code next} ({@code data.links.next} of the previous page). */
+    public void getBuyerRecipesPage(String next, ResultCallback<Paged<BuyerRecipe>> callback) {
+        enqueue(api.buyerRecipesPage(next), RecipeRepository::page, callback);
+    }
+
+    /** Rows and next-page URL of a {@code GET buyer/recipes} page. */
+    public static Paged<BuyerRecipe> page(@Nullable BuyerRecipeResponses.Page body) {
+        BuyerRecipeResponses.PageData data = body == null ? null : body.data;
+        if (data == null) {
+            return Paged.empty();
+        }
+        List<BuyerRecipe> rows = new ArrayList<>();
+        if (data.rows != null) {
+            for (BuyerRecipe r : data.rows) {
+                if (r != null) {
+                    rows.add(r);
+                }
+            }
+        }
+        return new Paged<>(rows, data.links == null ? null : data.links.next);
     }
 
     /** SUCCESS with null data when the recipe doesn't exist. */

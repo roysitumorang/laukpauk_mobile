@@ -8,11 +8,6 @@ import java.util.List;
 public final class RecipeResponses {
     private RecipeResponses() {}
 
-    public static class RecipeList {
-        @Json(name = "dataResep")
-        public List<Recipe> recipeData;
-    }
-
     public static class RecipeDetail {
         /** null when the server answers false. */
         @Json(name = "dataResep")
