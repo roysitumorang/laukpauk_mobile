@@ -7,7 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-/** Delivery plan (schedule options), gifts, cart reset and the Google Maps web services (JSON; ApiClient adds the auth and version headers). */
+/** Delivery plan (schedule options), cart reset and the Google Maps web services (JSON; ApiClient adds the auth and version headers). */
 public interface DeliveryApi {
 
     /**
@@ -16,9 +16,6 @@ public interface DeliveryApi {
      */
     @GET("buyer/delivery_plans/now")
     Call<DeliveryResponses.PlanNow> deliveryPlanNow();
-
-    @GET("Gift/getGift")
-    Call<DeliveryResponses.Gifts> getGifts();
 
     /** Legacy CheckoutModel.clearCart (the response is ignored). */
     @GET("Keranjang/bersihkanKeranjang")

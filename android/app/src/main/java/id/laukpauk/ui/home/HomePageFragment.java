@@ -50,7 +50,6 @@ public class HomePageFragment extends Fragment {
                 .get("produk", ProductSectionViewModel.class);
 
         binding.header.bind(this);
-        DeliveryFlow.homeChecks(this);
 
         binding.refresh.setColorSchemeColors(requireContext().getColor(R.color.green));
         binding.refresh.setOnRefreshListener(() -> {

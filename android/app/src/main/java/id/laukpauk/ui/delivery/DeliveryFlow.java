@@ -1,7 +1,5 @@
 package id.laukpauk.ui.delivery;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 
 import androidx.annotation.Nullable;
@@ -21,7 +19,7 @@ import id.laukpauk.ui.common.Images;
 
 /**
  * The delivery address + schedule flows (legacy HeaderModel.adjd / showAlamatPengantaran / makeSureADJD /
- * giftChecking / alertADJDKadaluarsa, ProdukModel/PaketModel.adjdNotSetAlert, ADJDModel). Results are
+ * alertADJDKadaluarsa, ProdukModel/PaketModel.adjdNotSetAlert, ADJDModel). Results are
  * stored by DeliveryRepository, so callers usually just observe {@code deliveryRepository.selection()}.
  *
  * {@link #ask} runs in a headless {@link DeliveryFlowFragment} on the activity; the callbacks are only invoked
@@ -92,28 +90,6 @@ public final class DeliveryFlow {
                     c.deliveryRepository.clear();
                     ask(fragment, onDone);
                 }).show();
-    }
-
-    /** The home screen's start-up dialog: legacy giftChecking (shown once). */
-    public static void homeChecks(Fragment fragment) {
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(() -> {
-            if (!fragment.isAdded()) {
-                return;
-            }
-            DeliveryRepository repo = repo(fragment);
-            if (!repo.showAlertGift()) {
-                return;
-            }
-            repo.getGifts(r -> {
-                if (!fragment.isAdded()) {
-                    return;
-                }
-                if (r.isSuccess() && r.data != null && !r.data.isEmpty()) {
-                    GiftAlert.show(fragment, r.data, repo::setAlertGiftShown);
-                }
-            });
-        }, 3000);
     }
 
     /** Legacy alertADJDKadaluarsa: the saved schedule has expired; {@code onClosed} runs when dismissed. */
