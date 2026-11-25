@@ -31,10 +31,6 @@ public interface CartApi {
     @POST("Keranjang/saveCart")
     Call<AddToCartResult> saveCart(@Body Map<String, String> fields);
 
-    /** Duplicate of the checkout slice's wallet configuration call. */
-    @GET("Pengaturan/getWalletConfiguration")
-    Call<CartResponses.Wallet> getWalletConfiguration();
-
     @GET("gift/gift-transaksi")
     Call<CartResponses.TransactionGiftList> getTransactionGift(@Query("cartCode") String cartCode);
 

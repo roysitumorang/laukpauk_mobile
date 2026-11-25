@@ -26,7 +26,6 @@ import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.cart.CartGift;
 import id.laukpauk.data.model.cart.BuyerCart;
 import id.laukpauk.data.model.cart.BuyerCartItem;
-import id.laukpauk.data.model.cart.WalletConfiguration;
 import id.laukpauk.databinding.FragmentCartBinding;
 import id.laukpauk.databinding.ItemCartGiftBinding;
 import id.laukpauk.data.repository.CheckoutRepository;
@@ -43,7 +42,7 @@ import id.laukpauk.util.Currency;
 
 /**
  * Keranjang: the buyer's cart from {@code GET buyer/cart} (lines, notes, subtotal), quantity and note changes, delete and
- * "Bersihkan Keranjang" through {@code POST buyer/cart}, checkout, and the wallet note and earned gifts.
+ * "Bersihkan Keranjang" through {@code POST buyer/cart}, checkout, and earned gifts.
  */
 public class CartFragment extends Fragment {
 
@@ -161,7 +160,6 @@ public class CartFragment extends Fragment {
             binding.summaryGroup.setVisibility(any ? View.VISIBLE : View.GONE);
             binding.emptyGroup.setVisibility(any ? View.GONE : View.VISIBLE);
         });
-        viewModel.getWallet().observe(getViewLifecycleOwner(), this::renderWallet);
         viewModel.getGifts().observe(getViewLifecycleOwner(), res -> {
             if (res == null || !res.isSuccess()) {
                 return;
@@ -180,36 +178,6 @@ public class CartFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private void renderWallet(@Nullable Resource<WalletConfiguration> res) {
-        if (res == null) {
-            return;
-        }
-        if (res.isLoading()) {
-            binding.walletProgress.setVisibility(View.VISIBLE);
-            binding.walletText.setVisibility(View.GONE);
-            return;
-        }
-        binding.walletProgress.setVisibility(View.GONE);
-        WalletConfiguration w = res.data;
-        if (!res.isSuccess() || w == null) {
-            binding.walletText.setText(R.string.cart_wallet_failed);
-            binding.walletText.setTextSize(14f);
-            binding.walletText.setTypeface(null, android.graphics.Typeface.NORMAL);
-            binding.walletText.setGravity(android.view.Gravity.START);
-            binding.walletText.setVisibility(View.VISIBLE);
-        } else if (w.isWalletOn) {
-            binding.walletText.setText(getString(R.string.cart_wallet_discount,
-                    Currency.formatRupiah(amount(w.walletDiscount), 0),
-                    Currency.formatRupiah(amount(w.minGrandTotalTransactionForWallet), 0)));
-            binding.walletText.setTextSize(12f);
-            binding.walletText.setTypeface(null, android.graphics.Typeface.ITALIC);
-            binding.walletText.setGravity(android.view.Gravity.CENTER);
-            binding.walletText.setVisibility(View.VISIBLE);
-        } else {
-            binding.walletText.setVisibility(View.GONE);
-        }
     }
 
     /**
@@ -336,21 +304,6 @@ public class CartFragment extends Fragment {
         }
         String reason = result.message == null ? "" : result.message.trim();
         Messages.snack(this, getString(R.string.cart_edit_failed, reason));
-    }
-
-    /** A wallet amount sent as a number or a numeric string; 0 when missing or not a number. */
-    private static long amount(@Nullable Object value) {
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
-        }
-        if (value == null) {
-            return 0;
-        }
-        try {
-            return (long) Double.parseDouble(value.toString().trim());
-        } catch (NumberFormatException e) {
-            return 0;
-        }
     }
 
     @Override

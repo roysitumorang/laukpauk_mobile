@@ -20,11 +20,6 @@ public final class CartResponses {
         public boolean clearCartStatus;
     }
 
-    /** walletConfiguration is {@code false} on the server when unavailable (the lenient Moshi adapters map it to null). */
-    public static final class Wallet {
-        public WalletConfiguration walletConfiguration;
-    }
-
     public static final class TransactionGift {
         public String id;
         public String idGift;

@@ -37,7 +37,6 @@ public class CheckoutInit {
     public String cartCode = "";
     @Json(name = "penjelasanOngkir")
     public String shippingFeeExplanation = "";
-    @Nullable public WalletConfiguration walletConfiguration;
     /** Dynamic server object ({diskon, ...}) forwarded verbatim to the checkout request; null = no discount. */
     @Json(name = "diskonKategori")
     @Nullable public Map<String, Object> categoryDiscount;
