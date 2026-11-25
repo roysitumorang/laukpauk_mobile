@@ -155,8 +155,7 @@ public class CheckoutFragment extends Fragment {
             if (v != null) {
                 new MaterialAlertDialogBuilder(requireContext())
                         .setTitle(R.string.checkout_voucher_not_title)
-                        .setMessage(getString(R.string.checkout_voucher_not, Currency.formatRupiah(v.minimumShopping, 0),
-                                v.validFrom(), v.validUntil(), v.timeFrom(), v.timeUntil(), v.zone()))
+                        .setMessage(getString(R.string.checkout_voucher_not, Currency.formatRupiah(v.minimumShopping, 0)))
                         .setPositiveButton(R.string.checkout_ok, null)
                         .show();
             }

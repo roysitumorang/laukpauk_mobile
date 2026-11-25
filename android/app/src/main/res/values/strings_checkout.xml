@@ -35,14 +35,14 @@
     <string name="checkout_wallet_deduction">Potongan Dompet</string>
     <string name="checkout_points_discount">Potongan Poin</string>
     <string name="checkout_normal_shipping_fee">Ongkir Normal </string>
+    <string name="checkout_voucher_not_title">Voucher Tidak Dapat Digunakan</string>
+    <string name="checkout_voucher_not">Voucher ini hanya bisa digunakan untuk belanja minimal %1$s.</string>
     <string name="checkout_voucher_discount">Potongan Voucher</string>
     <string name="checkout_voucher_discount_remark">Potongan %1$s (Voucher %2$s)</string>
     <string name="checkout_discount">Discount</string>
     <string name="checkout_total_shipping_fee">Total Ongkos Kirim</string>
     <string name="checkout_total_paid">Total Yang Harus Dibayar</string>
     <string name="checkout_minus">(%1$s)</string>
-    <string name="checkout_voucher_not_title">Voucher Tidak Dapat Digunakan</string>
-    <string name="checkout_voucher_not">Voucher ini hanya bisa digunakan untuk belanja minimal %1$s, pada %2$s s/d %3$s, pukul %4$s - %5$s %6$s.</string>
     <string name="checkout_voucher_you">Voucher Kamu</string>
     <string name="checkout_voucher_active">Voucher aktif untuk minimal belanja %1$s : </string>
     <string name="checkout_voucher_empty">Tidak ada voucher yang bisa anda gunakan.</string>
