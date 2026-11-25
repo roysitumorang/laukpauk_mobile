@@ -60,9 +60,6 @@ public final class AppStartup {
         }
         started = true;
 
-        // main.dart: _sP.setBool('showAlertGift', true);
-        container.prefs.setBool("showAlertGift", true);
-
         initPush(app, container);
         app.registerActivityLifecycleCallbacks(new Watcher(app, container));
     }

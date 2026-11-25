@@ -17,7 +17,6 @@ import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliveryPlans;
 import id.laukpauk.data.model.delivery.DeliveryResponses;
 import id.laukpauk.data.model.delivery.DeliverySelection;
-import id.laukpauk.data.model.delivery.Gift;
 import id.laukpauk.data.model.delivery.DeliverySchedule;
 import id.laukpauk.data.model.delivery.PlaceSuggestion;
 import id.laukpauk.data.remote.DeliveryApi;
@@ -233,21 +232,6 @@ public class DeliveryRepository extends BaseRepository {
         } catch (RuntimeException e) {
             return true;
         }
-    }
-
-    // ------------------------------------------------------------------ gifts + one-time reminders
-
-    /** Legacy GiftModel.getGifts (empty list when the request fails). */
-    public void getGifts(ResultCallback<List<Gift>> callback) {
-        enqueue(api.getGifts(), body -> body != null && body.gift != null ? body.gift : new ArrayList<Gift>(), callback);
-    }
-
-    public boolean showAlertGift() {
-        return prefs.getBool("showAlertGift", true);
-    }
-
-    public void setAlertGiftShown() {
-        prefs.setBool("showAlertGift", false);
     }
 
     private void copy(String from, String to) {
