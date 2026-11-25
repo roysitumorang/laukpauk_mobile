@@ -1,10 +1,5 @@
 package id.laukpauk.ui.checkout;
 
-import java.util.Map;
-
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,14 +17,11 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.Arrays;
-import java.util.List;
 
 import id.laukpauk.R;
 import id.laukpauk.util.Currency;
 import id.laukpauk.data.model.voucher.Voucher;
-import id.laukpauk.data.model.payment.CheckoutResponse;
-import id.laukpauk.data.model.payment.ReturnedDataFromCheckout;
+import id.laukpauk.data.model.payment.BuyerTransaction;
 import id.laukpauk.data.repository.CheckoutRepository;
 import id.laukpauk.databinding.FragmentCheckoutBinding;
 import id.laukpauk.di.AppContainer;
@@ -37,7 +29,6 @@ import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.AppBars;
 import id.laukpauk.ui.common.AuthGate;
 import id.laukpauk.ui.delivery.DeliveryFlow;
-import id.laukpauk.util.Json;
 
 /**
  * Checkout.dart: recipient form, delivery schedule, payment summary and the "Bayar" bar. Needs a signed-in,
@@ -297,40 +288,25 @@ public class CheckoutFragment extends Fragment {
 
     // ------------------------------------------------------------------ after the order
 
-    private static final List<String> SHOW_PAYMENT_MESSAGE =
-            Arrays.asList("shopeepay", "dana", "linkaja", "credit_card");
-
+    /**
+     * {@code POST buyer/transactions} answered: on success the cart is gone and the order success screen shows the
+     * transaction; otherwise the backend's reason is shown.
+     */
     private void onOrderOutcome(CheckoutViewModel.OrderOutcome o) {
-        CheckoutResponse r = o.response;
-        String channel = o.channelCodeLC;
-        Object payment = r.paymentResponse;
-        if (!r.statusCheckout) {
-            checkoutFailed(channel, payment);
+        if (o.transaction == null) {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.checkout_failed_title)
+                    .setMessage(o.message == null || o.message.isEmpty() ? getString(R.string.checkout_failed) : o.message)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.checkout_try_again, null)
+                    .show();
             return;
         }
-        if (channel.equals("dana") || channel.equals("linkaja")) {
-            launchExternal(Json.strOrNull(Json.obj(payment), "checkout_url"));
-        } else if (channel.equals("shopeepay")) {
-            Map<String, Object> actions = Json.object(Json.obj(payment), "actions");
-            launchExternal(Json.strOrNull(actions, "mobile_deeplink_checkout_url"));
-        } else if (channel.equals("ovo")) {
-            closeSheet();
-            CheckoutNav.toResult(this, R.id.doPaymentFragment, null);
-        } else {
-            // cod, tf_bca and kartu_kredit
-            closeSheet();
-            ReturnedDataFromCheckout data = new ReturnedDataFromCheckout();
-            data.responseCheckout = r;
-            data.dataCheckout = o.dataCheckout;
-            Bundle args = new Bundle();
-            args.putString("returnedDataFromCheckout", c.apiClient.toJson(data, ReturnedDataFromCheckout.class));
-            if (channel.equals("tf_bca")) {
-                CheckoutNav.toResult(this, R.id.transferBankFragment, args);
-            } else {
-                args.putBoolean("removeTransactionSession", true);
-                CheckoutNav.toResult(this, R.id.orderSuccessFragment, args);
-            }
-        }
+        closeSheet();
+        Bundle args = new Bundle();
+        args.putString(OrderSuccessFragment.ARG_TRANSACTION, c.apiClient.toJson(o.transaction, BuyerTransaction.class));
+        args.putBoolean("removeTransactionSession", true);
+        CheckoutNav.toResult(this, R.id.orderSuccessFragment, args);
     }
 
     private void closeSheet() {
@@ -338,55 +314,5 @@ public class CheckoutFragment extends Fragment {
             paymentSheet.dismiss();
             paymentSheet = null;
         }
-    }
-
-    private void checkoutFailed(String channelLC, Object payment) {
-        String content = getString(R.string.checkout_failed);
-        if (SHOW_PAYMENT_MESSAGE.contains(channelLC)) {
-            content = Json.str(Json.obj(payment), "message");
-        }
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.checkout_failed_title)
-                .setMessage(content)
-                .setCancelable(false)
-                .setPositiveButton(R.string.checkout_try_again, null)
-                .show();
-    }
-
-    /** E-wallet / ShopeePay: leave the app flow for the payment app or page, and clear the cart session. */
-    private void launchExternal(@Nullable String url) {
-        Intent intent = null;
-        if (url != null) {
-            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            intent.addCategory(Intent.CATEGORY_BROWSABLE);
-        }
-        if (intent == null || !canLaunch(intent)) {
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.checkout_url_invalid_title)
-                    .setMessage(R.string.checkout_url_invalid)
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.checkout_try_again_exclaim, null)
-                    .show();
-            return;
-        }
-        closeSheet();
-        try {
-            startActivity(intent);
-        } catch (RuntimeException e) {
-            // nothing handles it (legacy ignored launch failures)
-        }
-        c.cartRepository.clearTransactionSession(res -> { });
-        CheckoutNav.goHome(this, true);
-    }
-
-    private boolean canLaunch(Intent intent) {
-        if (intent.resolveActivity(requireContext().getPackageManager()) != null) {
-            return true;
-        }
-        // Package visibility (API 30+) hides handlers not declared in <queries>: custom schemes cannot be
-        // probed, so let the launch itself decide.
-        String scheme = intent.getData() != null ? intent.getData().getScheme() : null;
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && scheme != null
-                && !scheme.equalsIgnoreCase("http") && !scheme.equalsIgnoreCase("https");
     }
 }

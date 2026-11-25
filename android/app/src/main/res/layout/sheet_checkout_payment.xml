@@ -72,17 +72,5 @@
                 android:layout_marginTop="10dp"
                 android:nestedScrollingEnabled="false" />
         </LinearLayout>
-
-        <include
-            android:id="@+id/stepCod"
-            layout="@layout/view_checkout_cod" />
-
-        <include
-            android:id="@+id/stepEwallet"
-            layout="@layout/view_checkout_ewallet" />
-
-        <include
-            android:id="@+id/stepCard"
-            layout="@layout/view_checkout_credit_card" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

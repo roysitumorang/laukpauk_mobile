@@ -2,8 +2,8 @@ package id.laukpauk.data.remote;
 
 import java.util.Map;
 
-import id.laukpauk.data.model.payment.CheckoutResponse;
 import id.laukpauk.data.model.payment.PaymentChannelsResponse;
+import id.laukpauk.data.model.payment.TransactionResponses;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -20,6 +20,10 @@ public interface PaymentApi {
     @GET("buyer/payment_channels")
     Call<PaymentChannelsResponse> buyerPaymentChannels(@Query("amount") long amount);
 
-    @POST("Transaksi/checkout")
-    Call<CheckoutResponse> checkout(@Body Map<String, String> body);
+    /**
+     * Places the order (buyer JWT required): 201 with the transaction in {@code data}; 422 with the reason in
+     * {@code message}. See {@link id.laukpauk.data.repository.PaymentRepository#transactionBody}.
+     */
+    @POST("buyer/transactions")
+    Call<TransactionResponses.Created> createTransaction(@Body Map<String, Object> body);
 }

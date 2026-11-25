@@ -27,6 +27,15 @@ public class CheckoutInit {
     /** {@code delivery_cost_per_km} of {@code GET buyer/setting}. */
     @Json(name = "delivery_cost_per_km")
     public long deliveryCostPerKm;
+    /** {@code id} of {@code GET buyer/cart}. */
+    @Json(name = "cart_id")
+    @Nullable public String cartId;
+    /** The cart lines of {@code GET buyer/cart} (their ids and notes go with the order). */
+    @Json(name = "cart_items")
+    @Nullable public java.util.List<id.laukpauk.data.model.cart.BuyerCartItem> cartItems;
+    /** {@code id} of the chosen delivery address. */
+    @Json(name = "delivery_address_id")
+    @Nullable public String deliveryAddressId;
     /** {@code voucher_enabled} of {@code GET buyer/setting}. */
     @Json(name = "voucher_enabled")
     public boolean voucherEnabled;
