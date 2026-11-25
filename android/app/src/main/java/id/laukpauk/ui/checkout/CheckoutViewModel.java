@@ -188,11 +188,6 @@ public class CheckoutViewModel extends ViewModel {
         recompute();
     }
 
-    public void setAddress(String v) {
-        address = v;
-        recompute();
-    }
-
     public void setNote(String v) {
         note = v;
         recompute();

@@ -180,12 +180,11 @@ public class CheckoutRepository extends BaseRepository {
                     d.categoryDiscount = v;
                     all.step();
                 });
-        // the buyer (GET buyer/users/me): name, phone, address, wallet and points
+        // the buyer (GET buyer/users/me): name, phone, wallet and points
         this.<AccountResponses.Me, UserDetail>call(userApi.me(), UserRepository::me, null, user -> {
             if (user != null) {
                 d.name = nz(user.name);
                 d.phoneNumber = nz(user.phoneNumber);
-                d.address = nz(user.address);
                 d.myWalletTotal = user.walletOrZero();
                 d.point = user.rewardPointsOrZero();
             }
@@ -203,6 +202,10 @@ public class CheckoutRepository extends BaseRepository {
         final BuyerAddress[] address = {null};
         final BuyerSetting[] setting = {null};
         final Join inner = new Join(3, () -> {
+            if (address[0] != null) {
+                // "Alamat Lengkap Penerima": street_address of the chosen delivery address
+                d.address = nz(address[0].streetAddress);
+            }
             if (address[0] != null && setting[0] != null) {
                 d.distanceKm = address[0].distanceKm;
                 d.deliveryCostPerKm = setting[0].deliveryCostPerKm;
