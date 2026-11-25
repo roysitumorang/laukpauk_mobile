@@ -206,6 +206,7 @@ public class CheckoutRepository extends BaseRepository {
             if (address[0] != null && setting[0] != null) {
                 d.distanceKm = address[0].distanceKm;
                 d.deliveryCostPerKm = setting[0].deliveryCostPerKm;
+                d.voucherEnabled = setting[0].voucherEnabled;
                 d.totalShippingFee = deliveryCost(d.distanceKm, d.deliveryCostPerKm);
                 d.shippingFeeExplanation = explanation(d.distanceKm, d.deliveryCostPerKm);
                 d.complete = true;

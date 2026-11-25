@@ -201,8 +201,13 @@ public class CheckoutViewModel extends ViewModel {
         recompute();
     }
 
+    /** Points and a voucher exclude each other (the backend applies the points first and then ignores the voucher). */
     public void setPointUsed(boolean used) {
         pointUsed = used;
+        if (used && usedVoucher != null) {
+            checkout.clearUsedVoucher();
+            usedVoucher = null;
+        }
         recompute();
     }
 
@@ -227,6 +232,7 @@ public class CheckoutViewModel extends ViewModel {
         if (usable(voucher, shopping, new java.util.Date())) {
             checkout.selectVoucher(voucher);
             usedVoucher = voucher;
+            pointUsed = false; // the backend applies either the points or a voucher
             recompute();
         } else {
             voucherRejected.setValue(new Event<>(voucher));
@@ -234,9 +240,7 @@ public class CheckoutViewModel extends ViewModel {
     }
 
     static boolean usable(Voucher voucher, long shoppingCost, java.util.Date now) {
-        java.util.Locale l = java.util.Locale.US;
-        return voucher.canUse(shoppingCost, new java.text.SimpleDateFormat("yyyy-MM-dd", l).format(now),
-                new java.text.SimpleDateFormat("HH:mm:ss", l).format(now));
+        return voucher.canUse(shoppingCost, now.getTime());
     }
 
     public Voucher usedVoucher() {
@@ -282,6 +286,10 @@ public class CheckoutViewModel extends ViewModel {
         // the voucher: discount on the delivery cost (voucher_type 0) or the shopping cost, while usable
         long voucherValue = 0;
         statusVoucher = null;
+        if (usedVoucher != null && !init.voucherEnabled) {
+            checkout.clearUsedVoucher();
+            usedVoucher = null;
+        }
         if (usedVoucher != null) {
             boolean usable = usable(usedVoucher, shoppingTotal, new java.util.Date());
             statusVoucher = usable ? "aktif" : "tidak berlaku";
@@ -301,6 +309,7 @@ public class CheckoutViewModel extends ViewModel {
                 - (voucherValue + pointOutValue + categoryDiscountValue + promoCodeDiscount));
 
         s.isPointUsed = pointUsed;
+        s.voucherEnabled = init.voucherEnabled;
         s.goodsCount = init.goodsCount;
         s.subTotal = shoppingTotal;
         s.totalShippingFee = totalShippingFee;

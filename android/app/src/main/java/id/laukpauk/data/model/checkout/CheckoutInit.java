@@ -27,6 +27,9 @@ public class CheckoutInit {
     /** {@code delivery_cost_per_km} of {@code GET buyer/setting}. */
     @Json(name = "delivery_cost_per_km")
     public long deliveryCostPerKm;
+    /** {@code voucher_enabled} of {@code GET buyer/setting}. */
+    @Json(name = "voucher_enabled")
+    public boolean voucherEnabled;
     @Json(name = "jumlahBarang")
     public long goodsCount;
     @Json(name = "totalDompetSaya")

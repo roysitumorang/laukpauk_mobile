@@ -11,6 +11,8 @@ import id.laukpauk.data.model.voucher.Voucher;
 public final class CheckoutSummary {
     public boolean isFormCompleted;
     public boolean isPointUsed;
+    /** {@code voucher_enabled} of {@code GET buyer/setting}: the voucher picker shows only then. */
+    public boolean voucherEnabled;
     public long goodsCount;
     /** Basket total before wallet / voucher / shipping. */
     public long subTotal;
