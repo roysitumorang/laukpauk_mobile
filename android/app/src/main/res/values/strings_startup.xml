@@ -4,6 +4,6 @@
     <string name="startup_intro_start">Belanja Sekarang</string>
     <string name="startup_update_title">Update Aplikasi Terbaru</string>
     <string name="startup_update_message">Update Yuk! Banyak fitur-fitur baru menanti kamu nih...</string>
-    <string name="startup_update_no">Tidak</string>
+    <string name="startup_update_later">Nanti</string>
     <string name="startup_update_update">Update</string>
 </resources>
