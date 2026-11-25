@@ -22,9 +22,6 @@ public interface CheckoutApi {
     @GET("User/getDiskonKategori")
     Call<CheckoutResponses.CategoryDiscount> getCategoryDiscount(@Query("cartCode") String cartCode);
 
-    @GET("Pengaturan/getWalletConfiguration")
-    Call<CheckoutResponses.WalletConfig> getWalletConfiguration();
-
     @GET("User/getVoucher")
     Call<CheckoutResponses.VoucherList> getVoucher(@Query("entitasVoucher") String voucherEntities,
                                                    @Query("forThisTotalBelanja") String shoppingTotal);

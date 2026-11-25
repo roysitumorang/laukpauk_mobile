@@ -8,8 +8,6 @@
     <string name="checkout_note">Catatan Tambahan</string>
     <string name="checkout_total">TOTAL</string>
     <string name="checkout_pay">Bayar</string>
-    <string name="checkout_wallet_info">Potongan langsung dari dompet sebesar %1$s untuk setiap transaksi minimal %2$s</string>
-    <string name="checkout_wallet_failed">Gagal mengambil data konfigurasi Dompet/Wallet</string>
     <string name="checkout_form_incomplete">Anda harus melengkapi terlebih dahulu data - data yang diperlukan</string>
     <string name="checkout_ok">OK</string>
     <string name="checkout_insufficient">Anda tidak dapat checkout karena total belanja anda Rp 0. Tambahkan produk ke keranjang dulu ya!</string>

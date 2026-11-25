@@ -17,7 +17,6 @@ import id.laukpauk.data.model.cart.BuyerCart;
 import id.laukpauk.data.model.cart.BuyerCartItem;
 import id.laukpauk.data.model.cart.CartGift;
 import id.laukpauk.data.model.cart.CartResponses;
-import id.laukpauk.data.model.cart.WalletConfiguration;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.remote.CartApi;
 
@@ -248,11 +247,6 @@ public class CartRepository extends BaseRepository {
     }
 
     // ---- cart screens --------------------------------------------------------------------------
-
-    /** Wallet discount configuration; SUCCESS with null data when the server has none. */
-    public LiveData<Resource<WalletConfiguration>> walletConfiguration() {
-        return load(api.getWalletConfiguration(), body -> body == null ? null : body.walletConfiguration);
-    }
 
     /** Gifts earned by the current cart (gift-transaksi + the details of each existing gift). */
     public LiveData<Resource<List<CartGift>>> gifts() {

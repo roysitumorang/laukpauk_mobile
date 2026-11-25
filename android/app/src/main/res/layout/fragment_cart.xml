@@ -107,28 +107,6 @@
                                         app:cornerRadius="50dp"
                                         app:strokeColor="@color/green" />
                                 </LinearLayout>
-
-                                <FrameLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-
-                                    <ProgressBar
-                                        android:id="@+id/walletProgress"
-                                        android:layout_width="15dp"
-                                        android:layout_height="15dp"
-                                        android:layout_gravity="center" />
-
-                                    <TextView
-                                        android:id="@+id/walletText"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:paddingTop="15dp"
-                                        android:textColor="@color/black"
-                                        android:textSize="12sp"
-                                        android:textStyle="italic"
-                                        android:visibility="gone" />
-                                </FrameLayout>
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
 

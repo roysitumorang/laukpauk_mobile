@@ -14,11 +14,6 @@ public final class CheckoutResponses {
         public long cartCount;
     }
 
-    public static class WalletConfig {
-        /** null when the server answers false. */
-        public WalletConfiguration walletConfiguration;
-    }
-
     public static class CategoryDiscount {
         /** Dynamic: an object, or false when there is no category discount. */
         @Json(name = "diskonKategori")

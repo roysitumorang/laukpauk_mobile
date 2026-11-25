@@ -278,30 +278,16 @@ public class CheckoutViewModel extends ViewModel {
         }
         long categoryDiscountValue = init.categoryDiscount != null ? Json.longVal(init.categoryDiscount, "diskon") : 0;
 
-        long walletDiscount = 0;
-        boolean isWalletOn = false;
-        boolean walletCancelled = false;
-        if (init.walletConfiguration != null) {
-            isWalletOn = init.walletConfiguration.isWalletOn;
-            if (isWalletOn && shoppingTotal >= init.walletConfiguration.minGrandTotalTransactionForWallet) {
-                long walletDeductionConfig = init.walletConfiguration.walletDiscount;
-                if (init.myWalletTotal >= walletDeductionConfig) {
-                    walletDiscount = walletDeductionConfig;
-                } else {
-                    walletCancelled = true;
-                }
-            }
-        }
-
-        long netSubTotal = shoppingTotal - walletDiscount - voucherValue - categoryDiscountValue;
+        long netSubTotal = shoppingTotal - voucherValue - categoryDiscountValue;
         long pointOutValue = pointUsed ? init.point : 0;
         if (pointOutValue >= netSubTotal) {
             pointOutValue = netSubTotal;
         }
+        // the wallet is always on: it pays what is left, up to the balance (no minimum total)
+        long walletDiscount = walletDeduction(init.myWalletTotal, (shoppingTotal + totalShippingFee)
+                - (voucherValue + pointOutValue + categoryDiscountValue + promoCodeDiscount));
 
         s.isPointUsed = pointUsed;
-        s.isWalletOn = isWalletOn;
-        s.walletCancelled = walletCancelled;
         s.goodsCount = init.goodsCount;
         s.subTotal = shoppingTotal;
         s.totalShippingFee = totalShippingFee;
@@ -316,7 +302,6 @@ public class CheckoutViewModel extends ViewModel {
         s.shippingFeeExplanation = init.shippingFeeExplanation;
         s.usedVoucher = usedVoucher;
         s.statusVoucher = statusVoucher;
-        s.walletConfiguration = init.walletConfiguration;
         s.categoryDiscount = init.categoryDiscount;
         s.promoCodeStatus = promoCodeStatus;
         s.promoCodeMessage = promoCodeMessage;
@@ -380,5 +365,10 @@ public class CheckoutViewModel extends ViewModel {
             orderResult.setValue(new Event<>(new OrderOutcome(nz(channel.channel_code).toLowerCase(),
                     res.data != null ? res.data : CheckoutResponse.failed(), dataCheckout)));
         });
+    }
+
+    /** The wallet deduction: what is left to pay, up to the wallet balance (never negative). */
+    static long walletDeduction(long walletBalance, long due) {
+        return Math.max(0, Math.min(walletBalance, due));
     }
 }

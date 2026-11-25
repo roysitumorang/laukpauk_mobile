@@ -18,7 +18,6 @@ import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
 import id.laukpauk.data.model.checkout.ShippingSchedule;
 import id.laukpauk.data.model.checkout.Voucher;
-import id.laukpauk.data.model.checkout.WalletConfiguration;
 import id.laukpauk.data.model.setting.BuyerSetting;
 import id.laukpauk.data.remote.CartApi;
 import id.laukpauk.data.remote.CheckoutApi;
@@ -166,13 +165,8 @@ public class CheckoutRepository extends BaseRepository {
     }
 
     private void loadRest(final CheckoutInit d, String lat, String lng, ResultCallback<CheckoutInit> callback) {
-        final Join all = new Join(5, () -> callback.onResult(Resource.success(d)));
+        final Join all = new Join(4, () -> callback.onResult(Resource.success(d)));
 
-        this.<CheckoutResponses.WalletConfig, WalletConfiguration>call(api.getWalletConfiguration(),
-                b -> b.walletConfiguration, null, w -> {
-                    d.walletConfiguration = w;
-                    all.step();
-                });
         this.<CheckoutResponses.CartQuantity, Long>call(api.getCartQuantity(d.cartCode),
                 b -> b.cartCount, 0L, v -> {
                     d.goodsCount = v;

@@ -107,7 +107,7 @@ final class PaymentSummarySection {
         }
 
         // rows
-        boolean walletRow = s.walletConfiguration != null && s.isWalletOn;
+        boolean walletRow = s.walletDiscount > 0;
         show(b.rowWallet, walletRow);
         b.tvPotWallet.setText(minus(s.walletDiscount));
         show(b.rowPoints, s.isPointUsed);

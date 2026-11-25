@@ -1,8 +1,5 @@
 package id.laukpauk.ui.checkout;
 
-import android.view.View;
-
-import id.laukpauk.R;
 import id.laukpauk.databinding.ViewCheckoutSubtotalBinding;
 import id.laukpauk.util.Currency;
 
@@ -19,17 +16,5 @@ final class SubTotalSection {
     void render(CheckoutSummary s) {
         b.tvTotal.setText(Currency.formatRupiah(s.overallTotal, 0));
         b.btnPay.setAlpha(s.isFormCompleted ? 1f : .35f);
-        if (!s.isWalletOn) {
-            b.tvWallet.setVisibility(View.GONE);
-            return;
-        }
-        b.tvWallet.setVisibility(View.VISIBLE);
-        if (s.walletConfiguration != null) {
-            b.tvWallet.setText(b.getRoot().getContext().getString(R.string.checkout_wallet_info,
-                    Currency.formatRupiah(s.walletConfiguration.walletDiscount, 0),
-                    Currency.formatRupiah(s.walletConfiguration.minGrandTotalTransactionForWallet, 0)));
-        } else {
-            b.tvWallet.setText(R.string.checkout_wallet_failed);
-        }
     }
 }

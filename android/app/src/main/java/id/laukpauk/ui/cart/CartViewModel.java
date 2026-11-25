@@ -9,11 +9,10 @@ import java.util.List;
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.cart.CartGift;
 import id.laukpauk.data.model.cart.BuyerCart;
-import id.laukpauk.data.model.cart.WalletConfiguration;
 import id.laukpauk.data.repository.BaseRepository;
 import id.laukpauk.data.repository.CartRepository;
 
-/** State of the Keranjang screen: the buyer's cart ({@code GET buyer/cart}), wallet announcement and gifts. */
+/** State of the Keranjang screen: the buyer's cart ({@code GET buyer/cart}) and gifts. */
 public class CartViewModel extends ViewModel {
 
     /** A LiveData that can be re-pointed at a freshly loaded source (refresh). */
@@ -40,7 +39,6 @@ public class CartViewModel extends ViewModel {
 
     private final CartRepository repository;
     private final Slot<BuyerCart> cart = new Slot<>();
-    private final Slot<WalletConfiguration> wallet = new Slot<>();
     private final Slot<List<CartGift>> gifts = new Slot<>();
 
     /** Set while the buyer went to Login from the Checkout button. */
@@ -54,10 +52,6 @@ public class CartViewModel extends ViewModel {
         return cart.live;
     }
 
-    public LiveData<Resource<WalletConfiguration>> getWallet() {
-        return wallet.live;
-    }
-
     public LiveData<Resource<List<CartGift>>> getGifts() {
         return gifts.live;
     }
@@ -65,7 +59,6 @@ public class CartViewModel extends ViewModel {
     /** Loads everything (first open, pull-to-refresh, back from Login). */
     public void load() {
         cart.set(repository.buyerCart());
-        wallet.set(repository.walletConfiguration());
         gifts.set(repository.gifts());
     }
 
