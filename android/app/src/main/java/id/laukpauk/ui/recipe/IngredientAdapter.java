@@ -82,8 +82,8 @@ class IngredientAdapter extends ListAdapter<IngredientRow, IngredientAdapter.Hol
                 PopupMenu menu = new PopupMenu(ctx, b.unit);
                 menu.getMenu().add(0, 0, 0, R.string.recipe_choose_unit);
                 for (int i = 0; i < row.variants.size(); i++) {
-                    BuyerProductVariant v = row.variants.get(i);
-                    menu.getMenu().add(0, i + 1, i + 1, unitOf(v) + " - " + Currency.formatRupiah(v.price(), 0));
+                    BuyerProductVariant variant = row.variants.get(i);
+                    menu.getMenu().add(0, i + 1, i + 1, unitOf(variant) + " - " + Currency.formatRupiah(variant.price(), 0));
                 }
                 menu.setOnMenuItemClickListener(m -> {
                     if (m.getItemId() > 0) {
