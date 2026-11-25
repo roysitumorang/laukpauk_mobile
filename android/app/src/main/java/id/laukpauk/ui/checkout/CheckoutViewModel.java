@@ -52,7 +52,6 @@ public class CheckoutViewModel extends ViewModel {
     private final MutableLiveData<Integer> phase = new MutableLiveData<>(PHASE_LOADING);
     private final MutableLiveData<Event<Integer>> redirect = new MutableLiveData<>();
     private final MutableLiveData<Event<Boolean>> formLoaded = new MutableLiveData<>();
-    private final MutableLiveData<Event<Voucher>> voucherRejected = new MutableLiveData<>();
     private final MutableLiveData<CheckoutSummary> summary = new MutableLiveData<>();
     private final MutableLiveData<ShippingSchedule> schedule = new MutableLiveData<>();
     private final MutableLiveData<Boolean> orderBusy = new MutableLiveData<>(false);
@@ -89,9 +88,6 @@ public class CheckoutViewModel extends ViewModel {
         return formLoaded;
     }
 
-    public LiveData<Event<Voucher>> voucherRejected() {
-        return voucherRejected;
-    }
 
     public LiveData<CheckoutSummary> summary() {
         return summary;
@@ -223,24 +219,12 @@ public class CheckoutViewModel extends ViewModel {
         return checkout.getVouchers(init != null ? init.shoppingTotal : 0);
     }
 
-    /**
-     * A voucher was picked in the sheet: used when the buyer can use it now (minimum purchase, effective dates and
-     * times), otherwise rejected.
-     */
+    /** A voucher was picked in the sheet (the backend lists only vouchers the buyer can use). */
     public void chooseVoucher(final Voucher voucher) {
-        long shopping = init != null ? init.shoppingTotal : 0;
-        if (usable(voucher, shopping, new java.util.Date())) {
-            checkout.selectVoucher(voucher);
-            usedVoucher = voucher;
-            pointUsed = false; // the backend applies either the points or a voucher
-            recompute();
-        } else {
-            voucherRejected.setValue(new Event<>(voucher));
-        }
-    }
-
-    static boolean usable(Voucher voucher, long shoppingCost, java.util.Date now) {
-        return voucher.canUse(shoppingCost, now.getTime());
+        checkout.selectVoucher(voucher);
+        usedVoucher = voucher;
+        pointUsed = false; // the backend applies either the points or a voucher
+        recompute();
     }
 
     public Voucher usedVoucher() {
@@ -283,7 +267,7 @@ public class CheckoutViewModel extends ViewModel {
         long shoppingTotal = init.shoppingTotal;
         long totalShippingFee = init.totalShippingFee;
 
-        // the voucher: discount on the delivery cost (voucher_type 0) or the shopping cost, while usable
+        // the voucher: discount on the delivery cost (voucher_type 0) or the shopping cost
         long voucherValue = 0;
         statusVoucher = null;
         if (usedVoucher != null && !init.voucherEnabled) {
@@ -291,9 +275,8 @@ public class CheckoutViewModel extends ViewModel {
             usedVoucher = null;
         }
         if (usedVoucher != null) {
-            boolean usable = usable(usedVoucher, shoppingTotal, new java.util.Date());
-            statusVoucher = usable ? "aktif" : "tidak berlaku";
-            voucherValue = usable ? usedVoucher.deduction(shoppingTotal, totalShippingFee) : 0;
+            statusVoucher = "aktif";
+            voucherValue = usedVoucher.deduction(shoppingTotal, totalShippingFee);
         }
         long shoppingVoucher = usedVoucher != null && usedVoucher.voucherType != Voucher.TYPE_DELIVERY_COST
                 ? voucherValue : 0;

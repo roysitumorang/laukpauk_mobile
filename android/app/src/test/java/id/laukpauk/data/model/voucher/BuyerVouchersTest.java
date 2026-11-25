@@ -1,8 +1,6 @@
 package id.laukpauk.data.model.voucher;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
@@ -45,24 +43,10 @@ public class BuyerVouchersTest {
     }
 
     @Test
-    public void canUseFollowsCreateTransaction() throws Exception {
+    public void timesAndZone() throws Exception {
         Voucher v = first();
-        v.effectiveStartDate = "2026-11-01T00:00:00+07:00";
-        v.effectiveEndDate = "2026-11-30T00:00:00+07:00";
         v.effectiveStartTime = "0001-01-01T08:00:00+07:00";
         v.effectiveEndTime = "0001-01-01T17:00:00+07:00";
-        // minimum purchase Rp50.000
-        assertTrue(v.canUse(50000, at("2026-11-15T12:00:00+07:00")));
-        assertFalse(v.canUse(49999, at("2026-11-15T12:00:00+07:00")));
-        // dates are instants: from 1 November 00:00 WIB up to 30 November 00:00 WIB
-        assertTrue(v.canUse(50000, at("2026-11-01T08:00:00+07:00")));
-        assertFalse(v.canUse(50000, at("2026-10-31T12:00:00+07:00")));
-        assertFalse(v.canUse(50000, at("2026-11-30T12:00:00+07:00")));
-        // time of day in WIB, also when now is written in UTC
-        assertFalse(v.canUse(50000, at("2026-11-15T07:59:59+07:00")));
-        assertTrue(v.canUse(50000, at("2026-11-15T08:00:00+07:00")));
-        assertTrue(v.canUse(50000, at("2026-11-15T10:00:00Z"))); // 17:00 WIB
-        assertFalse(v.canUse(50000, at("2026-11-15T10:00:01Z")));
         assertEquals("08:00", v.timeFrom());
         assertEquals("17:00", v.timeUntil());
         assertEquals("WIB", v.zone());
@@ -79,14 +63,8 @@ public class BuyerVouchersTest {
         assertEquals("UTC", v.zone());
         v.effectiveStartTime = "0001-01-01T08:00:00-05:30";
         assertEquals("UTC-05:30", v.zone());
-        // fractions of a second are ignored
-        assertEquals(at("2026-11-30T00:00:00+07:00"), (long) Voucher.instant("2026-11-30T00:00:00.123+07:00"));
-        assertNull(Voucher.instant("not a time"));
     }
 
-    private static long at(String rfc3339) {
-        return Voucher.instant(rfc3339);
-    }
 
     @Test
     public void deliveryVoucherReducesTheDeliveryCostOthersTheShoppingCost() throws Exception {

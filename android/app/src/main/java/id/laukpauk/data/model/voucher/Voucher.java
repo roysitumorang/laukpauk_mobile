@@ -49,27 +49,6 @@ public class Voucher {
         return voucherType == TYPE_DELIVERY_COST ? "ongkir" : "belanja";
     }
 
-    /**
-     * Whether the buyer can use it at {@code nowMillis}, as the backend's CreateTransaction checks it:
-     * {@code effective_start_date <= now <= effective_end_date} (instants), the time of day of now within
-     * {@code effective_start_time}..{@code effective_end_time} (each compared in its own UTC offset), and, as the
-     * voucher list filters it, {@code shoppingCost >= minimum_purchase}. A missing bound does not limit.
-     */
-    public boolean canUse(long shoppingCost, long nowMillis) {
-        if (shoppingCost < minimumShopping) {
-            return false;
-        }
-        Long start = instant(effectiveStartDate);
-        Long end = instant(effectiveEndDate);
-        if ((start != null && nowMillis < start) || (end != null && nowMillis > end)) {
-            return false;
-        }
-        Integer from = secondOfDay(effectiveStartTime);
-        Integer until = secondOfDay(effectiveEndTime);
-        return (from == null || secondOfDay(nowMillis, offsetMillis(effectiveStartTime)) >= from)
-                && (until == null || secondOfDay(nowMillis, offsetMillis(effectiveEndTime)) <= until);
-    }
-
     /** The zone of the effective times: "WIB" (+07:00), "WITA" (+08:00), "WIT" (+09:00), otherwise "UTC±hh:mm". */
     public String zone() {
         Integer offset = offsetMillis(effectiveStartTime);
@@ -93,22 +72,6 @@ public class Voucher {
         return String.format(Locale.US, "UTC%s%02d:%02d", minutes < 0 ? "-" : "+", abs / 60, abs % 60);
     }
 
-    /** Milliseconds since the epoch of an RFC 3339 time ("2026-11-30T00:00:00+07:00", fractions allowed), or null. */
-    @Nullable
-    static Long instant(@Nullable String value) {
-        if (value == null) {
-            return null;
-        }
-        String v = value.trim().replaceFirst("\\.\\d+", "");
-        try {
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US);
-            f.setLenient(false);
-            return f.parse(v).getTime();
-        } catch (ParseException | IllegalArgumentException e) {
-            return null;
-        }
-    }
-
     /** The UTC offset of an RFC 3339 time in milliseconds ("Z" is 0), or null. */
     @Nullable
     static Integer offsetMillis(@Nullable String value) {
@@ -125,22 +88,6 @@ public class Voucher {
         }
         int minutes = Integer.parseInt(m.group(2)) * 60 + Integer.parseInt(m.group(3));
         return ("-".equals(m.group(1)) ? -minutes : minutes) * 60000;
-    }
-
-    /** The time of day written in an RFC 3339 time, in seconds, or null. */
-    @Nullable
-    static Integer secondOfDay(@Nullable String value) {
-        String t = time(value);
-        if (t == null) {
-            return null;
-        }
-        return Integer.parseInt(t.substring(0, 2)) * 3600 + Integer.parseInt(t.substring(3, 5)) * 60
-                + Integer.parseInt(t.substring(6, 8));
-    }
-
-    static int secondOfDay(long millis, @Nullable Integer offsetMillis) {
-        long local = millis + (offsetMillis == null ? 0 : offsetMillis);
-        return (int) (Math.floorMod(local, 86_400_000L) / 1000);
     }
 
     /**
