@@ -196,7 +196,10 @@ public final class AppStartup {
             }
         }
 
-        /** Legacy askToUpdate: "Update Aplikasi Terbaru" with Tidak (exit) / Update (Play Store). */
+        /**
+         * Legacy askToUpdate: "Update Aplikasi Terbaru" with Nanti (closes the dialog; the buyer keeps using the app,
+         * and it is not asked again until the app is started again) / Update (Play Store).
+         */
         private void promptUpdate(final MainActivity activity) {
             if (updatePromptShowing || activity.isFinishing()) {
                 return;
@@ -208,10 +211,7 @@ public final class AppStartup {
             new MaterialAlertDialogBuilder(activity)
                     .setView(b.getRoot())
                     .setCancelable(false)
-                    .setNegativeButton(R.string.startup_update_no, (d, w) -> {
-                        updatePromptShowing = false;
-                        activity.finishAffinity(); // Dart: exit(0)
-                    })
+                    .setNegativeButton(R.string.startup_update_later, (d, w) -> updatePromptShowing = false)
                     .setPositiveButton(R.string.startup_update_update, (d, w) -> {
                         updatePromptShowing = false;
                         try {
