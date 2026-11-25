@@ -69,7 +69,8 @@ final class PaymentSummarySection {
         b.tvTotalPriceLabel.setText(ctx.getString(R.string.checkout_total_price, String.valueOf(s.goodsCount)));
         b.tvTotalPrice.setText(rp(s.subTotal));
 
-        // voucher
+        // voucher (only when vouchers are enabled)
+        show(b.voucherPicker, s.voucherEnabled);
         Voucher v = s.usedVoucher;
         String code = v != null && v.code != null ? v.code : "";
         String name = v != null && v.name != null ? v.name : "";

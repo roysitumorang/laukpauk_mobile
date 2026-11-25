@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import id.laukpauk.R;
+import id.laukpauk.util.Currency;
+import id.laukpauk.data.model.voucher.Voucher;
 import id.laukpauk.data.model.payment.CheckoutResponse;
 import id.laukpauk.data.model.payment.ReturnedDataFromCheckout;
 import id.laukpauk.data.repository.CheckoutRepository;
@@ -149,8 +151,14 @@ public class CheckoutFragment extends Fragment {
             }
         });
         vm.voucherRejected().observe(getViewLifecycleOwner(), e -> {
-            if (e != null && e.consume() != null) {
-                info(R.string.checkout_voucher_not_title, R.string.checkout_voucher_not, null);
+            Voucher v = e == null ? null : e.consume();
+            if (v != null) {
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.checkout_voucher_not_title)
+                        .setMessage(getString(R.string.checkout_voucher_not, Currency.formatRupiah(v.minimumShopping, 0),
+                                v.validFrom(), v.validUntil(), v.timeFrom(), v.timeUntil(), v.zone()))
+                        .setPositiveButton(R.string.checkout_ok, null)
+                        .show();
             }
         });
         vm.orderResult().observe(getViewLifecycleOwner(), e -> {

@@ -12,4 +12,9 @@ public final class VoucherResponses {
     public static final class BuyerVouchers {
         @Nullable public List<Voucher> data;
     }
+
+    /** {@code GET buyer/vouchers/:id}: the voucher is in {@code data}. */
+    public static final class BuyerVoucher {
+        @Nullable public Voucher data;
+    }
 }

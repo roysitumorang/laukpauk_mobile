@@ -206,6 +206,7 @@ public class CheckoutRepository extends BaseRepository {
             if (address[0] != null && setting[0] != null) {
                 d.distanceKm = address[0].distanceKm;
                 d.deliveryCostPerKm = setting[0].deliveryCostPerKm;
+                d.voucherEnabled = setting[0].voucherEnabled;
                 d.totalShippingFee = deliveryCost(d.distanceKm, d.deliveryCostPerKm);
                 d.shippingFeeExplanation = explanation(d.distanceKm, d.deliveryCostPerKm);
                 d.complete = true;
@@ -246,14 +247,9 @@ public class CheckoutRepository extends BaseRepository {
         return load(vouchers.buyerVouchers(Math.max(0, cartGrandTotal)), VoucherRepository::rows);
     }
 
-    /**
-     * Voucher chosen: remembers it as the used voucher and reports its status, "aktif" within its effective dates,
-     * otherwise "kadaluarsa".
-     */
-    public void selectVoucher(final Voucher voucher, final ResultCallback<String> callback) {
+    /** Voucher chosen: remembers it as the used voucher. */
+    public void selectVoucher(Voucher voucher) {
         session.setUsedVoucher(voucher.id);
-        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
-        callback.onResult(Resource.success(voucher.status(today)));
     }
 
     public void clearUsedVoucher() {

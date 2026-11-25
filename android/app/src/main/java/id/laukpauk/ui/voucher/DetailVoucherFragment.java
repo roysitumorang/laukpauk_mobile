@@ -89,7 +89,7 @@ public class DetailVoucherFragment extends Fragment {
         binding.code.setText(v.code == null ? "" : v.code.toUpperCase(Locale.ROOT));
         binding.minimum.setText(Currency.formatRupiah(v.minimumShopping, 0));
         binding.maxUsage.setText(getString(R.string.voucher_times_used, Currency.formatUnit(v.quotaPerBuyer)));
-        binding.valid.setText(getString(R.string.voucher_valid_range, v.validFrom(), v.validUntil()));
+        binding.valid.setText(getString(R.string.voucher_valid_range_time, v.validFrom(), v.validUntil(), v.timeFrom(), v.timeUntil(), v.zone()).trim());
         binding.description.setText(v.description);
 
         binding.toggle.setText(used ? R.string.voucher_cancel_use : R.string.voucher_use);
