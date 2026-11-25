@@ -15,6 +15,7 @@ import java.util.Map;
 
 import id.laukpauk.MainActivity;
 import id.laukpauk.R;
+import id.laukpauk.ui.checkout.OrderSuccessFragment;
 import id.laukpauk.util.Json;
 
 /**
@@ -143,9 +144,8 @@ public final class MainRouter {
                 break;
 
             case "/buatOrderBerhasil": {
-                Map<String, Object> responseCheckout = Json.of("idTransaksi", Json.str(a, "idTransaksi"));
-                Map<String, Object> dataFromCheckout = Json.of("responseCheckout", responseCheckout);
-                b.putString("returnedDataFromCheckout", Json.toJson(dataFromCheckout));
+                // only the transaction id is known here
+                b.putString(OrderSuccessFragment.ARG_TRANSACTION, Json.toJson(Json.of("id", Json.str(a, "idTransaksi"))));
                 b.putBoolean("removeTransactionSession", true);
                 nav.navigate(R.id.orderSuccessFragment, b);
                 break;

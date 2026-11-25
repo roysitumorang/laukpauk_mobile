@@ -13,6 +13,7 @@ import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.account.AccountResponses;
 import id.laukpauk.data.model.account.UserDetail;
 import id.laukpauk.data.model.address.BuyerAddress;
+import id.laukpauk.data.model.cart.BuyerCart;
 import id.laukpauk.data.model.cart.CartResponses;
 import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
@@ -155,9 +156,12 @@ public class CheckoutRepository extends BaseRepository {
         final String lat = savedLatitude();
         final String lng = savedLongitude();
         // the shopping total is the buyer's cart (GET buyer/cart): Σ unit price × quantity; checked in the app
-        this.<CartResponses.BuyerCartEnvelope, Long>call(cartApi.buyerCart(),
-                b -> b.data == null ? 0L : b.data.total(), 0L, total -> {
+        this.<CartResponses.BuyerCartEnvelope, BuyerCart>call(cartApi.buyerCart(),
+                b -> b.data, null, cart -> {
+                    long total = cart == null ? 0L : cart.total();
                     d.shoppingTotal = total;
+                    d.cartId = cart == null ? null : cart.id;
+                    d.cartItems = cart == null ? null : cart.items;
                     if (!hasPositiveTotal(total)) {
                         callback.onResult(Resource.success(d));
                         return;
@@ -205,6 +209,7 @@ public class CheckoutRepository extends BaseRepository {
             if (address[0] != null) {
                 // "Alamat Lengkap Penerima": street_address of the chosen delivery address
                 d.address = nz(address[0].streetAddress);
+                d.deliveryAddressId = address[0].id;
             }
             if (address[0] != null && setting[0] != null) {
                 d.distanceKm = address[0].distanceKm;

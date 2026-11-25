@@ -12,4 +12,7 @@ public class ShippingSchedule {
     @Json(name = "rentangWaktu")
     public String timeRange;
     public String setOn;
+    /** The plan's delivery time, exactly as {@code GET buyer/delivery_plans/now} sent it. */
+    @Json(name = "delivery_time")
+    public String deliveryTime;
 }

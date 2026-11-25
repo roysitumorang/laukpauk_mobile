@@ -1,5 +1,6 @@
 package id.laukpauk.ui.checkout;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -14,7 +15,7 @@ import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
 import id.laukpauk.data.model.checkout.ShippingSchedule;
 import id.laukpauk.data.model.voucher.Voucher;
-import id.laukpauk.data.model.payment.CheckoutResponse;
+import id.laukpauk.data.model.payment.BuyerTransaction;
 import id.laukpauk.data.model.payment.PaymentChannel;
 import id.laukpauk.data.repository.CheckoutRepository;
 import id.laukpauk.data.repository.PaymentRepository;
@@ -34,15 +35,14 @@ public class CheckoutViewModel extends ViewModel {
     public static final int REDIRECT_NOT_ENOUGH = 100;
 
     /** Result of placing an order. */
+    /** The answer of {@code POST buyer/transactions}: the new transaction, or the backend's reason. */
     public static final class OrderOutcome {
-        public final String channelCodeLC;
-        public final CheckoutResponse response;
-        public final Map<String, String> dataCheckout;
+        @Nullable public final BuyerTransaction transaction;
+        @Nullable public final String message;
 
-        OrderOutcome(String channelCodeLC, CheckoutResponse response, Map<String, String> dataCheckout) {
-            this.channelCodeLC = channelCodeLC;
-            this.response = response;
-            this.dataCheckout = dataCheckout;
+        OrderOutcome(@Nullable BuyerTransaction transaction, @Nullable String message) {
+            this.transaction = transaction;
+            this.message = message;
         }
     }
 
@@ -322,31 +322,6 @@ public class CheckoutViewModel extends ViewModel {
 
     // ------------------------------------------------------------------ order
 
-    /** The body of the checkout request (legacy SubTotal.onPay), or null when no schedule is saved. */
-    public Map<String, String> buildCheckoutData() {
-        ShippingSchedule j = schedule.getValue();
-        CheckoutSummary s = summary.getValue();
-        if (j == null || s == null || init == null) {
-            return null;
-        }
-        Map<String, String> m = new LinkedHashMap<>();
-        m.put("namaPenerima", name.trim());
-        m.put("nomorHPPenerima", phone.trim());
-        m.put("alamatDetailLengkap", address.trim());
-        m.put("catatanTambahan", note.trim());
-        m.put("jadwalPengiriman", nz(j.day) + " | " + nz(j.timeRange));
-        m.put("cartCode", init.cartCode);
-        m.put("voucher", usedVoucher == null ? "0" : nz(usedVoucher.id));
-        m.put("latDelivery", checkout.latDelivery());
-        m.put("longDelivery", checkout.longDelivery());
-        m.put("jadwalDeliveryCode", nz(j.code));
-        m.put("isPointUsed", pointUsed ? "true" : "false");
-        Map<String, Object> dk = init.categoryDiscount;
-        m.put("diskonKategori", dk != null ? Json.toJson(dk) : "");
-        m.put("kodePromo", promoCode);
-        return m;
-    }
-
     private static String nz(String s) {
         return s == null ? "" : s;
     }
@@ -360,23 +335,33 @@ public class CheckoutViewModel extends ViewModel {
         return channels;
     }
 
-    /** Places the order with the chosen channel; the answer arrives in {@link #orderResult()}. */
-    public void placeOrder(final PaymentChannel channel, final String moreData) {
-        final Map<String, String> data = buildCheckoutData();
-        if (data == null || Boolean.TRUE.equals(orderBusy.getValue())) {
+    /**
+     * Places the order ({@code POST buyer/transactions}) with the chosen channel's id as {@code payment_channel_id};
+     * the answer arrives in {@link #orderResult()}.
+     */
+    public void placeOrder(final PaymentChannel channel) {
+        ShippingSchedule j = schedule.getValue();
+        if (init == null || j == null || Boolean.TRUE.equals(orderBusy.getValue())) {
             return;
         }
+        PaymentRepository.Order o = new PaymentRepository.Order();
+        o.cartId = init.cartId;
+        o.cartItems = init.cartItems;
+        o.recipientName = name;
+        o.recipientMobilePhone = phone;
+        o.buyerNote = note;
+        o.deliveryAddressId = init.deliveryAddressId;
+        o.deliveryDatetime = j.deliveryTime;
+        o.rewardPointsDiscounted = pointUsed;
+        o.voucherId = usedVoucher != null && init.voucherEnabled ? usedVoucher.id : null;
+        o.walletAmount = init.myWalletTotal;
+        o.paymentChannelId = channel.id;
         orderBusy.setValue(true);
-        payment.placeOrder(channel, data, moreData, res -> {
+        payment.createTransaction(o, res -> {
             orderBusy.setValue(false);
-            Map<String, String> dataCheckout = new LinkedHashMap<>(data);
-            dataCheckout.put("metodePembayaran", nz(channel.channel_code));
-            dataCheckout.put("namaMetodePembayaran", nz(channel.name));
-            // never keep the card token (it holds the CVN) in the data handed to the next screen
-            dataCheckout.put("moreDataMetodePembayaran",
-                    "kartu_kredit".equalsIgnoreCase(channel.channel_code) ? "" : nz(moreData));
-            orderResult.setValue(new Event<>(new OrderOutcome(nz(channel.channel_code).toLowerCase(),
-                    res.data != null ? res.data : CheckoutResponse.failed(), dataCheckout)));
+            orderResult.setValue(new Event<>(res.isSuccess() && res.data != null
+                    ? new OrderOutcome(res.data, null)
+                    : new OrderOutcome(null, res.message)));
         });
     }
 

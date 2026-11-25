@@ -152,7 +152,7 @@
     <fragment
         android:id="@+id/orderSuccessFragment"
         android:name="id.laukpauk.ui.checkout.OrderSuccessFragment">
-        <argument android:name="returnedDataFromCheckout" app:argType="string" />
+        <argument android:name="transaction" app:argType="string" />
         <argument android:name="removeTransactionSession" app:argType="boolean" android:defaultValue="false" />
     </fragment>
 
