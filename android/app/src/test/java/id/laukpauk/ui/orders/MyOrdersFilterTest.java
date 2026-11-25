@@ -29,13 +29,15 @@ public class MyOrdersFilterTest {
 
     @Test
     public void tabsFilterByStatus() {
-        assertNull(MyOrdersViewModel.TAB_STATUS[0]);
-        assertEquals(Integer.valueOf(0), MyOrdersViewModel.TAB_STATUS[1]);
-        assertEquals(Integer.valueOf(2), MyOrdersViewModel.TAB_STATUS[2]);
-        assertEquals(Integer.valueOf(5), MyOrdersViewModel.TAB_STATUS[3]);
-        assertEquals(Integer.valueOf(6), MyOrdersViewModel.TAB_STATUS[4]);
-        assertEquals(Integer.valueOf(8), MyOrdersViewModel.TAB_STATUS[5]);
-        assertEquals(Integer.valueOf(1), MyOrdersViewModel.TAB_STATUS[6]);
+        assertEquals(0, MyOrdersViewModel.TAB_TODAY);
+        assertNull(MyOrdersViewModel.TAB_STATUS[0]); // "Hari Ini": the dropdown's status
+        assertNull(MyOrdersViewModel.TAB_STATUS[1]);
+        assertEquals(Integer.valueOf(0), MyOrdersViewModel.TAB_STATUS[2]);
+        assertEquals(Integer.valueOf(2), MyOrdersViewModel.TAB_STATUS[3]);
+        assertEquals(Integer.valueOf(5), MyOrdersViewModel.TAB_STATUS[4]);
+        assertEquals(Integer.valueOf(6), MyOrdersViewModel.TAB_STATUS[5]);
+        assertEquals(Integer.valueOf(8), MyOrdersViewModel.TAB_STATUS[6]);
+        assertEquals(Integer.valueOf(1), MyOrdersViewModel.TAB_STATUS[7]);
     }
 
     @Test
