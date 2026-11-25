@@ -2,18 +2,13 @@
 <resources>
     <!-- Pesanan Saya -->
     <string name="orders_transaction_records">Riwayat Transaksi</string>
-    <string name="orders_tab_today">Hari Ini</string>
-    <string name="orders_tab_not_processed">Belum di Proses</string>
-    <string name="orders_tab_in_process">Dalam Proses</string>
-    <string name="orders_tab_in_transit">Dalam Perjalanan</string>
-    <string name="orders_tab_completed">Completed</string>
+    <string name="orders_tab_all">Semua</string>
+    <string name="orders_tab_unpaid">Belum Bayar</string>
+    <string name="orders_tab_paid">Dibayar</string>
+    <string name="orders_tab_in_process">Diproses</string>
+    <string name="orders_tab_in_transit">Dikirim</string>
+    <string name="orders_tab_completed">Selesai</string>
     <string name="orders_tab_cancelled">Dibatalkan</string>
-    <string name="orders_dd_all">Semua Status Transaksi</string>
-    <string name="orders_dd_pending">Belum di Proses</string>
-    <string name="orders_dd_processing">Sedang di proses</string>
-    <string name="orders_dd_otw">Sedang dalam perjalanan</string>
-    <string name="orders_dd_received">Sudah diterima</string>
-    <string name="orders_dd_rejected">Dibatalkan</string>
     <string name="orders_start_date">Tanggal Awal</string>
     <string name="orders_end_date">Tanggal Akhir</string>
     <string name="orders_records_empty">Riwayat Transaksi tidak Ditemukan</string>
@@ -36,11 +31,22 @@
     <string name="orders_step_process">Proses</string>
     <string name="orders_step_send">Kirim</string>
     <string name="orders_step_done">Selesai</string>
-    <string name="orders_status_pending">Pesanan Sudah Diterima</string>
-    <string name="orders_status_processing">Sedang diproses</string>
-    <string name="orders_status_otw">Dalam Perjalanan</string>
-    <string name="orders_status_received">Diterima</string>
-    <string name="orders_status_rejected">Dibatalkan</string>
+    <string name="orders_status_0">Belum Dibayar</string>
+    <string name="orders_status_1">Dibatalkan</string>
+    <string name="orders_status_2">Sudah Dibayar</string>
+    <string name="orders_status_3">Pembatalan Diajukan</string>
+    <string name="orders_status_4">Pembatalan Disetujui</string>
+    <string name="orders_status_5">Sedang Diproses</string>
+    <string name="orders_status_6">Dalam Perjalanan</string>
+    <string name="orders_status_7">Dikomplain</string>
+    <string name="orders_status_8">Selesai</string>
+    <string name="orders_time_format">EEEE, d MMMM yyyy</string>
+    <string name="orders_revised_total">Total Setelah Revisi</string>
+    <string name="orders_refund">Dana Dikembalikan</string>
+    <string name="orders_virtual_account">No. Virtual Account</string>
+    <string name="orders_pay_before">Bayar Sebelum</string>
+    <string name="orders_item_name_format">%1$s (%2$d %3$s)</string>
+    <string name="orders_revised_quantity_format">Disesuaikan: %1$d %2$s</string>
 
     <!-- Detail Transaksi -->
     <string name="orders_transaction_detail">Detail Transaksi</string>
@@ -85,10 +91,8 @@
     <!-- Daftar belanjaan / gift -->
     <string name="orders_shopping_list">Daftar Belanjaan</string>
     <string name="orders_item_empty">Transaksi ini tidak memiliki item belanjaan</string>
-    <string name="orders_product_exists">Produk Ada</string>
     <string name="orders_product_processed">Sedang di proses</string>
     <string name="orders_product_unavailable">Produk Tidak Tersedia</string>
-    <string name="orders_unknown_product_format">Produk Tidak Dikenal %1$d x %2$s</string>
     <string name="orders_note_format">Catatan : %1$s</string>
 
     <!-- Repeat order -->

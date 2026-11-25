@@ -104,7 +104,7 @@ public class UserAndDashboardFragment extends Fragment {
         binding.todayTrx.setOnClickListener(v -> nav.navigate(R.id.myOrdersFragment));
         binding.trxHistory.setOnClickListener(v -> {
             Bundle args = new Bundle();
-            args.putInt("statusTransaksi", 2);
+            args.putInt("statusTransaksi", 3); // "Diproses"
             nav.navigate(R.id.myOrdersFragment, args);
         });
         binding.trxAccount.setOnClickListener(v -> nav.navigate(R.id.myProfileFragment));

@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.orders.Transaction;
+import id.laukpauk.data.model.orders.BuyerTransaction;
 import id.laukpauk.data.model.orders.TransactionResponses;
 import id.laukpauk.data.repository.BaseRepository;
 import id.laukpauk.data.repository.CartRepository;
@@ -14,7 +14,10 @@ import id.laukpauk.data.repository.DeliveryRepository;
 import id.laukpauk.data.repository.SettingRepository;
 import id.laukpauk.data.repository.TransactionRepository;
 
-/** State of Detail Transaksi: the transaction, the bank account (for BCA transfers) and delivered-item count. */
+/**
+ * State of Detail Transaksi: the transaction ({@code GET buyer/transactions/:id}), the bank account (for BCA
+ * transfers) and delivered-item count.
+ */
 public class TransactionDetailViewModel extends ViewModel {
 
     private final TransactionRepository repository;
@@ -23,8 +26,8 @@ public class TransactionDetailViewModel extends ViewModel {
     private final CartRepository cart;
     private final String transactionId;
 
-    private final MediatorLiveData<Resource<Transaction>> detail = new MediatorLiveData<>();
-    private LiveData<Resource<Transaction>> detailSource;
+    private final MediatorLiveData<Resource<BuyerTransaction>> detail = new MediatorLiveData<>();
+    private LiveData<Resource<BuyerTransaction>> detailSource;
     private final MediatorLiveData<Resource<Integer>> delivered = new MediatorLiveData<>();
     private LiveData<Resource<Integer>> deliveredSource;
     /** {bankAccountNumber, bankAccountOwner}; null until the settings answered. */
@@ -41,7 +44,7 @@ public class TransactionDetailViewModel extends ViewModel {
         load();
     }
 
-    public LiveData<Resource<Transaction>> getDetail() {
+    public LiveData<Resource<BuyerTransaction>> getDetail() {
         return detail;
     }
 
@@ -68,7 +71,7 @@ public class TransactionDetailViewModel extends ViewModel {
         if (detailSource != null) {
             detail.removeSource(detailSource);
         }
-        detailSource = repository.getDetail(transactionId);
+        detailSource = repository.getBuyerTransaction(transactionId);
         detail.addSource(detailSource, detail::setValue);
     }
 

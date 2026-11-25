@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import id.laukpauk.data.model.cart.BuyerCartItem;
-import id.laukpauk.data.model.payment.TransactionResponses;
+import id.laukpauk.data.model.orders.BuyerTransactionResponses;
 import id.laukpauk.data.remote.ApiClient;
 
 /** {@code POST buyer/transactions}: the body the checkout sends and the transaction it gets back. */
@@ -79,7 +79,7 @@ public class CreateTransactionTest {
                 + "\"payment_due_date\":\"2026-11-26T00:34:00+07:00\",\"payment_channel_id\":\"channel-1\","
                 + "\"payment_channel_name\":\"BCA Virtual Account\",\"payment_virtual_account_number\":\"1234567890\","
                 + "\"payment_virtual_account_expired_at\":null,\"items\":[]}}";
-        TransactionResponses.Created body = ApiClient.createMoshi().adapter(TransactionResponses.Created.class).fromJson(json);
+        BuyerTransactionResponses.One body = ApiClient.createMoshi().adapter(BuyerTransactionResponses.One.class).fromJson(json);
         assertEquals("t1", body.data.id);
         assertEquals("26330-1-ABCD", body.data.referenceNumber);
         assertEquals(54321, body.data.paymentAmount);

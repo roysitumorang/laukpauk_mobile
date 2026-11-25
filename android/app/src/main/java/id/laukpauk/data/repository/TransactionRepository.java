@@ -3,10 +3,14 @@ package id.laukpauk.data.repository;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import id.laukpauk.data.Resource;
+import id.laukpauk.data.model.orders.BuyerTransactionResponses;
+import id.laukpauk.data.model.orders.BuyerTransaction;
+import id.laukpauk.data.Paged;
 import id.laukpauk.data.model.delivery.DeliverySelection;
 import id.laukpauk.data.model.orders.TransactionItem;
 import id.laukpauk.data.model.orders.Transaction;
@@ -29,6 +33,46 @@ public class TransactionRepository extends BaseRepository {
         super(deps);
         this.api = api(TransactionApi.class);
         this.delivery = delivery;
+    }
+
+    /** Rows per page of {@code GET buyer/transactions}. */
+    public static final int PAGE_LIMIT = 25;
+
+    /**
+     * {@code GET buyer/transactions}: the first page. {@code status} 0..8 or null (all); {@code start} / {@code end}
+     * the creation dates (RFC 3339) or null.
+     */
+    public void getBuyerTransactions(@Nullable Integer status, @Nullable String start, @Nullable String end,
+                                     ResultCallback<Paged<BuyerTransaction>> callback) {
+        enqueue(api.buyerTransactions(PAGE_LIMIT, status, start, end), TransactionRepository::page, callback);
+    }
+
+    /** The page at {@code next} ({@code data.links.next} of the previous page). */
+    public void getBuyerTransactionsPage(String next, ResultCallback<Paged<BuyerTransaction>> callback) {
+        enqueue(api.buyerTransactionsPage(next), TransactionRepository::page, callback);
+    }
+
+    /** Rows and next-page URL of a {@code GET buyer/transactions} page. */
+    public static Paged<BuyerTransaction> page(@Nullable BuyerTransactionResponses.Page body) {
+        BuyerTransactionResponses.PageData data = body == null ? null : body.data;
+        if (data == null) {
+            return Paged.empty();
+        }
+        List<BuyerTransaction> rows = new ArrayList<>();
+        if (data.rows != null) {
+            for (BuyerTransaction t : data.rows) {
+                if (t != null) {
+                    rows.add(t);
+                }
+            }
+        }
+        return new Paged<>(rows, data.links == null ? null : data.links.next);
+    }
+
+    /** {@code GET buyer/transactions/:id}: the transaction with its items; ERROR 404 when it is not there. */
+    public LiveData<Resource<BuyerTransaction>> getBuyerTransaction(String transactionId) {
+        return load(api.buyerTransaction(transactionId),
+                (BuyerTransactionResponses.One body) -> body == null ? null : body.data);
     }
 
     /**

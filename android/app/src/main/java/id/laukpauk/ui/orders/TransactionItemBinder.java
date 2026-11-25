@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.orders.TransactionItem;
+import id.laukpauk.data.model.orders.BuyerTransactionItem;
 import id.laukpauk.databinding.ItemOrdersItemRowBinding;
 import id.laukpauk.databinding.ViewOrdersTransactionItemBinding;
 import id.laukpauk.util.Currency;
@@ -34,7 +34,7 @@ final class TransactionItemBinder {
             b.itemsContainer.removeAllViews();
             if (has) {
                 LayoutInflater inflater = LayoutInflater.from(f.requireContext());
-                for (TransactionItem item : res.data) {
+                for (BuyerTransactionItem item : res.data) {
                     ItemOrdersItemRowBinding row = ItemOrdersItemRowBinding.inflate(inflater, b.itemsContainer,
                             false);
                     bindRow(f, row, item);
@@ -44,31 +44,42 @@ final class TransactionItemBinder {
         });
     }
 
-    private static void bindRow(Fragment f, ItemOrdersItemRowBinding row, TransactionItem item) {
-        int discount = item.discount + item.promoDiscount;
-        int total = item.quantity * (item.price - discount);
-        String status = OrderUi.nz(item.status).toLowerCase();
-        boolean rejected = status.equals("rejected");
+    /**
+     * Name, line total (after revisions), whether it is ready (processed or later), out of stock, or revised, and the
+     * buyer's and the seller's notes.
+     */
+    private static void bindRow(Fragment f, ItemOrdersItemRowBinding row, BuyerTransactionItem item) {
+        boolean unavailable = item.outOfStock;
+        boolean revised = !unavailable && item.revisedQuantity != item.quantity;
         int statusText = R.string.orders_product_processed;
         int statusColor = R.color.text_muted;
-        if (status.equals("ok")) {
-            statusText = R.string.orders_product_exists;
-            statusColor = R.color.text_success;
-        }
-        if (rejected) {
+        if (unavailable) {
             statusText = R.string.orders_product_unavailable;
             statusColor = R.color.text_danger;
         }
-        row.name.setText(item.productName != null ? item.productName
-                : f.getString(R.string.orders_unknown_product_format, item.quantity, item.unit()));
-        row.total.setText(Currency.formatRupiah(total, 0));
+        String unit = OrderUi.nz(item.stockUnit);
+        String name = OrderUi.nz(item.productName);
+        row.name.setText(f.getString(R.string.orders_item_name_format, name, item.quantity, unit));
+        row.total.setText(Currency.formatRupiah(unavailable ? item.subtotal : item.revisedSubtotal, 0));
         row.total.setTextColor(ContextCompat.getColor(f.requireContext(),
-                rejected ? R.color.text_muted : R.color.nearly_black));
-        row.total.getPaint().setStrikeThruText(rejected);
-        row.status.setText(statusText);
-        row.status.setTextColor(ContextCompat.getColor(f.requireContext(), statusColor));
-        String note = OrderUi.nz(item.note);
-        row.note.setVisibility(note.isEmpty() ? View.GONE : View.VISIBLE);
-        row.note.setText(f.getString(R.string.orders_note_format, note));
+                unavailable ? R.color.text_muted : R.color.nearly_black));
+        row.total.getPaint().setStrikeThruText(unavailable);
+        if (revised) {
+            row.status.setText(f.getString(R.string.orders_revised_quantity_format, item.revisedQuantity, unit));
+            row.status.setTextColor(ContextCompat.getColor(f.requireContext(), R.color.text_danger));
+        } else {
+            row.status.setText(statusText);
+            row.status.setTextColor(ContextCompat.getColor(f.requireContext(), statusColor));
+        }
+        StringBuilder note = new StringBuilder(OrderUi.nz(item.buyerNote).trim());
+        String revision = OrderUi.nz(item.revisionNote).trim();
+        if (!revision.isEmpty()) {
+            if (note.length() > 0) {
+                note.append(" · ");
+            }
+            note.append(revision);
+        }
+        row.note.setVisibility(note.length() == 0 ? View.GONE : View.VISIBLE);
+        row.note.setText(f.getString(R.string.orders_note_format, note.toString()));
     }
 }

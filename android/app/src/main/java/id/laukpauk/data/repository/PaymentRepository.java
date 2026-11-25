@@ -10,10 +10,10 @@ import java.util.Map;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.cart.BuyerCartItem;
-import id.laukpauk.data.model.payment.BuyerTransaction;
+import id.laukpauk.data.model.orders.BuyerTransaction;
 import id.laukpauk.data.model.payment.PaymentChannel;
 import id.laukpauk.data.model.payment.PaymentChannelsResponse;
-import id.laukpauk.data.model.payment.TransactionResponses;
+import id.laukpauk.data.model.orders.BuyerTransactionResponses;
 import id.laukpauk.data.remote.PaymentApi;
 
 /** Payment channels and placing the order ({@code buyer/payment_channels}, {@code POST buyer/transactions}). */
@@ -58,7 +58,7 @@ public class PaymentRepository extends BaseRepository {
      */
     public void createTransaction(Order order, ResultCallback<BuyerTransaction> callback) {
         enqueue(api.createTransaction(transactionBody(order)),
-                (TransactionResponses.Created body) -> body == null ? null : body.data, callback);
+                (BuyerTransactionResponses.One body) -> body == null ? null : body.data, callback);
     }
 
     /**
