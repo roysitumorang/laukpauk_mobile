@@ -33,14 +33,13 @@ public class TransactionItemFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         AppContainer c = AppContainer.from(requireContext());
         String transactionId = requireArguments().getString("idTransaksi", "");
-        String cartCode = requireArguments().getString("cartCode");
         AppBars.setup(this, binding.appBar, getString(R.string.orders_shopping_list));
         TransactionItemViewModel vm = new ViewModelProvider(this, ViewModelFactory.of(
                 () -> new TransactionItemViewModel(c.transactionRepository, transactionId)))
                 .get(TransactionItemViewModel.class);
         TransactionItemBinder.bind(this, binding.items, vm);
         if (vm.getItems().getValue() == null) {
-            vm.load(cartCode);
+            vm.load();
         }
     }
 

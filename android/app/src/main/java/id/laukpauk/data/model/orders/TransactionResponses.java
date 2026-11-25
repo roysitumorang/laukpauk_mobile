@@ -39,14 +39,4 @@ public final class TransactionResponses {
         public boolean reorderStatus;
         public String message;
     }
-
-    public static class GiftList {
-        @Json(name = "giftTransaksi")
-        public List<TransactionGift> transactionGift;
-    }
-
-    public static class GiftDetail {
-        /** null when the gift does not exist (the API answers false). */
-        public GiftInfo gift;
-    }
 }

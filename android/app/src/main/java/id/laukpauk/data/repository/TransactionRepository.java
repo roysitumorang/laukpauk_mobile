@@ -8,14 +8,12 @@ import java.util.List;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.delivery.DeliverySelection;
-import id.laukpauk.data.model.orders.GiftInfo;
-import id.laukpauk.data.model.orders.TransactionGift;
 import id.laukpauk.data.model.orders.TransactionItem;
 import id.laukpauk.data.model.orders.Transaction;
 import id.laukpauk.data.model.orders.TransactionResponses;
 import id.laukpauk.data.remote.TransactionApi;
 
-/** The buyer's transactions: history, detail, items, gifts, "pesanan diterima" and "belanja ulang". */
+/** The buyer's transactions: history, detail, items, "pesanan diterima" and "belanja ulang". */
 public class TransactionRepository extends BaseRepository {
 
     /** Status filter of each tab of Pesanan Saya (tab 0 = today, no status). */
@@ -84,17 +82,5 @@ public class TransactionRepository extends BaseRepository {
         String day = code == null ? null : selection.dayDelivery != null ? selection.dayDelivery : "Hari Pengantaran";
         enqueue(api.reorder(transactionId, body("dayDelivery", day, "jadwalDeliveryCode", code, "cartCode",
                 session.getCartCode())), body -> body, callback);
-    }
-
-    /** Gifts attached to a cart (empty when none). */
-    public LiveData<Resource<List<TransactionGift>>> getTransactionGift(String cartCode) {
-        return load(api.getTransactionGift(cartCode),
-                body -> body == null || body.transactionGift == null
-                        ? Collections.<TransactionGift>emptyList() : body.transactionGift);
-    }
-
-    /** One gift; SUCCESS with null data when it does not exist. */
-    public void getGift(String idGift, ResultCallback<GiftInfo> callback) {
-        enqueue(api.getGift(idGift), body -> body == null ? null : body.gift, callback);
     }
 }

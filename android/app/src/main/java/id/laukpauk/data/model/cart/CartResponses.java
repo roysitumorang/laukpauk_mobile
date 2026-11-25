@@ -19,19 +19,4 @@ public final class CartResponses {
         @Json(name = "statusBersihkanKeranjang")
         public boolean clearCartStatus;
     }
-
-    public static final class TransactionGift {
-        public String id;
-        public String idGift;
-    }
-
-    public static final class TransactionGiftList {
-        @Json(name = "giftTransaksi")
-        public List<TransactionGift> transactionGift;
-    }
-
-    /** {@code gift} is {@code false} when the gift does not exist (null here). */
-    public static final class GiftDetail {
-        public CartGift gift;
-    }
 }

@@ -90,9 +90,6 @@
     <string name="orders_product_unavailable">Produk Tidak Tersedia</string>
     <string name="orders_unknown_product_format">Produk Tidak Dikenal %1$d x %2$s</string>
     <string name="orders_note_format">Catatan : %1$s</string>
-    <string name="orders_cart_code_missing">Cart code tidak terdefinisi!</string>
-    <string name="orders_gift_format">%1$s 1 pcs</string>
-    <string name="orders_gift_price">Rp. 0</string>
 
     <!-- Repeat order -->
     <string name="orders_repeat_order">Repeat Order</string>

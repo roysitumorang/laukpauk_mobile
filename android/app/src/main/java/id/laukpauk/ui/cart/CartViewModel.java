@@ -7,12 +7,11 @@ import androidx.lifecycle.ViewModel;
 import java.util.List;
 
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.cart.CartGift;
 import id.laukpauk.data.model.cart.BuyerCart;
 import id.laukpauk.data.repository.BaseRepository;
 import id.laukpauk.data.repository.CartRepository;
 
-/** State of the Keranjang screen: the buyer's cart ({@code GET buyer/cart}) and gifts. */
+/** State of the Keranjang screen: the buyer's cart ({@code GET buyer/cart}). */
 public class CartViewModel extends ViewModel {
 
     /** A LiveData that can be re-pointed at a freshly loaded source (refresh). */
@@ -39,7 +38,6 @@ public class CartViewModel extends ViewModel {
 
     private final CartRepository repository;
     private final Slot<BuyerCart> cart = new Slot<>();
-    private final Slot<List<CartGift>> gifts = new Slot<>();
 
     /** Set while the buyer went to Login from the Checkout button. */
     public boolean checkoutAfterLogin;
@@ -52,14 +50,9 @@ public class CartViewModel extends ViewModel {
         return cart.live;
     }
 
-    public LiveData<Resource<List<CartGift>>> getGifts() {
-        return gifts.live;
-    }
-
     /** Loads everything (first open, pull-to-refresh, back from Login). */
     public void load() {
         cart.set(repository.buyerCart());
-        gifts.set(repository.gifts());
     }
 
     /** Sets an item's quantity (0 removes it); the saved cart replaces the shown one. */
