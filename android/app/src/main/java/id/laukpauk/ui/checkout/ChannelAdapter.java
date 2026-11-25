@@ -14,7 +14,6 @@ import java.util.Locale;
 import id.laukpauk.R;
 import id.laukpauk.data.model.payment.PaymentChannel;
 import id.laukpauk.databinding.ItemCheckoutChannelBinding;
-import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
 
 /** Payment channels in the payment sheet (legacy PilihanMetodePembayaran tiles). */
@@ -58,7 +57,6 @@ final class ChannelAdapter extends ListAdapter<PaymentChannel, ChannelAdapter.Ho
         PaymentChannel ch = getItem(position);
         ItemCheckoutChannelBinding b = h.b;
         String code = ch.channel_code == null ? "" : ch.channel_code;
-        Images.asset(b.logo, "payment/" + code.toUpperCase(Locale.ROOT) + ".png");
         b.name.setText(ch.name);
         b.radio.setChecked(code.toLowerCase(Locale.ROOT).equals(selectedCode));
         b.row.setOnClickListener(v -> listener.onChannel(ch));
