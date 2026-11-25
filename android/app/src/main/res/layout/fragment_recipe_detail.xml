@@ -159,6 +159,28 @@
                                 android:textColor="@color/text_muted"
                                 android:textSize="11sp" />
 
+                            <TextView
+                                android:id="@+id/guidesTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                android:text="@string/recipe_guides"
+                                android:textColor="@color/recipe_text"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/guides"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:lineSpacingExtra="4dp"
+                                android:paddingEnd="10dp"
+                                android:textColor="@color/recipe_text"
+                                android:textSize="12sp"
+                                android:visibility="gone" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="0.5dp"

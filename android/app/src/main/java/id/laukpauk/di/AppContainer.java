@@ -93,7 +93,7 @@ public final class AppContainer {
         this.paymentRepository = new PaymentRepository(repositoryDeps);
         this.productRepository = new ProductRepository(repositoryDeps, this.deliveryRepository, this.settingRepository);
         this.promoRepository = new PromoRepository(repositoryDeps, this.deliveryRepository);
-        this.recipeRepository = new RecipeRepository(repositoryDeps, this.deliveryRepository);
+        this.recipeRepository = new RecipeRepository(repositoryDeps, this.cartRepository);
         this.repeatOrderRepository = new RepeatOrderRepository(repositoryDeps, this.deliveryRepository);
         this.searchRepository = new SearchRepository(repositoryDeps);
         this.startupRepository = new StartupRepository(repositoryDeps);
