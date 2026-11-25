@@ -15,7 +15,7 @@ import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
 import id.laukpauk.data.model.checkout.ShippingSchedule;
 import id.laukpauk.data.model.voucher.Voucher;
-import id.laukpauk.data.model.payment.BuyerTransaction;
+import id.laukpauk.data.model.orders.BuyerTransaction;
 import id.laukpauk.data.model.payment.PaymentChannel;
 import id.laukpauk.data.repository.CheckoutRepository;
 import id.laukpauk.data.repository.PaymentRepository;

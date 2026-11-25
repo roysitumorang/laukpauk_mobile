@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.payment.BuyerTransaction;
+import id.laukpauk.data.model.orders.BuyerTransaction;
 import id.laukpauk.util.Currency;
 import id.laukpauk.databinding.FragmentOrderSuccessBinding;
 import id.laukpauk.di.AppContainer;

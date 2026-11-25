@@ -21,7 +21,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import id.laukpauk.R;
 import id.laukpauk.util.Currency;
 import id.laukpauk.data.model.voucher.Voucher;
-import id.laukpauk.data.model.payment.BuyerTransaction;
+import id.laukpauk.data.model.orders.BuyerTransaction;
 import id.laukpauk.data.repository.CheckoutRepository;
 import id.laukpauk.databinding.FragmentCheckoutBinding;
 import id.laukpauk.di.AppContainer;

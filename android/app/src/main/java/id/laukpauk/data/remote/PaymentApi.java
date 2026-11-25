@@ -3,7 +3,7 @@ package id.laukpauk.data.remote;
 import java.util.Map;
 
 import id.laukpauk.data.model.payment.PaymentChannelsResponse;
-import id.laukpauk.data.model.payment.TransactionResponses;
+import id.laukpauk.data.model.orders.BuyerTransactionResponses;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -25,5 +25,5 @@ public interface PaymentApi {
      * {@code message}. See {@link id.laukpauk.data.repository.PaymentRepository#transactionBody}.
      */
     @POST("buyer/transactions")
-    Call<TransactionResponses.Created> createTransaction(@Body Map<String, Object> body);
+    Call<BuyerTransactionResponses.One> createTransaction(@Body Map<String, Object> body);
 }

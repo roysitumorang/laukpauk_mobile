@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -24,7 +23,7 @@ import java.util.List;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.orders.Transaction;
+import id.laukpauk.data.model.orders.BuyerTransaction;
 import id.laukpauk.databinding.FragmentMyOrdersBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
@@ -33,16 +32,16 @@ import id.laukpauk.ui.common.AuthGate;
 import id.laukpauk.ui.common.Messages;
 import id.laukpauk.util.Json;
 
-/** PesananSaya.dart: the buyer's transaction history (bottom-nav tab). Args: transactionStatus (initial tab 0..5). */
+/**
+ * PesananSaya.dart: the buyer's transactions ({@code GET buyer/transactions}), by status tab and creation dates.
+ * Args: statusTransaksi (initial tab 0..6).
+ */
 public class MyOrdersFragment extends Fragment {
 
-    private static final int[] TAB_LABELS = {R.string.orders_tab_today, R.string.orders_tab_not_processed,
-            R.string.orders_tab_in_process, R.string.orders_tab_in_transit, R.string.orders_tab_completed,
-            R.string.orders_tab_cancelled};
-    private static final int[] DD_LABELS = {R.string.orders_dd_all, R.string.orders_dd_pending,
-            R.string.orders_dd_processing, R.string.orders_dd_otw, R.string.orders_dd_received,
-            R.string.orders_dd_rejected};
-    private static final String[] DD_VALUES = {"", "pending", "processing", "otw", "received", "rejected"};
+    /** The tabs; their statuses are {@link MyOrdersViewModel#TAB_STATUS}. */
+    private static final int[] TAB_LABELS = {R.string.orders_tab_all, R.string.orders_tab_unpaid,
+            R.string.orders_tab_paid, R.string.orders_tab_in_process, R.string.orders_tab_in_transit,
+            R.string.orders_tab_completed, R.string.orders_tab_cancelled};
 
     private FragmentMyOrdersBinding binding;
     private MyOrdersViewModel viewModel;
@@ -77,21 +76,21 @@ public class MyOrdersFragment extends Fragment {
 
         adapter = new MyOrdersAdapter(new MyOrdersAdapter.Listener() {
             @Override
-            public void onOpen(Transaction t) {
+            public void onOpen(BuyerTransaction t) {
                 Bundle args = new Bundle();
                 args.putString("idTransaksi", t.id);
                 nav.navigate(R.id.transactionDetailFragment, args);
             }
 
             @Override
-            public void onOrderAgain(Transaction t) {
+            public void onOrderAgain(BuyerTransaction t) {
                 Bundle args = new Bundle();
                 args.putString("idTransaksi", t.id);
                 nav.navigate(R.id.repeatOrderFragment, args);
             }
 
             @Override
-            public void onReceived(Transaction t) {
+            public void onReceived(BuyerTransaction t) {
                 OrderUi.confirmReceived(MyOrdersFragment.this, () ->
                         viewModel.orderReceived(t.id, result -> {
                             if (!isAdded()) {
@@ -107,14 +106,14 @@ public class MyOrdersFragment extends Fragment {
             }
 
             @Override
-            public void onConfirmPayment(Transaction t) {
+            public void onConfirmPayment(BuyerTransaction t) {
                 viewModel.contactWhatsapp(result -> {
                     if (!isAdded() || !result.isSuccess() || result.data == null || Json.isFalse(result.data)) {
                         return;
                     }
                     Object data = result.data;
-                    String text = getString(R.string.orders_wa_confirmation_format, OrderUi.nz(t.transactionNumber),
-                            OrderUi.nz(t.paymentMethodName));
+                    String text = getString(R.string.orders_wa_confirmation_format, OrderUi.nz(t.referenceNumber),
+                            OrderUi.nz(t.paymentChannelName));
                     String config = Json.str(Json.obj(data), "contactUsWhatsapp");
                     OrderUi.openUrl(MyOrdersFragment.this,
                             "https://wa.me/" + config + "?text=" + Uri.encode(text));
@@ -123,6 +122,14 @@ public class MyOrdersFragment extends Fragment {
         });
         binding.list.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.list.setAdapter(adapter);
+        binding.list.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
+                if (dy > 0 && !rv.canScrollVertically(1)) {
+                    viewModel.loadMore();
+                }
+            }
+        });
         binding.empty.emptyText.setText(R.string.orders_records_empty);
         binding.refresh.setOnRefreshListener(() -> viewModel.load());
 
@@ -157,31 +164,6 @@ public class MyOrdersFragment extends Fragment {
     }
 
     private void setupFilter() {
-        String[] labels = new String[DD_LABELS.length];
-        for (int i = 0; i < labels.length; i++) {
-            labels[i] = getString(DD_LABELS[i]);
-        }
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_orders_spinner,
-                labels);
-        spinnerAdapter.setDropDownViewResource(R.layout.item_orders_spinner_dropdown);
-        binding.statusSpinner.setAdapter(spinnerAdapter);
-        int sel = 0;
-        for (int i = 0; i < DD_VALUES.length; i++) {
-            if (DD_VALUES[i].equals(viewModel.getTodayStatus())) {
-                sel = i;
-            }
-        }
-        binding.statusSpinner.setSelection(sel, false);
-        binding.statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-                viewModel.setTodayStatus(DD_VALUES[position]);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
         binding.startDate.setOnClickListener(v -> showDatePicker(true));
         binding.endDate.setOnClickListener(v -> showDatePicker(false));
         binding.clearDates.setOnClickListener(v -> {
@@ -192,20 +174,18 @@ public class MyOrdersFragment extends Fragment {
     }
 
     private void renderFilter() {
-        boolean today = viewModel.getTab() == 0;
-        binding.statusBox.setVisibility(today ? View.VISIBLE : View.GONE);
-        binding.dateBox.setVisibility(today ? View.GONE : View.VISIBLE);
+        binding.dateBox.setVisibility(View.VISIBLE);
         binding.startDate.setText(viewModel.getStartDate());
         binding.endDate.setText(viewModel.getEndDate());
         binding.clearDates.setVisibility(viewModel.hasDateRange() ? View.VISIBLE : View.GONE);
     }
 
-    /** showDatePicker(first 2017, last 2050); the day is not zero-padded ("yyyy-MM-d"), like the legacy app. */
+    /** showDatePicker(first 2017, last 2050): "yyyy-MM-dd", sent as created_at_start / created_at_end. */
     private void showDatePicker(boolean start) {
         Calendar now = Calendar.getInstance();
         DatePickerDialog dialog = new DatePickerDialog(requireContext(), (picker, year, month, day) -> {
             int monthNumber = month + 1;
-            String formatted = year + "-" + (monthNumber <= 9 ? "0" + monthNumber : String.valueOf(monthNumber)) + "-" + day;
+            String formatted = String.format(java.util.Locale.US, "%04d-%02d-%02d", year, monthNumber, day);
             if (start) {
                 viewModel.setStartDate(formatted);
             } else {
@@ -227,7 +207,7 @@ public class MyOrdersFragment extends Fragment {
         viewModel.start();
     }
 
-    private void render(Resource<List<Transaction>> res) {
+    private void render(Resource<List<BuyerTransaction>> res) {
         if (res == null) {
             return;
         }
@@ -239,7 +219,7 @@ public class MyOrdersFragment extends Fragment {
             return;
         }
         binding.refresh.setRefreshing(false);
-        List<Transaction> items = res.isSuccess() ? res.data : null;
+        List<BuyerTransaction> items = res.isSuccess() ? res.data : null;
         adapter.submitList(items);
         binding.empty.getRoot().setVisibility(items == null || items.isEmpty() ? View.VISIBLE : View.GONE);
     }

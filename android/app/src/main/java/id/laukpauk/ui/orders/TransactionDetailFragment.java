@@ -17,7 +17,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.orders.Transaction;
+import id.laukpauk.data.model.orders.BuyerTransaction;
 import id.laukpauk.databinding.FragmentTransactionDetailBinding;
 import id.laukpauk.databinding.ItemOrdersBreakdownRowBinding;
 import id.laukpauk.di.AppContainer;
@@ -28,14 +28,14 @@ import id.laukpauk.util.Currency;
 import id.laukpauk.util.Json;
 import id.laukpauk.util.ServerPath;
 
-/** DetailTransaksi.dart. Arg: transactionId. */
+/** DetailTransaksi.dart: one transaction ({@code GET buyer/transactions/:id}). Arg: idTransaksi. */
 public class TransactionDetailFragment extends Fragment {
 
     private FragmentTransactionDetailBinding binding;
     private TransactionDetailViewModel viewModel;
     private TransactionItemViewModel itemsViewModel;
     private String transactionId;
-    private Transaction current;
+    private BuyerTransaction current;
     private boolean awaitingDelivery;
 
     @Nullable
@@ -92,7 +92,7 @@ public class TransactionDetailFragment extends Fragment {
         });
     }
 
-    private void onDetail(Resource<Transaction> res) {
+    private void onDetail(Resource<BuyerTransaction> res) {
         if (res == null) {
             return;
         }
@@ -110,46 +110,44 @@ public class TransactionDetailFragment extends Fragment {
         }
         renderStatus(current);
         renderBreakdown(current);
-        itemsViewModel.load();
-        awaitingDelivery = current.statusLower().equals("rejected");
+        itemsViewModel.show(current);
+        awaitingDelivery = current.isCancelled();
         binding.refundSlot.setVisibility(awaitingDelivery ? View.VISIBLE : View.GONE);
         binding.refundProgress.setVisibility(View.VISIBLE);
         binding.refundBox.setVisibility(View.GONE);
         if (awaitingDelivery) {
             binding.refundTitle.setText(getString(R.string.orders_fund_refund_format,
-                    Currency.formatRupiah(current.refundedShippingFee + current.refundedShoppingMoney, 0)));
-            binding.shippingFeeRefund.setText(getString(R.string.orders_shipping_fee_refund_format,
-                    Currency.formatRupiah(current.refundedShippingFee, 0)));
-            binding.shoppingRefund.setText(getString(R.string.orders_shopping_refund_format,
-                    Currency.formatRupiah(current.refundedShoppingMoney, 0)));
+                    Currency.formatRupiah(current.refundAmount, 0)));
+            // the backend gives one refund amount, without the delivery / shopping split
+            binding.shippingFeeRefund.setVisibility(View.GONE);
+            binding.shoppingRefund.setVisibility(View.GONE);
             viewModel.loadDelivered();
         }
     }
 
-    private void renderStatus(Transaction t) {
-        String status = OrderUi.nz(t.status);
-        String lc = t.statusLower();
-        boolean rejected = lc.equals("rejected");
+    private void renderStatus(BuyerTransaction t) {
+        boolean cancelled = t.isCancelled();
 
-        binding.progressGroup.setVisibility(rejected ? View.GONE : View.VISIBLE);
-        binding.steps.setup(status, 39f, 15f, false);
-        binding.btnOrderAgain.setVisibility(lc.equals("received") ? View.VISIBLE : View.GONE);
-        binding.btnReceived.setVisibility(lc.equals("otw") ? View.VISIBLE : View.GONE);
+        binding.progressGroup.setVisibility(cancelled ? View.GONE : View.VISIBLE);
+        binding.steps.setup(OrderUi.step(t.status), 39f, 15f, false);
+        binding.btnOrderAgain.setVisibility(t.status == BuyerTransaction.STATUS_COMPLETED ? View.VISIBLE : View.GONE);
+        binding.btnReceived.setVisibility(t.status == BuyerTransaction.STATUS_SHIPPED ? View.VISIBLE : View.GONE);
         binding.statusText.setText(getString(R.string.orders_status_format,
-                OrderUi.statusReadable(this, status).toUpperCase()));
-        binding.noteBox.setVisibility(lc.equals("otw") ? View.VISIBLE : View.GONE);
-        binding.number.setText(OrderUi.nz(t.transactionNumber));
-        binding.method.setText(OrderUi.nz(t.paymentMethodName));
+                OrderUi.statusLabel(requireContext(), t.status).toUpperCase()));
+        binding.noteBox.setVisibility(t.status == BuyerTransaction.STATUS_SHIPPED ? View.VISIBLE : View.GONE);
+        binding.number.setText(OrderUi.nz(t.referenceNumber));
+        binding.method.setText(OrderUi.nz(t.paymentChannelName));
 
-        binding.howToPay.setVisibility(t.isTfBca() ? View.VISIBLE : View.GONE);
+        // manual bank transfer guide: no such channel any more
+        binding.howToPay.setVisibility(View.GONE);
         binding.howToPay.setOnClickListener(v -> openTransferBank(t));
 
-        String note = OrderUi.nz(t.note);
+        String note = OrderUi.nz(t.buyerNote);
         binding.noteGroup.setVisibility(note.isEmpty() ? View.GONE : View.VISIBLE);
         binding.note.setText(note);
 
-        binding.reasonBox.setVisibility(rejected ? View.VISIBLE : View.GONE);
-        String reason = OrderUi.nz(t.statusReason);
+        binding.reasonBox.setVisibility(cancelled ? View.VISIBLE : View.GONE);
+        String reason = OrderUi.nz(t.withdrawalReason);
         if (reason.isEmpty()) {
             binding.reason.setText(R.string.orders_without_description);
             binding.reason.setTextColor(requireContext().getColor(R.color.text_muted));
@@ -160,15 +158,15 @@ public class TransactionDetailFragment extends Fragment {
         }
     }
 
-    private void openTransferBank(Transaction t) {
+    private void openTransferBank(BuyerTransaction t) {
         String[] acct = viewModel.getBankAccount().getValue();
         Map<String, Object> payment = Json.of(
-                "totalBayar", t.overallTotal(),
-                "kodeUnik", t.paymentMethodMoreData,
+                "totalBayar", OrderUi.total(t),
+                "kodeUnik", t.uniqueCode,
                 "nomorRekening", acct != null ? acct[0] : getString(R.string.orders_bank_account_placeholder),
                 "pemilikNomorRekening", acct != null ? acct[1] : getString(R.string.orders_owner_placeholder),
                 "idTransaksi", transactionId,
-                "nomorTransaksi", OrderUi.nz(t.transactionNumber));
+                "nomorTransaksi", OrderUi.nz(t.referenceNumber));
         Map<String, Object> responseCheckout = Json.of("idTransaksi", transactionId, "paymentResponse", payment);
         Map<String, Object> data = Json.of("responseCheckout", responseCheckout);
         Bundle args = new Bundle();
@@ -188,38 +186,54 @@ public class TransactionDetailFragment extends Fragment {
         binding.breakdown.addView(row.getRoot());
     }
 
-    private static String minus(Fragment f, int amount) {
+    private static String minus(Fragment f, long amount) {
         return f.getString(R.string.orders_minus_format, Currency.formatRupiah(amount, 0));
     }
 
-    private void renderBreakdown(Transaction t) {
-        binding.address.setText(OrderUi.nz(t.deliveryAddress));
-        boolean hasDetail = t.fullAddressDetail != null;
-        binding.addressDetailGroup.setVisibility(hasDetail ? View.VISIBLE : View.GONE);
-        binding.addressDetail.setText(OrderUi.nz(t.fullAddressDetail));
-        binding.schedule.setText(getString(R.string.orders_schedule_format, OrderUi.nz(t.formattedDeliveryDate),
-                OrderUi.nz(t.deliverySchedule)));
+    private void renderBreakdown(BuyerTransaction t) {
+        binding.address.setText(OrderUi.nz(t.deliveryStreetAddress));
+        String addressNote = OrderUi.nz(t.deliveryStreetAddressNote).trim();
+        binding.addressDetailGroup.setVisibility(addressNote.isEmpty() ? View.GONE : View.VISIBLE);
+        binding.addressDetail.setText(addressNote);
+        binding.schedule.setText(getString(R.string.orders_schedule_format,
+                OrderUi.format(t.deliveryDatetime, getString(R.string.orders_time_format)),
+                OrderUi.format(t.deliveryDatetime, "HH:mm")));
 
-        String type = OrderUi.nz(t.voucherType).toLowerCase();
         binding.breakdown.removeAllViews();
-        addRow(R.string.orders_wallet_deduction, minus(this, t.walletDiscount), false);
-        addRow(R.string.orders_promo_code_deduction, minus(this, t.promoDiscount), false);
-        addRow(R.string.orders_points_discount, minus(this, t.pointOut), false);
-        addRow(R.string.orders_delivery_fee, Currency.formatRupiah(t.shippingFee, 0), false);
-        if (t.voucherValue >= 1 && type.equals("ongkir")) {
-            addRow(R.string.orders_shipping_voucher_discount, minus(this, t.voucherValue), false);
+        addRow(R.string.orders_shopping_total, Currency.formatRupiah(t.itemsTotal(), 0), false);
+        if (t.voucherDiscount > 0 && !t.isDeliveryVoucher()) {
+            addRow(R.string.orders_shopping_voucher_discount, minus(this, t.voucherDiscount), false);
         }
-        addRow(R.string.orders_shopping_total, Currency.formatRupiah(t.shoppingTotal, 0), false);
-        if (type.equals("belanja") && t.voucherValue >= 1) {
-            addRow(R.string.orders_shopping_voucher_discount, minus(this, t.voucherValue), false);
+        addRow(R.string.orders_delivery_fee, Currency.formatRupiah(t.deliveryEstimatedCost, 0), false);
+        if (t.voucherDiscount > 0 && t.isDeliveryVoucher()) {
+            addRow(R.string.orders_shipping_voucher_discount, minus(this, t.voucherDiscount), false);
         }
-        if (t.categoryDiscount >= 1) {
-            addRow(R.string.orders_discount, minus(this, t.categoryDiscount), false);
+        if (t.rewardPointsDiscount > 0) {
+            addRow(R.string.orders_points_discount, minus(this, t.rewardPointsDiscount), false);
         }
-        if (t.isTfBca()) {
-            addRow(R.string.orders_unique_code, Currency.formatRupiah(t.paymentMethodMoreData, 0), false);
+        if (t.walletDiscount > 0) {
+            addRow(R.string.orders_wallet_deduction, minus(this, t.walletDiscount), false);
         }
-        addRow(R.string.orders_total_paid, Currency.formatRupiah(t.totalPayment(), 0), true);
+        if (t.uniqueCode > 0) {
+            addRow(R.string.orders_unique_code, Currency.formatRupiah(t.uniqueCode, 0), false);
+        }
+        addRow(R.string.orders_total_paid, Currency.formatRupiah(t.paymentAmount, 0), true);
+        if (t.revisedPaymentAmount != t.paymentAmount) {
+            addRow(R.string.orders_revised_total, Currency.formatRupiah(t.revisedPaymentAmount, 0), true);
+        }
+        if (t.refundAmount > 0) {
+            addRow(R.string.orders_refund, Currency.formatRupiah(t.refundAmount, 0), false);
+        }
+        if (t.status == BuyerTransaction.STATUS_PENDING) {
+            String va = OrderUi.nz(t.paymentVirtualAccountNumber);
+            if (!va.isEmpty()) {
+                addRow(R.string.orders_virtual_account, va, false);
+            }
+            String due = OrderUi.format(t.paymentDueDate, "d MMMM yyyy HH:mm");
+            if (!due.isEmpty()) {
+                addRow(R.string.orders_pay_before, due, false);
+            }
+        }
     }
 
     private void onReceived() {
