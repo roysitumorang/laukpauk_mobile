@@ -1,72 +1,97 @@
 package id.laukpauk.ui.recipe;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
+import id.laukpauk.data.Paged;
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.recipe.Recipe;
+import id.laukpauk.data.model.recipe.BuyerRecipe;
 import id.laukpauk.data.repository.RecipeRepository;
 
-/** State of the Resep screen: the recipes and the name filter. */
+/**
+ * State of the Resep screen ({@code GET buyer/recipes}): the name searched ({@code q}) and the list, which grows page
+ * by page ({@code data.links.next}).
+ */
 public class RecipeViewModel extends ViewModel {
 
     private final RecipeRepository repository;
-    private final MediatorLiveData<Resource<List<Recipe>>> state = new MediatorLiveData<>();
-    private final MutableLiveData<String> query = new MutableLiveData<>("");
-    private final MediatorLiveData<List<Recipe>> visible = new MediatorLiveData<>();
-    private LiveData<Resource<List<Recipe>>> source;
+    private final MutableLiveData<Resource<List<BuyerRecipe>>> state = new MutableLiveData<>();
+    private final List<BuyerRecipe> rows = new ArrayList<>();
+    private String query = "";
+    @Nullable private String next;
+    private boolean loadingMore;
+    private boolean loaded;
+    /** Bumped on every reload, so a late answer for an old search is dropped. */
+    private int generation;
 
     public RecipeViewModel(RecipeRepository repository) {
         this.repository = repository;
-        visible.addSource(state, r -> filter());
-        visible.addSource(query, q -> filter());
     }
 
-    public LiveData<Resource<List<Recipe>>> getState() {
+    public LiveData<Resource<List<BuyerRecipe>>> getState() {
         return state;
     }
 
-    public LiveData<List<Recipe>> getVisible() {
-        return visible;
-    }
-
     public String getQuery() {
-        String q = query.getValue();
-        return q == null ? "" : q;
+        return query;
     }
 
+    /** Searches the recipe names (the backend's {@code q}); "" lists all. */
     public void search(String text) {
-        query.setValue(text == null ? "" : text);
+        query = text == null ? "" : text.trim();
+        load();
     }
 
     public boolean isLoaded() {
-        return source != null;
+        return loaded;
     }
 
+    /** Reloads the first page for the current search. */
     public void load() {
-        if (source != null) {
-            state.removeSource(source);
-        }
-        source = repository.getRecipe();
-        state.addSource(source, state::setValue);
+        loaded = true;
+        final int gen = ++generation;
+        rows.clear();
+        next = null;
+        loadingMore = false;
+        state.setValue(Resource.loading());
+        repository.getBuyerRecipes(query, r -> {
+            if (gen != generation) {
+                return;
+            }
+            if (!r.isSuccess() || r.data == null) {
+                state.setValue(Resource.error(r.message, r.code));
+                return;
+            }
+            take(r.data);
+        });
     }
 
-    private void filter() {
-        Resource<List<Recipe>> res = state.getValue();
-        List<Recipe> all = res == null || res.data == null ? new ArrayList<Recipe>() : res.data;
-        String q = getQuery().toLowerCase(Locale.ROOT);
-        List<Recipe> out = new ArrayList<>();
-        for (Recipe r : all) {
-            if (q.isEmpty() || (r.name == null ? "" : r.name).toLowerCase(Locale.ROOT).contains(q)) {
-                out.add(r);
-            }
+    /** The next page, when there is one and none is loading. */
+    public void loadMore() {
+        if (next == null || loadingMore) {
+            return;
         }
-        visible.setValue(out);
+        loadingMore = true;
+        final int gen = generation;
+        repository.getBuyerRecipesPage(next, r -> {
+            if (gen != generation) {
+                return;
+            }
+            loadingMore = false;
+            if (r.isSuccess() && r.data != null) {
+                take(r.data);
+            }
+        });
+    }
+
+    private void take(Paged<BuyerRecipe> page) {
+        rows.addAll(page.items);
+        next = page.next;
+        state.setValue(Resource.success(new ArrayList<>(rows)));
     }
 }

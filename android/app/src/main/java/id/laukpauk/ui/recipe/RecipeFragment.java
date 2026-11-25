@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
@@ -20,7 +23,7 @@ import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Messages;
 import id.laukpauk.ui.common.SearchBox;
 
-/** Resep.dart: the recipe list (a bottom navigation tab). */
+/** Resep.dart: the recipe list ({@code GET buyer/recipes}; a bottom navigation tab). */
 public class RecipeFragment extends Fragment {
 
     private FragmentRecipeBinding binding;
@@ -46,7 +49,7 @@ public class RecipeFragment extends Fragment {
 
         RecipeAdapter adapter = new RecipeAdapter(new RecipeAdapter.Listener() {
             @Override
-            public void onOpen(id.laukpauk.data.model.recipe.Recipe recipe) {
+            public void onOpen(id.laukpauk.data.model.recipe.BuyerRecipe recipe) {
                 Bundle args = new Bundle();
                 args.putString("idResep", recipe.id);
                 NavHostFragment.findNavController(RecipeFragment.this).navigate(R.id.recipeDetailFragment, args);
@@ -59,6 +62,14 @@ public class RecipeFragment extends Fragment {
         });
         binding.list.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.list.setAdapter(adapter);
+        binding.list.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
+                if (dy > 0 && !rv.canScrollVertically(1)) {
+                    viewModel.loadMore();
+                }
+            }
+        });
 
         SearchBox.bind(binding.search, getString(R.string.recipe_search_hint), viewModel.getQuery(),
                 viewModel::search, () -> viewModel.search(""));
@@ -77,11 +88,11 @@ public class RecipeFragment extends Fragment {
                 // Legacy: the "Exception Occured" dialog, then an empty list.
                 Messages.info(this, getString(R.string.recipe_error_title), res.message, null);
             }
-        });
-        viewModel.getVisible().observe(getViewLifecycleOwner(), list -> {
-            adapter.submitList(list);
-            Resource<?> res = viewModel.getState().getValue();
-            boolean loading = res == null || res.isLoading();
+            List<id.laukpauk.data.model.recipe.BuyerRecipe> list = res.isSuccess() && res.data != null
+                    ? res.data : new java.util.ArrayList<>();
+            if (!loading) {
+                adapter.submitList(list);
+            }
             binding.empty.getRoot().setVisibility(!loading && list.isEmpty() ? View.VISIBLE : View.GONE);
         });
         if (!viewModel.isLoaded()) {
