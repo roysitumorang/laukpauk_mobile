@@ -22,12 +22,12 @@ public interface CheckoutApi {
     @GET("User/getDiskonKategori")
     Call<CheckoutResponses.CategoryDiscount> getCategoryDiscount(@Query("cartCode") String cartCode);
 
-    @GET("User/getVoucher")
-    Call<CheckoutResponses.VoucherList> getVoucher(@Query("entitasVoucher") String voucherEntities,
-                                                   @Query("forThisTotalBelanja") String shoppingTotal);
-
-    @GET("Voucher/getStatusVoucher/{id}")
-    Call<CheckoutResponses.StatusVoucher> getStatusVoucher(@Path("id") String idVoucher);
+    /**
+     * The buyer's active vouchers whose {@code minimum_purchase} is at most {@code purchase} (buyer JWT required);
+     * the vouchers are in {@code data}.
+     */
+    @GET("buyer/vouchers")
+    Call<CheckoutResponses.VoucherList> buyerVouchers(@Query("purchase") long purchase);
 
     @GET("Promo/cekKodePromo/{kode}")
     Call<CheckoutResponses.PromoCode> checkPromoCode(@Path("kode") String promoCode);
