@@ -16,16 +16,15 @@ import java.util.Locale;
 
 import id.laukpauk.R;
 import id.laukpauk.data.Resource;
-import id.laukpauk.data.model.recipe.Recipe;
+import id.laukpauk.data.model.recipe.BuyerRecipe;
 import id.laukpauk.databinding.FragmentRecipeDetailBinding;
 import id.laukpauk.di.AppContainer;
 import id.laukpauk.di.ViewModelFactory;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.ui.common.Messages;
 import id.laukpauk.util.Currency;
-import id.laukpauk.util.ServerPath;
 
-/** DetailResep.dart. Argument: recipeId. */
+/** The recipe detail ({@code GET buyer/recipes/:id}): photo, description, guides and ingredients. Argument: idResep. */
 public class RecipeDetailFragment extends Fragment {
 
     private FragmentRecipeDetailBinding binding;
@@ -55,12 +54,12 @@ public class RecipeDetailFragment extends Fragment {
 
         IngredientAdapter adapter = new IngredientAdapter(new IngredientAdapter.Listener() {
             @Override
-            public void onPickUnit(IngredientRow row, int unitIndex) {
-                viewModel.pickUnit(row, unitIndex);
+            public void onPickVariant(IngredientRow row, int variantIndex) {
+                viewModel.pickVariant(row, variantIndex);
             }
 
             @Override
-            public void onPickQuantity(IngredientRow row, int quantity) {
+            public void onPickQuantity(IngredientRow row, long quantity) {
                 viewModel.pickQuantity(row, quantity);
             }
 
@@ -73,14 +72,6 @@ public class RecipeDetailFragment extends Fragment {
         binding.ingredient.setAdapter(adapter);
 
         viewModel.getDetail().observe(getViewLifecycleOwner(), this::renderDetail);
-        viewModel.getItems().observe(getViewLifecycleOwner(), res -> {
-            if (res == null) {
-                return;
-            }
-            binding.ingredientProgress.setVisibility(res.isLoading() ? View.VISIBLE : View.GONE);
-            boolean empty = res.isSuccess() && (res.data == null || res.data.isEmpty());
-            binding.ingredientEmpty.setVisibility(empty ? View.VISIBLE : View.GONE);
-        });
         viewModel.getRows().observe(getViewLifecycleOwner(), adapter::submitList);
         viewModel.getTotal().observe(getViewLifecycleOwner(), total -> {
             boolean any = total != null && total >= 0;
@@ -97,6 +88,8 @@ public class RecipeDetailFragment extends Fragment {
             if (result.isSuccess() && Boolean.TRUE.equals(result.data)) {
                 container.cartRepository.refreshCartCount();
                 Messages.cartSnack(this, getString(R.string.recipe_cart_success));
+            } else if (result.isError()) {
+                Messages.snack(this, result.message == null ? "" : result.message);
             }
         }));
 
@@ -105,7 +98,7 @@ public class RecipeDetailFragment extends Fragment {
         }
     }
 
-    private void renderDetail(Resource<Recipe> res) {
+    private void renderDetail(Resource<BuyerRecipe> res) {
         if (res == null) {
             return;
         }
@@ -115,7 +108,8 @@ public class RecipeDetailFragment extends Fragment {
             return;
         }
         binding.refresh.setRefreshing(false);
-        Recipe r = res.isSuccess() ? res.data : null;
+        binding.ingredientProgress.setVisibility(View.GONE);
+        BuyerRecipe r = res.isSuccess() ? res.data : null;
         if (r == null) {
             binding.content.setVisibility(View.GONE);
             binding.notFound.setVisibility(View.VISIBLE);
@@ -124,13 +118,18 @@ public class RecipeDetailFragment extends Fragment {
         binding.notFound.setVisibility(View.GONE);
         binding.content.setVisibility(View.VISIBLE);
 
-        Images.url(binding.photo, ServerPath.baseURL + "/" + ServerPath.uploadImageRecipe + "/" + r.photo);
+        Images.url(binding.photo, Images.recipe(r.photo));
         binding.name.setText(r.name);
-        binding.remarks.setText(r.remarks);
-        binding.fb.setOnClickListener(v -> LinkOpener.open(this, r.fbLink, R.string.recipe_url_invalid_detail));
-        binding.ig.setOnClickListener(v -> LinkOpener.open(this, r.igLink, R.string.recipe_url_invalid_detail));
+        binding.remarks.setText(r.description);
+        String guides = RecipeDetailViewModel.guidesText(r.guides);
+        binding.guidesTitle.setVisibility(guides.isEmpty() ? View.GONE : View.VISIBLE);
+        binding.guides.setVisibility(guides.isEmpty() ? View.GONE : View.VISIBLE);
+        binding.guides.setText(guides);
+        binding.ingredientEmpty.setVisibility(r.items == null || r.items.isEmpty() ? View.VISIBLE : View.GONE);
+        binding.fb.setOnClickListener(v -> LinkOpener.open(this, r.facebookLink, R.string.recipe_url_invalid_detail));
+        binding.ig.setOnClickListener(v -> LinkOpener.open(this, r.instagramLink, R.string.recipe_url_invalid_detail));
         binding.cookingMethod.setOnClickListener(v ->
-                LinkOpener.open(this, r.igLink, R.string.recipe_url_invalid_detail));
+                LinkOpener.open(this, r.instagramLink, R.string.recipe_url_invalid_detail));
         binding.share.setOnClickListener(v -> share(r.name == null ? "" : r.name));
     }
 

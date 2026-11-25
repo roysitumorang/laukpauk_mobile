@@ -20,7 +20,6 @@ UPLOAD_GAMBAR_KONTEN_ITEM=upload/gambar/konten-item
 UPLOAD_GAMBAR_PAKET=upload/gambar/paket
 UPLOAD_GAMBAR_PRODUK=upload/gambar/produk
 UPLOAD_GAMBAR_PUSH_NOTIFIKASI=upload/gambar/push-notifikasi
-UPLOAD_GAMBAR_RESEP=upload/gambar/resep
 UPLOAD_GAMBAR_USER=upload/gambar/user
 UPLOAD_GAMBAR_VOUCHER=upload/gambar/voucher
 

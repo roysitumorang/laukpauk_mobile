@@ -15,17 +15,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Locale;
 
 import id.laukpauk.R;
-import id.laukpauk.data.model.recipe.ProductUnit;
+import id.laukpauk.data.model.product.BuyerProductVariant;
 import id.laukpauk.databinding.ItemRecipeIngredientBinding;
 import id.laukpauk.util.Currency;
 
-/** The ingredient rows of a recipe (legacy ResepItemItem). */
+/** The ingredient rows of a recipe: what it needs, then the variant, quantity and cart toggle. */
 class IngredientAdapter extends ListAdapter<IngredientRow, IngredientAdapter.Holder> {
 
     interface Listener {
-        void onPickUnit(IngredientRow row, int unitIndex);
+        void onPickVariant(IngredientRow row, int variantIndex);
 
-        void onPickQuantity(IngredientRow row, int quantity);
+        void onPickQuantity(IngredientRow row, long quantity);
 
         void onCart(IngredientRow row);
     }
@@ -66,38 +66,39 @@ class IngredientAdapter extends ListAdapter<IngredientRow, IngredientAdapter.Hol
 
         b.number.setText(row.index + ".");
         b.name.setText(row.item.productName == null ? "" : row.item.productName.toUpperCase(Locale.ROOT));
-        b.portion.setText(ctx.getString(R.string.recipe_required, row.item.portion == null ? "" : row.item.portion));
+        b.portion.setText(required(ctx, row.item));
 
-        b.spinner.setVisibility(!row.unitLoaded ? View.VISIBLE : View.GONE);
-        b.noUnit.setVisibility(row.unitLoaded && row.unit.isEmpty() ? View.VISIBLE : View.GONE);
-        boolean hasUnit = row.unitLoaded && !row.unit.isEmpty();
+        boolean outOfStock = !row.item.productReadyStock;
+        b.spinner.setVisibility(!row.variantsLoaded ? View.VISIBLE : View.GONE);
+        b.noUnit.setText(outOfStock ? R.string.recipe_out_of_stock : R.string.recipe_no_unit);
+        b.noUnit.setVisibility(row.variantsLoaded && (outOfStock || row.variants.isEmpty()) ? View.VISIBLE : View.GONE);
+        boolean hasUnit = row.variantsLoaded && !outOfStock && !row.variants.isEmpty();
         b.controls.setVisibility(hasUnit ? View.VISIBLE : View.GONE);
 
         if (hasUnit) {
-            b.unit.setText(row.selectedUnit == null ? ctx.getString(R.string.recipe_choose_unit)
-                    : row.selectedUnit.name);
+            b.unit.setText(row.selectedVariant == null ? ctx.getString(R.string.recipe_choose_unit)
+                    : unitOf(row.selectedVariant));
             b.unit.setOnClickListener(v -> {
                 PopupMenu menu = new PopupMenu(ctx, b.unit);
                 menu.getMenu().add(0, 0, 0, R.string.recipe_choose_unit);
-                for (int i = 0; i < row.unit.size(); i++) {
-                    menu.getMenu().add(0, i + 1, i + 1, row.unit.get(i).name);
+                for (int i = 0; i < row.variants.size(); i++) {
+                    BuyerProductVariant variant = row.variants.get(i);
+                    menu.getMenu().add(0, i + 1, i + 1, unitOf(variant) + " - " + Currency.formatRupiah(variant.price(), 0));
                 }
                 menu.setOnMenuItemClickListener(m -> {
                     if (m.getItemId() > 0) {
-                        listener.onPickUnit(row, m.getItemId() - 1);
+                        listener.onPickVariant(row, m.getItemId() - 1);
                     }
                     return true;
                 });
                 menu.show();
             });
 
-            ProductUnit s = row.selectedUnit;
-            boolean notExact = s != null && s.isNotExact();
-            b.quantity.setVisibility(notExact ? View.VISIBLE : View.GONE);
+            b.quantity.setVisibility(View.VISIBLE);
             b.quantity.setText(ctx.getString(R.string.recipe_item_count, row.quantity));
             b.quantity.setOnClickListener(v -> {
                 PopupMenu menu = new PopupMenu(ctx, b.quantity);
-                for (int q = 1; q <= 10; q++) {
+                for (int q = 1; q <= Math.max(10, row.item.quantity); q++) {
                     menu.getMenu().add(0, q, q, ctx.getString(R.string.recipe_item_count, q));
                 }
                 menu.setOnMenuItemClickListener(m -> {
@@ -115,12 +116,23 @@ class IngredientAdapter extends ListAdapter<IngredientRow, IngredientAdapter.Hol
 
         b.selected.setVisibility(row.selected ? View.VISIBLE : View.GONE);
         if (row.selected) {
-            String name = row.selectedUnit == null ? "" : String.valueOf(row.selectedUnit.name);
+            String name = row.selectedVariant == null ? "" : unitOf(row.selectedVariant);
             b.ordered.setText(ctx.getString(R.string.recipe_ordered, Currency.formatUnit(row.quantity,
-                    "x " + name + " @ " + Currency.formatRupiah(row.netPrice(), 0))));
+                    "x " + name + " @ " + Currency.formatRupiah(row.price(), 0))));
             b.subTotal.setText(ctx.getString(R.string.recipe_sub_total,
-                    Currency.formatRupiah((long) row.netPrice() * row.quantity, 0)));
+                    Currency.formatRupiah(row.price() * row.quantity, 0)));
         }
+    }
+
+    /** "Diperlukan 2 kg" plus the item's note, when it has one. */
+    static String required(Context ctx, id.laukpauk.data.model.recipe.BuyerRecipe.Item item) {
+        String unit = item.productVariantStockUnit == null ? "" : item.productVariantStockUnit;
+        String text = ctx.getString(R.string.recipe_required, Currency.formatUnit(item.quantity, unit).trim());
+        return item.note == null || item.note.trim().isEmpty() ? text : text + " (" + item.note.trim() + ")";
+    }
+
+    private static String unitOf(BuyerProductVariant v) {
+        return v.stockUnit == null ? "" : v.stockUnit;
     }
 
     static class Holder extends RecyclerView.ViewHolder {

@@ -19,7 +19,6 @@ public final class ServerPath {
     public static final String uploadImagePack = BuildConfig.UPLOAD_IMAGE_PACK;
     public static final String uploadImageProduct = BuildConfig.UPLOAD_IMAGE_PRODUCT;
     public static final String uploadImagePushNotification = BuildConfig.UPLOAD_IMAGE_PUSH_NOTIFICATION;
-    public static final String uploadImageRecipe = BuildConfig.UPLOAD_IMAGE_RECIPE;
     public static final String uploadImageUser = BuildConfig.UPLOAD_IMAGE_USER;
     public static final String uploadImageVoucher = BuildConfig.UPLOAD_IMAGE_VOUCHER;
 }

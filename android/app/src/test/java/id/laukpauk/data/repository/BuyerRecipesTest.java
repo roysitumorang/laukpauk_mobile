@@ -10,7 +10,7 @@ import id.laukpauk.data.model.recipe.BuyerRecipe;
 import id.laukpauk.data.model.recipe.BuyerRecipeResponses;
 import id.laukpauk.data.remote.ApiClient;
 
-/** {@code GET buyer/recipes}: the Resep screen's pages. */
+/** {@code GET buyer/recipes} (the Resep screen's pages) and {@code GET buyer/recipes/:id} (the detail). */
 public class BuyerRecipesTest {
 
     @Test
@@ -40,5 +40,28 @@ public class BuyerRecipesTest {
         assertEquals(0, page.items.size());
         assertNull(page.next);
         assertEquals(0, RecipeRepository.page(null).items.size());
+    }
+
+    @Test
+    public void detailHasTheGuidesAndItems() throws Exception {
+        String json = "{\"status_code\":200,\"data\":{\"id\":\"r1\",\"record_status\":1,\"photo\":\"r1.jpg\","
+                + "\"name\":\"Sayur Asem\",\"description\":\"Segar\",\"instagram_link\":\"\",\"facebook_link\":\"\","
+                + "\"guides\":[{\"id\":\"g1\",\"record_status\":1,\"recipe_id\":\"r1\",\"instruction\":\"Rebus air\"}],"
+                + "\"items\":[{\"id\":\"i1\",\"record_status\":1,\"recipe_id\":\"r1\",\"product_id\":\"p1\","
+                + "\"product_name\":\"Asam Jawa\",\"product_photo\":\"p1.jpg\",\"product_ready_stock\":true,"
+                + "\"product_variant_id\":\"v1\",\"product_variant_stock_unit\":\"gram\",\"quantity\":2,"
+                + "\"note\":\"secukupnya\"}]}}";
+        BuyerRecipe r = ApiClient.createMoshi().adapter(BuyerRecipeResponses.One.class).fromJson(json).data;
+        assertEquals("Sayur Asem", r.name);
+        assertEquals(1, r.guides.size());
+        assertEquals("Rebus air", r.guides.get(0).instruction);
+        BuyerRecipe.Item item = r.items.get(0);
+        assertEquals("p1", item.productId);
+        assertEquals("Asam Jawa", item.productName);
+        assertEquals(true, item.productReadyStock);
+        assertEquals("v1", item.productVariantId);
+        assertEquals("gram", item.productVariantStockUnit);
+        assertEquals(2, item.quantity);
+        assertEquals("secukupnya", item.note);
     }
 }

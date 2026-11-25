@@ -120,4 +120,19 @@ public class BuyerCartTest {
         assertTrue(CheckoutRepository.hasPositiveTotal(1));
         assertEquals(0, new BuyerCart().total());
     }
+
+    @Test
+    public void addingSeveralVariantsAddsToExistingAndAppendsNew() throws Exception {
+        BuyerCart cart = parse("{\"data\":{\"id\":\"c1\",\"quantity\":1,\"items\":["
+                + "{\"product_variant_id\":\"v1\",\"quantity\":1,\"note\":\"n\"}]}}");
+        java.util.Map<String, Long> q = new java.util.LinkedHashMap<>();
+        q.put("v1", 2L);
+        q.put("v2", 3L);
+        List<Map<String, Object>> items = items(CartRepository.cartBody(cart, q));
+        assertEquals(2, items.size());
+        assertEquals("v1", items.get(0).get("product_variant_id"));
+        assertEquals(3L, ((Number) items.get(0).get("quantity")).longValue());
+        assertEquals("v2", items.get(1).get("product_variant_id"));
+        assertEquals(3L, ((Number) items.get(1).get("quantity")).longValue());
+    }
 }

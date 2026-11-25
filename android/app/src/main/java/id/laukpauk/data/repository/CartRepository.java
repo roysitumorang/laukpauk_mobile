@@ -89,6 +89,11 @@ public class CartRepository extends BaseRepository {
         updateCart(cart -> cartBody(cart, variantId, quantity), callback);
     }
 
+    /** Adds several variants at once ({@code variantId -> quantity}); one read-then-save. */
+    public void addVariants(Map<String, Long> quantities, ResultCallback<BuyerCart> callback) {
+        updateCart(cart -> cartBody(cart, quantities), callback);
+    }
+
     /** Sets a variant's quantity in the cart; 0 removes it. Same read-then-save as {@link #addVariant}. */
     public void setVariantQuantity(String variantId, long quantity, ResultCallback<BuyerCart> callback) {
         updateCart(cart -> quantityBody(cart, variantId, quantity), callback);
@@ -138,6 +143,27 @@ public class CartRepository extends BaseRepository {
         }
         if (!found) {
             items.add(row(variantId, quantity, null));
+        }
+        return body(cart, items);
+    }
+
+    /** The {@code POST buyer/cart} body: the cart's items with each variant's quantity added (new ones appended). */
+    static Map<String, Object> cartBody(@Nullable BuyerCart cart, Map<String, Long> quantities) {
+        List<Map<String, Object>> items = new ArrayList<>();
+        java.util.Set<String> added = new java.util.HashSet<>();
+        for (BuyerCartItem item : itemsOf(cart)) {
+            long q = item.quantity;
+            Long more = quantities.get(item.productVariantId);
+            if (more != null) {
+                q += more;
+                added.add(item.productVariantId);
+            }
+            items.add(row(item.productVariantId, q, item.note));
+        }
+        for (Map.Entry<String, Long> e : quantities.entrySet()) {
+            if (!added.contains(e.getKey()) && e.getValue() != null && e.getValue() > 0) {
+                items.add(row(e.getKey(), e.getValue(), null));
+            }
         }
         return body(cart, items);
     }
