@@ -245,6 +245,31 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/rowPromo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/checkout_promo_discount"
+            android:textColor="@color/grey"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tvPromoDeduction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textColor="@color/grey"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/rowPoints"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

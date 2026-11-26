@@ -24,21 +24,4 @@ public final class CheckoutResponses {
         @Json(name = "isJadwalDeliveryOpened")
         public boolean isDeliveryScheduleOpened;
     }
-
-
-    public static class Promo {
-        @Json(name = "diskon")
-        public long discount;
-    }
-
-    public static class PromoData {
-        public Promo promo;
-    }
-
-    /** GET Promo/cekKodePromo/{kode}. */
-    public static class PromoCode {
-        public boolean status;
-        public String message;
-        public PromoData data;
-    }
 }

@@ -12,7 +12,7 @@ import java.util.Map;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.checkout.CheckoutInit;
-import id.laukpauk.data.model.checkout.CheckoutResponses;
+import id.laukpauk.data.model.promotion.BuyerPromotion;
 import id.laukpauk.data.model.checkout.ShippingSchedule;
 import id.laukpauk.data.model.voucher.Voucher;
 import id.laukpauk.data.model.orders.BuyerTransaction;
@@ -67,9 +67,12 @@ public class CheckoutViewModel extends ViewModel {
     private String statusVoucher;
     private boolean pointUsed;
     private String promoCode = "";
-    private Boolean promoCodeStatus;
-    private String promoCodeMessage;
-    private long promoCodeDiscount;
+    /** One of {@code CheckoutSummary.PROMO_*}. */
+    private int promoCodeState = CheckoutSummary.PROMO_NONE;
+    /** The backend's message when the check failed for another reason than 404. */
+    @Nullable private String promoCodeMessage;
+    /** The promotion of the typed code, while it is valid. */
+    private BuyerPromotion promotion;
     private int promoSeq;
 
     public CheckoutViewModel(CheckoutRepository checkout, PaymentRepository payment) {
@@ -237,29 +240,50 @@ public class CheckoutViewModel extends ViewModel {
         return usedVoucher;
     }
 
-    /** Called on every change of the promo code field. */
+    /**
+     * Called on every change of the promo code field: checks the code with {@code GET buyer/promotions/:promo_code};
+     * a valid one takes its {@code discount} off the shopping cost.
+     */
     public void onPromoCode(final String code) {
         final int seq = ++promoSeq;
-        promoCode = code;
-        if (code.isEmpty()) {
-            promoCodeStatus = null;
-            promoCodeMessage = null;
-            promoCodeDiscount = 0;
+        promoCode = code == null ? "" : code.trim();
+        promotion = null;
+        promoCodeMessage = null;
+        if (promoCode.isEmpty()) {
+            promoCodeState = CheckoutSummary.PROMO_NONE;
             recompute();
             return;
         }
-        checkout.checkPromoCode(code, res -> {
+        if (!isPromoCodeFormat(promoCode)) {
+            promoCodeState = CheckoutSummary.PROMO_INVALID;
+            recompute();
+            return;
+        }
+        promoCodeState = CheckoutSummary.PROMO_CHECKING;
+        recompute();
+        checkout.getBuyerPromotion(promoCode, res -> {
             if (seq != promoSeq) {
                 return; // a newer code was typed meanwhile
             }
-            CheckoutResponses.PromoCode p = res.isSuccess() ? res.data : null;
-            if (p != null) {
-                promoCodeStatus = p.status;
-                promoCodeMessage = p.message;
-                promoCodeDiscount = p.data != null && p.data.promo != null ? p.data.promo.discount : 0;
+            if (res.isSuccess() && res.data != null) {
+                promotion = res.data;
+                promoCodeState = CheckoutSummary.PROMO_VALID;
+            } else {
+                promoCodeState = CheckoutSummary.PROMO_INVALID;
+                promoCodeMessage = res.code == 404 ? null : res.message;
             }
             recompute();
         });
+    }
+
+    /** Codes are letters, digits and dashes (the backend's {@code PromotionCodeRegex}). */
+    static boolean isPromoCodeFormat(String code) {
+        return code != null && code.matches("[a-zA-Z0-9-]+");
+    }
+
+    /** The promotion's discount, at most what is left of the shopping cost (never negative). */
+    static long promotionDeduction(@Nullable BuyerPromotion promotion, long shoppingLeft) {
+        return promotion == null ? 0 : Math.max(0, Math.min(promotion.discount, shoppingLeft));
     }
 
     // ------------------------------------------------------------------ totals
@@ -289,7 +313,8 @@ public class CheckoutViewModel extends ViewModel {
                 ? voucherValue : 0;
         long categoryDiscountValue = init.categoryDiscount != null ? Json.longVal(init.categoryDiscount, "diskon") : 0;
 
-        long netSubTotal = shoppingTotal - shoppingVoucher - categoryDiscountValue;
+        long promoCodeDiscount = promotionDeduction(promotion, shoppingTotal - shoppingVoucher - categoryDiscountValue);
+        long netSubTotal = shoppingTotal - shoppingVoucher - categoryDiscountValue - promoCodeDiscount;
         long pointOutValue = pointUsed ? init.point : 0;
         if (pointOutValue >= netSubTotal) {
             pointOutValue = netSubTotal;
@@ -315,7 +340,8 @@ public class CheckoutViewModel extends ViewModel {
         s.usedVoucher = usedVoucher;
         s.statusVoucher = statusVoucher;
         s.categoryDiscount = init.categoryDiscount;
-        s.promoCodeStatus = promoCodeStatus;
+        s.promoCodeDiscount = promoCodeDiscount;
+        s.promoCodeState = promoCodeState;
         s.promoCodeMessage = promoCodeMessage;
         summary.setValue(s);
     }
@@ -354,6 +380,7 @@ public class CheckoutViewModel extends ViewModel {
         o.deliveryDatetime = j.deliveryTime;
         o.rewardPointsDiscounted = pointUsed;
         o.voucherId = usedVoucher != null && init.voucherEnabled ? usedVoucher.id : null;
+        o.promotionId = promotion != null ? promotion.id : null;
         o.walletAmount = init.myWalletTotal;
         o.paymentChannelId = channel.id;
         orderBusy.setValue(true);

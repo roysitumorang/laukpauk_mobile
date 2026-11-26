@@ -28,6 +28,14 @@ public final class CheckoutSummary {
     @Nullable public Voucher usedVoucher;
     @Nullable public String statusVoucher;
     @Nullable public Map<String, Object> categoryDiscount;
-    @Nullable public Boolean promoCodeStatus;
+    /** The promo code's discount off the shopping cost (0 when there is no valid code). */
+    public long promoCodeDiscount;
+    /** The promo code field: empty, being checked, valid or not valid. */
+    public static final int PROMO_NONE = 0;
+    public static final int PROMO_CHECKING = 1;
+    public static final int PROMO_VALID = 2;
+    public static final int PROMO_INVALID = 3;
+    public int promoCodeState = PROMO_NONE;
+    /** The backend's message when the check failed for another reason than "not valid" (404); else null. */
     @Nullable public String promoCodeMessage;
 }

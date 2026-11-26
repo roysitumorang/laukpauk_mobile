@@ -32,6 +32,10 @@
     <string name="checkout_minimum_points">Minimal penukaran poin %1$s</string>
     <string name="checkout_points_used">Terpakai Hanya %1$s</string>
     <string name="checkout_promo_code">Kode Promo</string>
+    <string name="checkout_promo_discount">Potongan Kode Promo</string>
+    <string name="checkout_promo_checking">Memeriksa kode promo…</string>
+    <string name="checkout_promo_valid">Kode promo berlaku, potongan %1$s</string>
+    <string name="checkout_promo_invalid">Kode promo tidak berlaku</string>
     <string name="checkout_wallet_deduction">Potongan Dompet</string>
     <string name="checkout_points_discount">Potongan Poin</string>
     <string name="checkout_normal_shipping_fee">Ongkir Normal </string>
