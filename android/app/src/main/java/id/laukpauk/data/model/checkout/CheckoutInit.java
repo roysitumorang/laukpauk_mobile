@@ -2,7 +2,6 @@ package id.laukpauk.data.model.checkout;
 
 import com.squareup.moshi.Json;
 
-import java.util.Map;
 
 import androidx.annotation.Nullable;
 
@@ -49,9 +48,6 @@ public class CheckoutInit {
     public String cartCode = "";
     @Json(name = "penjelasanOngkir")
     public String shippingFeeExplanation = "";
-    /** Dynamic server object ({diskon, ...}) forwarded verbatim to the checkout request; null = no discount. */
-    @Json(name = "diskonKategori")
-    @Nullable public Map<String, Object> categoryDiscount;
     @Json(name = "nama")
     public String name = "";
     @Json(name = "nomorHP")

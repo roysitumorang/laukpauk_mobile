@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import id.laukpauk.data.Resource;
 import id.laukpauk.data.model.checkout.CheckoutInit;
@@ -19,7 +18,6 @@ import id.laukpauk.data.model.orders.BuyerTransaction;
 import id.laukpauk.data.model.payment.PaymentChannel;
 import id.laukpauk.data.repository.CheckoutRepository;
 import id.laukpauk.data.repository.PaymentRepository;
-import id.laukpauk.util.Json;
 
 /**
  * State of the whole Checkout screen and of the payment sheets (replaces the legacy CheckoutGlobalState and
@@ -311,17 +309,15 @@ public class CheckoutViewModel extends ViewModel {
         }
         long shoppingVoucher = usedVoucher != null && usedVoucher.voucherType != Voucher.TYPE_DELIVERY_COST
                 ? voucherValue : 0;
-        long categoryDiscountValue = init.categoryDiscount != null ? Json.longVal(init.categoryDiscount, "diskon") : 0;
-
-        long promoCodeDiscount = promotionDeduction(promotion, shoppingTotal - shoppingVoucher - categoryDiscountValue);
-        long netSubTotal = shoppingTotal - shoppingVoucher - categoryDiscountValue - promoCodeDiscount;
+        long promoCodeDiscount = promotionDeduction(promotion, shoppingTotal - shoppingVoucher);
+        long netSubTotal = shoppingTotal - shoppingVoucher - promoCodeDiscount;
         long pointOutValue = pointUsed ? init.point : 0;
         if (pointOutValue >= netSubTotal) {
             pointOutValue = netSubTotal;
         }
         // the wallet is always on: it pays what is left, up to the balance (no minimum total)
         long walletDiscount = walletDeduction(init.myWalletTotal, (shoppingTotal + totalShippingFee)
-                - (voucherValue + pointOutValue + categoryDiscountValue + promoCodeDiscount));
+                - (voucherValue + pointOutValue + promoCodeDiscount));
 
         s.isPointUsed = pointUsed;
         s.voucherEnabled = init.voucherEnabled;
@@ -330,16 +326,14 @@ public class CheckoutViewModel extends ViewModel {
         s.totalShippingFee = totalShippingFee;
         s.walletDiscount = walletDiscount;
         s.voucherDiscount = voucherValue;
-        s.discountAmount = categoryDiscountValue;
         s.pointOutValue = pointOutValue;
         s.point = init.point;
         s.minimumPointRedeem = init.minimumPointRedeem;
         s.overallTotal = (shoppingTotal + totalShippingFee)
-                - (voucherValue + walletDiscount + pointOutValue + categoryDiscountValue + promoCodeDiscount);
+                - (voucherValue + walletDiscount + pointOutValue + promoCodeDiscount);
         s.shippingFeeExplanation = init.shippingFeeExplanation;
         s.usedVoucher = usedVoucher;
         s.statusVoucher = statusVoucher;
-        s.categoryDiscount = init.categoryDiscount;
         s.promoCodeDiscount = promoCodeDiscount;
         s.promoCodeState = promoCodeState;
         s.promoCodeMessage = promoCodeMessage;
