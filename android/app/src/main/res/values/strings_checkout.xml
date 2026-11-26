@@ -71,6 +71,7 @@
     <string name="checkout_make_payment">Lakukan Pembayaran</string>
     <string name="checkout_open_ovo">Silahkan buka aplikasi OVO yang terinstal di perangkat anda untuk melakukan pembayaran</string>
     <string name="checkout_order_created">Orderan Berhasil Dibuat</string>
+    <string name="checkout_creating_order">Membuat pesanan…</string>
     <string name="checkout_transfer_to">Silahkan lakukan transfer ke nomor rekening di bawah ini :</string>
     <string name="checkout_an">A.N. %1$s</string>
     <string name="checkout_click_to_copy">Klik nomor rekening untuk salin</string>
