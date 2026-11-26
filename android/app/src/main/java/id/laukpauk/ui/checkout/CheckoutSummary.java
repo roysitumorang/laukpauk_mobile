@@ -1,6 +1,5 @@
 package id.laukpauk.ui.checkout;
 
-import java.util.Map;
 
 import androidx.annotation.Nullable;
 
@@ -19,7 +18,6 @@ public final class CheckoutSummary {
     public long totalShippingFee;
     public long walletDiscount;
     public long voucherDiscount;
-    public long discountAmount;
     public long pointOutValue;
     public long point;
     public long minimumPointRedeem;
@@ -27,7 +25,6 @@ public final class CheckoutSummary {
     public String shippingFeeExplanation = "";
     @Nullable public Voucher usedVoucher;
     @Nullable public String statusVoucher;
-    @Nullable public Map<String, Object> categoryDiscount;
     /** The promo code's discount off the shopping cost (0 when there is no valid code). */
     public long promoCodeDiscount;
     /** The promo code field: empty, being checked, valid or not valid. */

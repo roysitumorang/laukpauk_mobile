@@ -176,13 +176,8 @@ public class CheckoutRepository extends BaseRepository {
     }
 
     private void loadRest(final CheckoutInit d, String lat, String lng, ResultCallback<CheckoutInit> callback) {
-        final Join all = new Join(3, () -> callback.onResult(Resource.success(d)));
+        final Join all = new Join(2, () -> callback.onResult(Resource.success(d)));
 
-        this.<CheckoutResponses.CategoryDiscount, Map<String, Object>>call(api.getCategoryDiscount(d.cartCode),
-                b -> Json.isObject(b.categoryDiscount) ? Json.obj(b.categoryDiscount) : null, null, v -> {
-                    d.categoryDiscount = v;
-                    all.step();
-                });
         // the buyer (GET buyer/users/me): name, phone, wallet and points
         this.<AccountResponses.Me, UserDetail>call(userApi.me(), UserRepository::me, null, user -> {
             if (user != null) {

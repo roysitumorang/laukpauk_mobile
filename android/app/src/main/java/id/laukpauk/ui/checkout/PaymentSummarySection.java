@@ -12,7 +12,6 @@ import id.laukpauk.data.model.voucher.Voucher;
 import id.laukpauk.databinding.ViewCheckoutSummaryBinding;
 import id.laukpauk.ui.common.Images;
 import id.laukpauk.util.Currency;
-import id.laukpauk.util.Json;
 
 /** The payment summary: voucher, points, promo code and the totals (legacy RingkasanPembayaran). */
 final class PaymentSummarySection {
@@ -126,10 +125,6 @@ final class PaymentSummarySection {
         b.tvVoucherDeduction.setText(minus(s.voucherDiscount));
         b.tvVoucherDeductionRemark.setText(ctx.getString(R.string.checkout_voucher_discount_remark, type,
                 s.statusVoucher == null ? "" : s.statusVoucher.toUpperCase()));
-
-        long dk = s.categoryDiscount != null ? Json.longVal(s.categoryDiscount, "diskon") : 0;
-        show(b.rowDiscount, s.categoryDiscount != null && dk >= 1);
-        b.tvDiscount.setText(minus(dk));
 
         long shippingFeeShown = shippingFeeVoucher ? s.totalShippingFee - s.voucherDiscount : s.totalShippingFee;
         b.tvShippingFee.setText(rp(shippingFeeShown));
