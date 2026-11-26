@@ -28,8 +28,6 @@ public class TransactionDetailViewModel extends ViewModel {
 
     private final MediatorLiveData<Resource<BuyerTransaction>> detail = new MediatorLiveData<>();
     private LiveData<Resource<BuyerTransaction>> detailSource;
-    private final MediatorLiveData<Resource<Integer>> delivered = new MediatorLiveData<>();
-    private LiveData<Resource<Integer>> deliveredSource;
     /** {bankAccountNumber, bankAccountOwner}; null until the settings answered. */
     private final MutableLiveData<String[]> bankAccount = new MutableLiveData<>();
 
@@ -46,10 +44,6 @@ public class TransactionDetailViewModel extends ViewModel {
 
     public LiveData<Resource<BuyerTransaction>> getDetail() {
         return detail;
-    }
-
-    public LiveData<Resource<Integer>> getDelivered() {
-        return delivered;
     }
 
     public LiveData<String[]> getBankAccount() {
@@ -76,14 +70,6 @@ public class TransactionDetailViewModel extends ViewModel {
     }
 
     /** Count of delivered items of a rejected transaction (refund / re-order is offered when 0). */
-    public void loadDelivered() {
-        if (deliveredSource != null) {
-            delivered.removeSource(deliveredSource);
-        }
-        deliveredSource = repository.getDeliveredItemCount(transactionId);
-        delivered.addSource(deliveredSource, delivered::setValue);
-    }
-
     public void orderReceived(BaseRepository.ResultCallback<Boolean> callback) {
         repository.orderReceived(transactionId, callback);
     }

@@ -80,16 +80,6 @@ public class TransactionDetailFragment extends Fragment {
                 renderStatus(current);
             }
         });
-        viewModel.getDelivered().observe(getViewLifecycleOwner(), res -> {
-            if (res == null || res.isLoading() || !awaitingDelivery) {
-                return;
-            }
-            // FutureBuilder<int?>: an error keeps the spinner
-            if (res.isSuccess() && res.data != null) {
-                binding.refundProgress.setVisibility(View.GONE);
-                binding.refundBox.setVisibility(res.data <= 0 ? View.VISIBLE : View.GONE);
-            }
-        });
     }
 
     private void onDetail(Resource<BuyerTransaction> res) {
@@ -113,15 +103,14 @@ public class TransactionDetailFragment extends Fragment {
         itemsViewModel.show(current);
         awaitingDelivery = current.isCancelled();
         binding.refundSlot.setVisibility(awaitingDelivery ? View.VISIBLE : View.GONE);
-        binding.refundProgress.setVisibility(View.VISIBLE);
-        binding.refundBox.setVisibility(View.GONE);
+        // a cancelled order has nothing delivered: the refund box shows straight away
+        binding.refundBox.setVisibility(awaitingDelivery ? View.VISIBLE : View.GONE);
         if (awaitingDelivery) {
             binding.refundTitle.setText(getString(R.string.orders_fund_refund_format,
                     Currency.formatRupiah(current.refundAmount, 0)));
             // the backend gives one refund amount, without the delivery / shopping split
             binding.shippingFeeRefund.setVisibility(View.GONE);
             binding.shoppingRefund.setVisibility(View.GONE);
-            viewModel.loadDelivered();
         }
     }
 
