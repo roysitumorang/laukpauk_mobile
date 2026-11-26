@@ -9,11 +9,6 @@ import java.util.List;
 public final class CheckoutResponses {
     private CheckoutResponses() {}
 
-    public static class CartQuantity {
-        @Json(name = "jumlahKeranjang")
-        public long cartCount;
-    }
-
     public static class CategoryDiscount {
         /** Dynamic: an object, or false when there is no category discount. */
         @Json(name = "diskonKategori")

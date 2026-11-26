@@ -17,9 +17,6 @@ public interface CheckoutApi {
     @POST("JadwalDelivery/isJadwalDeliveryOpened")
     Call<CheckoutResponses.ScheduleOpened> isDeliveryScheduleOpened(@Body Map<String, Object> body);
 
-    @GET("User/getJumlahCart")
-    Call<CheckoutResponses.CartQuantity> getCartQuantity(@Query("cartCode") String cartCode);
-
     @GET("User/getDiskonKategori")
     Call<CheckoutResponses.CategoryDiscount> getCategoryDiscount(@Query("cartCode") String cartCode);
 
