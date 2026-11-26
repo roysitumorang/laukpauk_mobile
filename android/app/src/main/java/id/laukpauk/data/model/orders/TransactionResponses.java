@@ -13,11 +13,6 @@ public final class TransactionResponses {
         public Transaction transaction;
     }
 
-    public static class Delivered {
-        @Json(name = "jumlahBarangDiantar")
-        public int deliveredGoodsCount;
-    }
-
     public static class OrderReceived {
         @Json(name = "pesananDiterima")
         public boolean orderReceived;

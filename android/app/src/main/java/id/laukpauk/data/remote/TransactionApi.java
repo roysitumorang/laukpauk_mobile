@@ -39,9 +39,6 @@ public interface TransactionApi {
     Call<TransactionResponses.Detail> getTransaction(@Path("id") String id,
                                                  @Query("entitasTransaksi") String transactionEntities);
 
-    @GET("Transaksi/getJumlahItemDiantar/{id}")
-    Call<TransactionResponses.Delivered> getDeliveredItemCount(@Path("id") String id);
-
     /** POST without a body. */
     @POST("Transaksi/pesananDiterima/{id}")
     Call<TransactionResponses.OrderReceived> orderReceived(@Path("id") String id);

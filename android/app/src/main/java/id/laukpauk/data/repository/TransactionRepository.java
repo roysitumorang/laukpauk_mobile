@@ -81,12 +81,6 @@ public class TransactionRepository extends BaseRepository {
                 body -> body == null ? null : body.transaction);
     }
 
-    /** Number of items already delivered (a rejected transaction can be refunded/re-ordered when 0). */
-    public LiveData<Resource<Integer>> getDeliveredItemCount(String transactionId) {
-        return load(api.getDeliveredItemCount(transactionId),
-                body -> body == null ? 0 : body.deliveredGoodsCount);
-    }
-
     /** Marks an "otw" transaction as received; SUCCESS(true) when the server accepted it. */
     public void orderReceived(String transactionId, ResultCallback<Boolean> callback) {
         enqueue(api.orderReceived(transactionId), body -> body != null && body.orderReceived,
