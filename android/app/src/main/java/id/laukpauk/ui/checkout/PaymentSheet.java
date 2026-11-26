@@ -25,6 +25,8 @@ final class PaymentSheet {
     private final ChannelAdapter adapter;
 
     private PaymentChannel selected;
+    /** True while the order is being placed ({@code POST buyer/transactions}). */
+    private boolean submitting;
 
     PaymentSheet(Fragment fragment, CheckoutViewModel vm, long totalBill) {
         this.vm = vm;
@@ -48,7 +50,7 @@ final class PaymentSheet {
                 adapter.submitList(res.isSuccess() ? res.data : null);
             }
         });
-        vm.orderBusy().observe(fragment.getViewLifecycleOwner(), busy -> b.btnOrder.setEnabled(!Boolean.TRUE.equals(busy)));
+        vm.orderBusy().observe(fragment.getViewLifecycleOwner(), busy -> showSubmitting(Boolean.TRUE.equals(busy)));
     }
 
     void show() {
@@ -59,7 +61,23 @@ final class PaymentSheet {
         dialog.dismiss();
     }
 
+    /**
+     * While the order is being placed: a spinner in place of "Buat Pesanan", the channels dimmed and locked, and the
+     * sheet can't be dismissed, so the buyer can't change the channel or leave before the answer comes.
+     */
+    private void showSubmitting(boolean busy) {
+        submitting = busy;
+        b.orderProgress.setVisibility(busy ? View.VISIBLE : View.GONE);
+        b.btnOrder.setEnabled(!busy);
+        b.btnOrder.setVisibility(busy ? View.INVISIBLE : selected != null ? View.VISIBLE : View.GONE);
+        b.list.setAlpha(busy ? 0.5f : 1f);
+        dialog.setCancelable(!busy);
+    }
+
     private void onChannel(PaymentChannel ch) {
+        if (submitting) {
+            return;
+        }
         selected = ch;
         adapter.setSelected(ch.channel_code == null ? "" : ch.channel_code.toLowerCase(Locale.ROOT));
         b.btnOrder.setVisibility(View.VISIBLE);

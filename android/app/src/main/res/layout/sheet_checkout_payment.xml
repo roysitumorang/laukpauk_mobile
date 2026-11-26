@@ -47,13 +47,27 @@
                         android:textSize="11sp" />
                 </LinearLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnOrder"
-                    style="@style/Checkout.Button"
+                <FrameLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/checkout_create_order"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnOrder"
+                        style="@style/Checkout.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/checkout_create_order"
+                        android:visibility="gone" />
+
+                    <!-- shown in place of "Buat Pesanan" while POST buyer/transactions is in progress -->
+                    <ProgressBar
+                        android:id="@+id/orderProgress"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/checkout_creating_order"
+                        android:visibility="gone" />
+                </FrameLayout>
             </LinearLayout>
 
             <ProgressBar
