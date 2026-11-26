@@ -42,8 +42,6 @@ public class Transaction {
     @Json(name = "nilaiVoucher")
     public int voucherValue;
     public int pointOut;
-    @Json(name = "diskonKategori")
-    public int categoryDiscount;
     @Json(name = "diskonPromo")
     public int promoDiscount;
     /** The unique transfer code for "tf_bca". */
@@ -57,7 +55,7 @@ public class Transaction {
     /** (shoppingTotal + ongkir) - all deductions; the unique code is not included. */
     public int overallTotal() {
         return (shoppingTotal + shippingFee)
-                - (voucherValue + walletDiscount + pointOut + categoryDiscount + promoDiscount);
+                - (voucherValue + walletDiscount + pointOut + promoDiscount);
     }
 
     public boolean isTfBca() {
