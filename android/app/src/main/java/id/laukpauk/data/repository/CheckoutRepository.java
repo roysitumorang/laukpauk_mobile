@@ -164,6 +164,8 @@ public class CheckoutRepository extends BaseRepository {
                     d.shoppingTotal = total;
                     d.cartId = cart == null ? null : cart.id;
                     d.cartItems = cart == null ? null : cart.items;
+                    // "Total Harga (N Barang)": the cart's total quantity, as on the cart badge
+                    d.goodsCount = cart == null ? 0L : Math.max(0L, cart.quantity);
                     if (!hasPositiveTotal(total)) {
                         callback.onResult(Resource.success(d));
                         return;
@@ -174,13 +176,8 @@ public class CheckoutRepository extends BaseRepository {
     }
 
     private void loadRest(final CheckoutInit d, String lat, String lng, ResultCallback<CheckoutInit> callback) {
-        final Join all = new Join(4, () -> callback.onResult(Resource.success(d)));
+        final Join all = new Join(3, () -> callback.onResult(Resource.success(d)));
 
-        this.<CheckoutResponses.CartQuantity, Long>call(api.getCartQuantity(d.cartCode),
-                b -> b.cartCount, 0L, v -> {
-                    d.goodsCount = v;
-                    all.step();
-                });
         this.<CheckoutResponses.CategoryDiscount, Map<String, Object>>call(api.getCategoryDiscount(d.cartCode),
                 b -> Json.isObject(b.categoryDiscount) ? Json.obj(b.categoryDiscount) : null, null, v -> {
                     d.categoryDiscount = v;
