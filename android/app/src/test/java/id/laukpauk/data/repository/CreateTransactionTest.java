@@ -87,4 +87,12 @@ public class CreateTransactionTest {
         assertEquals("1234567890", body.data.paymentVirtualAccountNumber);
         assertNull(body.data.paymentVirtualAccountExpiredAt);
     }
+
+    @Test
+    public void validPromoCodeSendsItsPromotionId() {
+        PaymentRepository.Order o = order();
+        o.promotionId = "promotion-1";
+        assertEquals("promotion-1", PaymentRepository.transactionBody(o).get("promotion_id"));
+        assertFalse(PaymentRepository.transactionBody(order()).containsKey("promotion_id"));
+    }
 }

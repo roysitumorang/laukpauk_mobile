@@ -18,6 +18,8 @@ import id.laukpauk.data.model.cart.CartResponses;
 import id.laukpauk.data.model.checkout.CheckoutInit;
 import id.laukpauk.data.model.checkout.CheckoutResponses;
 import id.laukpauk.data.model.checkout.ShippingSchedule;
+import id.laukpauk.data.model.promotion.BuyerPromotion;
+import id.laukpauk.data.model.promotion.BuyerPromotionResponses;
 import id.laukpauk.data.model.voucher.Voucher;
 import id.laukpauk.data.model.setting.BuyerSetting;
 import id.laukpauk.data.remote.CartApi;
@@ -264,8 +266,12 @@ public class CheckoutRepository extends BaseRepository {
         session.clearUsedVoucher();
     }
 
-    /** Legacy KodePromoModel.checkPromoCode; ERROR when the request failed. */
-    public void checkPromoCode(String promoCode, ResultCallback<CheckoutResponses.PromoCode> callback) {
-        enqueue(api.checkPromoCode(promoCode), body -> body, callback);
+    /**
+     * {@code GET buyer/promotions/:promo_code}: SUCCESS with the promotion when the buyer can use the code; ERROR 404
+     * when the code is not valid for them (unknown, inactive, out of its dates or over the buyer's quota).
+     */
+    public void getBuyerPromotion(String promoCode, ResultCallback<BuyerPromotion> callback) {
+        enqueue(api.buyerPromotion(promoCode), (BuyerPromotionResponses.One body) -> body == null ? null : body.data,
+                callback);
     }
 }

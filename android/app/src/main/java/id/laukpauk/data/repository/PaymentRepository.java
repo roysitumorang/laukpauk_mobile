@@ -48,6 +48,8 @@ public class PaymentRepository extends BaseRepository {
         public String deliveryDatetime;
         public boolean rewardPointsDiscounted;
         @Nullable public String voucherId;
+        /** The promotion of a valid promo code ({@code GET buyer/promotions/:promo_code}). */
+        @Nullable public String promotionId;
         public long walletAmount;
         @Nullable public String paymentChannelId;
     }
@@ -64,7 +66,7 @@ public class PaymentRepository extends BaseRepository {
     /**
      * The request body: {@code cart_id} and {@code items[]} ({@code cart_item_id}, {@code buyer_note}) of
      * {@code GET buyer/cart}, the recipient, {@code buyer_note}, {@code delivery_address_id}, {@code delivery_datetime},
-     * either {@code reward_points_discounted} or {@code voucher_id}, the wallet ({@code wallet_discounted},
+     * either {@code reward_points_discounted} or {@code voucher_id}, {@code promotion_id} (a valid promo code), the wallet ({@code wallet_discounted},
      * {@code wallet_amount}) and {@code payment_channel_id} (the id of the chosen channel).
      */
     static Map<String, Object> transactionBody(Order o) {
@@ -91,6 +93,9 @@ public class PaymentRepository extends BaseRepository {
         body.put("reward_points_discounted", o.rewardPointsDiscounted);
         if (!o.rewardPointsDiscounted && o.voucherId != null && !o.voucherId.isEmpty()) {
             body.put("voucher_id", o.voucherId);
+        }
+        if (o.promotionId != null && !o.promotionId.isEmpty()) {
+            body.put("promotion_id", o.promotionId);
         }
         body.put("wallet_discounted", o.walletAmount > 0);
         body.put("wallet_amount", Math.max(0, o.walletAmount));

@@ -95,22 +95,26 @@ final class PaymentSummarySection {
         b.tvPointUsed.setText(ctx.getString(R.string.checkout_points_used, rp(absPoint)));
 
         // promo message
-        if (s.promoCodeMessage != null) {
-            b.tvPromoMessage.setVisibility(View.VISIBLE);
-            b.tvPromoMessage.setText(s.promoCodeMessage);
-            int color = R.color.text_muted;
-            if (s.promoCodeStatus != null) {
-                color = s.promoCodeStatus ? R.color.text_success : R.color.text_danger;
-            }
-            b.tvPromoMessage.setTextColor(ContextCompat.getColor(ctx, color));
-        } else {
-            b.tvPromoMessage.setVisibility(View.GONE);
+        show(b.tvPromoMessage, s.promoCodeState != CheckoutSummary.PROMO_NONE);
+        int color = R.color.text_muted;
+        if (s.promoCodeState == CheckoutSummary.PROMO_CHECKING) {
+            b.tvPromoMessage.setText(R.string.checkout_promo_checking);
+        } else if (s.promoCodeState == CheckoutSummary.PROMO_VALID) {
+            b.tvPromoMessage.setText(ctx.getString(R.string.checkout_promo_valid, rp(s.promoCodeDiscount)));
+            color = R.color.text_success;
+        } else if (s.promoCodeState == CheckoutSummary.PROMO_INVALID) {
+            b.tvPromoMessage.setText(s.promoCodeMessage != null && !s.promoCodeMessage.isEmpty()
+                    ? s.promoCodeMessage : ctx.getString(R.string.checkout_promo_invalid));
+            color = R.color.text_danger;
         }
+        b.tvPromoMessage.setTextColor(ContextCompat.getColor(ctx, color));
 
         // rows
         boolean walletRow = s.walletDiscount > 0;
         show(b.rowWallet, walletRow);
         b.tvPotWallet.setText(minus(s.walletDiscount));
+        show(b.rowPromo, s.promoCodeDiscount > 0);
+        b.tvPromoDeduction.setText(minus(s.promoCodeDiscount));
         show(b.rowPoints, s.isPointUsed);
         b.tvPointsDeduction.setText(minus(pointOutValue));
 
